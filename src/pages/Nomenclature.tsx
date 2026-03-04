@@ -14,6 +14,7 @@ import {
   BookOpen,
   Layers,
   Scale,
+  X,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -126,7 +127,16 @@ function findNode(nodes: NomenclatureNode[], id: string): NomenclatureNode | nul
 
 export default function Nomenclature() {
   const [selectedId, setSelectedId] = useState<string | null>("1.1.3");
+  const [editCode, setEditCode] = useState<string>("");
+  const [editLabel, setEditLabel] = useState<string>("");
+
   const selected = selectedId ? findNode(nomenclature, selectedId) : null;
+
+  // Update edit inputs when selection changes
+  if (selected && (editCode !== selected.code || editLabel !== selected.label)) {
+    setEditCode(selected.code);
+    setEditLabel(selected.label);
+  }
 
   return (
     <div className="p-8 space-y-6 max-w-[1800px] mx-auto">
@@ -192,93 +202,152 @@ export default function Nomenclature() {
         </div>
 
         {/* Edit Panel */}
-        <div className="w-72 flex-shrink-0 space-y-3">
+        <div className="w-80 flex-shrink-0 space-y-3">
           {selected ? (
-            <Card>
-              <CardHeader className="pb-1">
-                <CardTitle className="text-[13px] flex items-center gap-2">
-                  <Edit3 className="w-4 h-4" /> Édition
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <label className="metric-label">Code</label>
-                  <Input defaultValue={selected.code} className="mt-1 font-mono text-[12px] h-8" />
+            <div className="space-y-3">
+              {/* Header avec close button */}
+              <div className="flex items-start justify-between gap-3 bg-card/95 backdrop-blur-sm border rounded-xl p-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Édition</div>
+                  <h3 className="text-[15px] font-bold text-foreground leading-snug truncate">{selected.code} — {selected.type}</h3>
                 </div>
-                <div>
-                  <label className="metric-label">Libellé</label>
-                  <Input defaultValue={selected.label} className="mt-1 text-[12px] h-8" />
-                </div>
-                <div>
-                  <label className="metric-label">Type</label>
-                  <div className="mt-1 text-[12px] bg-muted px-2 py-1 rounded">{selected.type || "—"}</div>
-                </div>
-                {selected.montant && (
-                  <div>
-                    <label className="metric-label">Montant consolidé</label>
-                    <div className="mt-1 text-[12px] font-semibold">{selected.montant}</div>
-                  </div>
-                )}
-                {selected.seuil && (
-                  <div>
-                    <label className="metric-label">Seuil de procédure</label>
-                    <div className="mt-1 text-[12px]">{selected.seuil}</div>
-                  </div>
-                )}
-                <div>
-                  <label className="metric-label">Conformité</label>
-                  <div className="mt-1">
-                    {selected.conforme ? (
-                      <span className="badge-conforme"><CheckCircle2 className="w-3 h-3" /> Conforme</span>
-                    ) : (
-                      <span className="badge-alerte"><AlertCircle className="w-3 h-3" /> Non conforme</span>
-                    )}
-                  </div>
-                </div>
+                <button
+                  onClick={() => setSelectedId(null)}
+                  className="p-1.5 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
 
-                {/* Inclusions / Exclusions (livre blanc concept) */}
-                {selected.level === 2 && (
-                  <div className="space-y-2 pt-2 border-t">
-                    <label className="metric-label">Périmètre du code</label>
-                    <div className="text-[11px] space-y-1">
-                      <div className="p-1.5 rounded bg-accent/5 border border-accent/15">
-                        <span className="font-semibold text-accent text-[10px]">INCLUT</span>
-                        <p className="text-muted-foreground mt-0.5">Prestations de {selected.label.toLowerCase()}</p>
-                      </div>
-                      <div className="p-1.5 rounded bg-destructive/5 border border-destructive/15">
-                        <span className="font-semibold text-destructive text-[10px]">EXCLUT</span>
-                        <p className="text-muted-foreground mt-0.5">Voir codes adjacents</p>
-                      </div>
+              {/* Form Card */}
+              <Card className="bg-card/95 backdrop-blur-sm shadow-lg">
+                <CardContent className="pt-5 space-y-4">
+                  {/* Code */}
+                  <div>
+                    <label className="metric-label">Code</label>
+                    <Input
+                      value={editCode}
+                      onChange={(e) => setEditCode(e.target.value)}
+                      className="mt-2 font-mono text-[13px] h-9 rounded-lg"
+                    />
+                  </div>
+
+                  {/* Libellé */}
+                  <div>
+                    <label className="metric-label">Libellé</label>
+                    <Input
+                      value={editLabel}
+                      onChange={(e) => setEditLabel(e.target.value)}
+                      className="mt-2 text-[13px] h-9 rounded-lg"
+                    />
+                  </div>
+
+                  {/* Type (read-only) */}
+                  <div>
+                    <label className="metric-label">Type</label>
+                    <div className="mt-2 text-[13px] bg-muted px-3 py-2 rounded-lg text-foreground font-medium">
+                      {selected.type || "—"}
                     </div>
                   </div>
-                )}
 
-                <div className="pt-2 flex gap-2">
-                  <Button size="sm" className="flex-1 text-[11px] h-7">Enregistrer</Button>
-                  <Button size="sm" variant="outline" className="text-[11px] h-7">Annuler</Button>
-                </div>
-              </CardContent>
-            </Card>
+                  {/* Montant si disponible */}
+                  {selected.montant && (
+                    <div>
+                      <label className="metric-label">Montant consolidé</label>
+                      <div className="mt-2 text-[13px] font-bold text-primary">{selected.montant}</div>
+                    </div>
+                  )}
+
+                  {/* Seuil si disponible */}
+                  {selected.seuil && (
+                    <div>
+                      <label className="metric-label">Seuil de procédure</label>
+                      <div className="mt-2 text-[13px] font-semibold text-foreground">{selected.seuil}</div>
+                    </div>
+                  )}
+
+                  {/* Conformité */}
+                  <div>
+                    <label className="metric-label">Conformité</label>
+                    <div className="mt-2">
+                      {selected.conforme ? (
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/20 text-[12px] font-bold text-success uppercase tracking-wider">
+                          <CheckCircle2 className="w-4 h-4" /> Conforme
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20 text-[12px] font-bold text-destructive uppercase tracking-wider">
+                          <AlertCircle className="w-4 h-4" /> Non conforme
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Périmètre (codes détail) */}
+                  {selected.level === 2 && (
+                    <div className="space-y-2 pt-3 border-t">
+                      <label className="metric-label">Périmètre du code</label>
+                      <div className="space-y-2">
+                        <div className="p-2.5 rounded-lg bg-accent/8 border border-accent/20">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-accent">Inclut</span>
+                          <p className="text-[12px] text-muted-foreground mt-1">
+                            Prestations de {selected.label.toLowerCase()}
+                          </p>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-destructive/8 border border-destructive/20">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-destructive">Exclut</span>
+                          <p className="text-[12px] text-muted-foreground mt-1">Voir codes adjacents</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Boutons action */}
+                  <div className="pt-2 flex gap-2">
+                    <Button size="sm" className="flex-1 text-[12px] h-8 rounded-lg">
+                      Enregistrer
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-[12px] h-8 rounded-lg"
+                      onClick={() => {
+                        setEditCode(selected.code);
+                        setEditLabel(selected.label);
+                      }}
+                    >
+                      Réinitialiser
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           ) : (
-            <Card>
-              <CardContent className="py-10 text-center text-[12px] text-muted-foreground">
-                Sélectionnez un élément
+            <Card className="bg-card/95 backdrop-blur-sm">
+              <CardContent className="py-12 text-center text-[13px] text-muted-foreground">
+                📋 Sélectionnez un élément <br /> dans l'arborescence pour l'éditer
               </CardContent>
             </Card>
           )}
 
           {/* Versions */}
-          <Card>
-            <CardHeader className="pb-1">
-              <CardTitle className="text-[13px] flex items-center gap-2"><History className="w-4 h-4" /> Versions</CardTitle>
+          <Card className="bg-card/95 backdrop-blur-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-[13px] flex items-center gap-2">
+                <History className="w-4 h-4" /> Versions
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1.5">
+            <CardContent className="space-y-2">
               {versions.map((v) => (
-                <div key={v.version} className="flex items-start gap-2 p-1.5 rounded hover:bg-muted/30 text-[11px]">
-                  <span className="font-mono font-semibold text-primary w-8">{v.version}</span>
-                  <div className="flex-1">
-                    <p className="text-foreground leading-snug">{v.note}</p>
-                    <p className="text-muted-foreground mt-0.5">{v.auteur} — {v.date}</p>
+                <div
+                  key={v.version}
+                  className="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-muted/40 transition-colors cursor-pointer"
+                >
+                  <span className="font-mono font-bold text-primary text-[11px] flex-shrink-0">{v.version}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] text-foreground font-medium leading-snug">{v.note}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      {v.auteur} · {v.date}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -286,19 +355,21 @@ export default function Nomenclature() {
           </Card>
 
           {/* Journal */}
-          <Card>
-            <CardHeader className="pb-1">
-              <CardTitle className="text-[13px] flex items-center gap-2"><BookOpen className="w-4 h-4" /> Journal des modifications</CardTitle>
+          <Card className="bg-card/95 backdrop-blur-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-[13px] flex items-center gap-2">
+                <BookOpen className="w-4 h-4" /> Journal
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1.5">
+            <CardContent className="space-y-2">
               {journal.map((j, i) => (
-                <div key={i} className="p-1.5 rounded text-[11px] hover:bg-muted/30">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-foreground">{j.action}</span>
+                <div key={i} className="p-2.5 rounded-lg text-[11px] hover:bg-muted/40 transition-colors">
+                  <div className="flex items-start gap-2">
+                    <span className="font-semibold text-foreground flex-shrink-0">{j.action}</span>
                     <span className="text-muted-foreground">— {j.utilisateur}</span>
                   </div>
-                  <p className="text-muted-foreground mt-0.5">{j.detail}</p>
-                  <p className="text-[10px] text-muted-foreground/70 font-mono">{j.date}</p>
+                  <p className="text-muted-foreground mt-1 leading-snug">{j.detail}</p>
+                  <p className="text-[10px] text-muted-foreground/70 font-mono mt-0.5">{j.date}</p>
                 </div>
               ))}
             </CardContent>
