@@ -15,11 +15,12 @@ import {
   Layers,
   Scale,
   Zap,
+  Target,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ResponsiveContainer,
   BarChart,
@@ -32,6 +33,8 @@ import {
   Line,
 } from "recharts";
 import { CHART_COLORS, PALETTE, UI_COLORS } from "@/lib/palette";
+import { StatsGrid } from "@/components/StatsGrid";
+import { CalendarView } from "@/components/CalendarView";
 
 const marches = [
   { id: "M2026-001", objet: "Maintenance ascenseurs — Lot 1 Centre", service: "DGA Bâtiments", montant: "120 000 €", procedure: "AO ouvert", echeance: "15/03/2026", statut: "En cours", priorite: "haute", charge: 12 },
@@ -103,23 +106,16 @@ export default function Planification() {
       </div>
 
       {/* KPIs Planification */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
-        {[
-          { label: "Marchés en cours", value: "24", icon: CalendarRange },
-          { label: "Charge prévisionnelle", value: "68%", icon: Users, alert: true },
-          { label: "Chevauchements", value: "3", icon: Layers },
-          { label: "Impact budgétaire simulé", value: "84,2 M€", icon: TrendingUp },
+      <StatsGrid
+        stats={[
+          { label: "Marchés en cours", value: "24", icon: CalendarRange, trend: { value: "+3", positive: true } },
+          { label: "Charge prévisionnelle", value: "68%", icon: Users, alert: true, trend: { value: "+12%", positive: false } },
+          { label: "Chevauchements", value: "3", icon: Layers, trend: { value: "-2", positive: true } },
+          { label: "Impact budgétaire", value: "84,2 M€", icon: TrendingUp, trend: { value: "+8,3%", positive: true } },
           { label: "Alertes seuils", value: "5", icon: AlertTriangle, alert: true },
-        ].map((kpi) => (
-          <div key={kpi.label} className="stat-card">
-            <div className="flex items-center gap-2.5 mb-3">
-              <kpi.icon className={`w-4 h-4 ${kpi.alert ? "text-warning" : "text-primary"}`} />
-              <span className="metric-label">{kpi.label}</span>
-            </div>
-            <span className={`text-2xl font-bold ${kpi.alert ? "text-warning" : "text-foreground"}`}>{kpi.value}</span>
-          </div>
-        ))}
-      </div>
+        ]}
+        columns="5"
+      />
 
       {/* Charge + Pluriannuel */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -189,26 +185,35 @@ export default function Planification() {
       {/* Search + Toggle */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <Input placeholder="Rechercher par objet, référence, service…" className="pl-9 text-[12px] h-8" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input placeholder="Rechercher par objet, référence, service…" className="pl-10 text-[13px] h-10 rounded-lg" />
         </div>
-        <div className="flex gap-1.5 ml-auto">
+        <div className="flex gap-2 ml-auto">
           {["Service", "Procédure", "Montant", "Année"].map((f) => (
-            <Button key={f} variant="outline" size="sm" className="text-[11px] h-7 px-2.5 gap-1">
-              {f} <ChevronRight className="w-3 h-3 rotate-90" />
+            <Button key={f} variant="outline" size="sm" className="text-[12px] h-9 px-3 gap-1.5 rounded-lg">
+              {f} <ChevronRight className="w-3.5 h-3.5 rotate-90" />
             </Button>
           ))}
         </div>
-        <Tabs defaultValue="tableau">
-          <TabsList className="h-7">
-            <TabsTrigger value="tableau" className="text-[11px] gap-1 px-2.5 h-6"><LayoutList className="w-3 h-3" />Tableau</TabsTrigger>
-            <TabsTrigger value="calendrier" className="text-[11px] gap-1 px-2.5 h-6"><Calendar className="w-3 h-3" />Calendrier</TabsTrigger>
-          </TabsList>
-        </Tabs>
       </div>
 
-      {/* Table + Detail */}
-      <div className="flex gap-3">
+      {/* Tabs tableau/calendrier */}
+      <Tabs defaultValue="tableau" className="space-y-4">
+        <TabsList className="h-10">
+          <TabsTrigger value="tableau" className="text-[13px] gap-2 px-4 h-8">
+            <LayoutList className="w-4 h-4" />
+            Tableau
+          </TabsTrigger>
+          <TabsTrigger value="calendrier" className="text-[13px] gap-2 px-4 h-8">
+            <Calendar className="w-4 h-4" />
+            Calendrier
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Vue Tableau */}
+        <TabsContent value="tableau" className="space-y-4">
+          {/* Table + Detail */}
+          <div className="flex gap-4">
         <div className="flex-1 min-w-0">
           <div className="bg-card border rounded overflow-hidden">
             <table className="data-table">
@@ -304,6 +309,43 @@ export default function Planification() {
           </div>
         )}
       </div>
+    </TabsContent>
+
+    {/* Vue Calendrier */}
+    <TabsContent value="calendrier" className="space-y-4">
+      <CalendarView marches={marches} onSelectMarche={setSelectedMarche} />
+
+      {/* Detail panel aussi disponible en vue calendrier */}
+      {selected && (
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-mono text-[11px] text-muted-foreground">{selected.id}</span>
+              <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border ${statusStyles[selected.statut]}`}>
+                {selected.statut}
+              </span>
+            </div>
+            <h3 className="text-[15px] font-semibold leading-snug mb-4">{selected.objet}</h3>
+            <div className="grid grid-cols-2 gap-4 text-[13px]">
+              {[
+                ["Service", selected.service],
+                ["Montant", selected.montant],
+                ["Procédure", selected.procedure],
+                ["Échéance", selected.echeance],
+                ["Charge", `${selected.charge} j/homme`],
+                ["Priorité", <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${prioriteStyles[selected.priorite]}`}>{selected.priorite}</span>],
+              ].map(([label, value]) => (
+                <div key={String(label)} className="flex flex-col gap-1">
+                  <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+                  <span className="font-semibold">{value}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </TabsContent>
+  </Tabs>
     </div>
   );
 }

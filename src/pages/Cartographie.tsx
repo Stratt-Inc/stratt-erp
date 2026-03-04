@@ -27,6 +27,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { CHART_COLORS, PALETTE, UI_COLORS, withAlpha } from "@/lib/palette";
+import { StatsGrid } from "@/components/StatsGrid";
 
 /* ── Treemap data ── */
 const flatTreemap = [
@@ -158,23 +159,16 @@ export default function Cartographie() {
       </div>
 
       {/* KPIs Carto */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
-        {[
-          { label: "Familles d'achats", value: "14", icon: Layers },
-          { label: "Codes nomenclature", value: "86", icon: FolderOpen },
-          { label: "Dépenses classifiées", value: "96%", icon: CheckCircle2 },
+      <StatsGrid
+        stats={[
+          { label: "Familles d'achats", value: "14", icon: Layers, trend: { value: "+2", positive: true } },
+          { label: "Codes nomenclature", value: "86", icon: FolderOpen, trend: { value: "+8", positive: true } },
+          { label: "Dépenses classifiées", value: "96%", icon: CheckCircle2, trend: { value: "+3%", positive: true } },
           { label: "Fractionnements détectés", value: "5", icon: Scale, alert: true },
           { label: "Écart budgétaire moyen", value: "4,2%", icon: Target },
-        ].map((kpi) => (
-          <div key={kpi.label} className="stat-card">
-            <div className="flex items-center gap-2.5 mb-3">
-              <kpi.icon className={`w-4 h-4 ${kpi.alert ? "text-destructive" : "text-primary"}`} />
-              <span className="metric-label">{kpi.label}</span>
-            </div>
-            <span className={`text-2xl font-bold ${kpi.alert ? "text-destructive" : "text-foreground"}`}>{kpi.value}</span>
-          </div>
-        ))}
-      </div>
+        ]}
+        columns="5"
+      />
 
       {/* Import Zone */}
       <Card className="border-dashed">

@@ -48,9 +48,9 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r-0">
       <SidebarContent className="pt-6">
         {/* Logo Axiora */}
-        <div className="px-4 mb-10 flex items-center gap-3">
-          <div className="w-9 h-9 rounded bg-primary flex items-center justify-center flex-shrink-0">
-            <Target className="w-5 h-5 text-white" strokeWidth={2} />
+        <div className={`px-4 mb-10 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+            <Target className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
           {!collapsed && (
             <div className="flex flex-col">

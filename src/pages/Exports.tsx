@@ -12,9 +12,12 @@ import {
   Building2,
   Shield,
   Printer,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { StatsGrid } from "@/components/StatsGrid";
 
 interface Section {
   id: string;
@@ -61,22 +64,38 @@ export default function Exports() {
   };
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-start justify-between">
+    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
-          <p className="section-label mb-1">Module documents</p>
-          <h1>Génération documentaire & Exports</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
+          <p className="section-label mb-2">Module documents</p>
+          <h1 className="mb-2">Génération documentaire & Exports</h1>
+          <p className="text-[14px] text-muted-foreground">
             Document d'implémentation informatique · Rendus formalisés · Exports réglementaires
           </p>
         </div>
+        <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg" disabled={generating}>
+          {generating && <Loader2 className="w-4 h-4 animate-spin" />}
+          <Download className="w-4 h-4" />
+          Tout télécharger
+        </Button>
       </div>
 
+      {/* Stats Exports */}
+      <StatsGrid
+        stats={[
+          { label: "Documents générés", value: "12", icon: FileText, trend: { value: "+3", positive: true } },
+          { label: "Dernière génération", value: "1h", icon: Clock },
+          { label: "Exports ce mois", value: "47", icon: TrendingUp, trend: { value: "+12", positive: true } },
+          { label: "Conforme RGPD", value: "100%", icon: Shield },
+        ]}
+        columns="4"
+      />
+
       {/* Principes rendus (from livre blanc) */}
-      <Card className="border-accent/15 bg-accent/3">
-        <CardContent className="py-3 flex items-start gap-3">
-          <FileText className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-          <div className="text-[12px] leading-relaxed">
+      <Card className="border-accent/15 bg-accent/3 border-2">
+        <CardContent className="py-4 flex items-start gap-4">
+          <FileText className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+          <div className="text-[13px] leading-relaxed">
             <span className="font-semibold text-accent">Rendus formalisés</span> — Le document est généré conformément aux recommandations CartoAP : un fichier PDF lisible et esthétique pour la diffusion, un fichier XLSX récapitulatif pour les filtres, et un format d'import pour le progiciel financier.
           </div>
         </CardContent>

@@ -9,10 +9,12 @@ import {
   ChevronRight,
   Lock,
   Server,
+  Activity,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StatsGrid } from "@/components/StatsGrid";
 
 const users = [
   { nom: "Martin Dupont", email: "m.dupont@metropole-lyon.fr", role: "Administrateur", service: "Direction Achats", derniereConnexion: "04/03/2026" },
@@ -41,22 +43,33 @@ const journal = [
 
 export default function Administration() {
   return (
-    <div className="p-6 space-y-5">
-      <div>
-        <p className="section-label mb-1">Administration</p>
-        <h1>Gestion de la plateforme</h1>
-        <p className="text-[13px] text-muted-foreground mt-1">Utilisateurs, rôles, paramètres et sécurité</p>
+    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+      <div className="animate-fade-in">
+        <p className="section-label mb-2">Administration</p>
+        <h1 className="mb-2">Gestion de la plateforme</h1>
+        <p className="text-[14px] text-muted-foreground">Utilisateurs, rôles, paramètres et sécurité</p>
       </div>
 
-      <Tabs defaultValue="utilisateurs">
-        <TabsList className="h-8">
-          <TabsTrigger value="utilisateurs" className="gap-1.5 text-[11px] h-7"><Users className="w-3 h-3" />Utilisateurs</TabsTrigger>
-          <TabsTrigger value="parametres" className="gap-1.5 text-[11px] h-7"><Settings className="w-3 h-3" />Paramètres</TabsTrigger>
-          <TabsTrigger value="journal" className="gap-1.5 text-[11px] h-7"><ClipboardList className="w-3 h-3" />Journal</TabsTrigger>
-          <TabsTrigger value="support" className="gap-1.5 text-[11px] h-7"><BookOpen className="w-3 h-3" />Support</TabsTrigger>
+      {/* Stats Admin */}
+      <StatsGrid
+        stats={[
+          { label: "Utilisateurs actifs", value: "6", icon: Users },
+          { label: "Connexions aujourd'hui", value: "12", icon: Activity, trend: { value: "+3", positive: true } },
+          { label: "Sécurité système", value: "100%", icon: Shield },
+          { label: "Dernière sauvegarde", value: "30min", icon: Server },
+        ]}
+        columns="4"
+      />
+
+      <Tabs defaultValue="utilisateurs" className="space-y-4">
+        <TabsList className="h-10">
+          <TabsTrigger value="utilisateurs" className="gap-2 text-[13px] h-8 px-4"><Users className="w-4 h-4" />Utilisateurs</TabsTrigger>
+          <TabsTrigger value="parametres" className="gap-2 text-[13px] h-8 px-4"><Settings className="w-4 h-4" />Paramètres</TabsTrigger>
+          <TabsTrigger value="journal" className="gap-2 text-[13px] h-8 px-4"><ClipboardList className="w-4 h-4" />Journal</TabsTrigger>
+          <TabsTrigger value="support" className="gap-2 text-[13px] h-8 px-4"><BookOpen className="w-4 h-4" />Support</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="utilisateurs" className="space-y-3 mt-3">
+        <TabsContent value="utilisateurs" className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-[12px] text-muted-foreground">{users.length} utilisateurs actifs — Accès illimité</p>
             <Button size="sm" className="gap-2 text-[12px]"><Plus className="w-3.5 h-3.5" /> Ajouter</Button>

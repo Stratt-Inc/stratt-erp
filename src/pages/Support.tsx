@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StatsGrid } from "@/components/StatsGrid";
 
 const faqCategories = [
   {
@@ -157,24 +158,15 @@ export default function Support() {
       </div>
 
       {/* Stats Support */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
-        {[
-          { label: "Tickets ouverts", value: "1", icon: MessageSquare, color: "text-info" },
-          { label: "Temps de réponse moyen", value: "2h15", icon: Clock, color: "text-success" },
-          { label: "Ressources disponibles", value: "24", icon: BookOpen, color: "text-primary" },
-          { label: "Satisfaction", value: "4.8/5", icon: CheckCircle2, color: "text-accent" },
-        ].map((stat) => (
-          <div key={stat.label} className="stat-card flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-card border flex items-center justify-center flex-shrink-0">
-              <stat.icon className={`w-5 h-5 ${stat.color}`} />
-            </div>
-            <div className="flex-1">
-              <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-[11px] text-muted-foreground leading-tight">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <StatsGrid
+        stats={[
+          { label: "Tickets ouverts", value: "1", icon: MessageSquare },
+          { label: "Temps de réponse", value: "2h15", icon: Clock, trend: { value: "-15min", positive: true } },
+          { label: "Ressources disponibles", value: "24", icon: BookOpen, trend: { value: "+6", positive: true } },
+          { label: "Satisfaction", value: "4.8/5", icon: CheckCircle2 },
+        ]}
+        columns="4"
+      />
 
       {/* Barre de recherche */}
       <Card className="border-2">

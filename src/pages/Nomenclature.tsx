@@ -18,6 +18,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatsGrid } from "@/components/StatsGrid";
 
 interface NomenclatureNode {
   id: string;
@@ -128,40 +129,39 @@ export default function Nomenclature() {
   const selected = selectedId ? findNode(nomenclature, selectedId) : null;
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-start justify-between">
+    <div className="p-8 space-y-6 max-w-[1800px] mx-auto">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
-          <p className="section-label mb-1">Module nomenclature</p>
-          <h1>Nomenclature des achats</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
+          <p className="section-label mb-2">Module nomenclature</p>
+          <h1 className="mb-2">Nomenclature des achats</h1>
+          <p className="text-[14px] text-muted-foreground">
             Structure en entonnoir · Familles → Types de dépense → Codes · Version 3.2
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-2 text-[12px]"><History className="w-3.5 h-3.5" /> Historique</Button>
-          <Button variant="outline" size="sm" className="gap-2 text-[12px]"><Download className="w-3.5 h-3.5" /> Exporter</Button>
-          <Button size="sm" className="gap-2 text-[12px]"><Plus className="w-3.5 h-3.5" /> Nouvelle entrée</Button>
+        <div className="flex gap-3">
+          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+            <History className="w-4 h-4" /> Historique
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+            <Download className="w-4 h-4" /> Exporter
+          </Button>
+          <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+            <Plus className="w-4 h-4" /> Nouvelle entrée
+          </Button>
         </div>
       </div>
 
       {/* Indicateurs nomenclature */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        {[
+      <StatsGrid
+        stats={[
           { label: "Familles d'achats", value: "4", icon: Layers },
-          { label: "Codes actifs", value: "86", icon: FolderTree },
+          { label: "Codes actifs", value: "86", icon: FolderTree, trend: { value: "+3", positive: true } },
           { label: "Exhaustivité", value: "96%", icon: CheckCircle2 },
           { label: "Exclusivité mutuelle", value: "98%", icon: Scale },
           { label: "Adhésion utilisateurs", value: "92%", icon: BookOpen },
-        ].map((kpi) => (
-          <div key={kpi.label} className="stat-card">
-            <div className="flex items-center gap-2 mb-2">
-              <kpi.icon className="w-3.5 h-3.5 text-primary" />
-              <span className="metric-label">{kpi.label}</span>
-            </div>
-            <span className="text-xl font-bold">{kpi.value}</span>
-          </div>
-        ))}
-      </div>
+        ]}
+        columns="5"
+      />
 
       {/* Principes livre blanc */}
       <Card className="border-accent/15 bg-accent/3">
