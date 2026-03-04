@@ -139,29 +139,29 @@ export default function Nomenclature() {
   }
 
   return (
-    <div className="p-8 space-y-6 max-w-[1800px] mx-auto">
-      <div className="flex items-start justify-between animate-fade-in">
-        <div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1800px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 animate-fade-in">
+        <div className="flex-1">
           <p className="section-label mb-2">Module nomenclature</p>
-          <h1 className="mb-2">Nomenclature des achats</h1>
-          <p className="text-[14px] text-muted-foreground">
+          <h1 className="mb-2 text-2xl sm:text-3xl">Nomenclature des achats</h1>
+          <p className="text-[13px] sm:text-[14px] text-muted-foreground">
             Structure en entonnoir · Familles → Types de dépense → Codes · Version 3.2
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-            <History className="w-4 h-4" /> Historique
+        <div className="flex gap-2 sm:gap-3 flex-wrap flex-shrink-0">
+          <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-[12px] sm:text-[13px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg">
+            <History className="w-4 h-4" /> <span className="hidden sm:inline">Historique</span>
           </Button>
-          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-            <Download className="w-4 h-4" /> Exporter
+          <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-[12px] sm:text-[13px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg">
+            <Download className="w-4 h-4" /> <span className="hidden sm:inline">Exporter</span>
           </Button>
-          <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-            <Plus className="w-4 h-4" /> Nouvelle entrée
-          </Button>
-        </div>
-      </div>
+          <Button size="sm" className="gap-1 sm:gap-2 text-[12px] sm:text-[13px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg">
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nouvelle</span>
+           </Button>
+         </div>
+       </div>
 
-      {/* Indicateurs nomenclature */}
+       {/* Indicateurs nomenclature */}
       <StatsGrid
         stats={[
           { label: "Familles d'achats", value: "4", icon: Layers },
@@ -183,14 +183,15 @@ export default function Nomenclature() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-3">
-        {/* Tree */}
+      <div className="flex flex-col lg:flex-row gap-3">
+        {/* Tree - Full width on mobile, flex-1 on desktop */}
         <div className="flex-1 min-w-0">
           <Card>
-            <CardHeader className="pb-1">
-              <CardTitle className="text-[13px] flex items-center gap-2">
+            <CardHeader className="pb-2 sm:pb-1">
+              <CardTitle className="text-[12px] sm:text-[13px] flex items-center gap-2">
                 <FolderTree className="w-4 h-4" />
-                Arborescence nomenclaturale
+                <span className="hidden sm:inline">Arborescence nomenclaturale</span>
+                <span className="sm:hidden">Arborescence</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -201,10 +202,10 @@ export default function Nomenclature() {
           </Card>
         </div>
 
-        {/* Edit Panel */}
-        <div className="w-80 flex-shrink-0 space-y-3">
+        {/* Edit Panel - Hidden on mobile, visible on desktop */}
+        <div className="hidden lg:flex lg:w-80 lg:flex-shrink-0 lg:flex-col gap-3">
           {selected ? (
-            <div className="space-y-3">
+            <>
               {/* Header avec close button */}
               <div className="flex items-start justify-between gap-3 bg-card/95 backdrop-blur-sm border rounded-xl p-4">
                 <div className="flex-1 min-w-0">
@@ -222,7 +223,7 @@ export default function Nomenclature() {
               {/* Form Card */}
               <Card className="bg-card/95 backdrop-blur-sm shadow-lg">
                 <CardContent className="pt-5 space-y-4">
-                  {/* Code */}
+                  {/* ...existing code... */}
                   <div>
                     <label className="metric-label">Code</label>
                     <Input
@@ -232,7 +233,6 @@ export default function Nomenclature() {
                     />
                   </div>
 
-                  {/* Libellé */}
                   <div>
                     <label className="metric-label">Libellé</label>
                     <Input
@@ -242,7 +242,6 @@ export default function Nomenclature() {
                     />
                   </div>
 
-                  {/* Type (read-only) */}
                   <div>
                     <label className="metric-label">Type</label>
                     <div className="mt-2 text-[13px] bg-muted px-3 py-2 rounded-lg text-foreground font-medium">
@@ -250,7 +249,6 @@ export default function Nomenclature() {
                     </div>
                   </div>
 
-                  {/* Montant si disponible */}
                   {selected.montant && (
                     <div>
                       <label className="metric-label">Montant consolidé</label>
@@ -258,7 +256,6 @@ export default function Nomenclature() {
                     </div>
                   )}
 
-                  {/* Seuil si disponible */}
                   {selected.seuil && (
                     <div>
                       <label className="metric-label">Seuil de procédure</label>
@@ -266,7 +263,6 @@ export default function Nomenclature() {
                     </div>
                   )}
 
-                  {/* Conformité */}
                   <div>
                     <label className="metric-label">Conformité</label>
                     <div className="mt-2">
@@ -282,7 +278,6 @@ export default function Nomenclature() {
                     </div>
                   </div>
 
-                  {/* Périmètre (codes détail) */}
                   {selected.level === 2 && (
                     <div className="space-y-2 pt-3 border-t">
                       <label className="metric-label">Périmètre du code</label>
@@ -301,7 +296,6 @@ export default function Nomenclature() {
                     </div>
                   )}
 
-                  {/* Boutons action */}
                   <div className="pt-2 flex gap-2">
                     <Button size="sm" className="flex-1 text-[12px] h-8 rounded-lg">
                       Enregistrer
@@ -320,7 +314,7 @@ export default function Nomenclature() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </>
           ) : (
             <Card className="bg-card/95 backdrop-blur-sm">
               <CardContent className="py-12 text-center text-[13px] text-muted-foreground">
@@ -375,6 +369,98 @@ export default function Nomenclature() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Mobile Edit Panel - Visible only on mobile/tablet */}
+        {selected && (
+          <div className="lg:hidden fixed inset-0 z-40" onClick={() => setSelectedId(null)}>
+            <div className="absolute inset-0 bg-black/30" />
+            <div
+              className="absolute bottom-14 left-0 right-0 bg-card border-t rounded-t-2xl shadow-xl max-h-[70vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4">
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div className="flex-1">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Édition</div>
+                  <h3 className="text-[14px] sm:text-[15px] font-bold text-foreground leading-snug">{selected.code} — {selected.type}</h3>
+                </div>
+                <button
+                  onClick={() => setSelectedId(null)}
+                  className="p-1.5 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="metric-label text-[10px]">Code</label>
+                  <Input
+                    value={editCode}
+                    onChange={(e) => setEditCode(e.target.value)}
+                    className="mt-1 font-mono text-[12px] h-8 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="metric-label text-[10px]">Libellé</label>
+                  <Input
+                    value={editLabel}
+                    onChange={(e) => setEditLabel(e.target.value)}
+                    className="mt-1 text-[12px] h-8 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="metric-label text-[10px]">Type</label>
+                  <div className="mt-1 text-[12px] bg-muted px-2 py-1.5 rounded-lg text-foreground font-medium">
+                    {selected.type || "—"}
+                  </div>
+                </div>
+
+                {selected.montant && (
+                  <div>
+                    <label className="metric-label text-[10px]">Montant</label>
+                    <div className="mt-1 text-[12px] font-bold text-primary">{selected.montant}</div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="metric-label text-[10px]">Conformité</label>
+                  <div className="mt-1">
+                    {selected.conforme ? (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-success/10 border border-success/20 text-[10px] font-bold text-success uppercase">
+                        <CheckCircle2 className="w-3 h-3" /> Conforme
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-destructive/10 border border-destructive/20 text-[10px] font-bold text-destructive uppercase">
+                        <AlertCircle className="w-3 h-3" /> Non conforme
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex gap-2">
+                  <Button size="sm" className="flex-1 text-[11px] h-7 rounded-lg">
+                    Enregistrer
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-[11px] h-7 rounded-lg"
+                    onClick={() => {
+                      setEditCode(selected.code);
+                      setEditLabel(selected.label);
+                    }}
+                  >
+                    Réinit.
+                  </Button>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

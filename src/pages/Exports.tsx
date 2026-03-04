@@ -64,19 +64,19 @@ export default function Exports() {
   };
 
   return (
-    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
-      <div className="flex items-start justify-between animate-fade-in">
-        <div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1600px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 animate-fade-in">
+        <div className="flex-1">
           <p className="section-label mb-2">Module documents</p>
-          <h1 className="mb-2">Génération documentaire & Exports</h1>
-          <p className="text-[14px] text-muted-foreground">
+          <h1 className="mb-2 text-2xl sm:text-3xl">Génération documentaire & Exports</h1>
+          <p className="text-[13px] sm:text-[14px] text-muted-foreground">
             Document d'implémentation informatique · Rendus formalisés · Exports réglementaires
           </p>
         </div>
-        <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg" disabled={generating}>
+        <Button size="sm" className="gap-1 sm:gap-2 text-[12px] sm:text-[13px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg flex-shrink-0" disabled={generating}>
           {generating && <Loader2 className="w-4 h-4 animate-spin" />}
           <Download className="w-4 h-4" />
-          Tout télécharger
+          <span className="hidden sm:inline">Télécharger</span>
         </Button>
       </div>
 
