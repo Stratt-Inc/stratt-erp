@@ -143,17 +143,17 @@ const prioriteStyles: Record<string, string> = {
 
 export default function Support() {
   return (
-    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
-      <div className="flex items-start justify-between animate-fade-in">
-        <div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1600px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 animate-fade-in">
+        <div className="flex-1">
           <p className="section-label mb-2">Centre d'aide</p>
-          <h1 className="mb-2">Support & Assistance</h1>
-          <p className="text-[14px] text-muted-foreground">
+          <h1 className="mb-2 text-2xl sm:text-3xl">Support & Assistance</h1>
+          <p className="text-[13px] sm:text-[14px] text-muted-foreground">
             Documentation, FAQ, contact équipe Axiora
           </p>
         </div>
-        <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-          <MessageSquare className="w-4 h-4" /> Nouveau ticket
+        <Button size="sm" className="gap-1 sm:gap-2 text-[12px] sm:text-[13px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg flex-shrink-0">
+          <MessageSquare className="w-4 h-4" /> <span className="hidden sm:inline">Nouveau</span>
         </Button>
       </div>
 

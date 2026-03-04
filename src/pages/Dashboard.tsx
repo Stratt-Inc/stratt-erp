@@ -130,30 +130,30 @@ const transformation = [
 
 export default function Dashboard() {
   return (
-    <div className="p-8 space-y-8 max-w-[1800px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1800px] mx-auto">
       {/* ── En-tête ── */}
-      <div className="flex items-start justify-between animate-fade-in">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 animate-fade-in">
+        <div className="flex-1">
           <p className="section-label mb-2">Pilotage stratégique</p>
-          <h1 className="mb-2">Tableau de bord — Gouvernance des achats</h1>
-          <p className="text-[14px] text-muted-foreground">
+          <h1 className="mb-2 text-2xl sm:text-3xl">Tableau de bord — Gouvernance des achats</h1>
+          <p className="text-[13px] sm:text-[14px] text-muted-foreground">
             Vision consolidée · Exercice budgétaire 2026 · Métropole de Lyon
           </p>
         </div>
-        <div className="flex gap-3">
-          <div className="badge-conforme">
-            <CheckCircle2 className="w-3.5 h-3.5" />
+        <div className="flex gap-2 sm:gap-3 flex-wrap flex-shrink-0">
+          <div className="badge-conforme text-[10px] sm:text-[11px]">
+            <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             Conforme CCP 2024
           </div>
-          <div className="badge-conforme">
-            <Shield className="w-3.5 h-3.5" />
+          <div className="badge-conforme text-[10px] sm:text-[11px]">
+            <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             RGPD
           </div>
         </div>
       </div>
 
       {/* ── KPIs stratégiques ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
         {kpisStrategiques.map((kpi, index) => (
           <div
             key={kpi.label}

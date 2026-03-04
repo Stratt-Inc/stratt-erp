@@ -43,11 +43,11 @@ const journal = [
 
 export default function Administration() {
   return (
-    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1600px] mx-auto">
       <div className="animate-fade-in">
         <p className="section-label mb-2">Administration</p>
-        <h1 className="mb-2">Gestion de la plateforme</h1>
-        <p className="text-[14px] text-muted-foreground">Utilisateurs, rôles, paramètres et sécurité</p>
+        <h1 className="mb-2 text-2xl sm:text-3xl">Gestion de la plateforme</h1>
+        <p className="text-[13px] sm:text-[14px] text-muted-foreground">Utilisateurs, rôles, paramètres et sécurité</p>
       </div>
 
       {/* Stats Admin */}

@@ -139,26 +139,27 @@ const anomalies = [
 
 export default function Cartographie() {
   return (
-    <div className="p-8 space-y-6 max-w-[1800px] mx-auto">
-      <div className="flex items-start justify-between animate-fade-in">
-        <div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1800px] mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 animate-fade-in">
+        <div className="flex-1 min-w-0">
           <p className="section-label mb-2">Module cartographie</p>
-          <h1 className="mb-2">Cartographie stratégique des achats</h1>
-          <p className="text-[14px] text-muted-foreground">
+          <h1 className="mb-2 text-2xl sm:text-3xl">Cartographie stratégique des achats</h1>
+          <p className="text-[13px] sm:text-[14px] text-muted-foreground">
             Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-            <Upload className="w-4 h-4" /> Importer base achats
+        <div className="flex gap-2 flex-shrink-0">
+          <Button variant="outline" size="sm" className="gap-1.5 text-[12px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg">
+            <Upload className="w-4 h-4" /> <span className="hidden sm:inline">Importer</span>
           </Button>
-          <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
-            <BarChart3 className="w-4 h-4" /> Générer cartographie
+          <Button size="sm" className="gap-1.5 text-[12px] h-8 sm:h-9 px-2 sm:px-3 rounded-lg">
+            <BarChart3 className="w-4 h-4" /> <span className="hidden sm:inline">Générer</span>
           </Button>
         </div>
       </div>
 
-      {/* KPIs Carto */}
+      {/* KPIs */}
       <StatsGrid
         stats={[
           { label: "Familles d'achats", value: "14", icon: Layers, trend: { value: "+2", positive: true } },
@@ -170,33 +171,33 @@ export default function Cartographie() {
         columns="5"
       />
 
-      {/* Import Zone */}
+      {/* Import Zone — responsive */}
       <Card className="border-dashed">
-        <CardContent className="py-6 flex items-center gap-6">
+        <CardContent className="py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
           <div className="w-10 h-10 rounded bg-muted flex items-center justify-center flex-shrink-0">
             <Upload className="w-4 h-4 text-muted-foreground" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="text-[13px] font-medium">Importer vos données d'achats</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
               Glissez-déposez vos fichiers (.xlsx, .csv) — Dépenses mandatées, bases achats, exports progiciel financier
             </p>
           </div>
-          <Button variant="outline" size="sm" className="text-[12px]">Parcourir</Button>
+          <Button variant="outline" size="sm" className="text-[12px] flex-shrink-0">Parcourir</Button>
         </CardContent>
       </Card>
 
-      {/* Treemap + Direction */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+      {/* Treemap + Direction Pie — stack on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <Card className="lg:col-span-8">
-          <CardHeader className="pb-1">
+          <CardHeader className="pb-2">
             <CardTitle className="text-[13px] flex items-center gap-2">
               <Layers className="w-4 h-4" />
-              Cartographie par famille d'achats homogène
+              <span className="truncate">Cartographie par famille d'achats homogène</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="h-52 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <Treemap data={flatTreemap} dataKey="size" aspectRatio={4 / 3} content={<CustomTreemapContent />}>
                   <Tooltip formatter={(v: number) => [`${(v / 1000000).toFixed(2)} M€`, "Montant"]} />
@@ -207,14 +208,14 @@ export default function Cartographie() {
         </Card>
 
         <Card className="lg:col-span-4">
-          <CardHeader className="pb-1">
+          <CardHeader className="pb-2">
             <CardTitle className="text-[13px]">Consolidation par direction</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-40">
+            <div className="h-36 sm:h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={directionData} cx="50%" cy="50%" innerRadius={36} outerRadius={60} dataKey="value" stroke={UI_COLORS.white} strokeWidth={2}>
+                  <Pie data={directionData} cx="50%" cy="50%" innerRadius={30} outerRadius={55} dataKey="value" stroke={UI_COLORS.white} strokeWidth={2}>
                     {directionData.map((e, i) => <Cell key={i} fill={e.color} />)}
                   </Pie>
                   <Tooltip formatter={(v: number) => `${v} M€`} />
@@ -234,22 +235,22 @@ export default function Cartographie() {
         </Card>
       </div>
 
-      {/* Computation des seuils (from livre blanc) */}
+      {/* Seuils — scrollable table on mobile */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-[13px] flex items-center gap-2">
-            <Scale className="w-4 h-4 text-warning" />
-            Computation des seuils de procédure
-            <span className="text-[10px] text-muted-foreground font-normal ml-1">Art. L2124-1 CCP</span>
+          <CardTitle className="text-[13px] flex items-center gap-2 flex-wrap">
+            <Scale className="w-4 h-4 text-warning flex-shrink-0" />
+            <span className="truncate">Computation des seuils de procédure</span>
+            <span className="text-[10px] text-muted-foreground font-normal hidden sm:inline">Art. L2124-1 CCP</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <table className="data-table">
+        <CardContent className="overflow-x-auto">
+          <table className="data-table w-full min-w-[500px]">
             <thead>
               <tr>
-                <th>Code nomenclature</th>
-                <th className="text-right">Dépense cumulée (k€)</th>
-                <th className="text-right">Seuil applicable (k€)</th>
+                <th>Code</th>
+                <th className="text-right">Dépense (k€)</th>
+                <th className="text-right">Seuil (k€)</th>
                 <th className="text-right">Ratio</th>
                 <th>Statut</th>
               </tr>
@@ -257,14 +258,14 @@ export default function Cartographie() {
             <tbody>
               {seuilsData.map((s) => (
                 <tr key={s.code}>
-                  <td className="font-medium text-[12px]">{s.code}</td>
+                  <td className="font-medium text-[12px] whitespace-nowrap">{s.code}</td>
                   <td className="text-right tabular-nums text-[12px] font-semibold">{s.depense}</td>
                   <td className="text-right tabular-nums text-[12px] text-muted-foreground">{s.seuil}</td>
                   <td className="text-right tabular-nums text-[12px]">
                     <span className={s.ratio > 1 ? "text-destructive font-semibold" : "text-primary"}>{s.ratio.toFixed(1)}x</span>
                   </td>
                   <td>
-                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                    <span className={`text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap ${
                       s.statut === "Conforme" ? "text-primary" : s.statut === "Fractionnement" ? "text-destructive" : "text-warning"
                     }`}>{s.statut}</span>
                   </td>
@@ -275,20 +276,20 @@ export default function Cartographie() {
         </CardContent>
       </Card>
 
-      {/* Comparatif + Écarts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      {/* Comparatif table + Écarts chart — stack on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-[13px]">Comparatif N / N-1 (M€)</CardTitle>
           </CardHeader>
-          <CardContent>
-            <table className="data-table">
+          <CardContent className="overflow-x-auto">
+            <table className="data-table w-full min-w-[360px]">
               <thead>
                 <tr>
                   <th>Famille</th>
-                  <th className="text-right">2026 (N)</th>
-                  <th className="text-right">2025 (N-1)</th>
-                  <th className="text-right">Variation</th>
+                  <th className="text-right">2026</th>
+                  <th className="text-right">2025</th>
+                  <th className="text-right">Var.</th>
                 </tr>
               </thead>
               <tbody>
@@ -311,7 +312,7 @@ export default function Cartographie() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-1">
+          <CardHeader className="pb-2">
             <CardTitle className="text-[13px]">Écarts budgétaires par direction</CardTitle>
           </CardHeader>
           <CardContent>
@@ -320,7 +321,7 @@ export default function Cartographie() {
                 <BarChart data={ecartsData} layout="vertical" barGap={2} barSize={10}>
                   <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
-                  <YAxis dataKey="direction" type="category" width={85} tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                  <YAxis dataKey="direction" type="category" width={75} tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
                   <Tooltip formatter={(v: number) => `${v} M€`} />
                   <Bar dataKey="prevu" name="Prévu" fill={PALETTE.accent} radius={[0, 2, 2, 0]} />
                   <Bar dataKey="execute" name="Exécuté" fill={PALETTE.primary} radius={[0, 2, 2, 0]} />
@@ -338,7 +339,7 @@ export default function Cartographie() {
           {anomalies.map((a, i) => (
             <div
               key={i}
-              className={`flex items-start gap-4 p-4 rounded-xl border-l-4 backdrop-blur-sm transition-all duration-200 hover:shadow-md ${
+              className={`flex items-start gap-3 p-3 sm:p-4 rounded-xl border-l-4 backdrop-blur-sm transition-all duration-200 hover:shadow-md ${
                 a.severity === "haute"
                   ? "border-l-destructive bg-destructive/5"
                   : a.severity === "moyenne"
@@ -347,32 +348,22 @@ export default function Cartographie() {
               }`}
             >
               <AlertTriangle
-                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                  a.severity === "haute"
-                    ? "text-destructive"
-                    : a.severity === "moyenne"
-                    ? "text-warning"
-                    : "text-muted-foreground"
+                className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                  a.severity === "haute" ? "text-destructive" : a.severity === "moyenne" ? "text-warning" : "text-muted-foreground"
                 }`}
               />
-              <div className="flex-1">
-                <span
-                  className={`text-[10px] font-bold uppercase tracking-widest ${
-                    a.severity === "haute"
-                      ? "text-destructive"
-                      : a.severity === "moyenne"
-                      ? "text-warning"
-                      : "text-muted-foreground"
-                  }`}
-                >
+              <div className="flex-1 min-w-0">
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${
+                  a.severity === "haute" ? "text-destructive" : a.severity === "moyenne" ? "text-warning" : "text-muted-foreground"
+                }`}>
                   {a.type}
                 </span>
-                <p className="text-[14px] text-foreground mt-1 leading-relaxed font-medium">
+                <p className="text-[12px] sm:text-[13px] text-foreground mt-1 leading-relaxed font-medium">
                   {a.message}
                 </p>
               </div>
-              <button className="text-[12px] text-primary font-semibold hover:underline flex items-center gap-1 flex-shrink-0 transition-colors">
-                Détails <ArrowUpRight className="w-3.5 h-3.5" />
+              <button className="text-[11px] sm:text-[12px] text-primary font-semibold hover:underline flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
+                <span className="hidden sm:inline">Détails</span> <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}
