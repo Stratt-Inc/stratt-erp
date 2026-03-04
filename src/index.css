@@ -352,4 +352,13 @@
   .animate-slide-in {
     animation: slideIn 0.3s ease-out;
   }
+
+  /* Hide scrollbar but keep scrolling */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
