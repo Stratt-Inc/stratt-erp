@@ -1,8 +1,9 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Bell, ChevronDown, User, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Shield } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { UserProfileDropdown } from "@/components/UserProfileDropdown";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -27,18 +28,13 @@ export function AppLayout({ children }: AppLayoutProps) {
                 Conforme
               </div>
               <ThemeToggle />
-              <Button variant="ghost" size="sm" className="relative h-9 w-9 p-0 rounded-lg">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive ring-2 ring-background" />
-              </Button>
+              <NotificationsDropdown />
               <div className="h-5 w-px bg-border mx-1" />
-              <Button variant="ghost" size="sm" className="gap-2.5 text-[14px] h-9 px-3 rounded-lg">
-                <div className="w-7 h-7 rounded-lg bg-primary/90 flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-primary-foreground" />
-                </div>
-                <span className="hidden md:inline text-foreground font-medium">M. Dupont</span>
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              </Button>
+              <UserProfileDropdown
+                userName="M. Dupont"
+                userEmail="m.dupont@metropole-lyon.fr"
+                userRole="Administrateur"
+              />
             </div>
           </header>
           <main className="flex-1 overflow-auto bg-background">
