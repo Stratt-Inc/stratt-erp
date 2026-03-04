@@ -84,26 +84,26 @@ export default function Planification() {
   const selected = marches.find((m) => m.id === selectedMarche);
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-8 space-y-6 max-w-[1800px] mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
-          <p className="section-label mb-1">Module planification</p>
-          <h1>Planification stratégique des passations</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">147 marchés planifiés · 84,2 M€ prévisionnels · Exercice 2026</p>
+          <p className="section-label mb-2">Module planification</p>
+          <h1 className="mb-2">Planification stratégique des passations</h1>
+          <p className="text-[14px] text-muted-foreground">147 marchés planifiés · 84,2 M€ prévisionnels · Exercice 2026</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-2 text-[12px]">
-            <Filter className="w-3.5 h-3.5" /> Filtres avancés
+        <div className="flex gap-3">
+          <Button variant="outline" size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+            <Filter className="w-4 h-4" /> Filtres avancés
           </Button>
-          <Button size="sm" className="gap-2 text-[12px]">
-            <Plus className="w-3.5 h-3.5" /> Nouveau marché
+          <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+            <Plus className="w-4 h-4" /> Nouveau marché
           </Button>
         </div>
       </div>
 
       {/* KPIs Planification */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
         {[
           { label: "Marchés en cours", value: "24", icon: CalendarRange },
           { label: "Charge prévisionnelle", value: "68%", icon: Users, alert: true },
@@ -112,11 +112,11 @@ export default function Planification() {
           { label: "Alertes seuils", value: "5", icon: AlertTriangle, alert: true },
         ].map((kpi) => (
           <div key={kpi.label} className="stat-card">
-            <div className="flex items-center gap-2 mb-2">
-              <kpi.icon className={`w-3.5 h-3.5 ${kpi.alert ? "text-warning" : "text-primary"}`} />
+            <div className="flex items-center gap-2.5 mb-3">
+              <kpi.icon className={`w-4 h-4 ${kpi.alert ? "text-warning" : "text-primary"}`} />
               <span className="metric-label">{kpi.label}</span>
             </div>
-            <span className={`text-xl font-bold ${kpi.alert ? "text-warning" : "text-foreground"}`}>{kpi.value}</span>
+            <span className={`text-2xl font-bold ${kpi.alert ? "text-warning" : "text-foreground"}`}>{kpi.value}</span>
           </div>
         ))}
       </div>

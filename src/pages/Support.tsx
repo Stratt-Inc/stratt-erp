@@ -142,56 +142,56 @@ const prioriteStyles: Record<string, string> = {
 
 export default function Support() {
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-start justify-between">
+    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
-          <p className="section-label mb-1">Centre d'aide</p>
-          <h1>Support & Assistance</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
+          <p className="section-label mb-2">Centre d'aide</p>
+          <h1 className="mb-2">Support & Assistance</h1>
+          <p className="text-[14px] text-muted-foreground">
             Documentation, FAQ, contact équipe Axiora
           </p>
         </div>
-        <Button size="sm" className="gap-2 text-[12px]">
-          <MessageSquare className="w-3.5 h-3.5" /> Nouveau ticket
+        <Button size="sm" className="gap-2 text-[13px] h-9 rounded-lg">
+          <MessageSquare className="w-4 h-4" /> Nouveau ticket
         </Button>
       </div>
 
       {/* Stats Support */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
         {[
           { label: "Tickets ouverts", value: "1", icon: MessageSquare, color: "text-info" },
           { label: "Temps de réponse moyen", value: "2h15", icon: Clock, color: "text-success" },
           { label: "Ressources disponibles", value: "24", icon: BookOpen, color: "text-primary" },
           { label: "Satisfaction", value: "4.8/5", icon: CheckCircle2, color: "text-accent" },
         ].map((stat) => (
-          <div key={stat.label} className="stat-card flex items-center gap-3">
-            <div className="w-9 h-9 rounded bg-card border flex items-center justify-center flex-shrink-0">
-              <stat.icon className={`w-4 h-4 ${stat.color}`} />
+          <div key={stat.label} className="stat-card flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-card border flex items-center justify-center flex-shrink-0">
+              <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
-            <div>
-              <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground leading-tight">{stat.label}</p>
+            <div className="flex-1">
+              <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-[11px] text-muted-foreground leading-tight">{stat.label}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Barre de recherche */}
-      <Card>
-        <CardContent className="py-6">
+      <Card className="border-2">
+        <CardContent className="py-8">
           <div className="max-w-2xl mx-auto">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 placeholder="Rechercher dans la documentation, FAQ, tutoriels..."
-                className="pl-12 h-12 text-[14px]"
+                className="pl-14 h-14 text-[15px] rounded-xl border-2"
               />
             </div>
-            <div className="flex gap-2 mt-3 justify-center flex-wrap">
+            <div className="flex gap-2.5 mt-4 justify-center flex-wrap">
               {["Import données", "Seuils CCP", "Nomenclature", "Fractionnement", "Exports PDF"].map((tag) => (
                 <button
                   key={tag}
-                  className="px-2.5 py-1 text-[11px] rounded border border-border hover:bg-muted transition-colors"
+                  className="px-3.5 py-1.5 text-[12px] font-medium rounded-lg border-2 hover:bg-muted transition-colors"
                 >
                   {tag}
                 </button>

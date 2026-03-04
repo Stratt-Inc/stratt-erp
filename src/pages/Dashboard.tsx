@@ -129,38 +129,42 @@ const transformation = [
 
 export default function Dashboard() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 space-y-8 max-w-[1800px] mx-auto">
       {/* ── En-tête ── */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
-          <p className="section-label mb-1">Pilotage stratégique</p>
-          <h1>Tableau de bord — Gouvernance des achats</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
+          <p className="section-label mb-2">Pilotage stratégique</p>
+          <h1 className="mb-2">Tableau de bord — Gouvernance des achats</h1>
+          <p className="text-[14px] text-muted-foreground">
             Vision consolidée · Exercice budgétaire 2026 · Métropole de Lyon
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <div className="badge-conforme">
-            <CheckCircle2 className="w-3 h-3" />
+            <CheckCircle2 className="w-3.5 h-3.5" />
             Conforme CCP 2024
           </div>
           <div className="badge-conforme">
-            <Shield className="w-3 h-3" />
+            <Shield className="w-3.5 h-3.5" />
             RGPD
           </div>
         </div>
       </div>
 
       {/* ── KPIs stratégiques ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {kpisStrategiques.map((kpi) => (
-          <div key={kpi.label} className="stat-card">
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-8 h-8 rounded bg-primary/8 flex items-center justify-center">
-                <kpi.icon className="w-4 h-4 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+        {kpisStrategiques.map((kpi, index) => (
+          <div
+            key={kpi.label}
+            className="stat-card"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <kpi.icon className="w-5 h-5 text-primary" />
               </div>
-              <span className={`text-[11px] font-semibold flex items-center gap-0.5 ${kpi.positive ? "text-accent" : "text-warning"}`}>
-                {kpi.positive ? <ArrowUpRight className="w-3 h-3" /> : <Target className="w-3 h-3" />}
+              <span className={`text-[11px] font-bold flex items-center gap-1 ${kpi.positive ? "text-accent" : "text-warning"}`}>
+                {kpi.positive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <Target className="w-3.5 h-3.5" />}
                 {kpi.sub}
               </span>
             </div>
@@ -173,20 +177,20 @@ export default function Dashboard() {
       </div>
 
       {/* ── Indicateurs secondaires ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpisSecondaires.map((kpi) => (
-          <div key={kpi.label} className="stat-card flex items-center gap-3">
-            <span className={`text-xl font-bold ${kpi.color}`}>{kpi.value}</span>
-            <div>
-              <p className="text-[11px] font-semibold text-foreground leading-tight">{kpi.label}</p>
-              <p className="text-[10px] text-muted-foreground">{kpi.sub}</p>
+          <div key={kpi.label} className="stat-card flex items-center gap-4">
+            <span className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</span>
+            <div className="flex-1">
+              <p className="text-[12px] font-semibold text-foreground leading-tight mb-0.5">{kpi.label}</p>
+              <p className="text-[11px] text-muted-foreground">{kpi.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* ── Row : Maturité + Procédures + Timeline ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Maturité achats */}
         <Card className="lg:col-span-3">
           <CardHeader className="pb-1">

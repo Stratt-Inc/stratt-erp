@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -47,7 +49,7 @@
     --input: var(--palette-accent);
     --ring: var(--palette-primary);
 
-    --radius: 0.25rem;
+    --radius: 0.5rem;
 
     --sidebar-background: var(--palette-primary);
     --sidebar-foreground: 72 15% 95%;
@@ -59,8 +61,8 @@
     --sidebar-ring: var(--palette-tertiary);
     --sidebar-muted: 180 9% 70%;
 
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
     --chart-1: var(--palette-primary);
     --chart-2: var(--palette-secondary);
@@ -129,83 +131,110 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-sans), sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* ─── Hiérarchie typographique sobre ─── */
+  /* Typographie moderne hiérarchisée */
   h1 {
-    @apply text-2xl font-semibold tracking-tight text-foreground;
+    @apply text-3xl font-bold tracking-tight text-foreground;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
   h2 {
-    @apply text-lg font-semibold text-foreground;
+    @apply text-xl font-semibold text-foreground;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
   }
 
   h3 {
-    @apply text-base font-semibold text-foreground;
+    @apply text-lg font-semibold text-foreground;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
   }
 
   h4 {
-    @apply text-sm font-semibold text-foreground;
+    @apply text-base font-semibold text-foreground;
   }
 
-  /* Labels uppercase */
+  /* Labels et petits textes */
   .text-label {
-    @apply text-[10px] font-semibold uppercase tracking-wider text-muted-foreground;
+    @apply text-[11px] font-semibold uppercase tracking-widest text-muted-foreground;
+    letter-spacing: 0.08em;
   }
 
-  /* Montants & codes : même font Inter */
+  /* Montants en monospace */
   .text-amount {
     @apply tabular-nums font-medium;
+    font-family: var(--font-mono);
+    font-size: 0.95em;
   }
 
   .text-code {
     @apply text-xs font-medium tracking-tight;
+    font-family: var(--font-mono);
+  }
+
+  /* Scrollbar moderne */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/30;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
   }
 }
 
 @layer components {
-  /* ═══════════════════════════════════════════════════════════════
-     AXIORA MINIMALISTE — 2 couleurs : Bleu + Rouge
-     ═══════════════════════════════════════════════════════════════ */
-
-  /* ─── Cards simples ─── */
+  /* ═══ Cards modernes avec glassmorphism subtil ═══ */
   .stat-card {
-    @apply bg-card border border-border rounded p-4;
+    @apply bg-card/95 backdrop-blur-sm border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5;
   }
 
   .kpi-card {
-    @apply bg-card border border-border rounded p-5;
+    @apply bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300;
   }
 
   .alert-card {
-    @apply bg-card border border-border border-l-4 border-l-destructive rounded p-4;
+    @apply bg-card/95 backdrop-blur-sm border-2 border-l-4 border-destructive rounded-xl p-5 shadow-sm;
   }
 
-  /* ─── Labels ─── */
+  /* ═══ Labels modernes ═══ */
   .section-label {
-    @apply text-[10px] font-semibold uppercase tracking-wider text-muted-foreground;
+    @apply text-[11px] font-bold uppercase tracking-widest text-muted-foreground;
+    letter-spacing: 0.1em;
   }
 
-  /* ─── Badges : 2 états ─── */
+  /* ═══ Badges redessinés ═══ */
   .badge-ok {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded;
-    background: hsl(var(--primary) / 0.1);
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full;
+    background: hsl(var(--primary) / 0.12);
     color: hsl(var(--primary));
-    border: 1px solid hsl(var(--primary) / 0.2);
+    border: 1.5px solid hsl(var(--primary) / 0.3);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.15);
   }
 
   .badge-alerte {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded;
-    background: hsl(var(--destructive) / 0.1);
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full;
+    background: hsl(var(--destructive) / 0.12);
     color: hsl(var(--destructive));
-    border: 1px solid hsl(var(--destructive) / 0.2);
+    border: 1.5px solid hsl(var(--destructive) / 0.3);
+    box-shadow: 0 2px 8px hsl(var(--destructive) / 0.15);
   }
 
-  /* Backward-compatible aliases used in pages */
   .badge-conforme,
   .badge-surveille,
   .badge-risque,
@@ -217,62 +246,110 @@
     @apply badge-alerte;
   }
 
-  /* ─── Tables ─── */
+  /* ═══ Tables modernes ═══ */
   .data-table {
     @apply w-full text-sm border-collapse;
   }
 
   .data-table thead {
-    @apply bg-muted/40;
+    @apply bg-muted/50 backdrop-blur-sm;
   }
 
   .data-table th {
-    @apply text-left text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-4 py-3 border-b border-border;
+    @apply text-left text-[11px] font-bold uppercase tracking-widest text-muted-foreground px-4 py-4 border-b-2 border-border;
+    letter-spacing: 0.08em;
   }
 
   .data-table td {
-    @apply px-4 py-3 border-b border-border text-sm;
+    @apply px-4 py-4 border-b border-border/50 text-[13px];
+  }
+
+  .data-table tbody tr {
+    @apply transition-colors duration-200;
   }
 
   .data-table tbody tr:hover {
-    @apply bg-muted/25;
+    @apply bg-muted/30;
   }
 
   .data-table .col-amount {
-    @apply text-right tabular-nums font-medium;
+    @apply text-right tabular-nums font-semibold;
+    font-family: var(--font-mono);
   }
 
-  /* ─── Métriques ─── */
+  /* ═══ Métriques optimisées ═══ */
   .metric-block {
-    @apply flex flex-col gap-1.5;
+    @apply flex flex-col gap-2;
   }
 
   .metric-label {
-    @apply text-[11px] font-semibold uppercase tracking-wider text-muted-foreground;
+    @apply text-[11px] font-bold uppercase tracking-widest text-muted-foreground;
+    letter-spacing: 0.08em;
   }
 
   .metric-value {
-    @apply text-3xl font-bold text-foreground tabular-nums;
+    @apply text-4xl font-bold text-foreground tabular-nums;
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
   }
 
   .metric-sub {
-    @apply text-xs text-muted-foreground;
+    @apply text-xs text-muted-foreground font-medium;
   }
 
-  /* ─── Indicateurs : 3 états ─── */
+  /* ═══ Indicateurs visuels ═══ */
   .seuil-indicator {
-    @apply inline-block w-2 h-2 rounded-full mr-2;
+    @apply inline-block w-2.5 h-2.5 rounded-full mr-2 shadow-sm;
   }
 
   .seuil-ok {
     background-color: hsl(var(--primary));
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.4);
   }
 
   .seuil-attention {
     background-color: hsl(var(--muted-foreground));
+    box-shadow: 0 0 8px hsl(var(--muted-foreground) / 0.3);
   }
 
   .seuil-alerte {
     background-color: hsl(var(--destructive));
+    box-shadow: 0 0 8px hsl(var(--destructive) / 0.4);
+  }
+
+  /* ═══ Divider moderne ═══ */
+  .panel-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-border to-transparent my-4;
+  }
+
+  /* ═══ Animations ═══ */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
   }
 }
