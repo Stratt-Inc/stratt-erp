@@ -3,7 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { AppLayout } from "@/components/AppLayout";
+import Dashboard from "./pages/Dashboard";
+import Planification from "./pages/Planification";
+import Cartographie from "./pages/Cartographie";
+import Nomenclature from "./pages/Nomenclature";
+import Exports from "./pages/Exports";
+import Administration from "./pages/Administration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -14,11 +20,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/planification" element={<Planification />} />
+            <Route path="/cartographie" element={<Cartographie />} />
+            <Route path="/nomenclature" element={<Nomenclature />} />
+            <Route path="/exports" element={<Exports />} />
+            <Route path="/administration" element={<Administration />} />
+            <Route path="/support" element={<Administration />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AppLayout>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
