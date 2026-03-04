@@ -4,94 +4,121 @@
 
 @layer base {
   :root {
-    --background: 220 16% 96%;
-    --foreground: 220 40% 13%;
+    /* Axiora core palette - MODIFIEZ CES COULEURS POUR CHANGER TOUTE LA PALETTE */
+    --palette-primary: 168 16% 41%;      /* #5F7470 - deepTeal */
+    --palette-secondary: 180 9% 56%;     /* #889696 - coolSteel */
+    --palette-tertiary: 80 8% 72%;       /* #B8BDB5 - ashGrey */
+    --palette-accent: 72 10% 82%;        /* #D2D4C8 - dustGrey */
+    --palette-accent-soft: 72 15% 88%;   /* #E0E2DB - softLinen */
+
+    --background: 72 15% 98%;
+    --foreground: var(--palette-primary);
 
     --card: 0 0% 100%;
-    --card-foreground: 220 40% 13%;
+    --card-foreground: var(--palette-primary);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 40% 13%;
+    --popover-foreground: var(--palette-primary);
 
-    --primary: 218 50% 18%;
-    --primary-foreground: 0 0% 98%;
+    --primary: var(--palette-primary);
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 220 40% 18%;
+    --secondary: 72 10% 90%;
+    --secondary-foreground: var(--palette-primary);
 
-    --muted: 220 12% 93%;
-    --muted-foreground: 220 10% 46%;
-
-    --accent: 162 45% 36%;
+    --accent: var(--palette-secondary);
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 48%;
+    --muted: 72 10% 95%;
+    --muted-foreground: var(--palette-secondary);
+
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-
-    --success: 155 50% 34%;
+    --success: var(--palette-primary);
     --success-foreground: 0 0% 100%;
-
-    --warning: 36 90% 48%;
-    --warning-foreground: 36 90% 14%;
-
-    --info: 210 75% 46%;
+    --warning: 35 90% 55%;
+    --warning-foreground: 0 0% 100%;
+    --alert: 0 70% 50%;
+    --alert-foreground: 0 0% 100%;
+    --info: var(--palette-secondary);
     --info-foreground: 0 0% 100%;
 
-    --border: 220 14% 87%;
-    --input: 220 14% 87%;
-    --ring: 218 50% 18%;
+    --border: var(--palette-accent);
+    --input: var(--palette-accent);
+    --ring: var(--palette-primary);
 
     --radius: 0.25rem;
 
-    --sidebar-background: 218 52% 14%;
-    --sidebar-foreground: 220 20% 78%;
-    --sidebar-primary: 0 0% 96%;
-    --sidebar-primary-foreground: 218 52% 14%;
-    --sidebar-accent: 218 45% 20%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 218 40% 22%;
-    --sidebar-ring: 210 75% 46%;
-    --sidebar-muted: 218 20% 42%;
+    --sidebar-background: var(--palette-primary);
+    --sidebar-foreground: 72 15% 95%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: var(--palette-primary);
+    --sidebar-accent: var(--palette-secondary);
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 168 20% 35%;
+    --sidebar-ring: var(--palette-tertiary);
+    --sidebar-muted: 180 9% 70%;
 
-    --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Inter', system-ui, -apple-system, sans-serif;
 
-    --chart-1: 218 50% 18%;
-    --chart-2: 162 45% 36%;
-    --chart-3: 210 75% 46%;
-    --chart-4: 36 90% 48%;
-    --chart-5: 0 65% 48%;
+    --chart-1: var(--palette-primary);
+    --chart-2: var(--palette-secondary);
+    --chart-3: var(--palette-tertiary);
+    --chart-4: var(--palette-accent);
+    --chart-5: var(--palette-accent-soft);
+
+    --seuil-ok: var(--palette-primary);
+    --seuil-attention: var(--palette-secondary);
+    --seuil-alerte: 0 70% 50%;
   }
 
   .dark {
-    --background: 220 40% 7%;
-    --foreground: 220 15% 88%;
-    --card: 220 35% 10%;
-    --card-foreground: 220 15% 88%;
-    --popover: 220 35% 10%;
-    --popover-foreground: 220 15% 88%;
-    --primary: 210 40% 72%;
-    --primary-foreground: 218 52% 10%;
-    --secondary: 220 25% 16%;
-    --secondary-foreground: 220 15% 82%;
-    --muted: 220 20% 14%;
-    --muted-foreground: 220 10% 50%;
-    --accent: 162 40% 38%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 55% 38%;
+    --background: 168 20% 15%;
+    --foreground: 72 15% 88%;
+
+    --card: 168 18% 20%;
+    --card-foreground: 72 15% 88%;
+
+    --popover: 168 18% 20%;
+    --popover-foreground: 72 15% 88%;
+
+    --primary: var(--palette-accent-soft);
+    --primary-foreground: 168 20% 15%;
+
+    --secondary: 168 15% 25%;
+    --secondary-foreground: 72 15% 88%;
+
+    --accent: var(--palette-secondary);
+    --accent-foreground: 168 20% 15%;
+
+    --muted: 168 12% 22%;
+    --muted-foreground: 80 8% 65%;
+
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 210 40% 72%;
-    --sidebar-background: 220 40% 8%;
-    --sidebar-foreground: 220 15% 70%;
-    --sidebar-primary: 210 40% 72%;
-    --sidebar-primary-foreground: 220 40% 8%;
-    --sidebar-accent: 220 30% 14%;
-    --sidebar-accent-foreground: 220 15% 82%;
-    --sidebar-border: 220 25% 16%;
-    --sidebar-ring: 210 75% 46%;
-    --sidebar-muted: 220 15% 38%;
+    --success: var(--palette-secondary);
+    --success-foreground: 168 20% 15%;
+    --warning: 35 90% 55%;
+    --warning-foreground: 0 0% 100%;
+    --alert: 0 70% 50%;
+    --alert-foreground: 0 0% 100%;
+    --info: var(--palette-tertiary);
+    --info-foreground: 168 20% 15%;
+
+    --border: 168 15% 30%;
+    --input: 168 15% 30%;
+    --ring: var(--palette-secondary);
+
+    --sidebar-background: 168 20% 12%;
+    --sidebar-foreground: 72 10% 75%;
+    --sidebar-primary: var(--palette-accent-soft);
+    --sidebar-primary-foreground: 168 20% 12%;
+    --sidebar-accent: 168 18% 20%;
+    --sidebar-accent-foreground: 72 15% 88%;
+    --sidebar-border: 168 15% 25%;
+    --sidebar-ring: var(--palette-secondary);
+    --sidebar-muted: 80 8% 60%;
   }
 }
 
@@ -99,96 +126,153 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
   }
+
+  /* ─── Hiérarchie typographique sobre ─── */
   h1 {
-    @apply text-xl font-semibold tracking-tight text-foreground leading-tight;
+    @apply text-2xl font-semibold tracking-tight text-foreground;
   }
+
   h2 {
-    @apply text-base font-semibold tracking-tight text-foreground;
+    @apply text-lg font-semibold text-foreground;
   }
+
   h3 {
+    @apply text-base font-semibold text-foreground;
+  }
+
+  h4 {
     @apply text-sm font-semibold text-foreground;
+  }
+
+  /* Labels uppercase */
+  .text-label {
+    @apply text-[10px] font-semibold uppercase tracking-wider text-muted-foreground;
+  }
+
+  /* Montants & codes : même font Inter */
+  .text-amount {
+    @apply tabular-nums font-medium;
+  }
+
+  .text-code {
+    @apply text-xs font-medium tracking-tight;
   }
 }
 
 @layer components {
-  /* Institutional stat card */
+  /* ═══════════════════════════════════════════════════════════════
+     AXIORA MINIMALISTE — 2 couleurs : Bleu + Rouge
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* ─── Cards simples ─── */
   .stat-card {
     @apply bg-card border border-border rounded p-4;
   }
 
-  /* Section headers - uppercase, structured */
+  .kpi-card {
+    @apply bg-card border border-border rounded p-5;
+  }
+
+  .alert-card {
+    @apply bg-card border border-border border-l-4 border-l-destructive rounded p-4;
+  }
+
+  /* ─── Labels ─── */
   .section-label {
-    @apply text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground;
+    @apply text-[10px] font-semibold uppercase tracking-wider text-muted-foreground;
   }
 
-  /* Conformity badges */
-  .badge-conforme {
-    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
-    background: hsl(var(--accent) / 0.08);
-    color: hsl(var(--accent));
-    border: 1px solid hsl(var(--accent) / 0.18);
+  /* ─── Badges : 2 états ─── */
+  .badge-ok {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded;
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.2);
   }
+
   .badge-alerte {
-    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
-    background: hsl(var(--destructive) / 0.08);
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded;
+    background: hsl(var(--destructive) / 0.1);
     color: hsl(var(--destructive));
-    border: 1px solid hsl(var(--destructive) / 0.18);
+    border: 1px solid hsl(var(--destructive) / 0.2);
   }
+
+  /* Backward-compatible aliases used in pages */
+  .badge-conforme,
+  .badge-surveille,
+  .badge-risque,
   .badge-info {
-    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
-    background: hsl(var(--info) / 0.08);
-    color: hsl(var(--info));
-    border: 1px solid hsl(var(--info) / 0.18);
-  }
-  .badge-warning {
-    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
-    background: hsl(var(--warning) / 0.08);
-    color: hsl(var(--warning));
-    border: 1px solid hsl(var(--warning) / 0.18);
+    @apply badge-ok;
   }
 
-  /* Data tables - institutional */
+  .badge-fractionnement {
+    @apply badge-alerte;
+  }
+
+  /* ─── Tables ─── */
   .data-table {
-    @apply w-full text-sm;
-  }
-  .data-table th {
-    @apply text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground p-3 border-b-2 border-border bg-muted/40;
-  }
-  .data-table td {
-    @apply p-3 border-b border-border text-sm;
-  }
-  .data-table tbody tr {
-    @apply transition-colors;
-  }
-  .data-table tbody tr:hover td {
-    @apply bg-muted/30;
+    @apply w-full text-sm border-collapse;
   }
 
-  /* Metric block */
+  .data-table thead {
+    @apply bg-muted/40;
+  }
+
+  .data-table th {
+    @apply text-left text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-4 py-3 border-b border-border;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 border-b border-border text-sm;
+  }
+
+  .data-table tbody tr:hover {
+    @apply bg-muted/25;
+  }
+
+  .data-table .col-amount {
+    @apply text-right tabular-nums font-medium;
+  }
+
+  /* ─── Métriques ─── */
   .metric-block {
-    @apply flex flex-col gap-1;
+    @apply flex flex-col gap-1.5;
   }
+
   .metric-label {
-    @apply text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground;
+    @apply text-[11px] font-semibold uppercase tracking-wider text-muted-foreground;
   }
+
   .metric-value {
-    @apply text-2xl font-bold tracking-tight text-foreground leading-none;
+    @apply text-3xl font-bold text-foreground tabular-nums;
   }
+
   .metric-sub {
     @apply text-xs text-muted-foreground;
   }
 
-  /* Gauge arc placeholder */
-  .gauge-container {
-    @apply relative flex items-center justify-center;
+  /* ─── Indicateurs : 3 états ─── */
+  .seuil-indicator {
+    @apply inline-block w-2 h-2 rounded-full mr-2;
   }
 
-  /* Panel section divider */
-  .panel-divider {
-    @apply border-t border-border my-4;
+  .seuil-ok {
+    background-color: hsl(var(--primary));
+  }
+
+  .seuil-attention {
+    background-color: hsl(var(--muted-foreground));
+  }
+
+  .seuil-alerte {
+    background-color: hsl(var(--destructive));
   }
 }
