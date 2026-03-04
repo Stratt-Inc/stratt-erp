@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Users,
   Layers,
-  ArrowUpRight,
   Scale,
   Zap,
 } from "lucide-react";
@@ -32,6 +31,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { CHART_COLORS, PALETTE, UI_COLORS } from "@/lib/palette";
 
 const marches = [
   { id: "M2026-001", objet: "Maintenance ascenseurs — Lot 1 Centre", service: "DGA Bâtiments", montant: "120 000 €", procedure: "AO ouvert", echeance: "15/03/2026", statut: "En cours", priorite: "haute", charge: 12 },
@@ -134,12 +134,12 @@ export default function Planification() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chargeData} barGap={1}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" vertical={false} />
-                  <XAxis dataKey="mois" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} width={24} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} vertical={false} />
+                  <XAxis dataKey="mois" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip />
-                  <Bar dataKey="charge" name="Charge" fill="hsl(218, 50%, 18%)" radius={[2, 2, 0, 0]} barSize={14} />
-                  <Bar dataKey="capacite" name="Capacité" fill="hsl(220, 14%, 87%)" radius={[2, 2, 0, 0]} barSize={14} />
+                  <Bar dataKey="charge" name="Charge" fill={PALETTE.primary} radius={[2, 2, 0, 0]} barSize={14} />
+                  <Bar dataKey="capacite" name="Capacité" fill={PALETTE.accent} radius={[2, 2, 0, 0]} barSize={14} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -161,20 +161,20 @@ export default function Planification() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={pluriannuelData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" vertical={false} />
-                  <XAxis dataKey="annee" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
-                  <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} width={30} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} width={35} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} vertical={false} />
+                  <XAxis dataKey="annee" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                  <YAxis yAxisId="left" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} width={30} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} width={35} />
                   <Tooltip />
-                  <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="hsl(218, 50%, 18%)" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="hsl(162, 45%, 36%)" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke={PALETTE.primary} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke={PALETTE.secondary} strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
             <div className="flex gap-4 mt-2 justify-center">
               {[
-                { label: "Nb marchés", color: "hsl(218, 50%, 18%)" },
-                { label: "Montant (M€)", color: "hsl(162, 45%, 36%)" },
+                { label: "Nb marchés", color: CHART_COLORS.tertiary },
+                { label: "Montant (M€)", color: CHART_COLORS.accent },
               ].map((l) => (
                 <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                   <div className="w-2 h-0.5 rounded" style={{ backgroundColor: l.color }} />

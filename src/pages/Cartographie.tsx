@@ -7,7 +7,6 @@ import {
   TrendingUp,
   FolderOpen,
   Scale,
-  Shield,
   Layers,
   Target,
   CheckCircle2,
@@ -27,6 +26,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import { CHART_COLORS, PALETTE, UI_COLORS, withAlpha } from "@/lib/palette";
 
 /* ── Treemap data ── */
 const flatTreemap = [
@@ -47,20 +47,48 @@ const flatTreemap = [
 ];
 
 const TREEMAP_COLORS = [
-  "hsl(218, 50%, 18%)", "hsl(218, 42%, 28%)", "hsl(218, 38%, 38%)",
-  "hsl(210, 75%, 46%)", "hsl(210, 55%, 56%)", "hsl(210, 45%, 66%)", "hsl(210, 35%, 76%)",
-  "hsl(162, 45%, 36%)", "hsl(162, 38%, 46%)", "hsl(162, 32%, 56%)", "hsl(162, 26%, 66%)",
-  "hsl(36, 90%, 48%)", "hsl(36, 70%, 58%)", "hsl(36, 50%, 68%)",
+  CHART_COLORS.primary,
+  CHART_COLORS.secondary,
+  CHART_COLORS.tertiary,
+  withAlpha(PALETTE.primary, "E6"),
+  withAlpha(PALETTE.primary, "CC"),
+  withAlpha(PALETTE.secondary, "B3"),
+  withAlpha(PALETTE.secondary, "99"),
+  CHART_COLORS.accent,
+  CHART_COLORS.accentSoft,
+  withAlpha(PALETTE.accent, "E6"),
+  withAlpha(PALETTE.tertiary, "CC"),
+  withAlpha(PALETTE.primary, "CC"),
+  withAlpha(PALETTE.secondary, "CC"),
+  withAlpha(PALETTE.accentSoft, "CC"),
 ];
 
-const CustomTreemapContent = (props: any) => {
-  const { x, y, width, height, index, name, size } = props;
+type TreemapContentProps = {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  index?: number;
+  name?: string;
+  size?: number;
+};
+
+const CustomTreemapContent = (props: TreemapContentProps) => {
+  const {
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    index = 0,
+    name = "",
+    size = 0,
+  } = props;
   if (width < 30 || height < 20) return null;
   return (
     <g>
-      <rect x={x} y={y} width={width} height={height} fill={TREEMAP_COLORS[index % TREEMAP_COLORS.length]} stroke="hsl(0,0%,100%)" strokeWidth={2} rx={2} />
+      <rect x={x} y={y} width={width} height={height} fill={TREEMAP_COLORS[index % TREEMAP_COLORS.length]} stroke={UI_COLORS.white} strokeWidth={2} rx={2} />
       {width > 60 && height > 28 && <text x={x + 5} y={y + 14} fill="white" fontSize={9} fontWeight={600}>{name}</text>}
-      {width > 60 && height > 42 && <text x={x + 5} y={y + 26} fill="rgba(255,255,255,0.7)" fontSize={8}>{(size / 1000000).toFixed(1)} M€</text>}
+      {width > 60 && height > 42 && <text x={x + 5} y={y + 26} fill="rgba(255,255,255,0.75)" fontSize={8}>{(size / 1000000).toFixed(1)} M€</text>}
     </g>
   );
 };
@@ -84,11 +112,11 @@ const seuilsData = [
 
 /* ── Direction pie ── */
 const directionData = [
-  { name: "Infrastructures", value: 28.5, color: "hsl(218, 50%, 18%)" },
-  { name: "Éducation", value: 18.2, color: "hsl(210, 75%, 46%)" },
-  { name: "Numérique", value: 14.7, color: "hsl(162, 45%, 36%)" },
-  { name: "Services", value: 12.3, color: "hsl(218, 38%, 38%)" },
-  { name: "Autres", value: 10.5, color: "hsl(220, 14%, 75%)" },
+  { name: "Infrastructures", value: 28.5, color: CHART_COLORS.primary },
+  { name: "Éducation", value: 18.2, color: CHART_COLORS.secondary },
+  { name: "Numérique", value: 14.7, color: CHART_COLORS.tertiary },
+  { name: "Services", value: 12.3, color: CHART_COLORS.accent },
+  { name: "Autres", value: 10.5, color: CHART_COLORS.accentSoft },
 ];
 
 /* ── Écarts budgétaires ── */
@@ -192,7 +220,7 @@ export default function Cartographie() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={directionData} cx="50%" cy="50%" innerRadius={36} outerRadius={60} dataKey="value" stroke="hsl(0,0%,100%)" strokeWidth={2}>
+                  <Pie data={directionData} cx="50%" cy="50%" innerRadius={36} outerRadius={60} dataKey="value" stroke={UI_COLORS.white} strokeWidth={2}>
                     {directionData.map((e, i) => <Cell key={i} fill={e.color} />)}
                   </Pie>
                   <Tooltip formatter={(v: number) => `${v} M€`} />
@@ -239,11 +267,11 @@ export default function Cartographie() {
                   <td className="text-right tabular-nums text-[12px] font-semibold">{s.depense}</td>
                   <td className="text-right tabular-nums text-[12px] text-muted-foreground">{s.seuil}</td>
                   <td className="text-right tabular-nums text-[12px]">
-                    <span className={s.ratio > 1 ? "text-destructive font-semibold" : "text-accent"}>{s.ratio.toFixed(1)}x</span>
+                    <span className={s.ratio > 1 ? "text-destructive font-semibold" : "text-primary"}>{s.ratio.toFixed(1)}x</span>
                   </td>
                   <td>
                     <span className={`text-[10px] font-semibold uppercase tracking-wider ${
-                      s.statut === "Conforme" ? "text-accent" : s.statut === "Fractionnement" ? "text-destructive" : "text-warning"
+                      s.statut === "Conforme" ? "text-primary" : s.statut === "Fractionnement" ? "text-destructive" : "text-warning"
                     }`}>{s.statut}</span>
                   </td>
                 </tr>
@@ -296,12 +324,12 @@ export default function Cartographie() {
             <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={ecartsData} layout="vertical" barGap={2} barSize={10}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
-                  <YAxis dataKey="direction" type="category" width={85} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} horizontal={false} />
+                  <XAxis type="number" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                  <YAxis dataKey="direction" type="category" width={85} tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
                   <Tooltip formatter={(v: number) => `${v} M€`} />
-                  <Bar dataKey="prevu" name="Prévu" fill="hsl(220, 14%, 87%)" radius={[0, 2, 2, 0]} />
-                  <Bar dataKey="execute" name="Exécuté" fill="hsl(218, 50%, 18%)" radius={[0, 2, 2, 0]} />
+                  <Bar dataKey="prevu" name="Prévu" fill={PALETTE.accent} radius={[0, 2, 2, 0]} />
+                  <Bar dataKey="execute" name="Exécuté" fill={PALETTE.primary} radius={[0, 2, 2, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -315,7 +343,7 @@ export default function Cartographie() {
         <div className="space-y-2">
           {anomalies.map((a, i) => (
             <div key={i} className={`flex items-start gap-3 p-3 rounded border border-l-[3px] ${
-              a.severity === "haute" ? "border-l-destructive bg-destructive/4" : a.severity === "moyenne" ? "border-l-warning bg-warning/4" : "border-l-muted-foreground bg-muted/30"
+              a.severity === "haute" ? "border-l-destructive bg-destructive/10" : a.severity === "moyenne" ? "border-l-warning bg-warning/15" : "border-l-muted-foreground bg-muted/30"
             }`}>
               <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${
                 a.severity === "haute" ? "text-destructive" : a.severity === "moyenne" ? "text-warning" : "text-muted-foreground"

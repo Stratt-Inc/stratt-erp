@@ -10,30 +10,36 @@ import Cartographie from "./pages/Cartographie";
 import Nomenclature from "./pages/Nomenclature";
 import Exports from "./pages/Exports";
 import Administration from "./pages/Administration";
+import Support from "./pages/Support";
+import DesignSystemShowcase from "./pages/DesignSystemShowcase";
 import NotFound from "./pages/NotFound";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppLayout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/planification" element={<Planification />} />
-            <Route path="/cartographie" element={<Cartographie />} />
-            <Route path="/nomenclature" element={<Nomenclature />} />
-            <Route path="/exports" element={<Exports />} />
-            <Route path="/administration" element={<Administration />} />
-            <Route path="/support" element={<Administration />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AppLayout>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppLayout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/planification" element={<Planification />} />
+              <Route path="/cartographie" element={<Cartographie />} />
+              <Route path="/nomenclature" element={<Nomenclature />} />
+              <Route path="/exports" element={<Exports />} />
+              <Route path="/administration" element={<Administration />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/design-system" element={<DesignSystemShowcase />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppLayout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

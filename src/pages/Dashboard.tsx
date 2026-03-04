@@ -11,9 +11,7 @@ import {
   Scale,
   BarChart3,
   ArrowUpRight,
-  ArrowDownRight,
   Gauge,
-  Users,
   Briefcase,
   AlertCircle,
   Zap,
@@ -33,6 +31,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
+import { CHART_COLORS, PALETTE, UI_COLORS, withAlpha } from "@/lib/palette";
 
 /* ── KPIs stratégiques ── */
 const kpisStrategiques = [
@@ -51,17 +50,17 @@ const kpisSecondaires = [
 
 /* ── Maturité achats (jauge) ── */
 const maturiteData = [
-  { name: "Maturité", value: 68, fill: "hsl(162, 45%, 36%)" },
+  { name: "Maturité", value: 68, fill: CHART_COLORS.tertiary },
 ];
 
 /* ── Répartition par procédure ── */
 const procedureData = [
-  { name: "MAPA < 40k€", value: 52, color: "hsl(218, 50%, 18%)" },
-  { name: "MAPA < 90k€", value: 34, color: "hsl(218, 42%, 32%)" },
-  { name: "Appel d'offres ouvert", value: 28, color: "hsl(210, 75%, 46%)" },
-  { name: "Appel d'offres restreint", value: 10, color: "hsl(210, 55%, 60%)" },
-  { name: "Accord-cadre", value: 15, color: "hsl(162, 45%, 36%)" },
-  { name: "Procédure négociée", value: 8, color: "hsl(162, 35%, 52%)" },
+  { name: "MAPA < 40k€", value: 52, color: CHART_COLORS.primary },
+  { name: "MAPA < 90k€", value: 34, color: CHART_COLORS.secondary },
+  { name: "Appel d'offres ouvert", value: 28, color: CHART_COLORS.tertiary },
+  { name: "Appel d'offres restreint", value: 10, color: withAlpha(PALETTE.primary, "CC") },
+  { name: "Accord-cadre", value: 15, color: CHART_COLORS.accent },
+  { name: "Procédure négociée", value: 8, color: CHART_COLORS.accentSoft },
 ];
 
 /* ── Timeline passations ── */
@@ -253,13 +252,12 @@ export default function Dashboard() {
                 <PieChart>
                   <Pie
                     data={procedureData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={48}
-                    outerRadius={76}
                     dataKey="value"
-                    stroke="hsl(0, 0%, 100%)"
-                    strokeWidth={2}
+                    innerRadius={35}
+                    outerRadius={64}
+                    paddingAngle={2}
+                    stroke={UI_COLORS.white}
+                    strokeWidth={1.5}
                   >
                     {procedureData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
@@ -291,12 +289,12 @@ export default function Dashboard() {
               <div className="h-36">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={timelineData} barGap={1}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" vertical={false} />
-                    <XAxis dataKey="mois" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} width={24} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} vertical={false} />
+                    <XAxis dataKey="mois" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} width={24} />
                     <Tooltip />
-                    <Bar dataKey="passations" name="Réalisé" fill="hsl(218, 50%, 18%)" radius={[2, 2, 0, 0]} barSize={12} />
-                    <Bar dataKey="previsionnel" name="Prévisionnel" fill="hsl(220, 14%, 87%)" radius={[2, 2, 0, 0]} barSize={12} />
+                    <Bar dataKey="passations" name="Réalisé" fill={PALETTE.primary} radius={[2, 2, 0, 0]} barSize={12} />
+                    <Bar dataKey="previsionnel" name="Prévisionnel" fill={PALETTE.accent} radius={[2, 2, 0, 0]} barSize={12} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -311,11 +309,11 @@ export default function Dashboard() {
               <div className="h-36">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={budgetByDirection} layout="vertical" barSize={14}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
-                    <YAxis dataKey="direction" type="category" width={100} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={UI_COLORS.lightStroke} horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="direction" type="category" width={100} tick={{ fontSize: 10, fill: UI_COLORS.mutedText }} axisLine={false} tickLine={false} />
                     <Tooltip formatter={(v: number) => `${v} M€`} />
-                    <Bar dataKey="montant" fill="hsl(218, 50%, 18%)" radius={[0, 2, 2, 0]} />
+                    <Bar dataKey="montant" fill={PALETTE.primary} radius={[0, 2, 2, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
