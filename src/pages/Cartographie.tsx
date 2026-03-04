@@ -332,24 +332,47 @@ export default function Cartographie() {
       </div>
 
       {/* Anomalies */}
-      <div>
-        <p className="section-label mb-2">Anomalies détectées</p>
-        <div className="space-y-2">
+      <div className="animate-slide-in">
+        <p className="section-label mb-3">Anomalies détectées</p>
+        <div className="space-y-3">
           {anomalies.map((a, i) => (
-            <div key={i} className={`flex items-start gap-3 p-3 rounded border border-l-[3px] ${
-              a.severity === "haute" ? "border-l-destructive bg-destructive/10" : a.severity === "moyenne" ? "border-l-warning bg-warning/15" : "border-l-muted-foreground bg-muted/30"
-            }`}>
-              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${
-                a.severity === "haute" ? "text-destructive" : a.severity === "moyenne" ? "text-warning" : "text-muted-foreground"
-              }`} />
+            <div
+              key={i}
+              className={`flex items-start gap-4 p-4 rounded-xl border-l-4 backdrop-blur-sm transition-all duration-200 hover:shadow-md ${
+                a.severity === "haute"
+                  ? "border-l-destructive bg-destructive/5"
+                  : a.severity === "moyenne"
+                  ? "border-l-warning bg-warning/5"
+                  : "border-l-muted-foreground bg-muted/30"
+              }`}
+            >
+              <AlertTriangle
+                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                  a.severity === "haute"
+                    ? "text-destructive"
+                    : a.severity === "moyenne"
+                    ? "text-warning"
+                    : "text-muted-foreground"
+                }`}
+              />
               <div className="flex-1">
-                <span className={`text-[10px] font-semibold uppercase tracking-wider ${
-                  a.severity === "haute" ? "text-destructive" : a.severity === "moyenne" ? "text-warning" : "text-muted-foreground"
-                }`}>{a.type}</span>
-                <p className="text-[12px] text-foreground mt-0.5 leading-snug">{a.message}</p>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-widest ${
+                    a.severity === "haute"
+                      ? "text-destructive"
+                      : a.severity === "moyenne"
+                      ? "text-warning"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {a.type}
+                </span>
+                <p className="text-[14px] text-foreground mt-1 leading-relaxed font-medium">
+                  {a.message}
+                </p>
               </div>
-              <button className="text-[11px] text-primary font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0">
-                Détails <ArrowUpRight className="w-3 h-3" />
+              <button className="text-[12px] text-primary font-semibold hover:underline flex items-center gap-1 flex-shrink-0 transition-colors">
+                Détails <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}

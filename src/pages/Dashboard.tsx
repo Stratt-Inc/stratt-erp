@@ -32,6 +32,7 @@ import {
   RadialBar,
 } from "recharts";
 import { CHART_COLORS, PALETTE, UI_COLORS, withAlpha } from "@/lib/palette";
+import {StatsGrid} from "@/components/StatsGrid.tsx";
 
 /* ── KPIs stratégiques ── */
 const kpisStrategiques = [
@@ -42,10 +43,10 @@ const kpisStrategiques = [
 ];
 
 const kpisSecondaires = [
-  { label: "Sécurité juridique", value: "94%", sub: "Contrats conformes", color: "text-accent" },
-  { label: "Performance budgétaire", value: "0,91", sub: "Ratio exécuté/prévu", color: "text-info" },
-  { label: "Marchés à risque", value: "5", sub: "Fractionnement potentiel", color: "text-destructive" },
-  { label: "Renouvellements < 6 mois", value: "12", sub: "Accords-cadres", color: "text-warning" },
+  { label: "Sécurité juridique", value: "94%", icon: CheckCircle2, trend: { value: "+3%", positive: true } },
+  { label: "Performance budgétaire", value: "0,91", icon: TrendingUp, trend: { value: "-0,05", positive: false } },
+  { label: "Marchés à risque", value: "5", icon: AlertTriangle, alert: true },
+  { label: "Renouvellements < 6 mois", value: "12", icon: Clock },
 ];
 
 /* ── Maturité achats (jauge) ── */
@@ -177,17 +178,10 @@ export default function Dashboard() {
       </div>
 
       {/* ── Indicateurs secondaires ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpisSecondaires.map((kpi) => (
-          <div key={kpi.label} className="stat-card flex items-center gap-4">
-            <span className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</span>
-            <div className="flex-1">
-              <p className="text-[12px] font-semibold text-foreground leading-tight mb-0.5">{kpi.label}</p>
-              <p className="text-[11px] text-muted-foreground">{kpi.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <StatsGrid
+        stats={kpisSecondaires}
+        columns="4"
+      />
 
       {/* ── Row : Maturité + Procédures + Timeline ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -327,18 +321,25 @@ export default function Dashboard() {
       </div>
 
       {/* ── Alertes réglementaires ── */}
-      <div>
-        <p className="section-label mb-2">Alertes réglementaires</p>
-        <div className="space-y-2">
+      <div className="animate-slide-in">
+        <p className="section-label mb-3">Alertes réglementaires</p>
+        <div className="space-y-3">
           {alertes.map((a, i) => (
-            <div key={i} className={`flex items-start gap-3 p-3 rounded border border-l-[3px] ${severityStyles[a.severity]}`}>
-              <a.icon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${severityIconColor[a.severity]}`} />
+            <div
+              key={i}
+              className={`flex items-start gap-4 p-4 rounded-xl border-l-4 backdrop-blur-sm transition-all duration-200 hover:shadow-md ${severityStyles[a.severity]}`}
+            >
+              <a.icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${severityIconColor[a.severity]}`} />
               <div className="flex-1">
-                <span className={`text-[10px] font-semibold uppercase tracking-wider ${severityIconColor[a.severity]}`}>{a.severity}</span>
-                <p className="text-[13px] text-foreground mt-0.5 leading-snug">{a.message}</p>
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${severityIconColor[a.severity]}`}>
+                  {a.severity}
+                </span>
+                <p className="text-[14px] text-foreground mt-1 leading-relaxed font-medium">
+                  {a.message}
+                </p>
               </div>
-              <button className="text-[11px] text-primary font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0 mt-0.5">
-                Traiter <ArrowUpRight className="w-3 h-3" />
+              <button className="text-[12px] text-primary font-semibold hover:underline flex items-center gap-1 flex-shrink-0 transition-colors">
+                Traiter <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}
