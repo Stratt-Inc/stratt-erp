@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Bell, ChevronDown, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <Shield className="w-3 h-3" />
                 Conforme
               </div>
+              <ThemeToggle />
               <Button variant="ghost" size="sm" className="relative h-8 w-8 p-0">
                 <Bell className="w-4 h-4" />
                 <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive" />
