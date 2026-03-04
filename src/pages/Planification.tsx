@@ -16,6 +16,7 @@ import {
   Scale,
   Zap,
   Target,
+  X,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -259,15 +260,28 @@ export default function Planification() {
 
         {/* Side panel */}
         {selected && (
-          <div className="w-72 flex-shrink-0 bg-card border rounded p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] text-muted-foreground">{selected.id}</span>
-              <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border ${statusStyles[selected.statut]}`}>
-                {selected.statut}
-              </span>
+          <div className="w-80 flex-shrink-0 bg-card/95 backdrop-blur-sm border rounded-xl p-5 space-y-4 shadow-lg animate-slide-in">
+            {/* Header avec close button */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <span className="font-mono text-[11px] text-muted-foreground">{selected.id}</span>
+                <h3 className="text-[15px] font-bold text-foreground leading-snug mt-1">{selected.objet}</h3>
+              </div>
+              <button
+                onClick={() => setSelectedMarche(null)}
+                className="p-1.5 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
             </div>
-            <h3 className="text-[13px] leading-snug">{selected.objet}</h3>
-            <div className="space-y-2 text-[12px]">
+
+            {/* Status badge */}
+            <span className={`inline-flex px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest ${statusStyles[selected.statut]}`}>
+              {selected.statut}
+            </span>
+
+            {/* Informations principales */}
+            <div className="space-y-3 text-[13px]">
               {[
                 ["Service", selected.service],
                 ["Montant", selected.montant],
@@ -275,35 +289,45 @@ export default function Planification() {
                 ["Échéance", selected.echeance],
                 ["Charge", `${selected.charge} j/homme`],
               ].map(([label, value]) => (
-                <div key={label} className="flex justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium">{value}</span>
+                <div key={String(label)} className="flex justify-between">
+                  <span className="text-muted-foreground font-medium">{label}</span>
+                  <span className="font-semibold text-foreground">{value}</span>
                 </div>
               ))}
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Priorité</span>
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${prioriteStyles[selected.priorite]}`}>{selected.priorite}</span>
+                <span className="text-muted-foreground font-medium">Priorité</span>
+                <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold uppercase tracking-wider ${prioriteStyles[selected.priorite]}`}>
+                  {selected.priorite}
+                </span>
               </div>
             </div>
-            <div className="panel-divider" />
-            <div className="space-y-1.5">
-              <Button size="sm" variant="outline" className="w-full gap-2 text-[11px] h-7 justify-start">
-                <FileText className="w-3 h-3" /> Créer un scénario
+
+            <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+            {/* Actions */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Actions rapides</p>
+              <Button size="sm" variant="outline" className="w-full gap-2 text-[12px] h-8 justify-start rounded-lg">
+                <FileText className="w-3.5 h-3.5" /> Créer un scénario
               </Button>
-              <Button size="sm" variant="outline" className="w-full gap-2 text-[11px] h-7 justify-start">
-                <Clock className="w-3 h-3" /> Simuler les délais
+              <Button size="sm" variant="outline" className="w-full gap-2 text-[12px] h-8 justify-start rounded-lg">
+                <Clock className="w-3.5 h-3.5" /> Simuler les délais
               </Button>
-              <Button size="sm" variant="outline" className="w-full gap-2 text-[11px] h-7 justify-start">
-                <Scale className="w-3 h-3" /> Vérifier les seuils
+              <Button size="sm" variant="outline" className="w-full gap-2 text-[12px] h-8 justify-start rounded-lg">
+                <Scale className="w-3.5 h-3.5" /> Vérifier les seuils
               </Button>
-              <Button size="sm" variant="outline" className="w-full gap-2 text-[11px] h-7 justify-start">
-                <Zap className="w-3 h-3" /> Simulation budgétaire
+              <Button size="sm" variant="outline" className="w-full gap-2 text-[12px] h-8 justify-start rounded-lg">
+                <Zap className="w-3.5 h-3.5" /> Simulation budgétaire
               </Button>
             </div>
+
+            {/* Alerte si applicable */}
             {selected.statut === "Alerte" && (
-              <div className="p-2.5 rounded bg-destructive/5 border border-destructive/15 text-[11px] flex items-start gap-2">
-                <AlertTriangle className="w-3 h-3 text-destructive flex-shrink-0 mt-0.5" />
-                <span className="text-destructive leading-snug">Montant dépasse le seuil MAPA 90k€. Procédure formalisée requise (art. L2124-1 CCP).</span>
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-[12px] flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+                <span className="text-destructive leading-relaxed font-medium">
+                  Montant dépasse le seuil MAPA 90k€. Procédure formalisée requise (art. L2124-1 CCP).
+                </span>
               </div>
             )}
           </div>
@@ -317,32 +341,43 @@ export default function Planification() {
 
       {/* Detail panel aussi disponible en vue calendrier */}
       {selected && (
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+        <div className="w-80 bg-card/95 backdrop-blur-sm border rounded-xl p-5 space-y-4 shadow-lg animate-slide-in">
+          {/* Header avec close button */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
               <span className="font-mono text-[11px] text-muted-foreground">{selected.id}</span>
-              <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border ${statusStyles[selected.statut]}`}>
-                {selected.statut}
-              </span>
+              <h3 className="text-[15px] font-bold text-foreground leading-snug mt-1">{selected.objet}</h3>
             </div>
-            <h3 className="text-[15px] font-semibold leading-snug mb-4">{selected.objet}</h3>
-            <div className="grid grid-cols-2 gap-4 text-[13px]">
-              {[
-                ["Service", selected.service],
-                ["Montant", selected.montant],
-                ["Procédure", selected.procedure],
-                ["Échéance", selected.echeance],
-                ["Charge", `${selected.charge} j/homme`],
-                ["Priorité", <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${prioriteStyles[selected.priorite]}`}>{selected.priorite}</span>],
-              ].map(([label, value]) => (
-                <div key={String(label)} className="flex flex-col gap-1">
-                  <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
-                  <span className="font-semibold">{value}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+            <button
+              onClick={() => setSelectedMarche(null)}
+              className="p-1.5 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
+            >
+              <X className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </div>
+
+          {/* Status badge */}
+          <span className={`inline-flex px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest ${statusStyles[selected.statut]}`}>
+            {selected.statut}
+          </span>
+
+          {/* Informations principales */}
+          <div className="grid grid-cols-2 gap-4 text-[13px]">
+            {[
+              ["Service", selected.service],
+              ["Montant", selected.montant],
+              ["Procédure", selected.procedure],
+              ["Échéance", selected.echeance],
+              ["Charge", `${selected.charge} j/homme`],
+              ["Priorité", <span key="prio" className={`px-2 py-0.5 rounded-lg text-[11px] font-bold uppercase tracking-wider ${prioriteStyles[selected.priorite]}`}>{selected.priorite}</span>],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="flex flex-col gap-1">
+                <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+                <span className="font-semibold text-foreground">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </TabsContent>
   </Tabs>
