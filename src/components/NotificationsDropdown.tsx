@@ -32,7 +32,7 @@ const initialNotifications: Notification[] = [
     id: "2",
     type: "success",
     title: "Export terminé",
-    message: "Document d'implémentation PDF généré avec succès",
+    message: "Document PDF généré avec succès",
     time: "Il y a 1h",
     read: false,
   },
@@ -71,76 +71,58 @@ export function NotificationsDropdown() {
   const getIcon = (type: string) => {
     switch (type) {
       case "success":
-        return <CheckCircle2 className="w-4 h-4 text-success" />;
+        return <CheckCircle2 className="w-3.5 h-3.5 text-success flex-shrink-0" />;
       case "warning":
-        return <AlertTriangle className="w-4 h-4 text-warning" />;
-      case "info":
-        return <Info className="w-4 h-4 text-info" />;
+        return <AlertTriangle className="w-3.5 h-3.5 text-warning flex-shrink-0" />;
       default:
-        return <Info className="w-4 h-4" />;
+        return <Info className="w-3.5 h-3.5 text-info flex-shrink-0" />;
     }
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="relative h-9 w-9 p-0 rounded-lg">
+        <Button variant="ghost" size="sm" className="relative h-8 w-8 p-0 rounded-lg">
           <Bell className="w-4 h-4" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive ring-2 ring-background" />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-destructive ring-2 ring-background" />
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-96">
-        <DropdownMenuLabel className="flex items-center justify-between">
-          <span className="text-[14px] font-semibold">Notifications</span>
+      <DropdownMenuContent align="end" sideOffset={8} collisionPadding={12} className="w-72 sm:w-80">
+        <DropdownMenuLabel className="flex items-center justify-between py-1.5 px-3">
+          <span className="text-[12px] font-semibold">Notifications</span>
           {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-[11px]"
-              onClick={markAllAsRead}
-            >
-              Tout marquer comme lu
-            </Button>
+            <button className="text-[10px] text-primary font-medium hover:underline" onClick={markAllAsRead}>
+              Tout lire
+            </button>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <div className="max-h-[400px] overflow-y-auto">
-          {notifications.map((notification) => (
+        <div className="max-h-[45vh] overflow-y-auto">
+          {notifications.map((n) => (
             <DropdownMenuItem
-              key={notification.id}
-              className={`flex items-start gap-3 p-3 cursor-pointer ${
-                !notification.read ? "bg-primary/5" : ""
-              }`}
-              onClick={() => markAsRead(notification.id)}
+              key={n.id}
+              className={`flex items-start gap-2 px-3 py-2 cursor-pointer ${!n.read ? "bg-primary/5" : ""}`}
+              onClick={() => markAsRead(n.id)}
             >
-              <div className="mt-0.5">{getIcon(notification.type)}</div>
+              <div className="mt-0.5">{getIcon(n.type)}</div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-[13px] font-semibold text-foreground">
-                    {notification.title}
-                  </p>
-                  {!notification.read && (
-                    <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1" />
-                  )}
+                <div className="flex items-center justify-between gap-1">
+                  <p className="text-[11px] font-semibold text-foreground truncate">{n.title}</p>
+                  {!n.read && <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
                 </div>
-                <p className="text-[12px] text-muted-foreground mt-0.5 leading-snug">
-                  {notification.message}
-                </p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">
-                  {notification.time}
-                </p>
+                <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug line-clamp-1">{n.message}</p>
+                <p className="text-[9px] text-muted-foreground/60 mt-0.5">{n.time}</p>
               </div>
             </DropdownMenuItem>
           ))}
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="justify-center text-[12px] text-primary font-medium">
-          Voir toutes les notifications
+        <DropdownMenuItem className="justify-center text-[10px] text-primary font-medium py-1.5">
+          Voir tout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-
