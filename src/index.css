@@ -4,94 +4,94 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 215 50% 15%;
+    --background: 220 16% 96%;
+    --foreground: 220 40% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 50% 15%;
+    --card-foreground: 220 40% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 50% 15%;
+    --popover-foreground: 220 40% 13%;
 
-    --primary: 215 55% 22%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 218 50% 18%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 215 15% 92%;
-    --secondary-foreground: 215 50% 22%;
+    --secondary: 220 14% 90%;
+    --secondary-foreground: 220 40% 18%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 12% 50%;
+    --muted: 220 12% 93%;
+    --muted-foreground: 220 10% 46%;
 
-    --accent: 168 40% 42%;
+    --accent: 162 45% 36%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 55% 40%;
+    --success: 155 50% 34%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 36 90% 48%;
+    --warning-foreground: 36 90% 14%;
 
-    --info: 205 85% 50%;
+    --info: 210 75% 46%;
     --info-foreground: 0 0% 100%;
 
-    --border: 220 13% 89%;
-    --input: 220 13% 89%;
-    --ring: 215 55% 22%;
+    --border: 220 14% 87%;
+    --input: 220 14% 87%;
+    --ring: 218 50% 18%;
 
-    --radius: 0.375rem;
+    --radius: 0.25rem;
 
-    --sidebar-background: 215 55% 18%;
-    --sidebar-foreground: 210 30% 85%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 215 55% 18%;
-    --sidebar-accent: 215 50% 25%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 45% 28%;
-    --sidebar-ring: 205 85% 50%;
-    --sidebar-muted: 215 30% 40%;
+    --sidebar-background: 218 52% 14%;
+    --sidebar-foreground: 220 20% 78%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 218 52% 14%;
+    --sidebar-accent: 218 45% 20%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 218 40% 22%;
+    --sidebar-ring: 210 75% 46%;
+    --sidebar-muted: 218 20% 42%;
 
     --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
 
-    --chart-1: 215 55% 22%;
-    --chart-2: 168 40% 42%;
-    --chart-3: 205 85% 50%;
-    --chart-4: 38 92% 50%;
-    --chart-5: 0 72% 51%;
+    --chart-1: 218 50% 18%;
+    --chart-2: 162 45% 36%;
+    --chart-3: 210 75% 46%;
+    --chart-4: 36 90% 48%;
+    --chart-5: 0 65% 48%;
   }
 
   .dark {
-    --background: 215 50% 8%;
-    --foreground: 210 30% 90%;
-    --card: 215 45% 12%;
-    --card-foreground: 210 30% 90%;
-    --popover: 215 45% 12%;
-    --popover-foreground: 210 30% 90%;
-    --primary: 210 40% 75%;
-    --primary-foreground: 215 55% 12%;
-    --secondary: 215 30% 18%;
-    --secondary-foreground: 210 30% 85%;
-    --muted: 215 25% 16%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 168 40% 42%;
+    --background: 220 40% 7%;
+    --foreground: 220 15% 88%;
+    --card: 220 35% 10%;
+    --card-foreground: 220 15% 88%;
+    --popover: 220 35% 10%;
+    --popover-foreground: 220 15% 88%;
+    --primary: 210 40% 72%;
+    --primary-foreground: 218 52% 10%;
+    --secondary: 220 25% 16%;
+    --secondary-foreground: 220 15% 82%;
+    --muted: 220 20% 14%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 162 40% 38%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 40%;
+    --destructive: 0 55% 38%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 210 40% 75%;
-    --sidebar-background: 215 55% 10%;
-    --sidebar-foreground: 210 30% 75%;
-    --sidebar-primary: 210 40% 75%;
-    --sidebar-primary-foreground: 215 55% 10%;
-    --sidebar-accent: 215 40% 16%;
-    --sidebar-accent-foreground: 210 30% 85%;
-    --sidebar-border: 215 30% 18%;
-    --sidebar-ring: 205 85% 50%;
-    --sidebar-muted: 215 20% 35%;
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 210 40% 72%;
+    --sidebar-background: 220 40% 8%;
+    --sidebar-foreground: 220 15% 70%;
+    --sidebar-primary: 210 40% 72%;
+    --sidebar-primary-foreground: 220 40% 8%;
+    --sidebar-accent: 220 30% 14%;
+    --sidebar-accent-foreground: 220 15% 82%;
+    --sidebar-border: 220 25% 16%;
+    --sidebar-ring: 210 75% 46%;
+    --sidebar-muted: 220 15% 38%;
   }
 }
 
@@ -101,41 +101,94 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight text-foreground;
+  h1 {
+    @apply text-xl font-semibold tracking-tight text-foreground leading-tight;
+  }
+  h2 {
+    @apply text-base font-semibold tracking-tight text-foreground;
+  }
+  h3 {
+    @apply text-sm font-semibold text-foreground;
   }
 }
 
 @layer components {
+  /* Institutional stat card */
   .stat-card {
-    @apply bg-card border border-border rounded-md p-5 shadow-sm;
+    @apply bg-card border border-border rounded p-4;
   }
-  .section-title {
-    @apply text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3;
+
+  /* Section headers - uppercase, structured */
+  .section-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground;
   }
+
+  /* Conformity badges */
   .badge-conforme {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-sm bg-accent/10 text-accent border border-accent/20;
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
+    background: hsl(var(--accent) / 0.08);
+    color: hsl(var(--accent));
+    border: 1px solid hsl(var(--accent) / 0.18);
   }
   .badge-alerte {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-sm bg-destructive/10 text-destructive border border-destructive/20;
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
+    background: hsl(var(--destructive) / 0.08);
+    color: hsl(var(--destructive));
+    border: 1px solid hsl(var(--destructive) / 0.18);
   }
   .badge-info {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-sm;
-    background: hsl(var(--info) / 0.1);
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
+    background: hsl(var(--info) / 0.08);
     color: hsl(var(--info));
-    border: 1px solid hsl(var(--info) / 0.2);
+    border: 1px solid hsl(var(--info) / 0.18);
   }
+  .badge-warning {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-sm;
+    background: hsl(var(--warning) / 0.08);
+    color: hsl(var(--warning));
+    border: 1px solid hsl(var(--warning) / 0.18);
+  }
+
+  /* Data tables - institutional */
   .data-table {
     @apply w-full text-sm;
   }
   .data-table th {
-    @apply text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground p-3 border-b bg-muted/50;
+    @apply text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground p-3 border-b-2 border-border bg-muted/40;
   }
   .data-table td {
-    @apply p-3 border-b border-border;
+    @apply p-3 border-b border-border text-sm;
   }
-  .data-table tr:hover td {
+  .data-table tbody tr {
+    @apply transition-colors;
+  }
+  .data-table tbody tr:hover td {
     @apply bg-muted/30;
+  }
+
+  /* Metric block */
+  .metric-block {
+    @apply flex flex-col gap-1;
+  }
+  .metric-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground;
+  }
+  .metric-value {
+    @apply text-2xl font-bold tracking-tight text-foreground leading-none;
+  }
+  .metric-sub {
+    @apply text-xs text-muted-foreground;
+  }
+
+  /* Gauge arc placeholder */
+  .gauge-container {
+    @apply relative flex items-center justify-center;
+  }
+
+  /* Panel section divider */
+  .panel-divider {
+    @apply border-t border-border my-4;
   }
 }

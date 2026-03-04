@@ -3,11 +3,20 @@ import {
   AlertTriangle,
   FileCheck,
   Clock,
-  BarChart3,
   Shield,
   RefreshCw,
-  ArrowUpRight,
   CheckCircle2,
+  Target,
+  Layers,
+  Scale,
+  BarChart3,
+  ArrowUpRight,
+  ArrowDownRight,
+  Gauge,
+  Users,
+  Briefcase,
+  AlertCircle,
+  Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,255 +30,372 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  RadialBarChart,
+  RadialBar,
 } from "recharts";
 
-const kpis = [
-  { label: "Marchés planifiés", value: "147", icon: FileCheck, trend: "+12 vs N-1" },
-  { label: "Montant prévisionnel", value: "84,2 M€", icon: TrendingUp, trend: "+8,3%" },
-  { label: "Taux d'anticipation", value: "76%", icon: Clock, trend: "+4 pts" },
-  { label: "Alertes actives", value: "8", icon: AlertTriangle, trend: "3 critiques", alert: true },
+/* ── KPIs stratégiques ── */
+const kpisStrategiques = [
+  { label: "Marchés planifiés", value: "147", sub: "+12 vs N-1", icon: FileCheck, positive: true },
+  { label: "Montant prévisionnel", value: "84,2 M€", sub: "+8,3% vs N-1", icon: TrendingUp, positive: true },
+  { label: "Taux d'anticipation", value: "76%", sub: "+4 pts vs N-1", icon: Clock, positive: true },
+  { label: "Taux de mutualisation", value: "42%", sub: "Objectif : 55%", icon: Layers, positive: false },
 ];
 
+const kpisSecondaires = [
+  { label: "Sécurité juridique", value: "94%", sub: "Contrats conformes", color: "text-accent" },
+  { label: "Performance budgétaire", value: "0,91", sub: "Ratio exécuté/prévu", color: "text-info" },
+  { label: "Marchés à risque", value: "5", sub: "Fractionnement potentiel", color: "text-destructive" },
+  { label: "Renouvellements < 6 mois", value: "12", sub: "Accords-cadres", color: "text-warning" },
+];
+
+/* ── Maturité achats (jauge) ── */
+const maturiteData = [
+  { name: "Maturité", value: 68, fill: "hsl(162, 45%, 36%)" },
+];
+
+/* ── Répartition par procédure ── */
 const procedureData = [
-  { name: "MAPA < 40k€", value: 52, color: "hsl(215, 55%, 22%)" },
-  { name: "MAPA < 90k€", value: 34, color: "hsl(215, 45%, 40%)" },
-  { name: "Appel d'offres", value: 38, color: "hsl(168, 40%, 42%)" },
-  { name: "Procédure négociée", value: 15, color: "hsl(205, 85%, 50%)" },
-  { name: "Accord-cadre", value: 8, color: "hsl(215, 30%, 65%)" },
+  { name: "MAPA < 40k€", value: 52, color: "hsl(218, 50%, 18%)" },
+  { name: "MAPA < 90k€", value: 34, color: "hsl(218, 42%, 32%)" },
+  { name: "Appel d'offres ouvert", value: 28, color: "hsl(210, 75%, 46%)" },
+  { name: "Appel d'offres restreint", value: 10, color: "hsl(210, 55%, 60%)" },
+  { name: "Accord-cadre", value: 15, color: "hsl(162, 45%, 36%)" },
+  { name: "Procédure négociée", value: 8, color: "hsl(162, 35%, 52%)" },
 ];
 
-const budgetByDirection = [
-  { direction: "DGA Infrastructures", montant: 28.5 },
-  { direction: "DGA Éducation", montant: 18.2 },
-  { direction: "DGA Numérique", montant: 12.8 },
-  { direction: "DGA RH", montant: 9.4 },
-  { direction: "DGA Finances", montant: 8.1 },
-  { direction: "DGA Environnement", montant: 7.2 },
-];
-
+/* ── Timeline passations ── */
 const timelineData = [
-  { mois: "Jan", passations: 8 },
-  { mois: "Fév", passations: 12 },
-  { mois: "Mar", passations: 18 },
-  { mois: "Avr", passations: 14 },
-  { mois: "Mai", passations: 16 },
-  { mois: "Jun", passations: 22 },
-  { mois: "Jul", passations: 10 },
-  { mois: "Aoû", passations: 6 },
-  { mois: "Sep", passations: 15 },
-  { mois: "Oct", passations: 12 },
-  { mois: "Nov", passations: 8 },
-  { mois: "Déc", passations: 6 },
+  { mois: "J", passations: 8, previsionnel: 10 },
+  { mois: "F", passations: 12, previsionnel: 11 },
+  { mois: "M", passations: 18, previsionnel: 16 },
+  { mois: "A", passations: 14, previsionnel: 15 },
+  { mois: "M", passations: 16, previsionnel: 14 },
+  { mois: "J", passations: 22, previsionnel: 20 },
+  { mois: "J", passations: 10, previsionnel: 12 },
+  { mois: "A", passations: 6, previsionnel: 8 },
+  { mois: "S", passations: 15, previsionnel: 14 },
+  { mois: "O", passations: 12, previsionnel: 13 },
+  { mois: "N", passations: 8, previsionnel: 9 },
+  { mois: "D", passations: 6, previsionnel: 5 },
 ];
 
+/* ── Budget par direction ── */
+const budgetByDirection = [
+  { direction: "Infrastructures", montant: 28.5 },
+  { direction: "Éducation", montant: 18.2 },
+  { direction: "Numérique / TIC", montant: 14.7 },
+  { direction: "Services", montant: 12.3 },
+  { direction: "RH", montant: 5.8 },
+  { direction: "Autres", montant: 4.7 },
+];
+
+/* ── Alertes réglementaires ── */
 const alertes = [
-  { type: "critique", message: "3 marchés dépassent le seuil de 90 000 € sans procédure formalisée", icon: AlertTriangle },
-  { type: "attention", message: "5 accords-cadres arrivent à échéance dans les 90 prochains jours", icon: RefreshCw },
-  { type: "info", message: "Risque de fractionnement détecté sur la famille « Fournitures informatiques »", icon: Shield },
+  { severity: "critique", message: "3 codes nomenclature dépassent les seuils de publicité sans procédure formalisée (art. L2124-1 CCP)", icon: AlertTriangle },
+  { severity: "haute", message: "Risque de fractionnement détecté : 12 MAPA < 40k€ sur « Fournitures informatiques » totalisent 380k€", icon: Scale },
+  { severity: "moyenne", message: "5 accords-cadres arrivent à échéance dans les 90 jours — renouvellement à planifier", icon: RefreshCw },
+  { severity: "info", message: "23 dépenses non rattachées à un code de nomenclature — classification nécessaire", icon: AlertCircle },
 ];
 
+const severityStyles: Record<string, string> = {
+  critique: "border-l-destructive bg-destructive/4",
+  haute: "border-l-warning bg-warning/4",
+  moyenne: "border-l-info bg-info/4",
+  info: "border-l-muted-foreground bg-muted/40",
+};
+const severityIconColor: Record<string, string> = {
+  critique: "text-destructive",
+  haute: "text-warning",
+  moyenne: "text-info",
+  info: "text-muted-foreground",
+};
+
+/* ── Conformité ── */
 const conformite = [
-  { label: "Seuils de procédure respectés", status: true, count: "139/147" },
-  { label: "Marchés à renouveler (< 6 mois)", status: false, count: "12" },
-  { label: "Dossiers complets", status: true, count: "95%" },
-  { label: "Risques fractionnement identifiés", status: false, count: "3" },
+  { label: "Seuils de procédure respectés", value: "139/147", ok: true },
+  { label: "Codes nomenclature exhaustifs", value: "96%", ok: true },
+  { label: "Codes mutuellement exclusifs", value: "98%", ok: true },
+  { label: "Dossiers documentés", value: "91%", ok: true },
+  { label: "Marchés sans justification", value: "5", ok: false },
+  { label: "Risques fractionnement actifs", value: "3", ok: false },
+];
+
+/* ── Transformation ── */
+const transformation = [
+  { label: "Gain en anticipation", value: "+18 jours", sub: "Délai moyen de préparation vs N-1", icon: Clock },
+  { label: "Réduction du risque", value: "-62%", sub: "Anomalies détectées en amont", icon: Shield },
+  { label: "Lisibilité budgétaire", value: "+34%", sub: "Taux de classification automatique", icon: BarChart3 },
 ];
 
 export default function Dashboard() {
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
+    <div className="p-6 space-y-6">
+      {/* ── En-tête ── */}
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Tableau de bord stratégique</h1>
-          <p className="text-sm text-muted-foreground mt-1">Vue d'ensemble des achats publics — Exercice 2026</p>
+          <p className="section-label mb-1">Pilotage stratégique</p>
+          <h1>Tableau de bord — Gouvernance des achats</h1>
+          <p className="text-[13px] text-muted-foreground mt-1">
+            Vision consolidée · Exercice budgétaire 2026 · Métropole de Lyon
+          </p>
         </div>
-        <div className="badge-conforme">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Conforme réglementation
+        <div className="flex gap-2">
+          <div className="badge-conforme">
+            <CheckCircle2 className="w-3 h-3" />
+            Conforme CCP 2024
+          </div>
+          <div className="badge-conforme">
+            <Shield className="w-3 h-3" />
+            RGPD
+          </div>
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi) => (
+      {/* ── KPIs stratégiques ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {kpisStrategiques.map((kpi) => (
           <div key={kpi.label} className="stat-card">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{kpi.label}</p>
-                <p className="text-2xl font-bold mt-1">{kpi.value}</p>
-                <p className={`text-xs mt-1 ${kpi.alert ? "text-destructive" : "text-accent"}`}>
-                  {kpi.trend}
-                </p>
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-8 h-8 rounded bg-primary/8 flex items-center justify-center">
+                <kpi.icon className="w-4 h-4 text-primary" />
               </div>
-              <div className={`w-9 h-9 rounded flex items-center justify-center flex-shrink-0 ${
-                kpi.alert ? "bg-destructive/10" : "bg-primary/10"
-              }`}>
-                <kpi.icon className={`w-4 h-4 ${kpi.alert ? "text-destructive" : "text-primary"}`} />
-              </div>
+              <span className={`text-[11px] font-semibold flex items-center gap-0.5 ${kpi.positive ? "text-accent" : "text-warning"}`}>
+                {kpi.positive ? <ArrowUpRight className="w-3 h-3" /> : <Target className="w-3 h-3" />}
+                {kpi.sub}
+              </span>
+            </div>
+            <div className="metric-block">
+              <span className="metric-value">{kpi.value}</span>
+              <span className="metric-label mt-1">{kpi.label}</span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Répartition par procédure */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Répartition par procédure</CardTitle>
+      {/* ── Indicateurs secondaires ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {kpisSecondaires.map((kpi) => (
+          <div key={kpi.label} className="stat-card flex items-center gap-3">
+            <span className={`text-xl font-bold ${kpi.color}`}>{kpi.value}</span>
+            <div>
+              <p className="text-[11px] font-semibold text-foreground leading-tight">{kpi.label}</p>
+              <p className="text-[10px] text-muted-foreground">{kpi.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Row : Maturité + Procédures + Timeline ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        {/* Maturité achats */}
+        <Card className="lg:col-span-3">
+          <CardHeader className="pb-1">
+            <CardTitle className="text-[13px] flex items-center gap-2">
+              <Gauge className="w-4 h-4 text-accent" />
+              Indice de maturité achats
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-52">
+          <CardContent className="flex flex-col items-center">
+            <div className="h-40 w-40">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={procedureData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    dataKey="value"
-                    stroke="none"
-                  >
-                    {procedureData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
+                <RadialBarChart
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="70%"
+                  outerRadius="100%"
+                  startAngle={180}
+                  endAngle={0}
+                  data={maturiteData}
+                >
+                  <RadialBar background dataKey="value" cornerRadius={4} />
+                </RadialBarChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {procedureData.map((item) => (
-                <div key={item.name} className="flex items-center gap-2 text-xs">
-                  <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
-                  <span className="text-muted-foreground truncate">{item.name}</span>
-                  <span className="font-medium ml-auto">{item.value}</span>
+            <div className="text-center -mt-8">
+              <span className="text-3xl font-bold text-accent">68</span>
+              <span className="text-sm text-muted-foreground">/100</span>
+              <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">Niveau : Structuré</p>
+            </div>
+            <div className="w-full mt-4 space-y-1.5">
+              {[
+                { label: "Nomenclature", score: 82 },
+                { label: "Planification", score: 71 },
+                { label: "Sécurité juridique", score: 65 },
+                { label: "Mutualisation", score: 54 },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-2 text-[11px]">
+                  <span className="w-28 text-muted-foreground truncate">{item.label}</span>
+                  <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full"
+                      style={{ width: `${item.score}%` }}
+                    />
+                  </div>
+                  <span className="w-8 text-right font-medium">{item.score}</span>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Timeline passations */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Timeline des passations 2026</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={timelineData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 89%)" />
-                  <XAxis dataKey="mois" tick={{ fontSize: 11, fill: "hsl(215, 12%, 50%)" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "hsl(215, 12%, 50%)" }} />
-                  <Tooltip />
-                  <Bar dataKey="passations" fill="hsl(215, 55%, 22%)" radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Budget par direction */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Budget par direction (M€)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={budgetByDirection} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 89%)" />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(215, 12%, 50%)" }} />
-                  <YAxis
-                    dataKey="direction"
-                    type="category"
-                    width={120}
-                    tick={{ fontSize: 10, fill: "hsl(215, 12%, 50%)" }}
-                  />
-                  <Tooltip />
-                  <Bar dataKey="montant" fill="hsl(168, 40%, 42%)" radius={[0, 2, 2, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Alertes & Conformité */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Alertes */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
-              Alertes réglementaires
+        {/* Répartition par procédure */}
+        <Card className="lg:col-span-4">
+          <CardHeader className="pb-1">
+            <CardTitle className="text-[13px] flex items-center gap-2">
+              <Briefcase className="w-4 h-4" />
+              Répartition par procédure
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {alertes.map((alerte, i) => (
-              <div
-                key={i}
-                className={`flex items-start gap-3 p-3 rounded text-sm ${
-                  alerte.type === "critique"
-                    ? "bg-destructive/5 border border-destructive/20"
-                    : alerte.type === "attention"
-                    ? "bg-warning/5 border border-warning/20"
-                    : "bg-info/5 border border-info/20"
-                }`}
-              >
-                <alerte.icon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
-                  alerte.type === "critique" ? "text-destructive" : alerte.type === "attention" ? "text-warning" : "text-info"
-                }`} />
-                <span className="text-foreground">{alerte.message}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Conformité */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <Shield className="w-4 h-4 text-accent" />
-              Indicateurs de conformité
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {conformite.map((item, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded border bg-card">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${item.status ? "bg-accent" : "bg-destructive"}`} />
-                  <span className="text-sm">{item.label}</span>
+          <CardContent>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={procedureData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={48}
+                    outerRadius={76}
+                    dataKey="value"
+                    stroke="hsl(0, 0%, 100%)"
+                    strokeWidth={2}
+                  >
+                    {procedureData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-1 mt-1">
+              {procedureData.map((item) => (
+                <div key={item.name} className="flex items-center gap-2 text-[11px]">
+                  <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <span className="text-muted-foreground flex-1 truncate">{item.name}</span>
+                  <span className="font-semibold tabular-nums">{item.value}</span>
                 </div>
-                <span className={`text-sm font-semibold ${item.status ? "text-accent" : "text-destructive"}`}>
-                  {item.count}
-                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Timeline + Budget */}
+        <div className="lg:col-span-5 space-y-3">
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-[13px]">Planning des passations 2026</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-36">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={timelineData} barGap={1}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" vertical={false} />
+                    <XAxis dataKey="mois" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} width={24} />
+                    <Tooltip />
+                    <Bar dataKey="passations" name="Réalisé" fill="hsl(218, 50%, 18%)" radius={[2, 2, 0, 0]} barSize={12} />
+                    <Bar dataKey="previsionnel" name="Prévisionnel" fill="hsl(220, 14%, 87%)" radius={[2, 2, 0, 0]} barSize={12} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-[13px]">Dépenses consolidées par direction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-36">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={budgetByDirection} layout="vertical" barSize={14}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 87%)" horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="direction" type="category" width={100} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} axisLine={false} tickLine={false} />
+                    <Tooltip formatter={(v: number) => `${v} M€`} />
+                    <Bar dataKey="montant" fill="hsl(218, 50%, 18%)" radius={[0, 2, 2, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* ── Alertes réglementaires ── */}
+      <div>
+        <p className="section-label mb-2">Alertes réglementaires</p>
+        <div className="space-y-2">
+          {alertes.map((a, i) => (
+            <div key={i} className={`flex items-start gap-3 p-3 rounded border border-l-[3px] ${severityStyles[a.severity]}`}>
+              <a.icon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${severityIconColor[a.severity]}`} />
+              <div className="flex-1">
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${severityIconColor[a.severity]}`}>{a.severity}</span>
+                <p className="text-[13px] text-foreground mt-0.5 leading-snug">{a.message}</p>
+              </div>
+              <button className="text-[11px] text-primary font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0 mt-0.5">
+                Traiter <ArrowUpRight className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Conformité + Transformation ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* Conformité */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-[13px] flex items-center gap-2">
+              <Shield className="w-4 h-4 text-accent" />
+              Indicateurs de conformité réglementaire
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2">
+              {conformite.map((item) => (
+                <div key={item.label} className="flex items-center gap-2.5 p-2.5 rounded border bg-card">
+                  <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${item.ok ? "bg-accent" : "bg-destructive"}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] text-muted-foreground truncate">{item.label}</p>
+                    <p className={`text-sm font-semibold ${item.ok ? "text-foreground" : "text-destructive"}`}>{item.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Impact stratégique / Transformation */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-[13px] flex items-center gap-2">
+              <Zap className="w-4 h-4 text-accent" />
+              Impact stratégique — Transformation achats
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {transformation.map((t) => (
+              <div key={t.label} className="flex items-center gap-4 p-3 rounded border bg-card">
+                <div className="w-9 h-9 rounded bg-accent/8 flex items-center justify-center flex-shrink-0">
+                  <t.icon className="w-4 h-4 text-accent" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold text-foreground">{t.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{t.sub}</p>
+                </div>
+                <span className="text-lg font-bold text-accent">{t.value}</span>
               </div>
             ))}
+            <div className="p-3 rounded border border-accent/15 bg-accent/4 text-[12px] text-foreground leading-relaxed">
+              <p className="font-semibold text-accent text-[10px] uppercase tracking-wider mb-1">Suggestion d'optimisation</p>
+              3 familles d'achats pourraient être regroupées en accord-cadre, réduisant les coûts de passation de ~15% et renforçant la sécurité juridique.
+            </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Suggestions IA discrètes */}
-      <Card className="shadow-sm border-accent/20 bg-accent/5">
-        <CardContent className="py-4 flex items-center gap-4">
-          <div className="w-8 h-8 rounded bg-accent/10 flex items-center justify-center flex-shrink-0">
-            <BarChart3 className="w-4 h-4 text-accent" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium">Suggestion d'optimisation</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              3 familles d'achats pourraient être regroupées pour atteindre le seuil d'un accord-cadre, réduisant les coûts de passation de ~15%.
-            </p>
-          </div>
-          <button className="text-xs text-accent font-medium hover:underline flex items-center gap-1">
-            Analyser <ArrowUpRight className="w-3 h-3" />
-          </button>
-        </CardContent>
-      </Card>
     </div>
   );
 }
