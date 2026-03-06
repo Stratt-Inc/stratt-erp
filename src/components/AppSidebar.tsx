@@ -6,10 +6,11 @@ import {
   FileText,
   Settings,
   HelpCircle,
-  Target,
+  Zap,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Sidebar,
   SidebarContent,
@@ -24,17 +25,97 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainNav = [
-  { title: "Tableau de bord", url: "/", icon: LayoutDashboard },
-  { title: "Planification", url: "/planification", icon: CalendarRange },
-  { title: "Cartographie", url: "/cartographie", icon: Map },
-  { title: "Nomenclature", url: "/nomenclature", icon: FolderTree },
-  { title: "Documents & Exports", url: "/exports", icon: FileText },
+  { title: "Tableau de bord",     url: "/",              icon: LayoutDashboard },
+  { title: "Planification",       url: "/planification", icon: CalendarRange   },
+  { title: "Cartographie",        url: "/cartographie",  icon: Map             },
+  { title: "Nomenclature",        url: "/nomenclature",  icon: FolderTree      },
+  { title: "Documents & Exports", url: "/exports",       icon: FileText        },
 ];
 
 const adminNav = [
-  { title: "Administration", url: "/administration", icon: Settings },
-  { title: "Support & Formation", url: "/support", icon: HelpCircle },
+  { title: "Administration",    url: "/administration", icon: Settings   },
+  { title: "Support & Formation", url: "/support",      icon: HelpCircle },
 ];
+
+const itemVariants = {
+  initial: { opacity: 0, x: -6 },
+  animate: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.22, delay: 0.04 + i * 0.04, ease: "easeOut" },
+  }),
+};
+
+function NavItems({
+  items,
+  indexOffset = 0,
+  collapsed,
+  isActive,
+}: {
+  items: typeof mainNav;
+  indexOffset?: number;
+  collapsed: boolean;
+  isActive: (path: string) => boolean;
+}) {
+  return (
+    <SidebarMenu>
+      {items.map((item, i) => {
+        const active = isActive(item.url);
+        return (
+          <SidebarMenuItem key={item.url}>
+            {/* motion.div wraps SidebarMenuButton — NOT inside asChild */}
+            <motion.div
+              custom={indexOffset + i}
+              variants={itemVariants}
+              initial="initial"
+              animate="animate"
+            >
+              <SidebarMenuButton asChild isActive={active}>
+                <NavLink
+                  to={item.url}
+                  end={item.url === "/"}
+                  className={[
+                    "relative flex items-center gap-3 w-full",
+                    "rounded-md px-3 py-2",
+                    "text-sidebar-foreground transition-colors duration-150",
+                    active
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
+                      : "hover:bg-white/5 hover:text-sidebar-accent-foreground",
+                  ].join(" ")}
+                  activeClassName=""
+                >
+                  {/* Left accent bar for active item */}
+                  {active && (
+                    <span
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+                      style={{ background: "hsl(234 88% 70%)" }}
+                    />
+                  )}
+
+                  <item.icon
+                    className={[
+                      "w-4 h-4 flex-shrink-0 transition-colors",
+                      active
+                        ? "text-sidebar-primary"
+                        : "text-sidebar-muted",
+                    ].join(" ")}
+                    strokeWidth={active ? 2.5 : 2}
+                  />
+
+                  {!collapsed && (
+                    <span className="text-[13px] truncate leading-none">
+                      {item.title}
+                    </span>
+                  )}
+                </NavLink>
+              </SidebarMenuButton>
+            </motion.div>
+          </SidebarMenuItem>
+        );
+      })}
+    </SidebarMenu>
+  );
+}
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -46,77 +127,109 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarContent className="pt-4 sm:pt-6">
-        {/* Logo Axiora */}
-        <div className={`px-3 sm:px-4 mb-6 sm:mb-10 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
-          <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
-            <Target className="w-4 sm:w-5 h-4 sm:h-5 text-white" strokeWidth={2.5} />
+      <SidebarContent className="pt-4 sm:pt-5">
+
+        {/* Logo */}
+        <div
+          className={`px-3 mb-6 sm:mb-8 flex items-center ${
+            collapsed ? "justify-center" : "gap-3"
+          }`}
+        >
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #5B6BF5 0%, #9B6FE8 100%)",
+              boxShadow: "0 4px 14px rgba(91, 107, 245, 0.40)",
+            }}
+          >
+            <Zap className="w-4 h-4 text-white" strokeWidth={2.5} fill="white" />
           </div>
+
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-sm sm:text-base font-bold text-sidebar-primary leading-tight">Axiora</span>
-              <span className="text-[8px] sm:text-[9px] text-sidebar-muted uppercase tracking-widest font-semibold">Achats Publics</span>
+              <span
+                className="text-[15px] font-bold leading-tight"
+                style={{
+                  background: "linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.70) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                Axiora
+              </span>
+              <span
+                className="text-[9px] uppercase tracking-[0.2em] font-semibold"
+                style={{ color: "hsl(234 12% 42%)" }}
+              >
+                Achats Publics
+              </span>
             </div>
           )}
         </div>
 
+        {/* Pilotage */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-muted text-[9px] sm:text-[10px] uppercase tracking-[0.18em] font-bold px-3 sm:px-4">
+          <SidebarGroupLabel
+            className="text-[9px] uppercase tracking-[0.2em] font-bold px-3 mb-1"
+            style={{ color: "hsl(234 12% 36%)" }}
+          >
             Pilotage
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNav.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/"}
-                      className="gap-2 sm:gap-3 text-sidebar-foreground hover:bg-sidebar-accent/70 transition-colors rounded-md px-2 sm:px-3 py-1.5 sm:py-2"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm"
-                    >
-                      <item.icon className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
-                      {!collapsed && <span className="text-[11px] sm:text-[13px] truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <NavItems
+              items={mainNav}
+              indexOffset={0}
+              collapsed={collapsed}
+              isActive={isActive}
+            />
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-muted text-[9px] sm:text-[10px] uppercase tracking-[0.18em] font-bold px-3 sm:px-4">
+        {/* Système */}
+        <SidebarGroup className="mt-2">
+          <SidebarGroupLabel
+            className="text-[9px] uppercase tracking-[0.2em] font-bold px-3 mb-1"
+            style={{ color: "hsl(234 12% 36%)" }}
+          >
             Système
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {adminNav.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="gap-2 sm:gap-3 text-sidebar-foreground hover:bg-sidebar-accent/70 transition-colors rounded-md px-2 sm:px-3 py-1.5 sm:py-2"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm"
-                    >
-                      <item.icon className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
-                      {!collapsed && <span className="text-[11px] sm:text-[13px] truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <NavItems
+              items={adminNav}
+              indexOffset={mainNav.length}
+              collapsed={collapsed}
+              isActive={isActive}
+            />
           </SidebarGroupContent>
         </SidebarGroup>
+
       </SidebarContent>
 
-      <SidebarFooter className="px-2 sm:px-4 pb-4 sm:pb-6 pt-3 sm:pt-4 border-t border-sidebar-border">
+      <SidebarFooter
+        className="px-3 pb-5 pt-3 border-t"
+        style={{ borderColor: "hsl(234 35% 13%)" }}
+      >
         {!collapsed && (
-          <div className="space-y-1.5 sm:space-y-2">
-            <p className="text-[9px] sm:text-[10px] text-sidebar-muted uppercase tracking-wider font-semibold leading-tight">
-              Conforme RGPD · SecNumCloud
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{
+                  background: "hsl(142 71% 50%)",
+                  boxShadow: "0 0 5px hsl(142 71% 50% / 0.6)",
+                }}
+              />
+              <p
+                className="text-[9px] uppercase tracking-[0.15em] font-semibold"
+                style={{ color: "hsl(234 12% 38%)" }}
+              >
+                RGPD · SecNumCloud
+              </p>
+            </div>
+            <p className="text-[9px]" style={{ color: "hsl(234 12% 30%)" }}>
+              © 2026 Axiora · v1.1
             </p>
-            <p className="text-[8px] sm:text-[9px] text-sidebar-muted/70">© 2026 Axiora · v1.1</p>
           </div>
         )}
       </SidebarFooter>

@@ -15,8 +15,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "-apple-system", "sans-serif"],
+        display: ["Plus Jakarta Sans", "sans-serif"],
+        mono: ["JetBrains Mono", "Courier New", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

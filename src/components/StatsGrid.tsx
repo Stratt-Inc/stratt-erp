@@ -1,5 +1,5 @@
-import { LucideIcon } from "lucide-react";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { LucideIcon, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface StatsGridProps {
   stats: Array<{
@@ -15,50 +15,77 @@ interface StatsGridProps {
   columns?: "2" | "3" | "4" | "5";
 }
 
-export function StatsGrid({ stats, columns = "4" }: StatsGridProps) {
-  const colsClass = {
-    "2": "grid-cols-1 md:grid-cols-2",
-    "3": "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-    "4": "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
-    "5": "grid-cols-2 lg:grid-cols-5",
-  }[columns];
+const colsMap = {
+  "2": "grid-cols-1 md:grid-cols-2",
+  "3": "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  "4": "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
+  "5": "grid-cols-2 lg:grid-cols-5",
+};
 
+export function StatsGrid({ stats, columns = "4" }: StatsGridProps) {
   return (
-    <div className={`grid ${colsClass} gap-4 animate-fade-in`}>
+    <div className={`grid ${colsMap[columns]} gap-3 sm:gap-4`}>
       {stats.map((stat, index) => (
-        <div
+        <motion.div
           key={stat.label}
-          className="stat-card group"
-          style={{ animationDelay: `${index * 50}ms` }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.07, ease: "easeOut" }}
+          whileHover={{ y: -1, transition: { duration: 0.15, ease: "easeOut" } }}
+          className="stat-card group cursor-default"
         >
           <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm transition-transform group-hover:scale-110">
-              <stat.icon className={`w-5 h-5 ${stat.alert ? "text-warning" : "text-primary"}`} />
+            <div
+              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105"
+              style={{
+                background: stat.alert
+                  ? "hsl(38 92% 50% / 0.10)"
+                  : "hsl(var(--primary) / 0.09)",
+                border: `1px solid ${stat.alert ? "hsl(38 92% 50% / 0.20)" : "hsl(var(--primary) / 0.18)"}`,
+              }}
+            >
+              <stat.icon
+                className="w-4 h-4"
+                style={{
+                  color: stat.alert ? "hsl(38 92% 50%)" : "hsl(var(--primary))",
+                }}
+                strokeWidth={2}
+              />
             </div>
+
             {stat.trend && (
               <span
-                className={`text-[11px] font-bold flex items-center gap-1 ${
-                  stat.trend.positive ? "text-accent" : "text-destructive"
-                }`}
+                className="text-[11px] font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md"
+                style={{
+                  color: stat.trend.positive
+                    ? "hsl(142 71% 40%)"
+                    : "hsl(var(--destructive))",
+                  background: stat.trend.positive
+                    ? "hsl(142 71% 45% / 0.10)"
+                    : "hsl(var(--destructive) / 0.09)",
+                }}
               >
                 {stat.trend.positive ? (
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <ArrowUpRight className="w-3 h-3" />
                 ) : (
-                  <ArrowDownRight className="w-3.5 h-3.5" />
+                  <ArrowDownRight className="w-3 h-3" />
                 )}
                 {stat.trend.value}
               </span>
             )}
           </div>
+
           <div className="metric-block">
-            <span className={`metric-value ${stat.alert ? "text-warning" : ""}`}>
+            <span
+              className="metric-value"
+              style={stat.alert ? { color: "hsl(38 92% 50%)" } : undefined}
+            >
               {stat.value}
             </span>
-            <span className="metric-label mt-1">{stat.label}</span>
+            <span className="metric-label mt-0.5">{stat.label}</span>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );
 }
-

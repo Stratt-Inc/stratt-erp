@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,121 +6,141 @@
 
 @layer base {
   :root {
-    /* Axiora core palette - MODIFIEZ CES COULEURS POUR CHANGER TOUTE LA PALETTE */
-    --palette-primary: 168 16% 41%;      /* #5F7470 - deepTeal */
-    --palette-secondary: 180 9% 56%;     /* #889696 - coolSteel */
-    --palette-tertiary: 80 8% 72%;       /* #B8BDB5 - ashGrey */
-    --palette-accent: 72 10% 82%;        /* #D2D4C8 - dustGrey */
-    --palette-accent-soft: 72 15% 88%;   /* #E0E2DB - softLinen */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       AXIORA DESIGN SYSTEM — LIGHT MODE
+       Electric Indigo · Violet · Cyan
+       Inspired by Linear, Vercel, Stripe, Raycast
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-    --background: 72 15% 98%;
-    --foreground: var(--palette-primary);
+    --background: 228 50% 99%;          /* #FAFAFD */
+    --foreground: 234 45% 10%;          /* #0D0F1B */
 
-    --card: 0 0% 100%;
-    --card-foreground: var(--palette-primary);
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 234 45% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: var(--palette-primary);
+    --popover-foreground: 234 45% 10%;
 
-    --primary: var(--palette-primary);
+    --primary: 234 88% 66%;             /* #5B6BF5 — electric indigo */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 72 10% 90%;
-    --secondary-foreground: var(--palette-primary);
+    --secondary: 228 35% 93%;           /* #E8EBF6 — light indigo tint */
+    --secondary-foreground: 234 45% 14%;
 
-    --accent: var(--palette-secondary);
-    --accent-foreground: 0 0% 100%;
+    --accent: 228 40% 96%;              /* #F0F2FA — very light indigo */
+    --accent-foreground: 234 45% 14%;
 
-    --muted: 72 10% 95%;
-    --muted-foreground: var(--palette-secondary);
+    --muted: 228 40% 96%;
+    --muted-foreground: 232 14% 52%;    /* #7B7C94 */
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --success: var(--palette-primary);
+
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 35 90% 55%;
+
+    --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --alert: 0 70% 50%;
+
+    --alert: 0 72% 51%;
     --alert-foreground: 0 0% 100%;
-    --info: var(--palette-secondary);
+
+    --info: 217 91% 60%;                /* #3B82F6 */
     --info-foreground: 0 0% 100%;
 
-    --border: var(--palette-accent);
-    --input: var(--palette-accent);
-    --ring: var(--palette-primary);
+    --border: 228 30% 91%;              /* #E4E8F5 */
+    --input: 228 30% 91%;
+    --ring: 234 88% 66%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: var(--palette-primary);
-    --sidebar-foreground: 72 15% 95%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: var(--palette-primary);
-    --sidebar-accent: var(--palette-secondary);
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 168 20% 35%;
-    --sidebar-ring: var(--palette-tertiary);
-    --sidebar-muted: 180 9% 70%;
+    /* Brand custom tokens */
+    --brand-violet: 267 73% 67%;        /* #9B6FE8 */
+    --brand-cyan: 189 96% 40%;          /* #04B5D3 */
+    --brand-indigo: 234 88% 66%;        /* #5B6BF5 */
 
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SIDEBAR — Always dark (Linear/Vercel pattern)
+       Same in light and dark mode for strong contrast
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    --sidebar-background: 234 42% 7%;           /* #08091B */
+    --sidebar-foreground: 234 16% 60%;          /* #8A8DB5 */
+    --sidebar-primary: 234 88% 70%;             /* brightened indigo for dark bg */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 234 38% 14%;              /* #101330 active item bg */
+    --sidebar-accent-foreground: 234 20% 93%;   /* near-white */
+    --sidebar-border: 234 35% 13%;              /* #0F1128 */
+    --sidebar-ring: 234 88% 66%;
+    --sidebar-muted: 234 12% 42%;               /* #636285 */
+
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
-    --chart-1: var(--palette-primary);
-    --chart-2: var(--palette-secondary);
-    --chart-3: var(--palette-tertiary);
-    --chart-4: var(--palette-accent);
-    --chart-5: var(--palette-accent-soft);
+    --chart-1: 234 88% 66%;
+    --chart-2: 267 73% 67%;
+    --chart-3: 189 96% 40%;
+    --chart-4: 217 91% 60%;
+    --chart-5: 258 89% 75%;
 
-    --seuil-ok: var(--palette-primary);
-    --seuil-attention: var(--palette-secondary);
-    --seuil-alerte: 0 70% 50%;
+    --seuil-ok: 142 71% 45%;
+    --seuil-attention: 38 92% 50%;
+    --seuil-alerte: 0 72% 51%;
   }
 
   .dark {
-    --background: 168 20% 15%;
-    --foreground: 72 15% 88%;
+    --background: 234 35% 6%;           /* #07091A */
+    --foreground: 234 20% 90%;          /* #E3E5F2 */
 
-    --card: 168 18% 20%;
-    --card-foreground: 72 15% 88%;
+    --card: 234 28% 9%;                 /* #0C0E1C */
+    --card-foreground: 234 20% 90%;
 
-    --popover: 168 18% 20%;
-    --popover-foreground: 72 15% 88%;
+    --popover: 234 28% 11%;
+    --popover-foreground: 234 20% 90%;
 
-    --primary: var(--palette-accent-soft);
-    --primary-foreground: 168 20% 15%;
+    --primary: 234 88% 68%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 168 15% 25%;
-    --secondary-foreground: 72 15% 88%;
+    --secondary: 234 25% 16%;           /* #191C2F */
+    --secondary-foreground: 234 20% 85%;
 
-    --accent: var(--palette-secondary);
-    --accent-foreground: 168 20% 15%;
+    --accent: 234 28% 13%;              /* #121527 */
+    --accent-foreground: 234 20% 85%;
 
-    --muted: 168 12% 22%;
-    --muted-foreground: 80 8% 65%;
+    --muted: 234 28% 13%;
+    --muted-foreground: 234 12% 52%;    /* #767892 */
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
-    --success: var(--palette-secondary);
-    --success-foreground: 168 20% 15%;
-    --warning: 35 90% 55%;
+
+    --success: 142 71% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 55%;
     --warning-foreground: 0 0% 100%;
-    --alert: 0 70% 50%;
+
+    --alert: 0 72% 55%;
     --alert-foreground: 0 0% 100%;
-    --info: var(--palette-tertiary);
-    --info-foreground: 168 20% 15%;
 
-    --border: 168 15% 30%;
-    --input: 168 15% 30%;
-    --ring: var(--palette-secondary);
+    --info: 217 91% 65%;
+    --info-foreground: 0 0% 100%;
 
-    --sidebar-background: 168 20% 12%;
-    --sidebar-foreground: 72 10% 75%;
-    --sidebar-primary: var(--palette-accent-soft);
-    --sidebar-primary-foreground: 168 20% 12%;
-    --sidebar-accent: 168 18% 20%;
-    --sidebar-accent-foreground: 72 15% 88%;
-    --sidebar-border: 168 15% 25%;
-    --sidebar-ring: var(--palette-secondary);
-    --sidebar-muted: 80 8% 60%;
+    --border: 234 25% 17%;              /* #191C2E */
+    --input: 234 25% 17%;
+    --ring: 234 88% 66%;
+
+    --brand-violet: 267 73% 67%;
+    --brand-cyan: 189 96% 45%;
+    --brand-indigo: 234 88% 68%;
+
+    --sidebar-background: 234 42% 5%;           /* #060814 */
+    --sidebar-foreground: 234 14% 58%;
+    --sidebar-primary: 234 88% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 234 38% 12%;
+    --sidebar-accent-foreground: 234 20% 92%;
+    --sidebar-border: 234 35% 11%;
+    --sidebar-ring: 234 88% 66%;
+    --sidebar-muted: 234 12% 40%;
   }
 }
 
@@ -138,40 +158,37 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* Typographie moderne hiérarchisée */
   h1 {
-    @apply text-3xl font-bold tracking-tight text-foreground;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    @apply text-3xl font-bold text-foreground;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 
   h2 {
     @apply text-xl font-semibold text-foreground;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.018em;
     line-height: 1.3;
   }
 
   h3 {
-    @apply text-lg font-semibold text-foreground;
-    letter-spacing: -0.01em;
+    @apply text-base font-semibold text-foreground;
+    letter-spacing: -0.012em;
     line-height: 1.4;
   }
 
   h4 {
-    @apply text-base font-semibold text-foreground;
+    @apply text-sm font-semibold text-foreground;
   }
 
-  /* Labels et petits textes */
   .text-label {
     @apply text-[11px] font-semibold uppercase tracking-widest text-muted-foreground;
     letter-spacing: 0.08em;
   }
 
-  /* Montants en monospace */
   .text-amount {
-    @apply tabular-nums font-medium;
+    @apply tabular-nums font-semibold;
     font-family: var(--font-mono);
-    font-size: 0.95em;
+    font-size: 0.93em;
   }
 
   .text-code {
@@ -179,18 +196,17 @@
     font-family: var(--font-mono);
   }
 
-  /* Scrollbar moderne */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-muted/30;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/20 rounded-full;
+    @apply bg-border rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -199,77 +215,100 @@
 }
 
 @layer components {
-  /* ═══ Cards modernes avec glassmorphism subtil ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     STAT CARDS — Premium hover effect
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .stat-card {
-    @apply bg-card/95 backdrop-blur-sm border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5;
+    @apply bg-card border border-border rounded-xl p-5 transition-all duration-200;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.02);
+  }
+
+  .stat-card:hover {
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.12),
+      0 4px 20px hsl(var(--primary) / 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   .kpi-card {
-    @apply bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300;
+    @apply bg-card border border-border rounded-xl p-6 transition-all duration-200;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   .alert-card {
-    @apply bg-card/95 backdrop-blur-sm border-2 border-l-4 border-destructive rounded-xl p-5 shadow-sm;
+    @apply bg-card border-2 border-l-4 border-destructive rounded-xl p-5;
   }
 
-  /* ═══ Labels modernes ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     LABELS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .section-label {
-    @apply text-[11px] font-bold uppercase tracking-widest text-muted-foreground;
-    letter-spacing: 0.1em;
+    @apply text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground;
   }
 
-  /* ═══ Badges redessinés ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     BADGES — Refined pill style
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .badge-ok {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full;
-    background: hsl(var(--primary) / 0.12);
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-full;
+    background: hsl(var(--primary) / 0.09);
     color: hsl(var(--primary));
-    border: 1.5px solid hsl(var(--primary) / 0.3);
-    box-shadow: 0 2px 8px hsl(var(--primary) / 0.15);
+    border: 1px solid hsl(var(--primary) / 0.22);
   }
 
   .badge-alerte {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full;
-    background: hsl(var(--destructive) / 0.12);
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-full;
+    background: hsl(var(--destructive) / 0.09);
     color: hsl(var(--destructive));
-    border: 1.5px solid hsl(var(--destructive) / 0.3);
-    box-shadow: 0 2px 8px hsl(var(--destructive) / 0.15);
+    border: 1px solid hsl(var(--destructive) / 0.22);
   }
 
-  .badge-conforme,
-  .badge-surveille,
+  .badge-conforme {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-full;
+    background: hsl(var(--success) / 0.10);
+    color: hsl(142 71% 38%);
+    border: 1px solid hsl(var(--success) / 0.22);
+  }
+
+  .badge-surveille {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-full;
+    background: hsl(var(--warning) / 0.09);
+    color: hsl(var(--warning));
+    border: 1px solid hsl(var(--warning) / 0.22);
+  }
+
   .badge-risque,
-  .badge-info {
-    @apply badge-ok;
-  }
-
+  .badge-info,
   .badge-fractionnement {
     @apply badge-alerte;
   }
 
-  /* ═══ Tables modernes ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     DATA TABLES
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .data-table {
     @apply w-full text-sm border-collapse;
   }
 
   .data-table thead {
-    @apply bg-muted/50 backdrop-blur-sm;
+    @apply bg-muted/60;
   }
 
   .data-table th {
-    @apply text-left text-[11px] font-bold uppercase tracking-widest text-muted-foreground px-4 py-4 border-b-2 border-border;
-    letter-spacing: 0.08em;
+    @apply text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground px-4 py-3 border-b border-border;
   }
 
   .data-table td {
-    @apply px-4 py-4 border-b border-border/50 text-[13px];
+    @apply px-4 py-3.5 border-b border-border/60 text-[13px];
   }
 
   .data-table tbody tr {
-    @apply transition-colors duration-200;
+    @apply transition-colors duration-150;
   }
 
   .data-table tbody tr:hover {
-    @apply bg-muted/30;
+    @apply bg-muted/40;
   }
 
   .data-table .col-amount {
@@ -277,88 +316,125 @@
     font-family: var(--font-mono);
   }
 
-  /* ═══ Métriques optimisées ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     METRICS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .metric-block {
-    @apply flex flex-col gap-2;
+    @apply flex flex-col gap-1.5;
   }
 
   .metric-label {
-    @apply text-[11px] font-bold uppercase tracking-widest text-muted-foreground;
-    letter-spacing: 0.08em;
+    @apply text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground;
   }
 
   .metric-value {
-    @apply text-4xl font-bold text-foreground tabular-nums;
+    @apply text-3xl font-bold text-foreground tabular-nums;
     font-family: var(--font-mono);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
   }
 
   .metric-sub {
     @apply text-xs text-muted-foreground font-medium;
   }
 
-  /* ═══ Indicateurs visuels ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     THRESHOLD INDICATORS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .seuil-indicator {
-    @apply inline-block w-2.5 h-2.5 rounded-full mr-2 shadow-sm;
+    @apply inline-block w-2 h-2 rounded-full mr-1.5;
   }
 
   .seuil-ok {
-    background-color: hsl(var(--primary));
-    box-shadow: 0 0 8px hsl(var(--primary) / 0.4);
+    background-color: hsl(var(--success));
+    box-shadow: 0 0 6px hsl(var(--success) / 0.5);
   }
 
   .seuil-attention {
-    background-color: hsl(var(--muted-foreground));
-    box-shadow: 0 0 8px hsl(var(--muted-foreground) / 0.3);
+    background-color: hsl(var(--warning));
+    box-shadow: 0 0 6px hsl(var(--warning) / 0.4);
   }
 
   .seuil-alerte {
     background-color: hsl(var(--destructive));
-    box-shadow: 0 0 8px hsl(var(--destructive) / 0.4);
+    box-shadow: 0 0 6px hsl(var(--destructive) / 0.5);
   }
 
-  /* ═══ Divider moderne ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     GRADIENT TEXT
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand-violet)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, hsl(var(--brand-cyan)), hsl(var(--primary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     GLOW & DEPTH
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.25), 0 0 40px hsl(var(--primary) / 0.10);
+  }
+
+  .glass {
+    @apply bg-card/70 backdrop-blur-xl border border-border/60;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     DIVIDERS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .panel-divider {
     @apply h-px bg-gradient-to-r from-transparent via-border to-transparent my-4;
   }
 
-  /* ═══ Animations ═══ */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ANIMATIONS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.4s ease-out both;
   }
 
   .animate-slide-in {
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.35s ease-out both;
   }
 
-  /* Hide scrollbar but keep scrolling */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .skeleton {
+    background: linear-gradient(90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+    @apply rounded;
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     UTILITIES
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
