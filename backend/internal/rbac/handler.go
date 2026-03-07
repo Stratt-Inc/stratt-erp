@@ -2,7 +2,7 @@ package rbac
 
 import (
 	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/middleware"
+	"github.com/axiora/backend/internal/ctxutil"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -17,7 +17,7 @@ func NewHandler(svc *Service) *Handler {
 
 // GET /api/v1/roles
 func (h *Handler) ListRoles(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 	roles, err := h.svc.ListRoles(c.Context(), orgID)
 	if err != nil {
 		return c.Status(500).JSON(models.Err("failed to fetch roles"))
@@ -27,7 +27,7 @@ func (h *Handler) ListRoles(c *fiber.Ctx) error {
 
 // POST /api/v1/roles
 func (h *Handler) CreateRole(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 	var body struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
@@ -112,7 +112,7 @@ func (h *Handler) AssignPermission(c *fiber.Ctx) error {
 
 // POST /api/v1/users/:id/roles
 func (h *Handler) AssignRoleToUser(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 	targetUserID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(400).JSON(models.Err("invalid user ID"))

@@ -49,25 +49,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&models.OrganizationModule{},
 		// Audit
 		&models.AuditLog{},
-		// ERP — CRM
-		&models.Contact{},
-		&models.Lead{},
-		&models.Deal{},
-		&models.Activity{},
-		// ERP — Accounting
-		&models.Account{},
-		&models.Transaction{},
-		// ERP — Billing
-		&models.Invoice{},
-		&models.InvoiceItem{},
-		// ERP — Inventory
-		&models.Product{},
-		&models.StockMovement{},
-		// ERP — HR
-		&models.Employee{},
-		&models.LeaveRequest{},
-		// ERP — Procurement
-		&models.PurchaseOrder{},
-		&models.PurchaseOrderItem{},
+		// TODO: Add ERP module models when implemented
+		// (CRM, Accounting, Billing, Inventory, HR, Procurement)
 	)
 }

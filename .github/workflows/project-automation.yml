@@ -1,0 +1,530 @@
+name: Project — Status Automation
+
+on:
+  issues:
+    types: [opened, assigned, labeled, unlabeled, closed, reopened]
+  pull_request:
+    types: [opened, ready_for_review, review_requested, closed]
+  pull_request_review:
+    types: [submitted]
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  issues: read
+  pull-requests: read
+
+jobs:
+  # ── Transition: Issue opened (non assignée) → 📋 Backlog ───────────────────
+  issue-opened:
+    name: Issue opened → Backlog
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    steps:
+      - uses: actions/add-to-project@v1.0.2
+        id: add
+        with:
+          project-url: https://github.com/users/makcimerrr/projects/11
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+      - name: Set Status → Backlog
+        if: steps.add.outputs.itemId != ''
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ITEM_ID: ${{ steps.add.outputs.itemId }}
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "PVT_kwHOAine984BRDZ8"
+                itemId: "'"$ITEM_ID"'"
+                fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                value: { singleSelectOptionId: "91196f9c" }
+              }) { projectV2Item { id } }
+            }'
+
+  # ── Transition: Issue assignée → 🎯 Todo ──────────────────────────────────
+  issue-assigned:
+    name: Issue assigned → Todo
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'assigned'
+    steps:
+      - name: Find project item and set Todo
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          # Find the item ID in the project
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              node(id: "'"$ISSUE_NODE_ID"'") {
+                ... on Issue {
+                  projectItems(first: 5) {
+                    nodes {
+                      id
+                      project { id }
+                    }
+                  }
+                }
+              }
+            }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+          if [ -n "$ITEM_ID" ]; then
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "47463c03" }
+                }) { projectV2Item { id } }
+              }'
+            echo "✅ Set Status → 🎯 Todo for item $ITEM_ID"
+          fi
+
+  # ── Transition: Label "blocked" ajouté → 🚫 Blocked ──────────────────────
+  issue-blocked:
+    name: Issue labeled blocked → Blocked
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'blocked'
+    steps:
+      - name: Set Status → Blocked
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              node(id: "'"$ISSUE_NODE_ID"'") {
+                ... on Issue {
+                  projectItems(first: 5) {
+                    nodes { id project { id } }
+                  }
+                }
+              }
+            }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+          if [ -n "$ITEM_ID" ]; then
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "8042542d" }
+                }) { projectV2Item { id } }
+              }'
+            echo "✅ Set Status → 🚫 Blocked"
+          fi
+
+  # ── Transition: Label "blocked" retiré → ⚡ In Progress ──────────────────
+  issue-unblocked:
+    name: Issue unlabeled blocked → In Progress
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'issues' &&
+      github.event.action == 'unlabeled' &&
+      github.event.label.name == 'blocked'
+    steps:
+      - name: Set Status → In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              node(id: "'"$ISSUE_NODE_ID"'") {
+                ... on Issue {
+                  projectItems(first: 5) {
+                    nodes { id project { id } }
+                  }
+                }
+              }
+            }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+          if [ -n "$ITEM_ID" ]; then
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "0bc42303" }
+                }) { projectV2Item { id } }
+              }'
+            echo "✅ Set Status → ⚡ In Progress"
+          fi
+
+  # ── Transition: Issue fermée → ✅ Done ────────────────────────────────────
+  issue-closed:
+    name: Issue closed → Done
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'closed'
+    steps:
+      - name: Set Status → Done
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              node(id: "'"$ISSUE_NODE_ID"'") {
+                ... on Issue {
+                  projectItems(first: 5) {
+                    nodes { id project { id } }
+                  }
+                }
+              }
+            }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+          if [ -n "$ITEM_ID" ]; then
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "e3fe23de" }
+                }) { projectV2Item { id } }
+              }'
+            echo "✅ Set Status → ✅ Done"
+          fi
+
+  # ── Transition: Issue réouverte → ⚡ In Progress ──────────────────────────
+  issue-reopened:
+    name: Issue reopened → In Progress
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'reopened'
+    steps:
+      - name: Set Status → In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            query {
+              node(id: "'"$ISSUE_NODE_ID"'") {
+                ... on Issue {
+                  projectItems(first: 5) {
+                    nodes { id project { id } }
+                  }
+                }
+              }
+            }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+          if [ -n "$ITEM_ID" ]; then
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "0bc42303" }
+                }) { projectV2Item { id } }
+              }'
+            echo "✅ Set Status → ⚡ In Progress"
+          fi
+
+  # ── Transition: PR ouverte (draft) → ⚡ In Progress ──────────────────────
+  pr-opened-draft:
+    name: PR draft opened → In Progress
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'opened' &&
+      github.event.pull_request.draft == true
+    steps:
+      - name: Set linked issues → In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          # Get issues linked to this PR
+          ISSUES=$(gh api graphql -f query='
+            query {
+              node(id: "'"$PR_NODE_ID"'") {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 10) {
+                    nodes { id number }
+                  }
+                }
+              }
+            }' --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          for ISSUE_NODE_ID in $ISSUES; do
+            ITEM_ID=$(gh api graphql -f query='
+              query {
+                node(id: "'"$ISSUE_NODE_ID"'") {
+                  ... on Issue {
+                    projectItems(first: 5) {
+                      nodes { id project { id } }
+                    }
+                  }
+                }
+              }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+            if [ -n "$ITEM_ID" ]; then
+              gh api graphql -f query='
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "PVT_kwHOAine984BRDZ8"
+                    itemId: "'"$ITEM_ID"'"
+                    fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                    value: { singleSelectOptionId: "0bc42303" }
+                  }) { projectV2Item { id } }
+                }'
+              echo "✅ Set Status → ⚡ In Progress for issue $ISSUE_NODE_ID"
+            fi
+          done
+
+  # ── Transition: PR prête pour review → 👀 In Review ──────────────────────
+  pr-ready-for-review:
+    name: PR ready for review → In Review
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'ready_for_review' ||
+       github.event.action == 'review_requested' ||
+       (github.event.action == 'opened' && github.event.pull_request.draft == false))
+    steps:
+      - name: Set linked issues → In Review
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          ISSUES=$(gh api graphql -f query='
+            query {
+              node(id: "'"$PR_NODE_ID"'") {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 10) {
+                    nodes { id }
+                  }
+                }
+              }
+            }' --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          for ISSUE_NODE_ID in $ISSUES; do
+            ITEM_ID=$(gh api graphql -f query='
+              query {
+                node(id: "'"$ISSUE_NODE_ID"'") {
+                  ... on Issue {
+                    projectItems(first: 5) {
+                      nodes { id project { id } }
+                    }
+                  }
+                }
+              }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+            if [ -n "$ITEM_ID" ]; then
+              gh api graphql -f query='
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "PVT_kwHOAine984BRDZ8"
+                    itemId: "'"$ITEM_ID"'"
+                    fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                    value: { singleSelectOptionId: "443c322c" }
+                  }) { projectV2Item { id } }
+                }'
+              echo "✅ Set Status → 👀 In Review"
+            fi
+          done
+
+  # ── Transition: Review approuvée → 🧪 Testing ────────────────────────────
+  pr-review-approved:
+    name: PR review approved → Testing
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state == 'approved'
+    steps:
+      - name: Set linked issues → Testing
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          ISSUES=$(gh api graphql -f query='
+            query {
+              node(id: "'"$PR_NODE_ID"'") {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 10) {
+                    nodes { id }
+                  }
+                }
+              }
+            }' --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          for ISSUE_NODE_ID in $ISSUES; do
+            ITEM_ID=$(gh api graphql -f query='
+              query {
+                node(id: "'"$ISSUE_NODE_ID"'") {
+                  ... on Issue {
+                    projectItems(first: 5) {
+                      nodes { id project { id } }
+                    }
+                  }
+                }
+              }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+            if [ -n "$ITEM_ID" ]; then
+              gh api graphql -f query='
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "PVT_kwHOAine984BRDZ8"
+                    itemId: "'"$ITEM_ID"'"
+                    fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                    value: { singleSelectOptionId: "4193cc86" }
+                  }) { projectV2Item { id } }
+                }'
+              echo "✅ Set Status → 🧪 Testing"
+            fi
+          done
+
+  # ── Transition: PR mergée → ✅ Done ──────────────────────────────────────
+  pr-merged:
+    name: PR merged → Done
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true
+    steps:
+      - name: Set linked issues → Done
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          ISSUES=$(gh api graphql -f query='
+            query {
+              node(id: "'"$PR_NODE_ID"'") {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 10) {
+                    nodes { id }
+                  }
+                }
+              }
+            }' --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          for ISSUE_NODE_ID in $ISSUES; do
+            ITEM_ID=$(gh api graphql -f query='
+              query {
+                node(id: "'"$ISSUE_NODE_ID"'") {
+                  ... on Issue {
+                    projectItems(first: 5) {
+                      nodes { id project { id } }
+                    }
+                  }
+                }
+              }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+            if [ -n "$ITEM_ID" ]; then
+              gh api graphql -f query='
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "PVT_kwHOAine984BRDZ8"
+                    itemId: "'"$ITEM_ID"'"
+                    fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                    value: { singleSelectOptionId: "e3fe23de" }
+                  }) { projectV2Item { id } }
+                }'
+              echo "✅ Set Status → ✅ Done"
+            fi
+          done
+
+  # ── Transition: PR fermée sans merge → 🎯 Todo (retour) ──────────────────
+  pr-closed-no-merge:
+    name: PR closed without merge → Todo
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == false
+    steps:
+      - name: Set linked issues → Todo
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          ISSUES=$(gh api graphql -f query='
+            query {
+              node(id: "'"$PR_NODE_ID"'") {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 10) {
+                    nodes { id }
+                  }
+                }
+              }
+            }' --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          for ISSUE_NODE_ID in $ISSUES; do
+            ITEM_ID=$(gh api graphql -f query='
+              query {
+                node(id: "'"$ISSUE_NODE_ID"'") {
+                  ... on Issue {
+                    projectItems(first: 5) {
+                      nodes { id project { id } }
+                    }
+                  }
+                }
+              }' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAine984BRDZ8") | .id')
+
+            if [ -n "$ITEM_ID" ]; then
+              gh api graphql -f query='
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "PVT_kwHOAine984BRDZ8"
+                    itemId: "'"$ITEM_ID"'"
+                    fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                    value: { singleSelectOptionId: "47463c03" }
+                  }) { projectV2Item { id } }
+                }'
+              echo "↩️  Set Status → 🎯 Todo (PR closed without merge)"
+            fi
+          done
+
+  # ── Transition: Tag v*.*.* pushé → 🚀 Shipped ────────────────────────────
+  tag-shipped:
+    name: Tag pushed → Shipped (Done items)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Set Done items → Shipped
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          # Fetch all Done items from the project
+          DONE_ITEMS=$(gh api graphql -f query='
+            query {
+              node(id: "PVT_kwHOAine984BRDZ8") {
+                ... on ProjectV2 {
+                  items(first: 100) {
+                    nodes {
+                      id
+                      fieldValueByName(name: "Status") {
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }' --jq '.data.node.items.nodes[] | select(.fieldValueByName.name == "✅ Done") | .id')
+
+          COUNT=0
+          for ITEM_ID in $DONE_ITEMS; do
+            gh api graphql -f query='
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "PVT_kwHOAine984BRDZ8"
+                  itemId: "'"$ITEM_ID"'"
+                  fieldId: "PVTSSF_lAHOAine984BRDZ8zg-_qmc"
+                  value: { singleSelectOptionId: "0526f82b" }
+                }) { projectV2Item { id } }
+              }' > /dev/null
+            COUNT=$((COUNT + 1))
+          done
+          echo "🚀 Shipped $COUNT items on release ${{ github.ref_name }}"
