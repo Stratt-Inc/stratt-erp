@@ -6,74 +6,89 @@
 
 | Outil | Version | Usage |
 |-------|---------|-------|
-| Node.js | ≥ 20 LTS | Runtime JavaScript |
-| pnpm | ≥ 9 | Package manager (workspace) |
-| Turborepo | latest | Monorepo build orchestration |
+| Node.js | ≥ 20 LTS | Runtime JavaScript (frontend) |
+| npm | ≥ 10 | Package manager frontend |
 | Go | 1.23 | Backend runtime |
-| golangci-lint | 1.57 | Linter Go |
-| ESLint | 9.x | Linter TypeScript |
-| Prettier | 3.x | Formatter TypeScript/CSS |
-| Husky | 9.x | Git hooks |
-| lint-staged | 15.x | Run linters on staged files |
-| Vitest | 2.x | Tests unitaires TypeScript |
-| Playwright | 1.x | Tests E2E |
+| Fiber v2 | 2.52 | Framework HTTP Go |
+| GORM | 1.25 | ORM Go (PostgreSQL) |
+| Next.js | 15 | Framework React (App Router) |
+| TanStack Query | 5.x | Data fetching / caching |
+| Zustand | 5.x | State management |
+| Tailwind CSS | 3.4 | Styling utilitaire |
+| Radix UI | latest | Composants accessibles (via ShadCN) |
+| Docker | latest | Conteneurisation |
+| Docker Compose | latest | Orchestration locale |
 
 ---
 
 ## Architecture Decision Records (ADR)
 
-### ADR-001 — Go pour le backend
+### ADR-001 — Go + Fiber v2 pour le backend
 
-**Décision** : Go (Gin framework) plutôt que Node.js ou Python.
+**Décision** : Go avec Fiber v2 plutôt que Gin, Node.js ou Python.
 
 **Justification** :
-- Performance native : P99 < 20ms sans optimisation pour les endpoints CRUD
-- Goroutines : gestion native de la concurrence pour les jobs d'import (milliers de lignes)
-- Typage fort : refactoring sûr, aucun runtime error sur les types
-- Binaire unique : déploiement simplifié (un seul container léger, ~10 MB)
-- Écosystème mature pour API REST (Gin, GORM, Asynq)
+- Performance native : P99 < 20ms pour les endpoints CRUD
+- Fiber : API express-like, familière, excellent middleware ecosystem
+- Goroutines : gestion native de la concurrence pour les workers Asynq
+- Typage fort : refactoring sûr, pas d'erreur runtime sur les types
+- Binaire unique : déploiement simplifié (~10 MB)
+- GORM : ORM mature avec AutoMigrate, relations, soft deletes
 
-**Alternative rejetée** : Node.js/Fastify (performances moindres sous charge), Python (trop lent pour le traitement de données en volume)
+**Alternative rejetée** : Gin (API moins ergonomique), Node.js/Fastify (performance sous charge), Python (trop lent)
 
 ---
 
-### ADR-002 — PostgreSQL avec RLS pour le multi-tenant
+### ADR-002 — Isolation multi-tenant par tenant_id
 
-**Décision** : Une seule base de données avec Row-Level Security (RLS) plutôt que DB-per-tenant ou schema-per-tenant.
+**Décision** : Toutes les tables métier contiennent `tenant_id UUID` filtrés dans les handlers.
 
 **Justification** :
-- Simplicité opérationnelle : une seule instance à gérer
-- RLS natif PostgreSQL : isolation garantie au niveau base de données
-- Coût : pas de multiplication des connexions DB
+- Simplicité opérationnelle : une seule base de données
+- Pas de complexité RLS à gérer côté DB
+- Filtrage applicatif via GORM : `db.Where("tenant_id = ?", orgID)`
 - Migrations : une seule migration à appliquer
+- Flexibilité : facile à migrer vers RLS PostgreSQL si besoin
 
-**Contrainte** : `SET app.current_org = '<uuid>'` doit être appelé en début de chaque transaction.
+**Contrainte** : chaque handler de module **doit** filtrer par `tenant_id` — vérifié en code review.
 
 ---
 
-### ADR-003 — Claude Anthropic pour les agents IA
+### ADR-003 — JWT propre plutôt que solution externe
 
-**Décision** : Claude (Anthropic) plutôt que GPT-4o, Mistral ou solution locale.
+**Décision** : Implémentation JWT maison (golang-jwt) plutôt que Stack Auth, Auth0 ou Supabase Auth.
 
 **Justification** :
-- Qualité de raisonnement sur des tâches complexes (analyse juridique, rédaction institutionnelle)
-- Contexte long (200k tokens) : nomenclature complète + dépenses dans un seul appel
-- Fiabilité : SLA enterprise, GDPR compliant (data processing agreement disponible)
-- API stable, SDK Go + TypeScript
-
-**Contrainte** : anonymisation des données avant injection dans les prompts.
+- Contrôle total sur le flux d'authentification
+- Pas de dépendance externe pour le login/signup
+- Access token (15 min) + refresh token (30 jours) en DB
+- Rotation de refresh token intégrée
+- Middleware Fiber personnalisé
 
 ---
 
 ### ADR-004 — Next.js 15 avec App Router
 
-**Décision** : Next.js 15 App Router + React Server Components (RSC).
+**Décision** : Next.js 15 App Router + Zustand + TanStack Query.
 
 **Justification** :
-- RSC : réduction du bundle JS côté client, amélioration des performances perçues
-- SSR : SEO pour les pages publiques (landing page, documentation)
-- Streaming : chargement progressif des données lourdes (cartographie, exports)
-- Cohérence : même framework pour web et futur mobile (Expo Router)
+- App Router : layouts imbriqués, route groups `(auth)` et `(app)`
+- Zustand : store léger et persisté (auth state, current org)
+- TanStack Query : cache, revalidation, optimistic updates
+- Radix UI : composants accessibles, personnalisables via Tailwind
+- Pas de SSR complexe nécessaire : SPA-like avec fetch côté client
+
+---
+
+### ADR-005 — Modules ERP isolés
+
+**Décision** : Chaque module ERP dans `backend/modules/<name>/` avec models, handler, routes.
+
+**Justification** :
+- Isolation : un module ne dépend pas d'un autre
+- Activable/désactivable par organisation via la table `organization_modules`
+- Ajout d'un nouveau module = un nouveau package Go + routes dans `main.go`
+- Chaque module gère ses propres entités et ses propres handlers
 
 ---
 
@@ -83,14 +98,28 @@
 
 | Couche | Type | Cible |
 |--------|------|-------|
-| Domain (Go) | Unit | ≥ 90% |
-| Use Cases (Go) | Unit + Integration | ≥ 80% |
+| Services (Go) | Unit | ≥ 80% |
 | Handlers (Go) | Integration | ≥ 70% |
+| Middleware (Go) | Unit | ≥ 90% |
 | Components (React) | Unit | ≥ 70% |
-| Agents IA | Unit (mocked) | ≥ 80% |
-| E2E | Playwright | 5 parcours clés |
+| Store (Zustand) | Unit | ≥ 80% |
+| E2E | Playwright | parcours clés |
 
 ### Interdictions formelles
+
+```go
+// ❌ INTERDIT : panic en dehors de l'init
+panic("something went wrong")
+
+// ❌ INTERDIT : ignorer les erreurs
+result, _ := someOperation()
+
+// ❌ INTERDIT : requêtes sans tenant_id dans les modules
+db.Find(&contacts) // manque .Where("tenant_id = ?", orgID)
+
+// ❌ INTERDIT : SQL brut non paramétré
+db.Exec("SELECT * FROM users WHERE id = " + userID)
+```
 
 ```typescript
 // ❌ INTERDIT : any implicite ou explicite
@@ -103,13 +132,7 @@ const user = getUser()!;
 console.log("debug", data);
 
 // ❌ INTERDIT : secrets en dur
-const API_KEY = "sk-ant-api03-...";
-
-// ❌ INTERDIT : requêtes SQL manuelles (utiliser GORM)
-db.Exec("SELECT * FROM users WHERE org_id = " + orgId)
-
-// ❌ INTERDIT : ignorer les erreurs Go
-result, _ := someOperation()
+const API_KEY = "sk-...";
 ```
 
 ---
@@ -118,19 +141,18 @@ result, _ := someOperation()
 
 ### Frontend
 
-- Images : `next/image` obligatoire (WebP, lazy loading)
-- Fonts : `next/font` avec `display: swap`
-- Code splitting : `dynamic()` pour les composants lourds (Recharts, PDFViewer)
-- React Query : `staleTime: 60_000` pour les données statiques
-- Skeleton loaders : obligatoires sur tous les appels API
+- Code splitting : `dynamic()` pour les composants lourds
+- TanStack Query : `staleTime` configuré selon la fréquence de mise à jour des données
+- Client API typé : `lib/api.ts` avec gestion d'erreurs centralisée
+- Zustand persist : state auth/org persisté en localStorage
 
 ### Backend (Go)
 
-- Pagination obligatoire sur toutes les listes (max 100 items/page)
-- Index PostgreSQL : sur `org_id`, `created_at`, colonnes filtrées
-- Connexions DB : pool configuré (max 25 connexions)
-- Timeouts : 30s max pour les handlers HTTP, 5min pour les jobs workers
-- `EXPLAIN ANALYZE` sur toutes les requêtes complexes avant merge
+- Pagination obligatoire sur toutes les listes
+- Index PostgreSQL : sur `tenant_id`, colonnes filtrées, clés étrangères
+- Pool de connexions DB configuré via GORM
+- Timeouts : 30s max pour les handlers HTTP
+- Workers Asynq : retry avec backoff exponentiel
 
 ---
 
@@ -138,48 +160,30 @@ result, _ := someOperation()
 
 Avant chaque merge de feature :
 
-- [ ] Aucune variable d'environnement non validée utilisée
-- [ ] Tous les inputs utilisateur validés (Zod / Go validator)
-- [ ] Requêtes DB paramétrées (jamais de string concatenation)
-- [ ] Headers de sécurité présents (CSP, HSTS, X-Frame-Options)
-- [ ] Authentification vérifiée sur TOUS les endpoints protégés
-- [ ] RLS activé sur toutes les nouvelles tables
-- [ ] Aucune donnée PII dans les logs
-- [ ] Fichiers uploadés : type MIME validé, taille limitée (10 MB)
-- [ ] Dépendances auditées (`pnpm audit`, `go mod verify`)
+- [ ] Tous les inputs utilisateur validés côté handler
+- [ ] Requêtes DB paramétrées (GORM, jamais de string concatenation)
+- [ ] CORS configuré pour `FRONTEND_URL` uniquement
+- [ ] Authentification vérifiée sur tous les endpoints protégés
+- [ ] `tenant_id` filtré sur toutes les requêtes modules
+- [ ] Aucune donnée sensible dans les logs
+- [ ] Fichiers uploadés : type MIME validé, taille limitée
+- [ ] Variables d'environnement : pas de secret en dur
 
 ---
 
-## Monitoring & Observabilité
+## Variables d'environnement
 
-### Logs (structurés JSON)
-
-```json
-{
-  "level": "info",
-  "timestamp": "2026-03-06T10:00:00Z",
-  "service": "api",
-  "org_id": "uuid",
-  "user_id": "uuid",
-  "trace_id": "uuid",
-  "action": "marche.create",
-  "duration_ms": 45,
-  "status": 201
-}
-```
-
-- **Pas de PII dans les logs** (emails, noms → remplacés par des IDs)
-- **Niveaux** : `debug` (dev uniquement), `info`, `warn`, `error`
-
-### Métriques Prometheus
-
-- `http_request_duration_seconds` (histogram par endpoint)
-- `ai_classification_confidence_avg` (qualité des agents)
-- `import_rows_processed_total` (volumes traités)
-- `active_organisations` (usage SaaS)
-
-### Alertes Sentry
-
-- Error rate > 1% sur 5 minutes → alerte Slack
-- P99 latency > 2s → alerte Slack
-- Worker job failure rate > 5% → alerte PagerDuty
+| Variable | Requis | Description |
+|----------|--------|-------------|
+| `DATABASE_URL` | ✅ | URL de connexion PostgreSQL |
+| `JWT_SECRET` | ✅ | Clé secrète pour signer les JWT |
+| `PORT` | — | Port API (défaut : 8080) |
+| `APP_ENV` | — | Environnement (défaut : development) |
+| `REDIS_URL` | — | URL Redis (défaut : redis://localhost:6379) |
+| `MEILISEARCH_URL` | — | URL Meilisearch (défaut : http://localhost:7700) |
+| `S3_ENDPOINT` | — | Endpoint MinIO/S3 (défaut : http://localhost:9000) |
+| `S3_ACCESS_KEY` | — | Clé d'accès S3 |
+| `S3_SECRET_KEY` | — | Clé secrète S3 |
+| `SMTP_HOST` | — | Serveur SMTP |
+| `SMTP_PORT` | — | Port SMTP (défaut : 587) |
+| `FRONTEND_URL` | — | URL frontend pour CORS (défaut : http://localhost:3000) |

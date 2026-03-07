@@ -1,337 +1,425 @@
 # ARCHITECTURE — Axiora
 
-> Clean Architecture appliquée à un SaaS de commande publique multi-tenant
+> ERP SaaS modulaire et multi-tenant pour entreprises modernes
 
 ---
 
 ## Vue d'ensemble
 
-Axiora suit une **Clean Architecture** stricte : les règles métier ne dépendent jamais des frameworks ou de l'infrastructure. Chaque couche ne connaît que la couche interne.
+Axiora suit une architecture **modulaire en couches** avec séparation stricte entre le core platform (auth, RBAC, organisations) et les modules ERP métier (CRM, Comptabilité, Facturation, etc.). Chaque module est isolé et activable par organisation.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      EXTERNAL WORLD                         │
-│         (Browser, Mobile, Progiciels financiers)            │
+│              (Browser, Applications tierces)                 │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ HTTP / WebSocket
+                       │ HTTP REST
 ┌──────────────────────▼──────────────────────────────────────┐
 │                   PRESENTATION LAYER                        │
-│   apps/web (Next.js 15)     │   apps/api (Go / Gin)        │
-│   - Server Components        │   - HTTP Handlers             │
-│   - Client Components        │   - Middleware (auth, CORS)   │
-│   - React Query / SWR        │   - Request validation        │
+│   frontend/ (Next.js 15)    │   backend/ (Go / Fiber v2)   │
+│   - App Router               │   - HTTP Handlers             │
+│   - TanStack Query           │   - Middleware (auth, org,    │
+│   - Zustand (state)          │     permissions)              │
+│   - Radix UI + Tailwind      │   - Request validation        │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ Use Case calls
+                       │ Service calls
 ┌──────────────────────▼──────────────────────────────────────┐
 │                  APPLICATION LAYER                          │
-│              apps/api/internal/usecases/                    │
-│   - NomenclatureUseCase                                     │
-│   - CartographieUseCase                                     │
-│   - PlanificationUseCase                                    │
-│   - ExportUseCase                                           │
-│   - AlerteUseCase                                           │
+│              backend/internal/                              │
+│   - auth.Service     (JWT, sessions, signup/login)          │
+│   - organization.Service (multi-tenant, membres)            │
+│   - rbac.Service     (rôles, permissions, vérification)     │
+│   - audit.Service    (logs d'audit fire & forget)           │
+│   - module.Handler   (activation/désactivation modules)     │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ Domain interfaces
+                       │ Models / DB
 ┌──────────────────────▼──────────────────────────────────────┐
 │                    DOMAIN LAYER                             │
-│              apps/api/internal/domain/                      │
-│   - Entities (Marché, Nomenclature, Code, Alerte...)       │
-│   - Value Objects (Montant, Seuil, Procédure...)           │
-│   - Domain Services (SeuilComputation, FractionnementCheck) │
-│   - Repository Interfaces                                   │
+│              backend/internal/models/                       │
+│   - User, Session, Invite                                   │
+│   - Organization, OrganizationMember                        │
+│   - Role, Permission, UserRole                              │
+│   - Module, OrganizationModule                              │
+│   - AuditLog                                                │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ Implementations
+                       │ Persistence
 ┌──────────────────────▼──────────────────────────────────────┐
 │                INFRASTRUCTURE LAYER                         │
-│   - PostgreSQL / GORM repositories                          │
-│   - Redis cache                                             │
-│   - Anthropic Claude client                                 │
-│   - PDF/XLSX generators                                     │
-│   - File storage (S3-compatible)                            │
+│   - PostgreSQL 16 / GORM (ORM + AutoMigrate)               │
+│   - Redis 7 (cache + job queue via Asynq)                   │
+│   - MinIO / S3-compatible (stockage fichiers)               │
+│   - Meilisearch v1.11 (recherche full-text)                 │
+│   - SMTP (emails transactionnels)                           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Structure du monorepo
+## Structure du projet
 
 ```
 axiora/
 │
-├── apps/
-│   ├── web/                          # Frontend Next.js 15
-│   │   ├── app/                      # App Router (pages, layouts)
-│   │   ├── components/               # Composants métier (réutilisent packages/ui)
-│   │   ├── lib/                      # API client, utils, hooks
-│   │   └── public/                   # Assets statiques
-│   │
-│   └── api/                          # Backend Go
-│       ├── cmd/
-│       │   ├── api/main.go           # Entrypoint HTTP server
-│       │   └── migrate/main.go       # Entrypoint migrations
-│       └── internal/
-│           ├── domain/               # Entités + interfaces (pure Go)
-│           ├── usecases/             # Logique applicative
-│           ├── handlers/             # HTTP handlers (Gin)
-│           ├── middleware/           # Auth, CORS, rate limiting
-│           ├── repository/           # Implémentations PostgreSQL
-│           └── infrastructure/       # Services externes (Redis, S3, AI)
+├── backend/                          # API Go / Fiber v2
+│   ├── cmd/
+│   │   ├── api/main.go               # Point d'entrée : Fiber, routes, DI
+│   │   └── worker/                   # Point d'entrée worker Asynq (async jobs)
+│   ├── internal/
+│   │   ├── config/config.go          # Variables d'environnement (godotenv)
+│   │   ├── database/
+│   │   │   ├── postgres.go           # Connexion PostgreSQL + GORM AutoMigrate
+│   │   │   └── redis.go              # Connexion Redis
+│   │   ├── models/                   # Modèles GORM partagés (entités core)
+│   │   │   ├── base.go               # Base model (UUID, timestamps, soft delete)
+│   │   │   ├── user.go               # User, Session, Invite
+│   │   │   ├── organization.go       # Organization, OrganizationMember
+│   │   │   ├── rbac.go               # Role, Permission, UserRole
+│   │   │   ├── module.go             # Module, OrganizationModule
+│   │   │   └── audit.go              # AuditLog
+│   │   ├── auth/                     # Service auth (JWT, signup, login, refresh, logout)
+│   │   │   ├── handler.go            # HTTP handlers auth
+│   │   │   ├── service.go            # Logique métier auth + JWT
+│   │   │   └── repository.go         # Accès DB auth
+│   │   ├── organization/             # Service organisations multi-tenant
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   └── repository.go
+│   │   ├── rbac/                     # Service RBAC (rôles, permissions)
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   └── repository.go
+│   │   ├── audit/service.go          # Service d'audit (fire & forget)
+│   │   └── module/handler.go         # Activation/désactivation modules
+│   ├── middleware/                    # Middleware Fiber
+│   │   ├── auth.go                   # RequireAuth (JWT Bearer)
+│   │   ├── organization.go           # RequireOrganization (X-Organization-Id)
+│   │   └── permission.go             # RequirePermission / RequireAnyPermission
+│   ├── modules/                      # Modules ERP isolés
+│   │   ├── crm/                      # Contacts, Leads, Deals, Activities
+│   │   ├── accounting/               # Comptes, Transactions
+│   │   ├── billing/                  # Factures, Items
+│   │   ├── inventory/                # Produits, Mouvements de stock
+│   │   ├── hr/                       # Employés, Congés
+│   │   ├── procurement/              # Commandes d'achat, Items
+│   │   └── analytics/               # Vue synthétique cross-modules
+│   ├── migrations/001_schema.sql     # Schéma SQL complet
+│   └── seed/main.go                  # Données initiales (permissions, modules, admin)
 │
-├── packages/
-│   ├── ui/                           # Design system Axiora
-│   │   ├── src/components/           # Composants ShadCN customisés
-│   │   ├── src/tokens/               # Palette, typography, spacing
-│   │   └── src/hooks/                # Hooks UI partagés
-│   │
-│   ├── core/                         # Types TypeScript partagés
-│   │   ├── src/types/                # Interfaces métier (Marché, Code, etc.)
-│   │   ├── src/constants/            # Seuils CCP, codes procédure
-│   │   └── src/validators/           # Zod schemas partagés
-│   │
-│   ├── database/                     # Schéma & migrations
-│   │   ├── schema/                   # Schéma Drizzle (référence)
-│   │   ├── migrations/               # SQL migrations versionnées
-│   │   └── seeds/                    # Données de test
-│   │
-│   ├── auth/                         # Wrapper Stack Auth
-│   │   ├── src/client.ts             # Client-side auth hooks
-│   │   └── src/server.ts             # Server-side session validation
-│   │
-│   ├── config/                       # Configuration centralisée
-│   │   ├── src/env.ts                # Validation env (Zod)
-│   │   └── src/constants.ts          # Constantes métier CCP
-│   │
-│   └── logger/                       # Logger structuré
-│       └── src/index.ts              # Winston (web) / Zap (api)
+├── frontend/                         # Next.js 15 App Router
+│   ├── app/
+│   │   ├── layout.tsx                # Layout racine + Providers
+│   │   ├── page.tsx                  # Page d'accueil
+│   │   ├── globals.css               # Styles globaux Tailwind
+│   │   ├── (auth)/                   # Routes publiques
+│   │   │   ├── layout.tsx
+│   │   │   ├── login/page.tsx
+│   │   │   └── signup/page.tsx
+│   │   └── (app)/                    # Routes authentifiées
+│   │       ├── layout.tsx
+│   │       ├── dashboard/page.tsx
+│   │       ├── organizations/
+│   │       └── settings/page.tsx
+│   ├── components/
+│   │   ├── AppShell.tsx              # Shell applicatif
+│   │   ├── Sidebar.tsx               # Navigation latérale
+│   │   ├── Providers.tsx             # React Query + Zustand providers
+│   │   └── ui/                       # Composants Radix/ShadCN
+│   ├── lib/api.ts                    # Client HTTP typé (fetch wrapper)
+│   └── store/auth.ts                 # Store Zustand (user, token, org) + persist
 │
-├── services/
-│   ├── ai/                           # Agents IA
-│   │   ├── agents/
-│   │   │   ├── nomenclature.ts       # Agent classification automatique
-│   │   │   ├── analyse.ts            # Agent analyse cartographique
-│   │   │   ├── conformite.ts         # Agent vérification réglementaire
-│   │   │   └── generation.ts         # Agent génération documentaire
-│   │   └── prompts/                  # System prompts versionnés
-│   │
-│   ├── generation/                   # Génération de documents
-│   │   ├── pdf/                      # Puppeteer → PDF institutionnel
-│   │   ├── xlsx/                     # ExcelJS → XLSX récapitulatif
-│   │   └── templates/                # Templates Handlebars
-│   │
-│   └── processing/                   # Pipeline de traitement
-│       ├── importers/                # Parsers CSV/XLSX dépenses mandatées
-│       ├── normalizers/              # Normalisation des données
-│       └── classifiers/              # Classification automatique IA
+├── workers/                          # Jobs asynchrones (Asynq / Redis)
+│   ├── email.go                      # Envoi d'emails (SMTP)
+│   ├── notifications.go              # Notifications en temps réel
+│   └── reports.go                    # Génération de rapports (PDF/Excel)
 │
-├── infrastructure/
+├── infra/
 │   ├── docker/
-│   │   ├── Dockerfile.api            # Go multi-stage build
-│   │   ├── Dockerfile.web            # Next.js multi-stage build
-│   │   └── Dockerfile.worker         # Worker jobs async
-│   ├── ci/
-│   │   ├── test.yml                  # Tests sur PR
-│   │   ├── build.yml                 # Build & push Docker
-│   │   └── deploy.yml                # Deploy sur Fly.io
-│   └── scripts/
-│       ├── setup.sh                  # Setup environnement dev
-│       └── seed.sh                   # Seeding base de données
+│   │   ├── Dockerfile.backend        # Go multi-stage build
+│   │   └── Dockerfile.frontend       # Next.js multi-stage build
+│   └── postgres/init.sql             # Extensions (uuid-ossp, pg_trgm)
 │
-└── docs/
-    ├── PRODUCT_VISION.md
-    ├── ROADMAP.md
-    ├── API.md
-    ├── USER_PERSONAS.md
-    └── DEV_STANDARDS.md
+├── docs/                             # Documentation projet
+│   ├── API.md                        # Documentation API REST
+│   ├── PRODUCT_VISION.md             # Vision produit et use cases
+│   ├── ROADMAP.md                    # Roadmap de développement
+│   ├── DEV_STANDARDS.md              # Standards de code et ADR
+│   └── USER_PERSONAS.md              # Personas utilisateurs
+│
+├── docker-compose.yml                # Stack complète (6 services)
+├── Makefile                          # Commandes dev (setup, up, dev, seed, build, test)
+├── ARCHITECTURE.md                   # Ce fichier
+├── CONTRIBUTING.md                   # Guide de contribution
+├── AGENTS.md                         # Description des agents IA (roadmap)
+└── README.md                         # Documentation principale
 ```
 
 ---
 
-## Modèle de données — Entités clés
+## Modèle de données
+
+### Entités Core (backend/internal/models/)
 
 ```sql
--- Organisation (tenant SaaS)
-organisations
-  id UUID PK
-  name VARCHAR
-  slug VARCHAR UNIQUE
-  plan ENUM(starter, pro, enterprise)
-  created_at TIMESTAMPTZ
-
 -- Utilisateur
 users
-  id UUID PK
-  org_id UUID FK → organisations
-  email VARCHAR UNIQUE
-  role ENUM(admin, acheteur, lecteur)
-  created_at TIMESTAMPTZ
+  id              UUID PK
+  email           TEXT UNIQUE NOT NULL
+  name            TEXT NOT NULL
+  password_hash   TEXT NOT NULL
+  avatar_url      TEXT
+  email_verified  BOOLEAN DEFAULT false
+  created_at / updated_at / deleted_at
 
--- Nomenclature (arborescence)
-nomenclature_codes
-  id UUID PK
-  org_id UUID FK
-  code VARCHAR (ex: "02.01")
-  label VARCHAR
-  level INT (0=famille, 1=sous-famille, 2=code)
-  parent_id UUID FK → self
-  seuil_procédure DECIMAL
-  is_active BOOLEAN
-  version INT
-  created_by UUID FK → users
+-- Sessions JWT
+sessions
+  id              UUID PK
+  user_id         UUID FK → users
+  refresh_token   TEXT UNIQUE NOT NULL
+  user_agent      TEXT
+  ip_address      TEXT
+  expires_at      TIMESTAMPTZ
 
--- Marché / Procédure
-marches
-  id UUID PK
-  org_id UUID FK
-  reference VARCHAR (ex: M2026-001)
-  objet TEXT
-  service VARCHAR
-  montant_previsionnel DECIMAL
-  procedure ENUM(mapa_40k, mapa_90k, ao_ouvert, ao_restreint, accord_cadre, negociee)
-  code_id UUID FK → nomenclature_codes
-  date_echeance DATE
-  statut ENUM(planifie, en_cours, alerte, cloture)
-  priorite ENUM(normale, haute, critique)
-  charge_jh INT
-  created_by UUID FK → users
+-- Organisations (tenant)
+organizations
+  id              UUID PK
+  name            TEXT NOT NULL
+  slug            TEXT UNIQUE NOT NULL
+  logo_url        TEXT
+  plan            TEXT DEFAULT 'free'    -- free, starter, pro, enterprise
 
--- Dépense mandatée (import)
-depenses
-  id UUID PK
-  org_id UUID FK
-  exercice INT
-  montant DECIMAL
-  fournisseur VARCHAR
-  libelle TEXT
-  code_id UUID FK → nomenclature_codes  -- nullable avant classification
-  direction VARCHAR
-  date_mandat DATE
-  source ENUM(import_csv, import_xlsx, api_financier, manuel)
+-- Membres d'organisation
+organization_members
+  id              UUID PK
+  organization_id UUID FK → organizations
+  user_id         UUID FK → users
+  role_id         UUID FK → roles (nullable)
+  status          TEXT DEFAULT 'active'  -- active, suspended
+  UNIQUE(organization_id, user_id)
 
--- Alerte réglementaire
-alertes
-  id UUID PK
-  org_id UUID FK
-  type ENUM(fractionnement, seuil_depasse, renouvellement, non_classe, concentration)
-  severity ENUM(critique, haute, moyenne, info)
-  message TEXT
-  marche_id UUID FK nullable
-  code_id UUID FK nullable
-  resolved_at TIMESTAMPTZ nullable
-  created_at TIMESTAMPTZ
+-- Invitations
+invites
+  id              UUID PK
+  organization_id UUID FK → organizations
+  email           TEXT NOT NULL
+  token           TEXT UNIQUE NOT NULL
+  role_id         UUID FK → roles (nullable)
+  expires_at      TIMESTAMPTZ
+  accepted_at     TIMESTAMPTZ
 
--- Document généré
-documents
-  id UUID PK
-  org_id UUID FK
-  type ENUM(pdf_institutionnel, xlsx_recap, format_progiciel)
-  filename VARCHAR
-  storage_key VARCHAR
-  size_bytes INT
-  generated_by UUID FK → users
-  sections JSONB
-  created_at TIMESTAMPTZ
+-- Rôles RBAC
+roles
+  id              UUID PK
+  organization_id UUID FK → organizations (nullable = system-wide)
+  name            TEXT NOT NULL
+  description     TEXT
+  is_system       BOOLEAN DEFAULT false
 
--- Audit log
+-- Permissions granulaires
+permissions
+  id              SERIAL PK
+  name            TEXT UNIQUE NOT NULL   -- ex: crm.read, admin.manage
+  description     TEXT
+  module          TEXT                   -- ex: crm, accounting, admin
+  action          TEXT                   -- ex: read, write, delete, manage
+
+-- Jointure rôle ↔ permissions (many-to-many)
+role_permissions
+  role_id         UUID FK → roles
+  permission_id   INT FK → permissions
+
+-- Jointure user ↔ organization ↔ role
+user_roles
+  user_id         UUID FK → users
+  organization_id UUID FK → organizations
+  role_id         UUID FK → roles
+
+-- Modules ERP
+modules
+  id              TEXT PK               -- crm, accounting, billing, ...
+  name            TEXT NOT NULL
+  description     TEXT
+  icon            TEXT
+  color           TEXT
+  is_core         BOOLEAN DEFAULT false
+
+-- Modules activés par organisation
+organization_modules
+  organization_id UUID FK → organizations
+  module_id       TEXT FK → modules
+  enabled_at      TIMESTAMPTZ
+  settings        JSONB
+
+-- Audit
 audit_logs
-  id UUID PK
-  org_id UUID FK
-  user_id UUID FK
-  action VARCHAR
-  entity_type VARCHAR
-  entity_id UUID
-  payload JSONB
-  created_at TIMESTAMPTZ
+  id              UUID PK
+  organization_id UUID FK (nullable)
+  user_id         UUID FK (nullable)
+  action          TEXT NOT NULL          -- user.login, org.created, role.updated
+  resource_type   TEXT                   -- user, organization, role, module
+  resource_id     TEXT
+  metadata        JSONB
+  ip_address      TEXT
+  user_agent      TEXT
+  created_at      TIMESTAMPTZ
 ```
 
----
+### Entités Modules ERP (backend/modules/)
 
-## Flux de données
+Chaque module utilise `tenant_id UUID` pour l'isolation multi-tenant.
 
-### Import & Classification automatique
-
-```
-[Fichier CSV/XLSX]
-      │
-      ▼
-[services/processing/importers]  → Parse, validation format
-      │
-      ▼
-[services/processing/normalizers] → Normalisation montants, dates, libellés
-      │
-      ▼
-[services/ai/agents/nomenclature] → Claude : classification IA par code
-      │
-      ├──► [Confiance > 90%] → Auto-affectation code_id
-      └──► [Confiance < 90%] → Queue révision manuelle
-      │
-      ▼
-[PostgreSQL: depenses table]
-      │
-      ▼
-[services/ai/agents/conformite] → Détection fractionnement, seuils
-      │
-      ▼
-[PostgreSQL: alertes table] → Notification temps réel WebSocket
-```
-
-### Génération documentaire
-
-```
-[User: POST /api/exports]
-      │
-      ▼
-[ExportUseCase] → Validation sections, métadonnées
-      │
-      ▼
-[Redis Queue: job_generation] → Async (Asynq worker)
-      │
-      ▼
-[services/ai/agents/generation] → Claude : rédaction narrative sections
-      │
-      ▼
-[services/generation/pdf] → Puppeteer + template Handlebars
-      │
-      ▼
-[S3 Storage] → Upload PDF/XLSX
-      │
-      ▼
-[WebSocket] → Notification "document prêt" → URL signée
-```
+| Module | Tables | Colonnes clés |
+|--------|--------|---------------|
+| **CRM** | `contacts`, `leads`, `deals`, `activities` | type, status, stage, value, assigned_to |
+| **Comptabilité** | `accounts`, `transactions` | code, type, balance, amount, date |
+| **Facturation** | `invoices`, `invoice_items` | number, status, total, tax_rate |
+| **Inventaire** | `products`, `stock_movements` | sku, stock, reorder_at, quantity, type |
+| **RH** | `employees`, `leave_requests` | department, job_title, salary, status |
+| **Achats** | `purchase_orders`, `purchase_order_items` | number, supplier_id, status, total |
 
 ---
 
 ## Multi-tenancy
 
-Axiora utilise un modèle **Row-Level Security (RLS)** PostgreSQL.
+Axiora utilise un modèle **tenant_id par table**. Toutes les tables métier contiennent `tenant_id UUID NOT NULL` référençant `organizations(id)`.
 
-- Chaque table contient `org_id UUID NOT NULL`
-- RLS activé : `SET app.current_org = 'uuid'` en début de transaction
-- Policy : `USING (org_id = current_setting('app.current_org')::uuid)`
-- Isolation garantie : aucune donnée ne peut fuiter d'un tenant à l'autre
+```
+Request
+  → JWT Bearer valid (middleware/auth.go)
+  → X-Organization-Id header parsé (middleware/organization.go)
+  → User est membre de l'organisation
+  → Permission vérifiée via RBAC (middleware/permission.go)
+  → Handler avec org_id dans le contexte Fiber
+```
+
+Chaque handler filtre les requêtes GORM par `tenant_id` pour garantir l'isolation.
 
 ---
 
-## Dépendances entre packages
+## RBAC (Role-Based Access Control)
 
 ```
-apps/web  →  packages/ui, packages/core, packages/auth, packages/config
-apps/api  →  packages/core, packages/config, packages/logger
-services/* → packages/core, packages/config, packages/logger
-packages/ui → packages/core
-packages/auth → packages/config
+Permissions système (seeded) :
+  crm.read, crm.write, crm.delete
+  accounting.read, accounting.write
+  billing.read, billing.write
+  inventory.read, inventory.write
+  hr.read, hr.write
+  procurement.read, procurement.write
+  analytics.read
+  admin.manage
+
+Rôles (par organisation, personnalisables) :
+  Admin     → toutes les permissions
+  Manager   → permissions read/write
+  Viewer    → permissions read uniquement
+  Custom    → combinaison libre
+
+UserRoles (table de jointure) :
+  user × organization × role
 ```
 
-**Règle** : jamais de dépendance circulaire. `packages/core` ne dépend de rien.
+**Chaîne middleware** :
+```
+RequireAuth → RequireOrganization → RequirePermission("module.action")
+```
+
+---
+
+## Modules ERP
+
+Les modules sont des packages Go isolés dans `backend/modules/`. Chaque module contient :
+- `models.go` — Entités GORM avec `TenantID`
+- `handler.go` — HTTP handlers Fiber
+- `routes.go` — Fonction `RegisterRoutes(router, handler)`
+- `repository.go` — Accès DB (optionnel, certains utilisent le handler directement)
+
+| Module | ID | Entités | Permissions |
+|--------|----|---------|-------------|
+| CRM | `crm` | Contact, Lead, Deal, Activity | crm.read / crm.write / crm.delete |
+| Comptabilité | `accounting` | Account, Transaction | accounting.read / accounting.write |
+| Facturation | `billing` | Invoice, InvoiceItem | billing.read / billing.write |
+| Inventaire | `inventory` | Product, StockMovement | inventory.read / inventory.write |
+| RH | `hr` | Employee, LeaveRequest | hr.read / hr.write |
+| Achats | `procurement` | PurchaseOrder, PurchaseOrderItem | procurement.read / procurement.write |
+| Analytics | `analytics` | Vue synthétique cross-modules | analytics.read |
+
+Les modules sont activables/désactivables par organisation via `POST /api/v1/modules/:id/enable|disable`.
+
+---
+
+## Authentification
+
+- **JWT** : access token (15 min) + refresh token (30 jours)
+- **Transport** : Bearer token dans le header `Authorization`
+- **Sessions** : stockées en DB (table `sessions`), rotation du refresh token
+- **Mots de passe** : hachés avec bcrypt
+- **Flux** : signup → login → access_token + refresh_token → refresh → logout
+
+---
+
+## Workers (Jobs asynchrones)
+
+Les workers utilisent **Asynq** (Redis-backed) pour traiter les tâches asynchrones :
+
+| Worker | Type de tâche | Description |
+|--------|---------------|-------------|
+| EmailWorker | `email:send` | Envoi d'emails transactionnels via SMTP |
+| NotificationWorker | `notification:send` | Notifications en temps réel |
+| ReportWorker | `report:generate` | Génération de rapports (PDF/Excel) |
+
+Les workers sont démarrés par `cmd/worker/main.go` et communiquent via la queue Redis.
+
+---
+
+## Stack technique
+
+| Couche | Technologie | Version |
+|--------|-------------|---------|
+| Frontend | Next.js (App Router) | 15 |
+| UI | Radix UI + Tailwind CSS + Framer Motion | — |
+| State management | Zustand + TanStack Query | 5.x / 5.x |
+| Backend | Go + Fiber v2 | 1.23 / 2.52 |
+| ORM | GORM | 1.25 |
+| Auth | JWT (golang-jwt/jwt/v5) | 5.2 |
+| Base de données | PostgreSQL | 16 |
+| Cache / Queue | Redis + Asynq | 7 / 0.24 |
+| Recherche | Meilisearch | 1.11 |
+| Stockage | MinIO (dev) / S3 compatible (prod) | — |
+| Infrastructure | Docker, Docker Compose | — |
+
+---
+
+## Infrastructure Docker
+
+6 services orchestrés via `docker-compose.yml` :
+
+```
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│  PostgreSQL  │  │    Redis     │  │    MinIO     │
+│    :5432     │  │    :6379     │  │  :9000/:9001 │
+└──────┬───────┘  └──────┬───────┘  └──────────────┘
+       │                 │
+┌──────▼─────────────────▼───────┐  ┌──────────────┐
+│         API Go/Fiber           │  │ Meilisearch  │
+│           :8080                │  │    :7700     │
+└──────────────┬─────────────────┘  └──────────────┘
+               │
+┌──────────────▼─────────────────┐
+│      Frontend Next.js          │
+│           :3000                │
+└────────────────────────────────┘
+```
 
 ---
 
 ## Sécurité
 
-- **Auth** : JWT (access 15min) + Refresh token (30j) via Stack Auth
-- **RBAC** : `admin` > `acheteur` > `lecteur` avec permissions granulaires
-- **Rate limiting** : 100 req/min par IP, 1000 req/min par org (Redis)
-- **Input validation** : Zod (frontend) + Go validator (backend), pas de confiance aveugle
+- **Auth** : JWT access token (15 min) + refresh token (30 jours) avec rotation
+- **RBAC** : permissions granulaires par module et action, vérifiées côté middleware
+- **Multi-tenant** : isolation par `tenant_id` sur toutes les tables métier
+- **Input validation** : validation côté handler Go
 - **SQL injection** : GORM parameterized queries uniquement
-- **XSS** : CSP strict, DOMPurify sur contenus importés
-- **Secrets** : jamais en clair, toujours via variables d'environnement validées
-- **Audit** : toute mutation loggée dans `audit_logs`
+- **CORS** : configuré pour n'accepter que le `FRONTEND_URL`
+- **Secrets** : variables d'environnement, jamais en clair dans le code
+- **Audit** : toute action significative loggée dans `audit_logs`
+- **Mots de passe** : hachés avec bcrypt (coût par défaut)
