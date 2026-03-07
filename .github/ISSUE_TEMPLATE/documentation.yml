@@ -1,0 +1,52 @@
+name: Documentation
+description: Signaler un problème ou une lacune dans la documentation
+title: "[DOCS] "
+labels: ["documentation", "P3 Low"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Aidez-nous à améliorer notre documentation.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type de problème
+      options:
+        - Documentation manquante
+        - Documentation incorrecte
+        - Documentation obsolète
+        - Amélioration de la clarté
+        - Exemple de code manquant
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Emplacement
+      description: Fichier ou section concernée
+      placeholder: ex. CONTRIBUTING.md > Section Tests
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Documentation actuelle
+      description: Quelle est la documentation actuelle (ou son absence) ?
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Documentation proposée
+      description: Que devrait-elle dire ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte additionnel

@@ -1,0 +1,58 @@
+name: Improvement
+description: Amélioration d'une fonctionnalité existante
+title: "[IMPROVE] "
+labels: ["enhancement", "P3 Low"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposez une amélioration d'une fonctionnalité existante.
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Fonctionnalité actuelle
+      description: Décrivez la fonctionnalité existante.
+    validations:
+      required: true
+
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Amélioration souhaitée
+      description: Décrivez comment elle pourrait être améliorée.
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefit
+    attributes:
+      label: Bénéfice attendu
+      description: Quel est l'impact de cette amélioration (UX, performance, maintenabilité...) ?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Module concerné
+      options:
+        - Frontend
+        - Backend
+        - Database
+        - IA / Agents
+        - DevOps / Infrastructure
+        - Authentification
+        - Export / Documents
+        - Administration
+        - Performance
+        - Sécurité
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte additionnel

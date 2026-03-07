@@ -1,0 +1,24 @@
+# CODEOWNERS — Axiora
+
+# Par défaut
+* @makcimerrr
+
+# Frontend
+/frontend/ @makcimerrr
+
+# Backend
+/backend/ @makcimerrr
+
+# Workers
+/workers/ @makcimerrr
+
+# Infrastructure
+/infra/ @makcimerrr
+/.github/ @makcimerrr
+
+# Documentation
+/docs/ @makcimerrr
+*.md @makcimerrr
+
+# Sécurité
+SECURITY.md @makcimerrr

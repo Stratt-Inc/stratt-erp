@@ -1,0 +1,78 @@
+name: Feature Request
+description: Proposer une nouvelle fonctionnalité
+title: "[FEAT] "
+labels: ["feature", "P2 Medium"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de proposer une nouvelle fonctionnalité ! Décrivez votre besoin clairement.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème ou besoin
+      description: Quel problème cette fonctionnalité résout-elle ? Quelle est la situation actuelle ?
+      placeholder: En tant que [persona], j'ai besoin de [besoin] pour [objectif]...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution proposée
+      description: Décrivez la fonctionnalité que vous souhaitez.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considérées
+      description: Avez-vous envisagé d'autres approches ?
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Module concerné
+      options:
+        - Frontend
+        - Backend
+        - Database
+        - IA / Agents
+        - DevOps / Infrastructure
+        - Authentification
+        - Export / Documents
+        - Administration
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité suggérée
+      options:
+        - P0 Critical
+        - P1 High
+        - P2 Medium
+        - P3 Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critères d'acceptance
+      description: Comment saurons-nous que la fonctionnalité est implémentée correctement ?
+      placeholder: |
+        - [ ] L'utilisateur peut...
+        - [ ] Le système doit...
+        - [ ] Les tests couvrent...
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte additionnel
+      description: Tout autre contexte, maquette, ou exemple utile.
