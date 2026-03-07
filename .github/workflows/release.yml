@@ -11,7 +11,11 @@ on:
         description: "Type de release"
         required: true
         type: choice
-        options: [patch, minor, major, prerelease]
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
 
 jobs:
   release:
@@ -30,18 +34,31 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create and push tag
+      - name: Create tag
         run: |
           TAG="v${{ inputs.version }}"
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
+
+      - name: Generate changelog with git-cliff
+        id: changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --latest --strip header
+        env:
+          OUTPUT: RELEASE_NOTES.md
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ inputs.version }}
           name: "Axiora v${{ inputs.version }}"
-          generate_release_notes: true
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: ${{ inputs.type == 'prerelease' }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: false
+          files: |
+            CHANGELOG.md
