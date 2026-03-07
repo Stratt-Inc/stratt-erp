@@ -2,6 +2,15 @@
 
 Plateforme ERP SaaS modulaire et multi-tenant pour entreprises modernes.
 
+> SaaS de stratégie des achats publics pour les collectivités territoriales et établissements publics.
+
+[![CI](https://github.com/makcimerrr/axiora/actions/workflows/ci.yml/badge.svg)](https://github.com/makcimerrr/axiora/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Vue d'ensemble
+
+Axiora est une plateforme SaaS qui aide les acheteurs publics à piloter leur stratégie d'achats : nomenclature, cartographie fournisseurs, planification, conformité réglementaire et génération documentaire assistée par IA.
+
 ## Stack technique
 
 | Couche | Technologie |
