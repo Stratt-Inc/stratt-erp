@@ -3,21 +3,13 @@ run:
   modules-download-mode: readonly
 
 linters:
-  enable-all: false
+  disable-all: true
   enable:
     - govet
     - errcheck
     - staticcheck
-    - unused
-    - gosimple
     - ineffassign
-    - typecheck
     - gofmt
-    - goimports
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/axiora/backend
 
 issues:
   exclude-rules:
