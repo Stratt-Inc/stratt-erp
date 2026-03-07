@@ -44,7 +44,7 @@ const itemVariants = {
   animate: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { duration: 0.22, delay: 0.04 + i * 0.04, ease: "easeOut" },
+    transition: { duration: 0.22, delay: 0.04 + i * 0.04, ease: "easeOut" as const },
   }),
 };
 

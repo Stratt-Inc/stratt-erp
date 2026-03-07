@@ -25,7 +25,7 @@ import {
  * ═══════════════════════════════════════════════════════════════
  */
 
-export const ExemplesBoutons = () => (
+const ExemplesBoutons = () => (
   <div className="space-y-4">
     <h3 className="font-semibold">Boutons stratégiques</h3>
 
@@ -36,13 +36,13 @@ export const ExemplesBoutons = () => (
     </Button>
 
     {/* Validation conformité */}
-    <Button variant="success">
+    <Button variant="default">
       <CheckCircle2 className="w-4 h-4" />
       Valider conformité
     </Button>
 
     {/* Alerte seuil */}
-    <Button variant="alert">
+    <Button variant="destructive">
       <AlertTriangle className="w-4 h-4" />
       Corriger fractionnement
     </Button>
@@ -60,13 +60,13 @@ export const ExemplesBoutons = () => (
  * ═══════════════════════════════════════════════════════════════
  */
 
-export const ExemplesBadges = () => (
+const ExemplesBadges = () => (
   <div className="flex flex-wrap gap-2">
     <Badge variant="conforme">Conforme</Badge>
     <Badge variant="surveille">À surveiller</Badge>
     <Badge variant="risque">Risque</Badge>
     <Badge variant="fractionnement">Fractionnement</Badge>
-    <Badge variant="info">Info</Badge>
+    <Badge variant="secondary">Info</Badge>
   </div>
 );
 
@@ -76,7 +76,7 @@ export const ExemplesBadges = () => (
  * ═══════════════════════════════════════════════════════════════
  */
 
-export const ExemplesCardsKPI = () => (
+const ExemplesCardsKPI = () => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
     {/* KPI standard */}
     <Card className="kpi-card">
@@ -161,7 +161,7 @@ const donneesTableau = [
   },
 ];
 
-export const ExempleTableInstitutionnelle = () => (
+const ExempleTableInstitutionnelle = () => (
   <Card>
     <CardHeader>
       <CardTitle className="text-base flex items-center gap-2">
@@ -216,7 +216,7 @@ export const ExempleTableInstitutionnelle = () => (
  * ═══════════════════════════════════════════════════════════════
  */
 
-export const ExempleLayoutModule = () => (
+const ExempleLayoutModule = () => (
   <div className="p-6 space-y-5">
     {/* Header module */}
     <div className="flex items-start justify-between">
@@ -277,7 +277,7 @@ export const ExempleLayoutModule = () => (
  * ═══════════════════════════════════════════════════════════════
  */
 
-export const ExemplesClassesUtilitaires = () => (
+const ExemplesClassesUtilitaires = () => (
   <div className="space-y-6">
     {/* Labels sections */}
     <div>
