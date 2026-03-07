@@ -70,7 +70,7 @@ jobs:
       - name: Build & push — Frontend
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./frontend
           file: infra/docker/Dockerfile.frontend
           push: true
           tags: ${{ steps.meta-frontend.outputs.tags }}
@@ -83,7 +83,7 @@ jobs:
       - name: Build & push — Backend
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./backend
           file: infra/docker/Dockerfile.backend
           push: true
           tags: ${{ steps.meta-backend.outputs.tags }}
