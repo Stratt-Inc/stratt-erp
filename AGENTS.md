@@ -1,121 +1,264 @@
-# AGENTS.md — Agents IA d'Axiora
+AGENTS.md — Axiora AI Development Guide
 
-> Description des agents IA prévus dans la roadmap. Ces agents ne sont **pas encore implémentés** dans le code actuel et représentent les fonctionnalités IA planifiées pour les futures itérations.
+This file provides instructions for AI coding agents (Claude, Copilot,
+Cursor, etc.) working on the Axiora repository.
 
----
+Axiora is a modular SaaS ERP platform designed to support multiple
+business domains such as CRM, accounting, billing, inventory and HR.
 
-## Statut actuel
+AI agents must follow the architectural rules and conventions described
+below.
 
-⚠️ **Les agents IA décrits ci-dessous font partie de la roadmap future.** L'implémentation actuelle d'Axiora est un ERP SaaS modulaire sans composante IA. Les workers existants (`workers/`) gèrent des tâches asynchrones basiques (emails, notifications, rapports) via Asynq/Redis.
+------------------------------------------------------------------------
 
----
+1. Project Overview
 
-## Vue d'ensemble (Roadmap)
+Axiora is a multi-tenant SaaS ERP built with a modular architecture.
 
-L'objectif à terme est d'intégrer des agents IA spécialisés pour enrichir les modules ERP existants :
+Core goals:
 
-```
-┌──────────────────────────────────────────────────────┐
-│                 MODULES ERP EXISTANTS                │
-│   CRM │ Comptabilité │ Facturation │ Inventaire │ … │
-└───────────────────┬──────────────────────────────────┘
-                    │ enrichissement IA
-┌───────────────────▼──────────────────────────────────┐
-│              AGENTS IA (à implémenter)               │
-│                                                       │
-│   🔮 Classification Agent    — Catégorisation auto    │
-│   📊 Analytics Agent         — Insights & prédictions │
-│   📝 Report Generation Agent — Rédaction auto         │
-│   🔔 Alert Agent             — Détection anomalies    │
-└──────────────────────────────────────────────────────┘
-```
+-   modular ERP architecture
+-   enterprise-grade security
+-   multi-tenant organizations
+-   extensible modules
+-   API-first design
+-   scalable async workers
 
----
+------------------------------------------------------------------------
 
-## Agent 1 — Classification Agent (planifié)
+2. Core Architecture
 
-### Rôle
-Classifier automatiquement les données entrantes dans les catégories appropriées des modules ERP.
+Frontend (Next.js) | v API Gateway / Backend (Go) | |– PostgreSQL |–
+Redis |– Object Storage (S3 / MinIO) |– Async Workers (Asynq)
 
-### Cas d'usage
-- CRM : classifier les leads par source et potentiel
-- Comptabilité : catégoriser automatiquement les transactions
-- Inventaire : suggérer des catégories de produits
+Main principles:
 
-### Stack envisagée
-- Modèle : Claude (Anthropic) ou modèle local
-- Intégration : worker Asynq existant + nouveau type de tâche
-- Confiance : seuil de validation humaine si confiance < 70%
+-   clean architecture
+-   domain-driven modules
+-   async processing
+-   strict separation of concerns
 
----
+------------------------------------------------------------------------
 
-## Agent 2 — Analytics Agent (planifié)
+3. Repository Structure
 
-### Rôle
-Fournir des insights stratégiques sur les données cross-modules.
+Typical project structure:
 
-### Cas d'usage
-- Identifier les tendances de ventes (CRM/Facturation)
-- Détecter les anomalies de stock (Inventaire)
-- Prédire les besoins d'achat (Procurement)
-- Calculer des KPIs métier dynamiques (Analytics)
+axiora/
 
----
+frontend/ → Next.js web application backend/ → Go API server
 
-## Agent 3 — Report Generation Agent (planifié)
+internal/ auth/ crm/ billing/ inventory/ hr/
 
-### Rôle
-Générer automatiquement des rapports narratifs à partir des données ERP.
+workers/ → async background jobs pkg/ → shared utilities
 
-### Cas d'usage
-- Rapports mensuels d'activité commerciale (CRM)
-- Bilan comptable narratif (Comptabilité)
-- Récapitulatif RH (HR)
+prisma/ → database schema & migrations
 
-### Intégration prévue
-- Utilisation du worker `report:generate` existant (`workers/reports.go`)
-- Enrichissement avec un LLM pour la rédaction des sections narratives
-- Stockage des documents générés sur MinIO/S3
+docs/ → architecture & product docs
 
----
+Rules:
 
-## Agent 4 — Alert Agent (planifié)
+-   business logic lives in internal/
+-   shared utilities go in pkg/
+-   workers process async tasks only
+-   handlers must remain thin
 
-### Rôle
-Surveiller les données en temps réel et déclencher des alertes intelligentes.
+------------------------------------------------------------------------
 
-### Cas d'usage
-- Stock bas + commande d'achat automatique suggérée (Inventaire → Procurement)
-- Factures impayées au-delà du délai (Billing)
-- Congés en conflit (HR)
-- Anomalies de transactions (Comptabilité)
+4. Coding Principles
 
-### Intégration prévue
-- Utilisation du worker `notification:send` existant (`workers/notifications.go`)
-- Cron job ou triggers GORM hooks
+AI agents MUST follow these rules.
 
----
+Architecture:
 
-## Architecture d'intégration prévue
+-   keep modules independent
+-   avoid cross-module coupling
+-   respect domain boundaries
 
-Les agents IA s'intégreront dans l'infrastructure existante :
+Backend
 
-```
-[Module ERP Handler]
-      │
-      ▼ enqueue task
-[Redis / Asynq Queue]
-      │
-      ▼
-[AI Worker] → appel API LLM → traitement résultat
-      │
-      ├──► [Confiance élevée] → Action automatique + audit log
-      └──► [Confiance basse]  → Notification pour validation humaine
-```
+Language: Go
 
-### Principes
-- **Pas de données PII** dans les prompts (anonymisation)
-- **Auditabilité** : chaque appel IA loggé dans `audit_logs`
-- **Human-in-the-loop** : validation humaine quand la confiance est insuffisante
-- **Fallback** : si le LLM est indisponible, mode dégradé sans IA
-- **Budget** : suivi des tokens consommés par organisation
+Rules:
+
+-   handlers must be lightweight
+-   business logic belongs to services
+-   repositories manage DB access
+-   no SQL inside handlers
+
+Example structure:
+
+module/
+
+handler.go service.go repository.go model.go dto.go
+
+------------------------------------------------------------------------
+
+Frontend
+
+Framework:
+
+-   Next.js
+-   Tailwind
+-   ShadCN components
+-   Framer Motion
+
+Rules:
+
+-   reusable components
+-   no business logic inside UI components
+-   API calls isolated in services
+
+------------------------------------------------------------------------
+
+5. Database
+
+Primary database:
+
+PostgreSQL
+
+ORMs used:
+
+-   Go → GORM
+-   Frontend tooling → Prisma (schema generation)
+
+Rules:
+
+-   migrations must be versioned
+-   avoid destructive migrations
+-   keep schema backwards compatible
+
+------------------------------------------------------------------------
+
+6. Async Workers
+
+Workers are powered by:
+
+-   Redis
+-   Asynq
+
+Responsibilities:
+
+-   emails
+-   notifications
+-   report generation
+-   long running jobs
+
+Workers must:
+
+-   be idempotent
+-   log failures
+-   support retries
+
+------------------------------------------------------------------------
+
+7. Security Rules
+
+Agents must respect these security constraints.
+
+Never:
+
+-   expose secrets
+-   log passwords
+-   store plaintext credentials
+
+Always:
+
+-   use environment variables
+-   sanitize user input
+-   validate permissions
+
+------------------------------------------------------------------------
+
+8. Multi-Tenancy
+
+Axiora is organization-based.
+
+All domain objects must include:
+
+organization_id
+
+Queries MUST always be scoped by organization.
+
+------------------------------------------------------------------------
+
+9. AI Agents (Future Roadmap)
+
+AI agents are planned but not implemented yet.
+
+Documentation is located in:
+
+docs/architecture/AI_AGENTS_ROADMAP.md
+
+Planned agents:
+
+-   classification agent
+-   analytics agent
+-   report generation agent
+-   alert agent
+
+AI logic must run inside workers, never in request handlers.
+
+------------------------------------------------------------------------
+
+10. Testing
+
+Required tests:
+
+-   unit tests for services
+-   integration tests for API
+-   worker tests for async tasks
+
+Testing tools:
+
+-   Go testing package
+-   Playwright (frontend)
+
+------------------------------------------------------------------------
+
+11. Pull Request Rules
+
+Agents creating pull requests must:
+
+-   keep changes small
+-   follow module boundaries
+-   update documentation
+-   include tests when possible
+
+------------------------------------------------------------------------
+
+12. Forbidden Changes
+
+Agents MUST NOT:
+
+-   break database schema
+-   change authentication logic
+-   remove audit logging
+-   bypass organization scoping
+
+If unsure, ask for confirmation.
+
+------------------------------------------------------------------------
+
+13. Preferred Development Workflow
+
+1.  understand module
+2.  implement service logic
+3.  add repository queries
+4.  expose handler
+5.  update tests
+6.  update documentation
+
+------------------------------------------------------------------------
+
+14. Design Philosophy
+
+Axiora follows these principles:
+
+-   simplicity
+-   modularity
+-   auditability
+-   enterprise readiness
+-   future AI extensibility
+
+Code must remain clear, maintainable, and production-ready.
