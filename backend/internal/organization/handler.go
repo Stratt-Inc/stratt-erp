@@ -2,7 +2,7 @@ package organization
 
 import (
 	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/middleware"
+	"github.com/axiora/backend/internal/ctxutil"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -17,7 +17,7 @@ func NewHandler(svc *Service) *Handler {
 
 // POST /api/v1/organizations
 func (h *Handler) Create(c *fiber.Ctx) error {
-	userID, _ := middleware.GetUserID(c)
+	userID, _ := ctxutil.GetUserID(c)
 
 	var body struct {
 		Name string `json:"name"`
@@ -44,7 +44,7 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 
 // GET /api/v1/organizations
 func (h *Handler) List(c *fiber.Ctx) error {
-	userID, _ := middleware.GetUserID(c)
+	userID, _ := ctxutil.GetUserID(c)
 
 	orgs, err := h.svc.ListByUser(c.Context(), userID)
 	if err != nil {
@@ -96,7 +96,7 @@ func (h *Handler) RemoveMember(c *fiber.Ctx) error {
 		return c.Status(400).JSON(models.Err("invalid user ID"))
 	}
 
-	requestingUserID, _ := middleware.GetUserID(c)
+	requestingUserID, _ := ctxutil.GetUserID(c)
 
 	if err := h.svc.RemoveMember(c.Context(), orgID, targetUserID, requestingUserID); err != nil {
 		return c.Status(400).JSON(models.Err(err.Error()))

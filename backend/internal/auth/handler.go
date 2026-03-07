@@ -6,6 +6,7 @@ import (
 
 	"github.com/axiora/backend/internal/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -89,7 +90,9 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 		return c.Status(401).JSON(models.Err("not authenticated"))
 	}
 
-	_ = h.svc.Logout(c.Context(), sessionID.(interface{ GetUUID() [16]byte }))
+	if uid, ok := sessionID.(uuid.UUID); ok {
+		_ = h.svc.Logout(c.Context(), uid)
+	}
 	clearRefreshCookie(c)
 	return c.JSON(models.Msg("logged out successfully"))
 }
@@ -126,7 +129,11 @@ func (h *Handler) Me(c *fiber.Ctx) error {
 		return c.Status(401).JSON(models.Err("not authenticated"))
 	}
 
-	user, err := h.svc.Me(c.Context(), c.Locals("user_id_uuid").([16]byte))
+	uid, ok := userID.(uuid.UUID)
+	if !ok {
+		return c.Status(401).JSON(models.Err("invalid session"))
+	}
+	user, err := h.svc.Me(c.Context(), uid)
 	if err != nil {
 		return c.Status(404).JSON(models.Err("user not found"))
 	}

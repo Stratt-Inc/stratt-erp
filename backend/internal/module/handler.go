@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/middleware"
+	"github.com/axiora/backend/internal/ctxutil"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -15,7 +15,7 @@ func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
 // GET /api/v1/modules
 func (h *Handler) List(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 
 	var all []models.Module
 	if err := h.db.WithContext(c.Context()).Find(&all).Error; err != nil {
@@ -44,7 +44,7 @@ func (h *Handler) List(c *fiber.Ctx) error {
 
 // POST /api/v1/modules/:id/enable
 func (h *Handler) Enable(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 	moduleID := c.Params("id")
 
 	var mod models.Module
@@ -68,7 +68,7 @@ func (h *Handler) Enable(c *fiber.Ctx) error {
 
 // POST /api/v1/modules/:id/disable
 func (h *Handler) Disable(c *fiber.Ctx) error {
-	orgID, _ := middleware.GetOrgID(c)
+	orgID, _ := ctxutil.GetOrgID(c)
 	moduleID := c.Params("id")
 
 	if err := h.db.WithContext(c.Context()).

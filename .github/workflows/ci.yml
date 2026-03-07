@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "20"
-  GO_VERSION: "1.23"
+  NODE_VERSION: "22"
+  GO_VERSION: "1.26"
 
 jobs:
   # ─── Lint ──────────────────────────────────────────────────
