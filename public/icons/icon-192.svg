@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="38" fill="#5f7470"/>
-  <circle cx="96" cy="76" r="32" fill="none" stroke="#e0e2db" stroke-width="5"/>
-  <circle cx="96" cy="76" r="6" fill="#e0e2db"/>
-  <line x1="96" y1="76" x2="116" y2="62" stroke="#e0e2db" stroke-width="4" stroke-linecap="round"/>
-  <line x1="96" y1="76" x2="96" y2="52" stroke="#e0e2db" stroke-width="4" stroke-linecap="round"/>
-  <text x="96" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" font-weight="700" fill="#e0e2db">AXIORA</text>
-</svg>
-
