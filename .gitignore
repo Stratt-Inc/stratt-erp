@@ -50,3 +50,6 @@ apps/api/*.exe
 
 # Test coverage
 coverage/
+
+# Documents de référence internes (non versionnés)
+docs/references/
