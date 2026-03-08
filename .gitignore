@@ -17,8 +17,8 @@ dist-ssr
 *.local
 
 # Next.js
-apps/web/.next/
-apps/web/out/
+frontend/.next/
+frontend/out/
 
 # Packages build
 packages/*/dist/
@@ -53,3 +53,5 @@ coverage/
 
 # Documents de référence internes (non versionnés)
 docs/references/
+
+maquette/
