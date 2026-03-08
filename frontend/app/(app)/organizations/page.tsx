@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore, type Organization } from "@/store/auth";
-import { Building2, Plus, Users, Check } from "lucide-react";
+import { useIsDemo } from "@/components/DemoBanner";
+import { Building2, Plus, Users, Check, Lock } from "lucide-react";
 
 export default function OrganizationsPage() {
   const { accessToken, currentOrg, setCurrentOrg } = useAuthStore();
+  const isDemo = useIsDemo();
   const qc = useQueryClient();
 
   const [showCreate, setShowCreate] = useState(false);
@@ -40,18 +42,37 @@ export default function OrganizationsPage() {
             Gérez vos espaces de travail multi-tenant.
           </p>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all"
-          style={{ background: "linear-gradient(135deg, #5B6BF5, #7B5BE8)" }}
-        >
-          <Plus className="w-4 h-4" />
-          Nouvelle organisation
-        </button>
+        {isDemo ? (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-muted-foreground border border-border cursor-not-allowed select-none"
+            title="Non disponible en mode démo">
+            <Lock className="w-3.5 h-3.5" />
+            Nouvelle organisation
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90"
+            style={{ background: "linear-gradient(135deg, #5B6BF5, #7B5BE8)" }}
+          >
+            <Plus className="w-4 h-4" />
+            Nouvelle organisation
+          </button>
+        )}
       </div>
 
+      {/* Demo notice */}
+      {isDemo && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
+          style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)" }}>
+          <Lock className="w-4 h-4 flex-shrink-0" style={{ color: "#D97706" }} />
+          <span style={{ color: "#92400E" }}>
+            En mode démo, la création d&apos;organisations est désactivée. Vous pouvez uniquement consulter les données existantes.
+          </span>
+        </div>
+      )}
+
       {/* Create form */}
-      {showCreate && (
+      {showCreate && !isDemo && (
         <div className="rounded-xl border border-primary/30 bg-card p-6 space-y-4">
           <h3 className="font-semibold text-foreground">Créer une organisation</h3>
           <div className="grid grid-cols-2 gap-4">

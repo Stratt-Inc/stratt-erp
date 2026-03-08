@@ -4,6 +4,14 @@ import (
 	"log"
 
 	"github.com/axiora/backend/internal/models"
+	accountingmod "github.com/axiora/backend/modules/accounting"
+	billingmod "github.com/axiora/backend/modules/billing"
+	crmmod "github.com/axiora/backend/modules/crm"
+	hrmod "github.com/axiora/backend/modules/hr"
+	inventorymod "github.com/axiora/backend/modules/inventory"
+	marchesmod "github.com/axiora/backend/modules/marches"
+	nomenclaturemod "github.com/axiora/backend/modules/nomenclature"
+	procurementmod "github.com/axiora/backend/modules/procurement"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -49,7 +57,29 @@ func AutoMigrate(db *gorm.DB) error {
 		&models.OrganizationModule{},
 		// Audit
 		&models.AuditLog{},
-		// TODO: Add ERP module models when implemented
-		// (CRM, Accounting, Billing, Inventory, HR, Procurement)
+		// CRM
+		&crmmod.Contact{},
+		&crmmod.Lead{},
+		&crmmod.Deal{},
+		&crmmod.Activity{},
+		// Accounting
+		&accountingmod.Account{},
+		&accountingmod.Transaction{},
+		// Billing
+		&billingmod.Invoice{},
+		&billingmod.InvoiceItem{},
+		// Inventory
+		&inventorymod.Product{},
+		&inventorymod.StockMovement{},
+		// HR
+		&hrmod.Employee{},
+		&hrmod.LeaveRequest{},
+		// Procurement
+		&procurementmod.PurchaseOrder{},
+		&procurementmod.PurchaseOrderItem{},
+		// Marchés publics
+		&marchesmod.Marche{},
+		// Nomenclature
+		&nomenclaturemod.NomenclatureNode{},
 	)
 }

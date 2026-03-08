@@ -21,6 +21,8 @@ import (
 	crmmod "github.com/axiora/backend/modules/crm"
 	"github.com/axiora/backend/modules/hr"
 	"github.com/axiora/backend/modules/inventory"
+	"github.com/axiora/backend/modules/marches"
+	"github.com/axiora/backend/modules/nomenclature"
 	"github.com/axiora/backend/modules/procurement"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -76,6 +78,8 @@ func main() {
 	inventoryHandler := inventory.NewHandler(db)
 	hrHandler := hr.NewHandler(db)
 	procurementHandler := procurement.NewHandler(db)
+	marchesHandler := marches.NewHandler(db)
+	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
 
 	// ── Middleware factories ───────────────────────────────
@@ -171,6 +175,12 @@ func main() {
 
 	analyticsGroup := v1.Group("/analytics", requireAuth, requireOrg, requirePerm("analytics.read"))
 	analytics.RegisterRoutes(analyticsGroup, analyticsHandler)
+
+	marchesGroup := v1.Group("/marches", requireAuth, requireOrg, requirePerm("procurement.read"))
+	marches.RegisterRoutes(marchesGroup, marchesHandler)
+
+	nomenclatureGroup := v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read"))
+	nomenclature.RegisterRoutes(nomenclatureGroup, nomenclatureHandler)
 
 	// ── Start ─────────────────────────────────────────────
 	quit := make(chan os.Signal, 1)

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { Sidebar } from "./Sidebar";
+import { ToastContainer } from "./ToastContainer";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }
