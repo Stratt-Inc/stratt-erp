@@ -203,7 +203,6 @@ Phase 4                                      ████
 - [ ] Prometheus + Grafana (métriques API)
 - [ ] Documentation API Swagger complète
 - [ ] README final + guides d'installation
-- [ ] Deploy production sur Fly.io
 - [ ] Seed données de démonstration (Métropole fictive)
 - [ ] Checklist sécurité OWASP Top 10
 - [ ] Variables d'environnement documentées

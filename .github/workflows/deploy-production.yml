@@ -25,19 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check Fly.io configuration
-        id: check
-        run: |
-          if [ -z "${{ secrets.FLY_API_TOKEN_PRODUCTION }}" ]; then
-            echo "ready=false" >> $GITHUB_OUTPUT
-            echo "::warning::FLY_API_TOKEN_PRODUCTION is not set — skipping Fly.io deployment"
-          else
-            echo "ready=true" >> $GITHUB_OUTPUT
-          fi
-
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-        if: steps.check.outputs.ready == 'true'
-
       - uses: docker/setup-buildx-action@v4
 
       - name: Login to GitHub Container Registry
@@ -76,34 +63,6 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:latest
           cache-from: type=gha,scope=backend
           cache-to: type=gha,scope=backend,mode=max
-
-      - name: Deploy backend to Fly.io
-        if: steps.check.outputs.ready == 'true'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PRODUCTION }}
-        run: flyctl deploy --config infra/fly/fly.backend.production.toml --image ${{ env.BACKEND_IMAGE }}:${{ steps.version.outputs.VERSION }}
-
-      - name: Deploy frontend to Fly.io
-        if: steps.check.outputs.ready == 'true'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PRODUCTION }}
-        run: flyctl deploy --config infra/fly/fly.frontend.production.toml --image ${{ env.FRONTEND_IMAGE }}:${{ steps.version.outputs.VERSION }}
-
-      - name: Smoke test
-        if: steps.check.outputs.ready == 'true'
-        run: |
-          sleep 10
-          curl -f ${{ vars.PRODUCTION_URL }}/health || exit 1
-
-      - name: Deployment summary
-        if: steps.check.outputs.ready == 'false'
-        run: |
-          echo "## ⚠️ Partial deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Docker images pushed to GHCR ✅" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Fly.io deployment skipped — \`FLY_API_TOKEN_PRODUCTION\` not configured." >> $GITHUB_STEP_SUMMARY
-          echo "Set it in **Settings → Environments → production → Secrets**." >> $GITHUB_STEP_SUMMARY
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

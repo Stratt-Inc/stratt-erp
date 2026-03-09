@@ -23,19 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check Fly.io configuration
-        id: check
-        run: |
-          if [ -z "${{ secrets.FLY_API_TOKEN_STAGING }}" ]; then
-            echo "ready=false" >> $GITHUB_OUTPUT
-            echo "::warning::FLY_API_TOKEN_STAGING is not set — skipping Fly.io deployment"
-          else
-            echo "ready=true" >> $GITHUB_OUTPUT
-          fi
-
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-        if: steps.check.outputs.ready == 'true'
-
       - uses: docker/setup-buildx-action@v4
 
       - name: Login to GitHub Container Registry
@@ -66,19 +53,3 @@ jobs:
           tags: ${{ env.BACKEND_IMAGE }}:staging-${{ github.sha }}
           cache-from: type=gha,scope=backend-staging
           cache-to: type=gha,scope=backend-staging,mode=max
-
-      - name: Deploy backend to Fly.io (staging)
-        if: steps.check.outputs.ready == 'true'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-        run: flyctl deploy --config infra/fly/fly.backend.staging.toml --image ${{ env.BACKEND_IMAGE }}:staging-${{ github.sha }}
-
-      - name: Deploy frontend to Fly.io (staging)
-        if: steps.check.outputs.ready == 'true'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-        run: flyctl deploy --config infra/fly/fly.frontend.staging.toml --image ${{ env.FRONTEND_IMAGE }}:staging-${{ github.sha }}
-
-      - name: Smoke test
-        if: steps.check.outputs.ready == 'true'
-        run: curl -f ${{ vars.STAGING_URL }}/health || exit 1
