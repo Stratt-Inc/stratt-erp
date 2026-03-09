@@ -16,7 +16,7 @@ Axiora est une plateforme SaaS qui aide les acheteurs publics à piloter leur st
 | Couche | Technologie |
 |--------|-------------|
 | Frontend | Next.js 15, TypeScript, Tailwind CSS, TanStack Query, Zustand |
-| Backend | Go 1.23, Fiber v2, GORM |
+| Backend | Go 1.24, Gin, GORM |
 | Auth | JWT (access 15min + refresh 30j, httpOnly cookie) |
 | Base de données | PostgreSQL 16 |
 | Cache / Queue | Redis 7 + Asynq |
@@ -28,8 +28,8 @@ Axiora est une plateforme SaaS qui aide les acheteurs publics à piloter leur st
 
 ```
 axiora/
-├── backend/                  # API Go/Fiber
-│   ├── cmd/api/main.go       # Point d'entrée — Fiber, routes, DI
+├── backend/                  # API Go/Gin
+│   ├── cmd/api/main.go       # Point d'entrée — Gin, routes, DI
 │   ├── internal/
 │   │   ├── config/           # Variables d'environnement
 │   │   ├── database/         # Connexions PostgreSQL + Redis
@@ -143,7 +143,7 @@ open http://localhost:3000
 ### Développement local
 
 ```bash
-# Prérequis : Go 1.23+, Node.js 20+, Docker
+# Prérequis : Go 1.24+, Node.js 22+, Docker
 
 make setup          # copie .env, installe les deps frontend
 make up-infra       # postgres + redis + minio + meilisearch

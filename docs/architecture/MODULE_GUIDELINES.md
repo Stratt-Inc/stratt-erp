@@ -65,7 +65,7 @@ backend/modules/
 |---|---|
 | `models.go` | GORM entity definitions for the module |
 | `repository.go` | All database queries (scoped to tenant) |
-| `handler.go` | HTTP request handling via Fiber |
+| `handler.go` | HTTP request handling via Gin |
 | `routes.go` | Route registration and middleware attachment |
 | `service.go` | Business logic (optional — use when handlers grow complex) |
 

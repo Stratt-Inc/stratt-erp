@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/axiora/backend/internal/models"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -18,146 +18,146 @@ func NewHandler(svc *Service) *Handler {
 }
 
 // POST /api/v1/auth/signup
-func (h *Handler) Signup(c *fiber.Ctx) error {
+func (h *Handler) Signup(c *gin.Context) {
 	var body struct {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	if body.Name == "" || body.Email == "" || body.Password == "" {
-		return c.Status(400).JSON(models.Err("name, email and password are required"))
+		c.JSON(400, models.Err("name, email and password are required"))
+		return
 	}
 	if len(body.Password) < 8 {
-		return c.Status(400).JSON(models.Err("password must be at least 8 characters"))
+		c.JSON(400, models.Err("password must be at least 8 characters"))
+		return
 	}
 
-	user, access, refresh, err := h.svc.Signup(c.Context(), SignupInput{
+	user, access, refresh, err := h.svc.Signup(c.Request.Context(), SignupInput{
 		Name:     body.Name,
 		Email:    body.Email,
 		Password: body.Password,
 	})
 	if err != nil {
 		if errors.Is(err, ErrEmailTaken) {
-			return c.Status(409).JSON(models.Err(err.Error()))
+			c.JSON(409, models.Err(err.Error()))
+			return
 		}
-		return c.Status(500).JSON(models.Err("signup failed"))
+		c.JSON(500, models.Err("signup failed"))
+		return
 	}
 
 	setRefreshCookie(c, refresh, 30*24*time.Hour)
-	return c.Status(201).JSON(models.OK(fiber.Map{
+	c.JSON(201, models.OK(gin.H{
 		"user":         user,
 		"access_token": access,
 	}))
 }
 
 // POST /api/v1/auth/login
-func (h *Handler) Login(c *fiber.Ctx) error {
+func (h *Handler) Login(c *gin.Context) {
 	var body struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 
-	user, access, refresh, err := h.svc.Login(c.Context(), LoginInput{
+	user, access, refresh, err := h.svc.Login(c.Request.Context(), LoginInput{
 		Email:     body.Email,
 		Password:  body.Password,
-		UserAgent: c.Get("User-Agent"),
-		IP:        c.IP(),
+		UserAgent: c.GetHeader("User-Agent"),
+		IP:        c.ClientIP(),
 	})
 	if err != nil {
 		if errors.Is(err, ErrInvalidCredentials) {
-			return c.Status(401).JSON(models.Err(err.Error()))
+			c.JSON(401, models.Err(err.Error()))
+			return
 		}
-		return c.Status(500).JSON(models.Err("login failed"))
+		c.JSON(500, models.Err("login failed"))
+		return
 	}
 
 	setRefreshCookie(c, refresh, 30*24*time.Hour)
-	return c.JSON(models.OK(fiber.Map{
+	c.JSON(200, models.OK(gin.H{
 		"user":         user,
 		"access_token": access,
 	}))
 }
 
 // POST /api/v1/auth/logout
-func (h *Handler) Logout(c *fiber.Ctx) error {
-	sessionID := c.Locals("session_id")
-	if sessionID == nil {
-		return c.Status(401).JSON(models.Err("not authenticated"))
+func (h *Handler) Logout(c *gin.Context) {
+	val, exists := c.Get("session_id")
+	if !exists {
+		c.JSON(401, models.Err("not authenticated"))
+		return
 	}
 
-	if uid, ok := sessionID.(uuid.UUID); ok {
-		_ = h.svc.Logout(c.Context(), uid)
+	if uid, ok := val.(uuid.UUID); ok {
+		_ = h.svc.Logout(c.Request.Context(), uid)
 	}
 	clearRefreshCookie(c)
-	return c.JSON(models.Msg("logged out successfully"))
+	c.JSON(200, models.Msg("logged out successfully"))
 }
 
 // POST /api/v1/auth/refresh
-func (h *Handler) Refresh(c *fiber.Ctx) error {
-	refreshToken := c.Cookies("refresh_token")
+func (h *Handler) Refresh(c *gin.Context) {
+	refreshToken, _ := c.Cookie("refresh_token")
 	if refreshToken == "" {
 		// Also accept in body for non-cookie clients
 		var body struct {
 			RefreshToken string `json:"refresh_token"`
 		}
-		_ = c.BodyParser(&body)
+		_ = c.ShouldBindJSON(&body)
 		refreshToken = body.RefreshToken
 	}
 	if refreshToken == "" {
-		return c.Status(401).JSON(models.Err("refresh token required"))
+		c.JSON(401, models.Err("refresh token required"))
+		return
 	}
 
-	access, refresh, err := h.svc.Refresh(c.Context(), refreshToken)
+	access, refresh, err := h.svc.Refresh(c.Request.Context(), refreshToken)
 	if err != nil {
 		clearRefreshCookie(c)
-		return c.Status(401).JSON(models.Err("invalid or expired refresh token"))
+		c.JSON(401, models.Err("invalid or expired refresh token"))
+		return
 	}
 
 	setRefreshCookie(c, refresh, 30*24*time.Hour)
-	return c.JSON(models.OK(fiber.Map{"access_token": access}))
+	c.JSON(200, models.OK(gin.H{"access_token": access}))
 }
 
 // GET /api/v1/auth/me
-func (h *Handler) Me(c *fiber.Ctx) error {
-	userID := c.Locals("user_id")
-	if userID == nil {
-		return c.Status(401).JSON(models.Err("not authenticated"))
+func (h *Handler) Me(c *gin.Context) {
+	val, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(401, models.Err("not authenticated"))
+		return
 	}
 
-	uid, ok := userID.(uuid.UUID)
+	uid, ok := val.(uuid.UUID)
 	if !ok {
-		return c.Status(401).JSON(models.Err("invalid session"))
+		c.JSON(401, models.Err("invalid session"))
+		return
 	}
-	user, err := h.svc.Me(c.Context(), uid)
+	user, err := h.svc.Me(c.Request.Context(), uid)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("user not found"))
+		c.JSON(404, models.Err("user not found"))
+		return
 	}
-	return c.JSON(models.OK(user))
+	c.JSON(200, models.OK(user))
 }
 
-func setRefreshCookie(c *fiber.Ctx, token string, maxAge time.Duration) {
-	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    token,
-		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Strict",
-		MaxAge:   int(maxAge.Seconds()),
-		Path:     "/api/v1/auth",
-	})
+func setRefreshCookie(c *gin.Context, token string, maxAge time.Duration) {
+	c.SetCookie("refresh_token", token, int(maxAge.Seconds()), "/api/v1/auth", "", true, true)
 }
 
-func clearRefreshCookie(c *fiber.Ctx) {
-	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    "",
-		HTTPOnly: true,
-		MaxAge:   -1,
-		Path:     "/api/v1/auth",
-	})
+func clearRefreshCookie(c *gin.Context) {
+	c.SetCookie("refresh_token", "", -1, "/api/v1/auth", "", true, true)
 }

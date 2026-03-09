@@ -3,7 +3,7 @@ package accounting
 import (
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/middleware"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -11,48 +11,54 @@ type Handler struct{ db *gorm.DB }
 
 func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
-func (h *Handler) ListAccounts(c *fiber.Ctx) error {
+func (h *Handler) ListAccounts(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var accounts []Account
-	if err := h.db.WithContext(c.Context()).Where("tenant_id = ?", orgID).Find(&accounts).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch accounts"))
+	if err := h.db.WithContext(c.Request.Context()).Where("tenant_id = ?", orgID).Find(&accounts).Error; err != nil {
+		c.JSON(500, models.Err("failed to fetch accounts"))
+		return
 	}
-	return c.JSON(models.OK(accounts))
+	c.JSON(200, models.OK(accounts))
 }
 
-func (h *Handler) CreateAccount(c *fiber.Ctx) error {
+func (h *Handler) CreateAccount(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var acc Account
-	if err := c.BodyParser(&acc); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&acc); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	acc.TenantID = orgID
-	if err := h.db.WithContext(c.Context()).Create(&acc).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to create account"))
+	if err := h.db.WithContext(c.Request.Context()).Create(&acc).Error; err != nil {
+		c.JSON(500, models.Err("failed to create account"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(acc))
+	c.JSON(201, models.OK(acc))
 }
 
-func (h *Handler) ListTransactions(c *fiber.Ctx) error {
+func (h *Handler) ListTransactions(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var txs []Transaction
-	if err := h.db.WithContext(c.Context()).Where("tenant_id = ?", orgID).Order("date DESC").Find(&txs).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch transactions"))
+	if err := h.db.WithContext(c.Request.Context()).Where("tenant_id = ?", orgID).Order("date DESC").Find(&txs).Error; err != nil {
+		c.JSON(500, models.Err("failed to fetch transactions"))
+		return
 	}
-	return c.JSON(models.OK(txs))
+	c.JSON(200, models.OK(txs))
 }
 
-func (h *Handler) CreateTransaction(c *fiber.Ctx) error {
+func (h *Handler) CreateTransaction(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	userID, _ := middleware.GetUserID(c)
 	var tx Transaction
-	if err := c.BodyParser(&tx); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&tx); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	tx.TenantID = orgID
 	tx.CreatedBy = userID
-	if err := h.db.WithContext(c.Context()).Create(&tx).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to create transaction"))
+	if err := h.db.WithContext(c.Request.Context()).Create(&tx).Error; err != nil {
+		c.JSON(500, models.Err("failed to create transaction"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(tx))
+	c.JSON(201, models.OK(tx))
 }

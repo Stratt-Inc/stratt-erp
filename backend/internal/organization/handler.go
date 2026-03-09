@@ -1,9 +1,9 @@
 package organization
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/internal/ctxutil"
-	"github.com/gofiber/fiber/v2"
+	"github.com/axiora/backend/internal/models"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -16,91 +16,102 @@ func NewHandler(svc *Service) *Handler {
 }
 
 // POST /api/v1/organizations
-func (h *Handler) Create(c *fiber.Ctx) error {
+func (h *Handler) Create(c *gin.Context) {
 	userID, _ := ctxutil.GetUserID(c)
 
 	var body struct {
 		Name string `json:"name"`
 		Slug string `json:"slug"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	if body.Name == "" {
-		return c.Status(400).JSON(models.Err("name is required"))
+		c.JSON(400, models.Err("name is required"))
+		return
 	}
 
-	org, err := h.svc.Create(c.Context(), CreateInput{
+	org, err := h.svc.Create(c.Request.Context(), CreateInput{
 		Name:    body.Name,
 		Slug:    body.Slug,
 		OwnerID: userID,
 	})
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to create organization"))
+		c.JSON(500, models.Err("failed to create organization"))
+		return
 	}
 
-	return c.Status(201).JSON(models.OK(org))
+	c.JSON(201, models.OK(org))
 }
 
 // GET /api/v1/organizations
-func (h *Handler) List(c *fiber.Ctx) error {
+func (h *Handler) List(c *gin.Context) {
 	userID, _ := ctxutil.GetUserID(c)
 
-	orgs, err := h.svc.ListByUser(c.Context(), userID)
+	orgs, err := h.svc.ListByUser(c.Request.Context(), userID)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch organizations"))
+		c.JSON(500, models.Err("failed to fetch organizations"))
+		return
 	}
 
-	return c.JSON(models.OK(orgs))
+	c.JSON(200, models.OK(orgs))
 }
 
 // GET /api/v1/organizations/:id
-func (h *Handler) Get(c *fiber.Ctx) error {
-	orgID, err := uuid.Parse(c.Params("id"))
+func (h *Handler) Get(c *gin.Context) {
+	orgID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid organization ID"))
+		c.JSON(400, models.Err("invalid organization ID"))
+		return
 	}
 
-	org, err := h.svc.GetByID(c.Context(), orgID)
+	org, err := h.svc.GetByID(c.Request.Context(), orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("organization not found"))
+		c.JSON(404, models.Err("organization not found"))
+		return
 	}
 
-	return c.JSON(models.OK(org))
+	c.JSON(200, models.OK(org))
 }
 
 // GET /api/v1/organizations/:id/members
-func (h *Handler) ListMembers(c *fiber.Ctx) error {
-	orgID, err := uuid.Parse(c.Params("id"))
+func (h *Handler) ListMembers(c *gin.Context) {
+	orgID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid organization ID"))
+		c.JSON(400, models.Err("invalid organization ID"))
+		return
 	}
 
-	members, err := h.svc.ListMembers(c.Context(), orgID)
+	members, err := h.svc.ListMembers(c.Request.Context(), orgID)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch members"))
+		c.JSON(500, models.Err("failed to fetch members"))
+		return
 	}
 
-	return c.JSON(models.OK(members))
+	c.JSON(200, models.OK(members))
 }
 
 // DELETE /api/v1/organizations/:id/members/:userId
-func (h *Handler) RemoveMember(c *fiber.Ctx) error {
-	orgID, err := uuid.Parse(c.Params("id"))
+func (h *Handler) RemoveMember(c *gin.Context) {
+	orgID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid organization ID"))
+		c.JSON(400, models.Err("invalid organization ID"))
+		return
 	}
 
-	targetUserID, err := uuid.Parse(c.Params("userId"))
+	targetUserID, err := uuid.Parse(c.Param("userId"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid user ID"))
+		c.JSON(400, models.Err("invalid user ID"))
+		return
 	}
 
 	requestingUserID, _ := ctxutil.GetUserID(c)
 
-	if err := h.svc.RemoveMember(c.Context(), orgID, targetUserID, requestingUserID); err != nil {
-		return c.Status(400).JSON(models.Err(err.Error()))
+	if err := h.svc.RemoveMember(c.Request.Context(), orgID, targetUserID, requestingUserID); err != nil {
+		c.JSON(400, models.Err(err.Error()))
+		return
 	}
 
-	return c.JSON(models.Msg("member removed"))
+	c.JSON(200, models.Msg("member removed"))
 }

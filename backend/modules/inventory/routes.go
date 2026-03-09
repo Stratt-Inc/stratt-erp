@@ -1,10 +1,10 @@
 package inventory
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/products", h.ListProducts)
-	r.Post("/products", h.CreateProduct)
-	r.Get("/products/:id", h.GetProduct)
-	r.Post("/stock-movements", h.AddStockMovement)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("/products", h.ListProducts)
+	r.POST("/products", h.CreateProduct)
+	r.GET("/products/:id", h.GetProduct)
+	r.POST("/stock-movements", h.AddStockMovement)
 }

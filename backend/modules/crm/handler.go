@@ -5,7 +5,7 @@ import (
 
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/middleware"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -17,9 +17,9 @@ func NewHandler(repo *Repository) *Handler {
 	return &Handler{repo: repo}
 }
 
-func paginate(c *fiber.Ctx) (int, int) {
-	page, _ := strconv.Atoi(c.Query("page", "1"))
-	limit, _ := strconv.Atoi(c.Query("limit", "20"))
+func paginate(c *gin.Context) (int, int) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
 	if page < 1 {
 		page = 1
 	}
@@ -32,190 +32,219 @@ func paginate(c *fiber.Ctx) (int, int) {
 // ─── Contacts ────────────────────────────────────────────
 
 // GET /api/v1/crm/contacts
-func (h *Handler) ListContacts(c *fiber.Ctx) error {
+func (h *Handler) ListContacts(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	page, limit := paginate(c)
-	contacts, total, err := h.repo.ListContacts(c.Context(), orgID, c.Query("search"), page, limit)
+	contacts, total, err := h.repo.ListContacts(c.Request.Context(), orgID, c.Query("search"), page, limit)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch contacts"))
+		c.JSON(500, models.Err("failed to fetch contacts"))
+		return
 	}
-	return c.JSON(models.OK(fiber.Map{"items": contacts, "total": total, "page": page, "limit": limit}))
+	c.JSON(200, models.OK(gin.H{"items": contacts, "total": total, "page": page, "limit": limit}))
 }
 
 // POST /api/v1/crm/contacts
-func (h *Handler) CreateContact(c *fiber.Ctx) error {
+func (h *Handler) CreateContact(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var contact Contact
-	if err := c.BodyParser(&contact); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&contact); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	contact.TenantID = orgID
-	if err := h.repo.CreateContact(c.Context(), &contact); err != nil {
-		return c.Status(500).JSON(models.Err("failed to create contact"))
+	if err := h.repo.CreateContact(c.Request.Context(), &contact); err != nil {
+		c.JSON(500, models.Err("failed to create contact"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(contact))
+	c.JSON(201, models.OK(contact))
 }
 
 // GET /api/v1/crm/contacts/:id
-func (h *Handler) GetContact(c *fiber.Ctx) error {
+func (h *Handler) GetContact(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid contact ID"))
+		c.JSON(400, models.Err("invalid contact ID"))
+		return
 	}
-	contact, err := h.repo.FindContact(c.Context(), id, orgID)
+	contact, err := h.repo.FindContact(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("contact not found"))
+		c.JSON(404, models.Err("contact not found"))
+		return
 	}
-	return c.JSON(models.OK(contact))
+	c.JSON(200, models.OK(contact))
 }
 
 // PUT /api/v1/crm/contacts/:id
-func (h *Handler) UpdateContact(c *fiber.Ctx) error {
+func (h *Handler) UpdateContact(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid contact ID"))
+		c.JSON(400, models.Err("invalid contact ID"))
+		return
 	}
-	contact, err := h.repo.FindContact(c.Context(), id, orgID)
+	contact, err := h.repo.FindContact(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("contact not found"))
+		c.JSON(404, models.Err("contact not found"))
+		return
 	}
-	if err := c.BodyParser(contact); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(contact); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	contact.TenantID = orgID
-	if err := h.repo.UpdateContact(c.Context(), contact); err != nil {
-		return c.Status(500).JSON(models.Err("failed to update contact"))
+	if err := h.repo.UpdateContact(c.Request.Context(), contact); err != nil {
+		c.JSON(500, models.Err("failed to update contact"))
+		return
 	}
-	return c.JSON(models.OK(contact))
+	c.JSON(200, models.OK(contact))
 }
 
 // DELETE /api/v1/crm/contacts/:id
-func (h *Handler) DeleteContact(c *fiber.Ctx) error {
+func (h *Handler) DeleteContact(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid contact ID"))
+		c.JSON(400, models.Err("invalid contact ID"))
+		return
 	}
-	if err := h.repo.DeleteContact(c.Context(), id, orgID); err != nil {
-		return c.Status(500).JSON(models.Err("failed to delete contact"))
+	if err := h.repo.DeleteContact(c.Request.Context(), id, orgID); err != nil {
+		c.JSON(500, models.Err("failed to delete contact"))
+		return
 	}
-	return c.JSON(models.Msg("contact deleted"))
+	c.JSON(200, models.Msg("contact deleted"))
 }
 
 // ─── Leads ───────────────────────────────────────────────
 
-func (h *Handler) ListLeads(c *fiber.Ctx) error {
+func (h *Handler) ListLeads(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	page, limit := paginate(c)
-	leads, total, err := h.repo.ListLeads(c.Context(), orgID, c.Query("status"), page, limit)
+	leads, total, err := h.repo.ListLeads(c.Request.Context(), orgID, c.Query("status"), page, limit)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch leads"))
+		c.JSON(500, models.Err("failed to fetch leads"))
+		return
 	}
-	return c.JSON(models.OK(fiber.Map{"items": leads, "total": total, "page": page, "limit": limit}))
+	c.JSON(200, models.OK(gin.H{"items": leads, "total": total, "page": page, "limit": limit}))
 }
 
-func (h *Handler) CreateLead(c *fiber.Ctx) error {
+func (h *Handler) CreateLead(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var lead Lead
-	if err := c.BodyParser(&lead); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&lead); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	lead.TenantID = orgID
-	if err := h.repo.CreateLead(c.Context(), &lead); err != nil {
-		return c.Status(500).JSON(models.Err("failed to create lead"))
+	if err := h.repo.CreateLead(c.Request.Context(), &lead); err != nil {
+		c.JSON(500, models.Err("failed to create lead"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(lead))
+	c.JSON(201, models.OK(lead))
 }
 
-func (h *Handler) GetLead(c *fiber.Ctx) error {
+func (h *Handler) GetLead(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid lead ID"))
+		c.JSON(400, models.Err("invalid lead ID"))
+		return
 	}
-	lead, err := h.repo.FindLead(c.Context(), id, orgID)
+	lead, err := h.repo.FindLead(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("lead not found"))
+		c.JSON(404, models.Err("lead not found"))
+		return
 	}
-	return c.JSON(models.OK(lead))
+	c.JSON(200, models.OK(lead))
 }
 
-func (h *Handler) UpdateLead(c *fiber.Ctx) error {
+func (h *Handler) UpdateLead(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid lead ID"))
+		c.JSON(400, models.Err("invalid lead ID"))
+		return
 	}
-	lead, err := h.repo.FindLead(c.Context(), id, orgID)
+	lead, err := h.repo.FindLead(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("lead not found"))
+		c.JSON(404, models.Err("lead not found"))
+		return
 	}
-	if err := c.BodyParser(lead); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(lead); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	lead.TenantID = orgID
-	if err := h.repo.UpdateLead(c.Context(), lead); err != nil {
-		return c.Status(500).JSON(models.Err("failed to update lead"))
+	if err := h.repo.UpdateLead(c.Request.Context(), lead); err != nil {
+		c.JSON(500, models.Err("failed to update lead"))
+		return
 	}
-	return c.JSON(models.OK(lead))
+	c.JSON(200, models.OK(lead))
 }
 
 // ─── Deals ───────────────────────────────────────────────
 
-func (h *Handler) ListDeals(c *fiber.Ctx) error {
+func (h *Handler) ListDeals(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	page, limit := paginate(c)
-	deals, total, err := h.repo.ListDeals(c.Context(), orgID, c.Query("stage"), page, limit)
+	deals, total, err := h.repo.ListDeals(c.Request.Context(), orgID, c.Query("stage"), page, limit)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch deals"))
+		c.JSON(500, models.Err("failed to fetch deals"))
+		return
 	}
-	return c.JSON(models.OK(fiber.Map{"items": deals, "total": total, "page": page, "limit": limit}))
+	c.JSON(200, models.OK(gin.H{"items": deals, "total": total, "page": page, "limit": limit}))
 }
 
-func (h *Handler) CreateDeal(c *fiber.Ctx) error {
+func (h *Handler) CreateDeal(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var deal Deal
-	if err := c.BodyParser(&deal); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&deal); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	deal.TenantID = orgID
-	if err := h.repo.CreateDeal(c.Context(), &deal); err != nil {
-		return c.Status(500).JSON(models.Err("failed to create deal"))
+	if err := h.repo.CreateDeal(c.Request.Context(), &deal); err != nil {
+		c.JSON(500, models.Err("failed to create deal"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(deal))
+	c.JSON(201, models.OK(deal))
 }
 
-func (h *Handler) GetDeal(c *fiber.Ctx) error {
+func (h *Handler) GetDeal(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid deal ID"))
+		c.JSON(400, models.Err("invalid deal ID"))
+		return
 	}
-	deal, err := h.repo.FindDeal(c.Context(), id, orgID)
+	deal, err := h.repo.FindDeal(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("deal not found"))
+		c.JSON(404, models.Err("deal not found"))
+		return
 	}
-	return c.JSON(models.OK(deal))
+	c.JSON(200, models.OK(deal))
 }
 
-func (h *Handler) UpdateDeal(c *fiber.Ctx) error {
+func (h *Handler) UpdateDeal(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid deal ID"))
+		c.JSON(400, models.Err("invalid deal ID"))
+		return
 	}
-	deal, err := h.repo.FindDeal(c.Context(), id, orgID)
+	deal, err := h.repo.FindDeal(c.Request.Context(), id, orgID)
 	if err != nil {
-		return c.Status(404).JSON(models.Err("deal not found"))
+		c.JSON(404, models.Err("deal not found"))
+		return
 	}
-	if err := c.BodyParser(deal); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(deal); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	deal.TenantID = orgID
-	if err := h.repo.UpdateDeal(c.Context(), deal); err != nil {
-		return c.Status(500).JSON(models.Err("failed to update deal"))
+	if err := h.repo.UpdateDeal(c.Request.Context(), deal); err != nil {
+		c.JSON(500, models.Err("failed to update deal"))
+		return
 	}
-	return c.JSON(models.OK(deal))
+	c.JSON(200, models.OK(deal))
 }

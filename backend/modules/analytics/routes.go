@@ -1,7 +1,7 @@
 package analytics
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/overview", h.Overview)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("/overview", h.Overview)
 }

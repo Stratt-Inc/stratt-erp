@@ -6,10 +6,10 @@
 
 | Outil | Version | Usage |
 |-------|---------|-------|
-| Node.js | ≥ 20 LTS | Runtime JavaScript (frontend) |
-| npm | ≥ 10 | Package manager frontend |
-| Go | 1.23 | Backend runtime |
-| Fiber v2 | 2.52 | Framework HTTP Go |
+| Node.js | ≥ 22 LTS | Runtime JavaScript (frontend) |
+| pnpm | latest (corepack) | Package manager frontend |
+| Go | 1.24 | Backend runtime |
+| Gin | 1.10 | Framework HTTP Go |
 | GORM | 1.25 | ORM Go (PostgreSQL) |
 | Next.js | 15 | Framework React (App Router) |
 | TanStack Query | 5.x | Data fetching / caching |
@@ -23,19 +23,19 @@
 
 ## Architecture Decision Records (ADR)
 
-### ADR-001 — Go + Fiber v2 pour le backend
+### ADR-001 — Go + Gin pour le backend
 
-**Décision** : Go avec Fiber v2 plutôt que Gin, Node.js ou Python.
+**Décision** : Go avec Gin plutôt que Node.js ou Python.
 
 **Justification** :
 - Performance native : P99 < 20ms pour les endpoints CRUD
-- Fiber : API express-like, familière, excellent middleware ecosystem
+- Gin : API mature, ecosystem de middleware riche, conventions Go idiomatiques
 - Goroutines : gestion native de la concurrence pour les workers Asynq
 - Typage fort : refactoring sûr, pas d'erreur runtime sur les types
 - Binaire unique : déploiement simplifié (~10 MB)
 - GORM : ORM mature avec AutoMigrate, relations, soft deletes
 
-**Alternative rejetée** : Gin (API moins ergonomique), Node.js/Fastify (performance sous charge), Python (trop lent)
+**Alternative rejetée** : Node.js/Fastify (performance sous charge), Python (trop lent)
 
 ---
 
@@ -63,7 +63,7 @@
 - Pas de dépendance externe pour le login/signup
 - Access token (15 min) + refresh token (30 jours) en DB
 - Rotation de refresh token intégrée
-- Middleware Fiber personnalisé
+- Middleware Gin personnalisé
 
 ---
 

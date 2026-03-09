@@ -88,7 +88,7 @@ try {
 const user = await getUser(id)!; // interdit
 ```
 
-### Go (Backend — Fiber v2 + GORM)
+### Go (Backend — Gin + GORM)
 
 ```go
 // ✅ Errors wrapped avec contexte
