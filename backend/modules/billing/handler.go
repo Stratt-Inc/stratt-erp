@@ -3,7 +3,7 @@ package billing
 import (
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/middleware"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,25 +12,27 @@ type Handler struct{ db *gorm.DB }
 
 func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
-func (h *Handler) ListInvoices(c *fiber.Ctx) error {
+func (h *Handler) ListInvoices(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var invoices []Invoice
-	q := h.db.WithContext(c.Context()).Preload("Items").Where("tenant_id = ?", orgID)
+	q := h.db.WithContext(c.Request.Context()).Preload("Items").Where("tenant_id = ?", orgID)
 	if status := c.Query("status"); status != "" {
 		q = q.Where("status = ?", status)
 	}
 	if err := q.Order("created_at DESC").Find(&invoices).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch invoices"))
+		c.JSON(500, models.Err("failed to fetch invoices"))
+		return
 	}
-	return c.JSON(models.OK(invoices))
+	c.JSON(200, models.OK(invoices))
 }
 
-func (h *Handler) CreateInvoice(c *fiber.Ctx) error {
+func (h *Handler) CreateInvoice(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	userID, _ := middleware.GetUserID(c)
 	var inv Invoice
-	if err := c.BodyParser(&inv); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&inv); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	inv.TenantID = orgID
 	inv.CreatedBy = userID
@@ -43,41 +45,47 @@ func (h *Handler) CreateInvoice(c *fiber.Ctx) error {
 	inv.Subtotal = subtotal
 	inv.TaxAmount = subtotal * inv.TaxRate / 100
 	inv.Total = subtotal + inv.TaxAmount
-	if err := h.db.WithContext(c.Context()).Create(&inv).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to create invoice"))
+	if err := h.db.WithContext(c.Request.Context()).Create(&inv).Error; err != nil {
+		c.JSON(500, models.Err("failed to create invoice"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(inv))
+	c.JSON(201, models.OK(inv))
 }
 
-func (h *Handler) GetInvoice(c *fiber.Ctx) error {
+func (h *Handler) GetInvoice(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid invoice ID"))
+		c.JSON(400, models.Err("invalid invoice ID"))
+		return
 	}
 	var inv Invoice
-	if err := h.db.WithContext(c.Context()).Preload("Items").Where("id = ? AND tenant_id = ?", id, orgID).First(&inv).Error; err != nil {
-		return c.Status(404).JSON(models.Err("invoice not found"))
+	if err := h.db.WithContext(c.Request.Context()).Preload("Items").Where("id = ? AND tenant_id = ?", id, orgID).First(&inv).Error; err != nil {
+		c.JSON(404, models.Err("invoice not found"))
+		return
 	}
-	return c.JSON(models.OK(inv))
+	c.JSON(200, models.OK(inv))
 }
 
-func (h *Handler) UpdateInvoiceStatus(c *fiber.Ctx) error {
+func (h *Handler) UpdateInvoiceStatus(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid invoice ID"))
+		c.JSON(400, models.Err("invalid invoice ID"))
+		return
 	}
 	var body struct {
 		Status string `json:"status"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
-	if err := h.db.WithContext(c.Context()).Model(&Invoice{}).
+	if err := h.db.WithContext(c.Request.Context()).Model(&Invoice{}).
 		Where("id = ? AND tenant_id = ?", id, orgID).
 		Update("status", body.Status).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to update invoice"))
+		c.JSON(500, models.Err("failed to update invoice"))
+		return
 	}
-	return c.JSON(models.Msg("invoice updated"))
+	c.JSON(200, models.Msg("invoice updated"))
 }

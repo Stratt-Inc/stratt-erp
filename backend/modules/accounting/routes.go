@@ -1,10 +1,10 @@
 package accounting
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/accounts", h.ListAccounts)
-	r.Post("/accounts", h.CreateAccount)
-	r.Get("/transactions", h.ListTransactions)
-	r.Post("/transactions", h.CreateTransaction)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("/accounts", h.ListAccounts)
+	r.POST("/accounts", h.CreateAccount)
+	r.GET("/transactions", h.ListTransactions)
+	r.POST("/transactions", h.CreateTransaction)
 }

@@ -3,7 +3,7 @@ package inventory
 import (
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/middleware"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,55 +12,61 @@ type Handler struct{ db *gorm.DB }
 
 func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
-func (h *Handler) ListProducts(c *fiber.Ctx) error {
+func (h *Handler) ListProducts(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var products []Product
-	q := h.db.WithContext(c.Context()).Where("tenant_id = ?", orgID)
+	q := h.db.WithContext(c.Request.Context()).Where("tenant_id = ?", orgID)
 	if search := c.Query("search"); search != "" {
 		q = q.Where("name ILIKE ? OR sku ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 	if err := q.Order("name ASC").Find(&products).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch products"))
+		c.JSON(500, models.Err("failed to fetch products"))
+		return
 	}
-	return c.JSON(models.OK(products))
+	c.JSON(200, models.OK(products))
 }
 
-func (h *Handler) CreateProduct(c *fiber.Ctx) error {
+func (h *Handler) CreateProduct(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var p Product
-	if err := c.BodyParser(&p); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&p); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	p.TenantID = orgID
-	if err := h.db.WithContext(c.Context()).Create(&p).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to create product"))
+	if err := h.db.WithContext(c.Request.Context()).Create(&p).Error; err != nil {
+		c.JSON(500, models.Err("failed to create product"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(p))
+	c.JSON(201, models.OK(p))
 }
 
-func (h *Handler) GetProduct(c *fiber.Ctx) error {
+func (h *Handler) GetProduct(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid product ID"))
+		c.JSON(400, models.Err("invalid product ID"))
+		return
 	}
 	var p Product
-	if err := h.db.WithContext(c.Context()).Where("id = ? AND tenant_id = ?", id, orgID).First(&p).Error; err != nil {
-		return c.Status(404).JSON(models.Err("product not found"))
+	if err := h.db.WithContext(c.Request.Context()).Where("id = ? AND tenant_id = ?", id, orgID).First(&p).Error; err != nil {
+		c.JSON(404, models.Err("product not found"))
+		return
 	}
-	return c.JSON(models.OK(p))
+	c.JSON(200, models.OK(p))
 }
 
-func (h *Handler) AddStockMovement(c *fiber.Ctx) error {
+func (h *Handler) AddStockMovement(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	userID, _ := middleware.GetUserID(c)
 	var mv StockMovement
-	if err := c.BodyParser(&mv); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&mv); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	mv.TenantID = orgID
 	mv.CreatedBy = userID
-	if err := h.db.WithContext(c.Context()).Transaction(func(tx *gorm.DB) error {
+	if err := h.db.WithContext(c.Request.Context()).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&mv).Error; err != nil {
 			return err
 		}
@@ -71,7 +77,8 @@ func (h *Handler) AddStockMovement(c *fiber.Ctx) error {
 		return tx.Model(&Product{}).Where("id = ?", mv.ProductID).
 			UpdateColumn("stock", gorm.Expr("stock + ?", delta)).Error
 	}); err != nil {
-		return c.Status(500).JSON(models.Err("failed to record movement"))
+		c.JSON(500, models.Err("failed to record movement"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(mv))
+	c.JSON(201, models.OK(mv))
 }

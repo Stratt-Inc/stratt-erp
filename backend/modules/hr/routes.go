@@ -1,11 +1,11 @@
 package hr
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/employees", h.ListEmployees)
-	r.Post("/employees", h.CreateEmployee)
-	r.Get("/employees/:id", h.GetEmployee)
-	r.Get("/leave-requests", h.ListLeaveRequests)
-	r.Post("/leave-requests", h.CreateLeaveRequest)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("/employees", h.ListEmployees)
+	r.POST("/employees", h.CreateEmployee)
+	r.GET("/employees/:id", h.GetEmployee)
+	r.GET("/leave-requests", h.ListLeaveRequests)
+	r.POST("/leave-requests", h.CreateLeaveRequest)
 }

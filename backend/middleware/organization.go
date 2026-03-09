@@ -3,41 +3,49 @@ package middleware
 import (
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/internal/organization"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 // RequireOrganization validates the X-Organization-Id header and ensures
 // the authenticated user is a member of that organization.
-func RequireOrganization(orgSvc *organization.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		rawOrgID := c.Get("X-Organization-Id")
+func RequireOrganization(orgSvc *organization.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		rawOrgID := c.GetHeader("X-Organization-Id")
 		if rawOrgID == "" {
 			// Also accept as query param
 			rawOrgID = c.Query("org_id")
 		}
 		if rawOrgID == "" {
-			return c.Status(400).JSON(models.Err("X-Organization-Id header is required"))
+			c.JSON(400, models.Err("X-Organization-Id header is required"))
+			c.Abort()
+			return
 		}
 
 		orgID, err := uuid.Parse(rawOrgID)
 		if err != nil {
-			return c.Status(400).JSON(models.Err("invalid organization ID"))
+			c.JSON(400, models.Err("invalid organization ID"))
+			c.Abort()
+			return
 		}
 
 		userID, ok := GetUserID(c)
 		if !ok {
-			return c.Status(401).JSON(models.Err("authentication required"))
+			c.JSON(401, models.Err("authentication required"))
+			c.Abort()
+			return
 		}
 
-		member, err := orgSvc.GetMember(c.Context(), orgID, userID)
+		member, err := orgSvc.GetMember(c.Request.Context(), orgID, userID)
 		if err != nil {
-			return c.Status(403).JSON(models.Err("you are not a member of this organization"))
+			c.JSON(403, models.Err("you are not a member of this organization"))
+			c.Abort()
+			return
 		}
 
-		c.Locals("org_id", orgID)
-		c.Locals("org_member", member)
+		c.Set("org_id", orgID)
+		c.Set("org_member", member)
 
-		return c.Next()
+		c.Next()
 	}
 }

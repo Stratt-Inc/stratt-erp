@@ -1,9 +1,9 @@
 package procurement
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/purchase-orders", h.ListOrders)
-	r.Post("/purchase-orders", h.CreateOrder)
-	r.Get("/purchase-orders/:id", h.GetOrder)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("/purchase-orders", h.ListOrders)
+	r.POST("/purchase-orders", h.CreateOrder)
+	r.GET("/purchase-orders/:id", h.GetOrder)
 }

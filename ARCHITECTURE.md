@@ -16,7 +16,7 @@ Axiora suit une architecture **modulaire en couches** avec séparation stricte e
                        │ HTTP REST
 ┌──────────────────────▼──────────────────────────────────────┐
 │                   PRESENTATION LAYER                        │
-│   frontend/ (Next.js 15)    │   backend/ (Go / Fiber v2)   │
+│   frontend/ (Next.js 15)    │   backend/ (Go / Gin)        │
 │   - App Router               │   - HTTP Handlers             │
 │   - TanStack Query           │   - Middleware (auth, org,    │
 │   - Zustand (state)          │     permissions)              │
@@ -60,9 +60,9 @@ Axiora suit une architecture **modulaire en couches** avec séparation stricte e
 ```
 axiora/
 │
-├── backend/                          # API Go / Fiber v2
+├── backend/                          # API Go / Gin
 │   ├── cmd/
-│   │   ├── api/main.go               # Point d'entrée : Fiber, routes, DI
+│   │   ├── api/main.go               # Point d'entrée : Gin, routes, DI
 │   │   └── worker/                   # Point d'entrée worker Asynq (async jobs)
 │   ├── internal/
 │   │   ├── config/config.go          # Variables d'environnement (godotenv)
@@ -90,7 +90,7 @@ axiora/
 │   │   │   └── repository.go
 │   │   ├── audit/service.go          # Service d'audit (fire & forget)
 │   │   └── module/handler.go         # Activation/désactivation modules
-│   ├── middleware/                    # Middleware Fiber
+│   ├── middleware/                    # Middleware Gin
 │   │   ├── auth.go                   # RequireAuth (JWT Bearer)
 │   │   ├── organization.go           # RequireOrganization (X-Organization-Id)
 │   │   └── permission.go             # RequirePermission / RequireAnyPermission
@@ -288,7 +288,7 @@ Request
   → X-Organization-Id header parsé (middleware/organization.go)
   → User est membre de l'organisation
   → Permission vérifiée via RBAC (middleware/permission.go)
-  → Handler avec org_id dans le contexte Fiber
+  → Handler avec org_id dans le contexte Gin
 ```
 
 Chaque handler filtre les requêtes GORM par `tenant_id` pour garantir l'isolation.
@@ -329,7 +329,7 @@ RequireAuth → RequireOrganization → RequirePermission("module.action")
 
 Les modules sont des packages Go isolés dans `backend/modules/`. Chaque module contient :
 - `models.go` — Entités GORM avec `TenantID`
-- `handler.go` — HTTP handlers Fiber
+- `handler.go` — HTTP handlers Gin
 - `routes.go` — Fonction `RegisterRoutes(router, handler)`
 - `repository.go` — Accès DB (optionnel, certains utilisent le handler directement)
 
@@ -378,7 +378,7 @@ Les workers sont démarrés par `cmd/worker/main.go` et communiquent via la queu
 | Frontend | Next.js (App Router) | 15 |
 | UI | Radix UI + Tailwind CSS + Framer Motion | — |
 | State management | Zustand + TanStack Query | 5.x / 5.x |
-| Backend | Go + Fiber v2 | 1.23 / 2.52 |
+| Backend | Go + Gin | 1.23 / 1.x |
 | ORM | GORM | 1.25 |
 | Auth | JWT (golang-jwt/jwt/v5) | 5.2 |
 | Base de données | PostgreSQL | 16 |
@@ -400,7 +400,7 @@ Les workers sont démarrés par `cmd/worker/main.go` et communiquent via la queu
 └──────┬───────┘  └──────┬───────┘  └──────────────┘
        │                 │
 ┌──────▼─────────────────▼───────┐  ┌──────────────┐
-│         API Go/Fiber           │  │ Meilisearch  │
+│          API Go/Gin            │  │ Meilisearch  │
 │           :8080                │  │    :7700     │
 └──────────────┬─────────────────┘  └──────────────┘
                │

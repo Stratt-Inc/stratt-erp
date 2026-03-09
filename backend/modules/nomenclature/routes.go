@@ -1,9 +1,9 @@
 package nomenclature
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r fiber.Router, h *Handler) {
-	r.Get("/", h.List)
-	r.Post("/", h.Create)
-	r.Put("/:id", h.Update)
+func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
+	r.GET("", h.List)
+	r.POST("", h.Create)
+	r.PUT("/:id", h.Update)
 }

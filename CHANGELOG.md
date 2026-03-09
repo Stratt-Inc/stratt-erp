@@ -23,7 +23,7 @@ All notable changes to Axiora are documented here.
 ### Dependencies
 
 - Apply all Dependabot updates: actions/checkout v6, setup-node v6, docker/build-push-action v7, CodeQL v4, node 25-alpine, golang 1.26-alpine, lucide-react 0.577.0, @types/node ^25 ([066798c](https://github.com/makcimerrr/axiora/commit/066798c))
-- Bump Go backend modules: fiber/v2 2.52.12, go-redis 9.7.3, x/crypto 0.45.0, jwt/v5 5.2.2, edwards25519 1.1.1
+- Bump Go backend modules: gin v1.10.0, gin-contrib/cors v1.7.2, gin-contrib/gzip v1.0.1, go-redis 9.7.3, x/crypto 0.45.0, jwt/v5 5.2.2, edwards25519 1.1.1
 
 ---
 

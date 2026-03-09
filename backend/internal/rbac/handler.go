@@ -1,9 +1,9 @@
 package rbac
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/internal/ctxutil"
-	"github.com/gofiber/fiber/v2"
+	"github.com/axiora/backend/internal/models"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -16,119 +16,138 @@ func NewHandler(svc *Service) *Handler {
 }
 
 // GET /api/v1/roles
-func (h *Handler) ListRoles(c *fiber.Ctx) error {
+func (h *Handler) ListRoles(c *gin.Context) {
 	orgID, _ := ctxutil.GetOrgID(c)
-	roles, err := h.svc.ListRoles(c.Context(), orgID)
+	roles, err := h.svc.ListRoles(c.Request.Context(), orgID)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch roles"))
+		c.JSON(500, models.Err("failed to fetch roles"))
+		return
 	}
-	return c.JSON(models.OK(roles))
+	c.JSON(200, models.OK(roles))
 }
 
 // POST /api/v1/roles
-func (h *Handler) CreateRole(c *fiber.Ctx) error {
+func (h *Handler) CreateRole(c *gin.Context) {
 	orgID, _ := ctxutil.GetOrgID(c)
 	var body struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	if body.Name == "" {
-		return c.Status(400).JSON(models.Err("name is required"))
+		c.JSON(400, models.Err("name is required"))
+		return
 	}
-	role, err := h.svc.CreateRole(c.Context(), orgID, body.Name, body.Description)
+	role, err := h.svc.CreateRole(c.Request.Context(), orgID, body.Name, body.Description)
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to create role"))
+		c.JSON(500, models.Err("failed to create role"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(role))
+	c.JSON(201, models.OK(role))
 }
 
 // PUT /api/v1/roles/:id
-func (h *Handler) UpdateRole(c *fiber.Ctx) error {
-	id, err := uuid.Parse(c.Params("id"))
+func (h *Handler) UpdateRole(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid role ID"))
+		c.JSON(400, models.Err("invalid role ID"))
+		return
 	}
 	var body struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
-	role, err := h.svc.UpdateRole(c.Context(), id, body.Name, body.Description)
+	role, err := h.svc.UpdateRole(c.Request.Context(), id, body.Name, body.Description)
 	if err != nil {
 		if err == ErrSystemRole {
-			return c.Status(403).JSON(models.Err(err.Error()))
+			c.JSON(403, models.Err(err.Error()))
+			return
 		}
-		return c.Status(500).JSON(models.Err("failed to update role"))
+		c.JSON(500, models.Err("failed to update role"))
+		return
 	}
-	return c.JSON(models.OK(role))
+	c.JSON(200, models.OK(role))
 }
 
 // DELETE /api/v1/roles/:id
-func (h *Handler) DeleteRole(c *fiber.Ctx) error {
-	id, err := uuid.Parse(c.Params("id"))
+func (h *Handler) DeleteRole(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid role ID"))
+		c.JSON(400, models.Err("invalid role ID"))
+		return
 	}
-	if err := h.svc.DeleteRole(c.Context(), id); err != nil {
+	if err := h.svc.DeleteRole(c.Request.Context(), id); err != nil {
 		if err == ErrSystemRole {
-			return c.Status(403).JSON(models.Err(err.Error()))
+			c.JSON(403, models.Err(err.Error()))
+			return
 		}
-		return c.Status(500).JSON(models.Err("failed to delete role"))
+		c.JSON(500, models.Err("failed to delete role"))
+		return
 	}
-	return c.JSON(models.Msg("role deleted"))
+	c.JSON(200, models.Msg("role deleted"))
 }
 
 // GET /api/v1/permissions
-func (h *Handler) ListPermissions(c *fiber.Ctx) error {
-	perms, err := h.svc.ListPermissions(c.Context())
+func (h *Handler) ListPermissions(c *gin.Context) {
+	perms, err := h.svc.ListPermissions(c.Request.Context())
 	if err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch permissions"))
+		c.JSON(500, models.Err("failed to fetch permissions"))
+		return
 	}
-	return c.JSON(models.OK(perms))
+	c.JSON(200, models.OK(perms))
 }
 
 // POST /api/v1/roles/:id/permissions
-func (h *Handler) AssignPermission(c *fiber.Ctx) error {
-	roleID, err := uuid.Parse(c.Params("id"))
+func (h *Handler) AssignPermission(c *gin.Context) {
+	roleID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid role ID"))
+		c.JSON(400, models.Err("invalid role ID"))
+		return
 	}
 	var body struct {
 		Permission string `json:"permission"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
-	if err := h.svc.AssignPermissionToRole(c.Context(), roleID, body.Permission); err != nil {
-		return c.Status(500).JSON(models.Err("failed to assign permission"))
+	if err := h.svc.AssignPermissionToRole(c.Request.Context(), roleID, body.Permission); err != nil {
+		c.JSON(500, models.Err("failed to assign permission"))
+		return
 	}
-	return c.JSON(models.Msg("permission assigned"))
+	c.JSON(200, models.Msg("permission assigned"))
 }
 
 // POST /api/v1/users/:id/roles
-func (h *Handler) AssignRoleToUser(c *fiber.Ctx) error {
+func (h *Handler) AssignRoleToUser(c *gin.Context) {
 	orgID, _ := ctxutil.GetOrgID(c)
-	targetUserID, err := uuid.Parse(c.Params("id"))
+	targetUserID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid user ID"))
+		c.JSON(400, models.Err("invalid user ID"))
+		return
 	}
 	var body struct {
 		RoleID string `json:"role_id"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	roleID, err := uuid.Parse(body.RoleID)
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid role ID"))
+		c.JSON(400, models.Err("invalid role ID"))
+		return
 	}
-	if err := h.svc.AssignRoleToUser(c.Context(), targetUserID, orgID, roleID); err != nil {
-		return c.Status(500).JSON(models.Err("failed to assign role"))
+	if err := h.svc.AssignRoleToUser(c.Request.Context(), targetUserID, orgID, roleID); err != nil {
+		c.JSON(500, models.Err("failed to assign role"))
+		return
 	}
-	return c.JSON(models.Msg("role assigned"))
+	c.JSON(200, models.Msg("role assigned"))
 }

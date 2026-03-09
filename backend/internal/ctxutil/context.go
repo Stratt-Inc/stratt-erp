@@ -1,37 +1,37 @@
-// Package ctxutil provides helpers for extracting typed values from Fiber context locals.
+// Package ctxutil provides helpers for extracting typed values from Gin context.
 package ctxutil
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-// GetUserID returns the authenticated user's UUID stored in Fiber context locals.
-func GetUserID(c *fiber.Ctx) (uuid.UUID, bool) {
-	v := c.Locals("user_id")
-	if v == nil {
+// GetUserID returns the authenticated user's UUID stored in Gin context.
+func GetUserID(c *gin.Context) (uuid.UUID, bool) {
+	val, exists := c.Get("user_id")
+	if !exists {
 		return uuid.Nil, false
 	}
-	id, ok := v.(uuid.UUID)
+	id, ok := val.(uuid.UUID)
 	return id, ok
 }
 
-// GetOrgID returns the current organization's UUID stored in Fiber context locals.
-func GetOrgID(c *fiber.Ctx) (uuid.UUID, bool) {
-	v := c.Locals("org_id")
-	if v == nil {
+// GetOrgID returns the current organization's UUID stored in Gin context.
+func GetOrgID(c *gin.Context) (uuid.UUID, bool) {
+	val, exists := c.Get("org_id")
+	if !exists {
 		return uuid.Nil, false
 	}
-	id, ok := v.(uuid.UUID)
+	id, ok := val.(uuid.UUID)
 	return id, ok
 }
 
-// GetSessionID returns the session UUID stored in Fiber context locals.
-func GetSessionID(c *fiber.Ctx) (uuid.UUID, bool) {
-	v := c.Locals("session_id")
-	if v == nil {
+// GetSessionID returns the session UUID stored in Gin context.
+func GetSessionID(c *gin.Context) (uuid.UUID, bool) {
+	val, exists := c.Get("session_id")
+	if !exists {
 		return uuid.Nil, false
 	}
-	id, ok := v.(uuid.UUID)
+	id, ok := val.(uuid.UUID)
 	return id, ok
 }

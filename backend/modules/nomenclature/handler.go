@@ -3,7 +3,7 @@ package nomenclature
 import (
 	"github.com/axiora/backend/internal/models"
 	"github.com/axiora/backend/middleware"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,47 +12,54 @@ type Handler struct{ db *gorm.DB }
 
 func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
-func (h *Handler) List(c *fiber.Ctx) error {
+func (h *Handler) List(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var nodes []NomenclatureNode
-	if err := h.db.WithContext(c.Context()).Where("tenant_id = ?", orgID).Order("code").Find(&nodes).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to fetch nomenclature"))
+	if err := h.db.WithContext(c.Request.Context()).Where("tenant_id = ?", orgID).Order("code").Find(&nodes).Error; err != nil {
+		c.JSON(500, models.Err("failed to fetch nomenclature"))
+		return
 	}
-	return c.JSON(models.OK(nodes))
+	c.JSON(200, models.OK(nodes))
 }
 
-func (h *Handler) Create(c *fiber.Ctx) error {
+func (h *Handler) Create(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
 	var node NomenclatureNode
-	if err := c.BodyParser(&node); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&node); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	node.TenantID = orgID
-	if err := h.db.WithContext(c.Context()).Create(&node).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to create node"))
+	if err := h.db.WithContext(c.Request.Context()).Create(&node).Error; err != nil {
+		c.JSON(500, models.Err("failed to create node"))
+		return
 	}
-	return c.Status(201).JSON(models.OK(node))
+	c.JSON(201, models.OK(node))
 }
 
-func (h *Handler) Update(c *fiber.Ctx) error {
+func (h *Handler) Update(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
-	id, err := uuid.Parse(c.Params("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.Status(400).JSON(models.Err("invalid id"))
+		c.JSON(400, models.Err("invalid id"))
+		return
 	}
 	var node NomenclatureNode
-	if err := h.db.WithContext(c.Context()).Where("id = ? AND tenant_id = ?", id, orgID).First(&node).Error; err != nil {
-		return c.Status(404).JSON(models.Err("node not found"))
+	if err := h.db.WithContext(c.Request.Context()).Where("id = ? AND tenant_id = ?", id, orgID).First(&node).Error; err != nil {
+		c.JSON(404, models.Err("node not found"))
+		return
 	}
 	savedID := node.ID
 	savedTenantID := node.TenantID
-	if err := c.BodyParser(&node); err != nil {
-		return c.Status(400).JSON(models.Err("invalid request body"))
+	if err := c.ShouldBindJSON(&node); err != nil {
+		c.JSON(400, models.Err("invalid request body"))
+		return
 	}
 	node.ID = savedID
 	node.TenantID = savedTenantID
-	if err := h.db.WithContext(c.Context()).Save(&node).Error; err != nil {
-		return c.Status(500).JSON(models.Err("failed to update node"))
+	if err := h.db.WithContext(c.Request.Context()).Save(&node).Error; err != nil {
+		c.JSON(500, models.Err("failed to update node"))
+		return
 	}
-	return c.JSON(models.OK(node))
+	c.JSON(200, models.OK(node))
 }
