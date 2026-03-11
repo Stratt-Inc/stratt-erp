@@ -157,10 +157,10 @@ Modules must **not** import each other directly.
 
 ```go
 // Wrong
-import "github.com/axiora/backend/modules/crm"
+import "github.com/stratt/backend/modules/crm"
 
 // Correct — use a shared service or analytics query
-import "github.com/axiora/backend/internal/analytics"
+import "github.com/stratt/backend/internal/analytics"
 ```
 
 Allowed communication patterns:

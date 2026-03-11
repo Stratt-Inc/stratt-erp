@@ -1,4 +1,4 @@
-# ROADMAP — Axiora — 8 semaines
+# ROADMAP — STRATT — 8 semaines
 
 > Objectif : transformer la maquette UI en SaaS complet, prêt à accueillir les premiers clients
 

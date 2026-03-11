@@ -1,4 +1,4 @@
-# ARCHITECTURE — Axiora
+# ARCHITECTURE — STRATT
 
 > ERP SaaS modulaire et multi-tenant pour entreprises modernes
 
@@ -6,7 +6,7 @@
 
 ## Vue d'ensemble
 
-Axiora suit une architecture **modulaire en couches** avec séparation stricte entre le core platform (auth, RBAC, organisations) et les modules ERP métier (CRM, Comptabilité, Facturation, etc.). Chaque module est isolé et activable par organisation.
+STRATT suit une architecture **modulaire en couches** avec séparation stricte entre le core platform (auth, RBAC, organisations) et les modules ERP métier (CRM, Comptabilité, Facturation, etc.). Chaque module est isolé et activable par organisation.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,7 +58,7 @@ Axiora suit une architecture **modulaire en couches** avec séparation stricte e
 ## Structure du projet
 
 ```
-axiora/
+stratt/
 │
 ├── backend/                          # API Go / Gin
 │   ├── cmd/
@@ -280,7 +280,7 @@ Chaque module utilise `tenant_id UUID` pour l'isolation multi-tenant.
 
 ## Multi-tenancy
 
-Axiora utilise un modèle **tenant_id par table**. Toutes les tables métier contiennent `tenant_id UUID NOT NULL` référençant `organizations(id)`.
+STRATT utilise un modèle **tenant_id par table**. Toutes les tables métier contiennent `tenant_id UUID NOT NULL` référençant `organizations(id)`.
 
 ```
 Request

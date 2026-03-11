@@ -311,8 +311,8 @@ export default function AdministrationPage() {
             <div className="space-y-2 mb-4">
               {[
                 { label: "Support prioritaire", value: "Lundi — Vendredi, 9h — 18h" },
-                { label: "Contact", value: "support@axiora.io" },
-                { label: "Documentation", value: "docs.axiora.io" },
+                { label: "Contact", value: "support@stratt.io" },
+                { label: "Documentation", value: "docs.stratt.io" },
               ].map(({ label, value }) => (
                 <div key={label} className="p-2.5 rounded-lg bg-muted/30">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>

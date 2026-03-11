@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}>
             <Zap className="w-5 h-5 text-white fill-white" />
           </div>
-          <span className="text-white font-bold text-lg tracking-tight">Axiora</span>
+          <span className="text-white font-bold text-lg tracking-tight">STRATT</span>
         </div>
 
         <div className="space-y-6">
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
 
-        <p className="text-white/30 text-sm">© 2026 Axiora. Tous droits réservés.</p>
+        <p className="text-white/30 text-sm">© 2026 STRATT. Tous droits réservés.</p>
       </div>
 
       {/* Right panel — form */}
@@ -46,7 +46,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}>
               <Zap className="w-4 h-4 text-white fill-white" />
             </div>
-            <span className="font-bold text-lg">Axiora</span>
+            <span className="font-bold text-lg">STRATT</span>
           </div>
           {children}
         </div>

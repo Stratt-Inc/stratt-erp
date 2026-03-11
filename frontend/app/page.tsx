@@ -183,7 +183,7 @@ export default function LandingPage() {
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
           </div>
-          <span className="font-bold text-[17px] text-[#0C1033]">Axiora</span>
+          <span className="font-bold text-[17px] text-[#0C1033]">STRATT</span>
         </Link>
 
         {/* Nav links */}
@@ -266,7 +266,7 @@ export default function LandingPage() {
           <div className="anim-fade-up-d4 inline-flex items-center gap-2 px-4 py-2 rounded-full demo-badge">
             <span style={{ color: "#5B6BF5" }} className="text-xs">✦</span>
             <span className="text-xs text-[#6B7280]">Accès démo immédiat —</span>
-            <code className="text-xs font-mono text-[#5B6BF5] font-semibold">admin@axiora.io</code>
+            <code className="text-xs font-mono text-[#5B6BF5] font-semibold">admin@stratt.io</code>
             <span className="text-xs text-[#9CA3AF]">/</span>
             <code className="text-xs font-mono text-[#5B6BF5] font-semibold">admin1234</code>
           </div>
@@ -453,7 +453,7 @@ export default function LandingPage() {
               </svg>
             </div>
             <div>
-              <span className="font-bold text-[15px] text-[#0C1033]">Axiora</span>
+              <span className="font-bold text-[15px] text-[#0C1033]">STRATT</span>
               <span className="text-[11px] text-[#9CA3AF] ml-2">ERP SaaS</span>
             </div>
           </div>
@@ -467,7 +467,7 @@ export default function LandingPage() {
 
           {/* Copyright */}
           <p className="text-[12px] text-[#9CA3AF]">
-            © 2026 Axiora. Tous droits réservés.
+            © 2026 STRATT. Tous droits réservés.
           </p>
         </div>
       </footer>

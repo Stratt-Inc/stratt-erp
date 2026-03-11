@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "Axiora — ERP SaaS",
+  title: "STRATT — ERP SaaS",
   description: "Plateforme ERP modulaire pour entreprises modernes",
 };
 

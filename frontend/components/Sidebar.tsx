@@ -99,7 +99,7 @@ export function Sidebar() {
             <Zap className="w-4 h-4 text-white fill-white" />
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-none">Axiora</p>
+            <p className="text-white font-bold text-sm leading-none">STRATT</p>
             <p className="text-white/40 text-[10px] mt-0.5 truncate">
               {currentOrg?.name ?? "Sélectionner une org"}
             </p>

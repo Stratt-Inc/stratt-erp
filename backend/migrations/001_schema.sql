@@ -1,4 +1,4 @@
--- Axiora — Initial Schema
+-- STRATT — Initial Schema
 -- Run with: psql $DATABASE_URL < migrations/001_schema.sql
 -- (GORM AutoMigrate also handles this automatically on startup)
 

@@ -9,8 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FRONTEND_IMAGE: ghcr.io/makcimerrr/axiora/frontend
-  BACKEND_IMAGE: ghcr.io/makcimerrr/axiora/backend
+  FRONTEND_IMAGE: ghcr.io/makcimerrr/stratt/frontend
+  BACKEND_IMAGE: ghcr.io/makcimerrr/stratt/backend
 
 jobs:
   deploy-staging:

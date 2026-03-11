@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/internal/rbac"
 	"github.com/gin-gonic/gin"
+	"github.com/stratt/backend/internal/models"
+	"github.com/stratt/backend/internal/rbac"
 )
 
 // RequirePermission checks that the authenticated user has the given permission

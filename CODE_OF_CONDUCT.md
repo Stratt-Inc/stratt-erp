@@ -1,4 +1,4 @@
-# Code de conduite — Axiora
+# Code de conduite — STRATT
 
 ## Notre engagement
 
@@ -19,6 +19,6 @@ Nous nous engageons à faire de la participation à notre projet une expérience
 
 ## Application
 
-Les cas de comportement abusif peuvent être signalés via [GitHub Security Advisories](https://github.com/makcimerrr/axiora/security/advisories/new). Toutes les plaintes seront examinées et feront l'objet d'une réponse appropriée.
+Les cas de comportement abusif peuvent être signalés via [GitHub Security Advisories](https://github.com/makcimerrr/stratt/security/advisories/new). Toutes les plaintes seront examinées et feront l'objet d'une réponse appropriée.
 
 Adapté du [Contributor Covenant](https://www.contributor-covenant.org), version 2.1.

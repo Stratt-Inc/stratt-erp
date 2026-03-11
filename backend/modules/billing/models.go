@@ -1,25 +1,25 @@
 package billing
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 type Invoice struct {
 	models.Base
-	TenantID   uuid.UUID  `gorm:"type:uuid;not null;index" json:"tenant_id"`
-	Number     string     `gorm:"not null;index"           json:"number"`
-	ContactID  *uuid.UUID `gorm:"type:uuid;index"          json:"contact_id"`
-	Status     string     `gorm:"default:'draft'"          json:"status"` // draft, sent, paid, overdue, cancelled
-	IssueDate  string     `gorm:"not null"                 json:"issue_date"`
-	DueDate    string     `json:"due_date"`
-	Currency   string     `gorm:"default:'EUR'"            json:"currency"`
-	Subtotal   float64    `gorm:"default:0"                json:"subtotal"`
-	TaxRate    float64    `gorm:"default:0"                json:"tax_rate"`
-	TaxAmount  float64    `gorm:"default:0"                json:"tax_amount"`
-	Total      float64    `gorm:"default:0"                json:"total"`
-	Notes      string     `json:"notes"`
-	CreatedBy  uuid.UUID  `gorm:"type:uuid;not null"       json:"created_by"`
+	TenantID  uuid.UUID  `gorm:"type:uuid;not null;index" json:"tenant_id"`
+	Number    string     `gorm:"not null;index"           json:"number"`
+	ContactID *uuid.UUID `gorm:"type:uuid;index"          json:"contact_id"`
+	Status    string     `gorm:"default:'draft'"          json:"status"` // draft, sent, paid, overdue, cancelled
+	IssueDate string     `gorm:"not null"                 json:"issue_date"`
+	DueDate   string     `json:"due_date"`
+	Currency  string     `gorm:"default:'EUR'"            json:"currency"`
+	Subtotal  float64    `gorm:"default:0"                json:"subtotal"`
+	TaxRate   float64    `gorm:"default:0"                json:"tax_rate"`
+	TaxAmount float64    `gorm:"default:0"                json:"tax_amount"`
+	Total     float64    `gorm:"default:0"                json:"total"`
+	Notes     string     `json:"notes"`
+	CreatedBy uuid.UUID  `gorm:"type:uuid;not null"       json:"created_by"`
 
 	Items []InvoiceItem `gorm:"foreignKey:InvoiceID" json:"items,omitempty"`
 }

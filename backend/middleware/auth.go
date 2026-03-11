@@ -3,10 +3,10 @@ package middleware
 import (
 	"strings"
 
-	"github.com/axiora/backend/internal/auth"
-	"github.com/axiora/backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/auth"
+	"github.com/stratt/backend/internal/models"
 )
 
 // RequireAuth validates the JWT access token and sets user context values.

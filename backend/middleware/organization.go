@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/internal/organization"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
+	"github.com/stratt/backend/internal/organization"
 )
 
 // RequireOrganization validates the X-Organization-Id header and ensures

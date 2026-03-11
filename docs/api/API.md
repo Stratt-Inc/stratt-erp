@@ -1,4 +1,4 @@
-# API.md — Documentation API REST Axiora
+# API.md — Documentation API REST STRATT
 
 > Version : v1 | Base URL : `http://localhost:8080/api/v1`
 
@@ -72,7 +72,7 @@ GET /health
 
 **Response 200** :
 ```json
-{ "status": "ok", "service": "Axiora" }
+{ "status": "ok", "service": "STRATT" }
 ```
 
 ---
@@ -105,7 +105,7 @@ Créer un nouveau compte utilisateur.
 
 ```json
 {
-  "email": "admin@axiora.io",
+  "email": "admin@stratt.io",
   "password": "admin1234"
 }
 ```
@@ -114,7 +114,7 @@ Créer un nouveau compte utilisateur.
 ```json
 {
   "data": {
-    "user": { "id": "uuid", "name": "Admin Axiora", "email": "admin@axiora.io" },
+    "user": { "id": "uuid", "name": "Admin STRATT", "email": "admin@stratt.io" },
     "access_token": "eyJhbGciOiJIUzI1NiIs..."
   }
 }

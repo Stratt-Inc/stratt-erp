@@ -1,4 +1,4 @@
-# Politique de sécurité — Axiora
+# Politique de sécurité — STRATT
 
 ## Versions supportées
 
@@ -11,7 +11,7 @@
 
 **Ne pas créer d'issue publique pour les vulnérabilités.**
 
-Utiliser **GitHub Security Advisories** : [Signaler une vulnérabilité](https://github.com/makcimerrr/axiora/security/advisories/new)
+Utiliser **GitHub Security Advisories** : [Signaler une vulnérabilité](https://github.com/makcimerrr/stratt/security/advisories/new)
 
 Inclure : description, étapes de reproduction, impact potentiel, version(s) affectée(s).
 

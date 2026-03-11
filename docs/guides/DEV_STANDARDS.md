@@ -1,4 +1,4 @@
-# DEV STANDARDS — Axiora
+# DEV STANDARDS — STRATT
 
 ---
 

@@ -1,4 +1,4 @@
-# Axiora — Docker Compose
+# STRATT — Docker Compose
 # Lancement complet : docker compose up --build
 # Développement local (infra only) : docker compose up postgres redis minio meilisearch
 
@@ -6,19 +6,19 @@ services:
   # ── PostgreSQL ──────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
-    container_name: axiora_postgres
+    container_name: stratt_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-axiora_dev}
-      POSTGRES_USER: ${POSTGRES_USER:-axiora}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-axiora_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-stratt_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-stratt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stratt_dev_password}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-axiora} -d ${POSTGRES_DB:-axiora_dev}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-stratt} -d ${POSTGRES_DB:-stratt_dev}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,7 +26,7 @@ services:
   # ── Redis ───────────────────────────────────────────────
   redis:
     image: redis:7-alpine
-    container_name: axiora_redis
+    container_name: stratt_redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -42,11 +42,11 @@ services:
   # ── MinIO (stockage S3-compatible) ──────────────────────
   minio:
     image: minio/minio:latest
-    container_name: axiora_minio
+    container_name: stratt_minio
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-axiora_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-axiora_minio_secret}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-stratt_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-stratt_minio_secret}
     ports:
       - "${MINIO_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_PORT:-9001}:9001"
@@ -62,11 +62,11 @@ services:
   # ── Meilisearch ─────────────────────────────────────────
   meilisearch:
     image: getmeili/meilisearch:v1.11
-    container_name: axiora_meilisearch
+    container_name: stratt_meilisearch
     restart: unless-stopped
     environment:
       MEILI_ENV: ${APP_ENV:-development}
-      MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:-axiora_meili_dev_key}
+      MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:-stratt_meili_dev_key}
     ports:
       - "${MEILISEARCH_PORT:-7700}:7700"
     volumes:
@@ -82,22 +82,22 @@ services:
     build:
       context: ./backend
       dockerfile: ../infra/docker/Dockerfile.backend
-    container_name: axiora_api
+    container_name: stratt_api
     restart: unless-stopped
     environment:
       PORT: 8080
       APP_ENV: ${APP_ENV:-development}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-axiora}:${POSTGRES_PASSWORD:-axiora_dev_password}@postgres:5432/${POSTGRES_DB:-axiora_dev}?sslmode=disable
+      DATABASE_URL: postgresql://${POSTGRES_USER:-stratt}:${POSTGRES_PASSWORD:-stratt_dev_password}@postgres:5432/${POSTGRES_DB:-stratt_dev}?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-change_me_in_production_min_32_chars}
       JWT_ACCESS_EXP_MINUTES: ${JWT_ACCESS_EXP_MINUTES:-15}
       JWT_REFRESH_EXP_DAYS: ${JWT_REFRESH_EXP_DAYS:-30}
       MEILISEARCH_URL: http://meilisearch:7700
-      MEILISEARCH_API_KEY: ${MEILISEARCH_API_KEY:-axiora_meili_dev_key}
+      MEILISEARCH_API_KEY: ${MEILISEARCH_API_KEY:-stratt_meili_dev_key}
       S3_ENDPOINT: http://minio:9000
-      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-axiora_minio}
-      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-axiora_minio_secret}
-      S3_BUCKET: ${S3_BUCKET:-axiora}
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-stratt_minio}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-stratt_minio_secret}
+      S3_BUCKET: ${S3_BUCKET:-stratt}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
     ports:
       - "${API_PORT:-8080}:8080"
@@ -117,7 +117,7 @@ services:
     build:
       context: ./frontend
       dockerfile: ../infra/docker/Dockerfile.frontend
-    container_name: axiora_frontend
+    container_name: stratt_frontend
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}

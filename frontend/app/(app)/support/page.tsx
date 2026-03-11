@@ -100,7 +100,7 @@ export default function SupportPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Assistance par email</h3>
-                <p className="text-xs text-muted-foreground">support@axiora.io</p>
+                <p className="text-xs text-muted-foreground">support@stratt.io</p>
               </div>
             </div>
             <div className="space-y-2 mb-4">

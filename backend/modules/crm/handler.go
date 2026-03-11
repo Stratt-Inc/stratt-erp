@@ -3,10 +3,10 @@ package crm
 import (
 	"strconv"
 
-	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
+	"github.com/stratt/backend/middleware"
 )
 
 type Handler struct {

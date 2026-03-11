@@ -1,4 +1,4 @@
-module github.com/axiora/backend
+module github.com/stratt/backend
 
 go 1.24.0
 

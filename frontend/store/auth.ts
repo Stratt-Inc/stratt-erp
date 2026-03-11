@@ -130,7 +130,7 @@ export const useAuthStore = create<AuthState>()(
         }),
     }),
     {
-      name: "axiora-auth",
+      name: "stratt-auth",
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

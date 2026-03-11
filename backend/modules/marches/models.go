@@ -1,8 +1,8 @@
 package marches
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 type Marche struct {

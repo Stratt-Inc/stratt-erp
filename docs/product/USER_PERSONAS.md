@@ -1,4 +1,4 @@
-# USER PERSONAS — Axiora
+# USER PERSONAS — STRATT
 
 Voir [PRODUCT_VISION.md](PRODUCT_VISION.md) pour la description détaillée des personas.
 

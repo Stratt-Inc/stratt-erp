@@ -1,10 +1,10 @@
-# git-cliff configuration — Axiora
+# git-cliff configuration — STRATT
 # https://git-cliff.org/docs/configuration
 
 [changelog]
 header = """
 # Changelog\n
-All notable changes to Axiora are documented here.\n
+All notable changes to STRATT are documented here.\n
 """
 body = """
 {% if version %}\
@@ -15,7 +15,7 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | upper_first }}
 {% for commit in commits %}
-- {% if commit.scope %}**{{ commit.scope }}**: {% endif %}{{ commit.message | upper_first }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/makcimerrr/axiora/commit/{{ commit.id }}))\
+- {% if commit.scope %}**{{ commit.scope }}**: {% endif %}{{ commit.message | upper_first }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/makcimerrr/stratt/commit/{{ commit.id }}))\
 {% endfor %}
 {% endfor %}\n
 """
@@ -30,7 +30,7 @@ conventional_commits = true
 filter_unconventional = true
 split_commits = false
 commit_preprocessors = [
-  { pattern = '\(#([0-9]+)\)', replace = "([#${1}](https://github.com/makcimerrr/axiora/pull/${1}))" },
+  { pattern = '\(#([0-9]+)\)', replace = "([#${1}](https://github.com/makcimerrr/stratt/pull/${1}))" },
 ]
 commit_parsers = [
   { message = "^feat", group = "Features" },

@@ -1,9 +1,9 @@
 package marches
 
 import (
-	"github.com/axiora/backend/internal/models"
-	"github.com/axiora/backend/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/stratt/backend/internal/models"
+	"github.com/stratt/backend/middleware"
 	"gorm.io/gorm"
 )
 

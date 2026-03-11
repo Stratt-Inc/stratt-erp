@@ -3,8 +3,8 @@ package rbac
 import (
 	"context"
 
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 	"gorm.io/gorm"
 )
 

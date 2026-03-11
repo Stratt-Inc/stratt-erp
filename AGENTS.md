@@ -1,9 +1,9 @@
-AGENTS.md — Axiora AI Development Guide
+AGENTS.md — STRATT AI Development Guide
 
 This file provides instructions for AI coding agents (Claude, Copilot,
-Cursor, etc.) working on the Axiora repository.
+Cursor, etc.) working on the STRATT repository.
 
-Axiora is a modular SaaS ERP platform designed to support multiple
+STRATT is a modular SaaS ERP platform designed to support multiple
 business domains such as CRM, accounting, billing, inventory and HR.
 
 AI agents must follow the architectural rules and conventions described
@@ -13,7 +13,7 @@ below.
 
 1. Project Overview
 
-Axiora is a multi-tenant SaaS ERP built with a modular architecture.
+STRATT is a multi-tenant SaaS ERP built with a modular architecture.
 
 Core goals:
 
@@ -44,7 +44,7 @@ Main principles:
 
 Typical project structure:
 
-axiora/
+stratt/
 
 frontend/ → Next.js web application backend/ → Go API server
 
@@ -172,7 +172,7 @@ Always:
 
 8. Multi-Tenancy
 
-Axiora is organization-based.
+STRATT is organization-based.
 
 All domain objects must include:
 
@@ -253,7 +253,7 @@ If unsure, ask for confirmation.
 
 14. Design Philosophy
 
-Axiora follows these principles:
+STRATT follows these principles:
 
 -   simplicity
 -   modularity

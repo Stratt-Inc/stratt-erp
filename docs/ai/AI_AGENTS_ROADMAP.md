@@ -1,4 +1,4 @@
-# AGENTS.md — Agents IA d'Axiora
+# AGENTS.md — Agents IA d'STRATT
 
 > Description des agents IA prévus dans la roadmap. Ces agents ne sont **pas encore implémentés** dans le code actuel et représentent les fonctionnalités IA planifiées pour les futures itérations.
 
@@ -6,7 +6,7 @@
 
 ## Statut actuel
 
-⚠️ **Les agents IA décrits ci-dessous font partie de la roadmap future.** L'implémentation actuelle d'Axiora est un ERP SaaS modulaire sans composante IA. Les workers existants (`workers/`) gèrent des tâches asynchrones basiques (emails, notifications, rapports) via Asynq/Redis.
+⚠️ **Les agents IA décrits ci-dessous font partie de la roadmap future.** L'implémentation actuelle d'STRATT est un ERP SaaS modulaire sans composante IA. Les workers existants (`workers/`) gèrent des tâches asynchrones basiques (emails, notifications, rapports) via Asynq/Redis.
 
 ---
 

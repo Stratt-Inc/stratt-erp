@@ -7,10 +7,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/axiora/backend/internal/config"
-	"github.com/axiora/backend/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/config"
+	"github.com/stratt/backend/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -174,7 +174,7 @@ func (s *Service) SignAccessToken(userID, sessionID uuid.UUID, orgID *uuid.UUID)
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(s.cfg.JWTAccessExpMinutes) * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Issuer:    "axiora",
+			Issuer:    "stratt",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

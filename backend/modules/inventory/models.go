@@ -1,8 +1,8 @@
 package inventory
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 type Product struct {
@@ -22,13 +22,13 @@ type Product struct {
 
 type StockMovement struct {
 	models.Base
-	TenantID   uuid.UUID  `gorm:"type:uuid;not null;index" json:"tenant_id"`
-	ProductID  uuid.UUID  `gorm:"type:uuid;not null;index" json:"product_id"`
-	Type       string     `gorm:"not null"                 json:"type"` // in, out, adjustment
-	Quantity   float64    `gorm:"not null"                 json:"quantity"`
-	Reference  string     `json:"reference"`
-	Notes      string     `json:"notes"`
-	CreatedBy  uuid.UUID  `gorm:"type:uuid;not null"       json:"created_by"`
+	TenantID  uuid.UUID `gorm:"type:uuid;not null;index" json:"tenant_id"`
+	ProductID uuid.UUID `gorm:"type:uuid;not null;index" json:"product_id"`
+	Type      string    `gorm:"not null"                 json:"type"` // in, out, adjustment
+	Quantity  float64   `gorm:"not null"                 json:"quantity"`
+	Reference string    `json:"reference"`
+	Notes     string    `json:"notes"`
+	CreatedBy uuid.UUID `gorm:"type:uuid;not null"       json:"created_by"`
 
 	Product *Product `gorm:"foreignKey:ProductID" json:"product,omitempty"`
 }

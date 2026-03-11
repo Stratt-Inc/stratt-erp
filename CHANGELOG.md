@@ -1,28 +1,28 @@
 # Changelog
 
-All notable changes to Axiora are documented here.
+All notable changes to STRATT are documented here.
 
 ## [0.1.0] — 2026-03-07
 
 ### Features
 
-- **monorepo**: Migrate Vite to Next.js 15 + Turborepo + AI agents structure ([a282793](https://github.com/makcimerrr/axiora/commit/a282793))
-- Implement complete ERP SaaS architecture — Clean Architecture Go backend, multi-tenant PostgreSQL RLS, Redis, 4 AI agents ([d9d2288](https://github.com/makcimerrr/axiora/commit/d9d2288))
-- Add PWA support with service worker, app manifest, and icons ([6af8801](https://github.com/makcimerrr/axiora/commit/6af8801))
+- **monorepo**: Migrate Vite to Next.js 15 + Turborepo + AI agents structure ([a282793](https://github.com/makcimerrr/stratt/commit/a282793))
+- Implement complete ERP SaaS architecture — Clean Architecture Go backend, multi-tenant PostgreSQL RLS, Redis, 4 AI agents ([d9d2288](https://github.com/makcimerrr/stratt/commit/d9d2288))
+- Add PWA support with service worker, app manifest, and icons ([6af8801](https://github.com/makcimerrr/stratt/commit/6af8801))
 
 ### CI/CD
 
-- Add GitHub Actions workflows: CI, deploy-staging, deploy-production, release, dependabot-auto-merge, project automation ([cc0e613](https://github.com/makcimerrr/axiora/commit/cc0e613))
-- Add GitHub Projects v2 status automation workflow with 10 lifecycle transitions ([97be979](https://github.com/makcimerrr/axiora/commit/97be979))
+- Add GitHub Actions workflows: CI, deploy-staging, deploy-production, release, dependabot-auto-merge, project automation ([cc0e613](https://github.com/makcimerrr/stratt/commit/cc0e613))
+- Add GitHub Projects v2 status automation workflow with 10 lifecycle transitions ([97be979](https://github.com/makcimerrr/stratt/commit/97be979))
 
 ### Documentation
 
-- Add SaaS architecture documentation: ARCHITECTURE.md, AGENTS.md, CONTRIBUTING.md, docs/ ([276746e](https://github.com/makcimerrr/axiora/commit/276746e))
-- Add PRODUCT_VISION.md, ROADMAP.md, API.md, DEV_STANDARDS.md, USER_PERSONAS.md ([4f60ebd](https://github.com/makcimerrr/axiora/commit/4f60ebd))
+- Add SaaS architecture documentation: ARCHITECTURE.md, AGENTS.md, CONTRIBUTING.md, docs/ ([276746e](https://github.com/makcimerrr/stratt/commit/276746e))
+- Add PRODUCT_VISION.md, ROADMAP.md, API.md, DEV_STANDARDS.md, USER_PERSONAS.md ([4f60ebd](https://github.com/makcimerrr/stratt/commit/4f60ebd))
 
 ### Dependencies
 
-- Apply all Dependabot updates: actions/checkout v6, setup-node v6, docker/build-push-action v7, CodeQL v4, node 25-alpine, golang 1.26-alpine, lucide-react 0.577.0, @types/node ^25 ([066798c](https://github.com/makcimerrr/axiora/commit/066798c))
+- Apply all Dependabot updates: actions/checkout v6, setup-node v6, docker/build-push-action v7, CodeQL v4, node 25-alpine, golang 1.26-alpine, lucide-react 0.577.0, @types/node ^25 ([066798c](https://github.com/makcimerrr/stratt/commit/066798c))
 - Bump Go backend modules: gin v1.10.0, gin-contrib/cors v1.7.2, gin-contrib/gzip v1.0.1, go-redis 9.7.3, x/crypto 0.45.0, jwt/v5 5.2.2, edwards25519 1.1.1
 
 ---

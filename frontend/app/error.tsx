@@ -29,7 +29,7 @@ export default function GlobalError({
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
           </svg>
         </div>
-        <span className="font-bold text-lg text-[#0C1033]">Axiora</span>
+        <span className="font-bold text-lg text-[#0C1033]">STRATT</span>
       </Link>
 
       {/* Error icon */}

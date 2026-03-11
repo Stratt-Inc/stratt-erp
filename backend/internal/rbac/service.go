@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 var ErrSystemRole = errors.New("cannot modify a system role")

@@ -1,8 +1,8 @@
 package hr
 
 import (
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 type Employee struct {

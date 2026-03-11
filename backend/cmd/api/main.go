@@ -10,26 +10,26 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/axiora/backend/internal/auth"
-	"github.com/axiora/backend/internal/audit"
-	"github.com/axiora/backend/internal/config"
-	"github.com/axiora/backend/internal/database"
-	"github.com/axiora/backend/internal/module"
-	"github.com/axiora/backend/internal/organization"
-	"github.com/axiora/backend/internal/rbac"
-	"github.com/axiora/backend/middleware"
-	"github.com/axiora/backend/modules/accounting"
-	"github.com/axiora/backend/modules/analytics"
-	"github.com/axiora/backend/modules/billing"
-	crmmod "github.com/axiora/backend/modules/crm"
-	"github.com/axiora/backend/modules/hr"
-	"github.com/axiora/backend/modules/inventory"
-	"github.com/axiora/backend/modules/marches"
-	"github.com/axiora/backend/modules/nomenclature"
-	"github.com/axiora/backend/modules/procurement"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/stratt/backend/internal/audit"
+	"github.com/stratt/backend/internal/auth"
+	"github.com/stratt/backend/internal/config"
+	"github.com/stratt/backend/internal/database"
+	"github.com/stratt/backend/internal/module"
+	"github.com/stratt/backend/internal/organization"
+	"github.com/stratt/backend/internal/rbac"
+	"github.com/stratt/backend/middleware"
+	"github.com/stratt/backend/modules/accounting"
+	"github.com/stratt/backend/modules/analytics"
+	"github.com/stratt/backend/modules/billing"
+	crmmod "github.com/stratt/backend/modules/crm"
+	"github.com/stratt/backend/modules/hr"
+	"github.com/stratt/backend/modules/inventory"
+	"github.com/stratt/backend/modules/marches"
+	"github.com/stratt/backend/modules/nomenclature"
+	"github.com/stratt/backend/modules/procurement"
 )
 
 func main() {
@@ -168,7 +168,7 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("✓ Axiora API listening on :%s [%s]", cfg.Port, cfg.AppEnv)
+		log.Printf("✓ STRATT API listening on :%s [%s]", cfg.Port, cfg.AppEnv)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server error: %v", err)
 		}

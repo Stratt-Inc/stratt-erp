@@ -1,4 +1,4 @@
-# CONTRIBUTING — Axiora
+# CONTRIBUTING — STRATT
 
 Standards de développement, conventions et workflow Git.
 
@@ -191,7 +191,7 @@ cd backend && gofmt -w .        # formatage Go
 
 ```bash
 # 1. Cloner
-git clone <repo> && cd axiora
+git clone <repo> && cd stratt
 
 # 2. Setup (copie .env, installe deps frontend)
 make setup
@@ -213,7 +213,7 @@ make dev              # API :8080 + Frontend :3000
 ```
 
 L'environnement est prêt. Accès sur http://localhost:3000.  
-Login : `admin@axiora.io` / `admin1234`
+Login : `admin@stratt.io` / `admin1234`
 
 ---
 

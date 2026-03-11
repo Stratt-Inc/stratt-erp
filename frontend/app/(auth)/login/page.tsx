@@ -101,10 +101,10 @@ export default function LoginPage() {
           Compte démo :{" "}
           <button
             type="button"
-            onClick={() => { setEmail("admin@axiora.io"); setPassword("admin1234"); }}
+            onClick={() => { setEmail("admin@stratt.io"); setPassword("admin1234"); }}
             className="text-primary hover:underline font-medium"
           >
-            admin@axiora.io / admin1234
+            admin@stratt.io / admin1234
           </button>
         </p>
       </div>

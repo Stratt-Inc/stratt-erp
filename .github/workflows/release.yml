@@ -54,7 +54,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ inputs.version }}
-          name: "Axiora v${{ inputs.version }}"
+          name: "STRATT v${{ inputs.version }}"
           body_path: RELEASE_NOTES.md
           draft: false
           prerelease: ${{ inputs.type == 'prerelease' }}

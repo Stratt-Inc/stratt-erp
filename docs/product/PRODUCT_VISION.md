@@ -1,4 +1,4 @@
-# PRODUCT VISION — Axiora
+# PRODUCT VISION — STRATT
 
 ---
 
@@ -46,7 +46,7 @@ L'analyse de la maquette révèle **6 modules fonctionnels** :
 - Aucune visibilité sur ce que font les directions sans passer par des réunions
 - La nomenclature est copiée-collée chaque année et jamais vraiment mise à jour
 
-**Gains attendus avec Axiora** :
+**Gains attendus avec STRATT** :
 - Rapport généré en 1 clic (gain : ~60 heures de travail)
 - Alertes en temps réel avant tout engagement
 - Tableau de bord consolidé sans réunion
@@ -71,7 +71,7 @@ L'analyse de la maquette révèle **6 modules fonctionnels** :
 - Doit demander à Marie pour chaque dépense "dans quel code ça va ?"
 - La planification se fait dans un fichier Excel partagé qui crée des conflits
 
-**Gains attendus avec Axiora** :
+**Gains attendus avec STRATT** :
 - Saisir une dépense → code nomenclature suggéré automatiquement
 - Voir immédiatement si la procédure choisie est conforme
 - Planifier ses marchés dans un calendrier partagé
@@ -95,7 +95,7 @@ L'analyse de la maquette révèle **6 modules fonctionnels** :
 - Ne peut pas comparer avec d'autres collectivités
 - Difficile de prioriser les investissements sans données fiables
 
-**Gains attendus avec Axiora** :
+**Gains attendus avec STRATT** :
 - Dashboard exécutif en 1 page
 - Indicateurs de maturité comparables
 - Export PowerPoint pour le Conseil
@@ -110,7 +110,7 @@ L'analyse de la maquette révèle **6 modules fonctionnels** :
 **Acteur** : Thomas (acheteur)
 **Flux** :
 1. Thomas télécharge l'export CSV de son progiciel financier
-2. Axiora parse et normalise les données
+2. STRATT parse et normalise les données
 3. L'agent IA classifie chaque ligne dans la nomenclature
 4. Thomas valide/corrige les classifications < 90% de confiance
 5. Le système calcule le cumul par code et vérifie les seuils
@@ -137,7 +137,7 @@ L'analyse de la maquette révèle **6 modules fonctionnels** :
 **Acteur** : Thomas (acheteur)
 **Flux** :
 1. Thomas crée un marché avec objet, montant, procédure, échéance
-2. Axiora vérifie automatiquement la procédure vs le montant
+2. STRATT vérifie automatiquement la procédure vs le montant
 3. Le système alerte si la charge prévisionnelle dépasse la capacité
 4. Marie visualise le planning consolidé de toutes les directions
 5. Les alertes d'accords-cadres arrivant à échéance apparaissent à J-90

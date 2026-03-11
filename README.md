@@ -1,15 +1,15 @@
-# Axiora — ERP SaaS
+# STRATT — ERP SaaS
 
 Plateforme ERP SaaS modulaire et multi-tenant pour entreprises modernes.
 
 > SaaS de stratégie des achats publics pour les collectivités territoriales et établissements publics.
 
-[![CI](https://github.com/makcimerrr/axiora/actions/workflows/ci.yml/badge.svg)](https://github.com/makcimerrr/axiora/actions/workflows/ci.yml)
+[![CI](https://github.com/makcimerrr/stratt/actions/workflows/ci.yml/badge.svg)](https://github.com/makcimerrr/stratt/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Vue d'ensemble
 
-Axiora est une plateforme SaaS qui aide les acheteurs publics à piloter leur stratégie d'achats : nomenclature, cartographie fournisseurs, planification, conformité réglementaire et génération documentaire assistée par IA.
+STRATT est une plateforme SaaS qui aide les acheteurs publics à piloter leur stratégie d'achats : nomenclature, cartographie fournisseurs, planification, conformité réglementaire et génération documentaire assistée par IA.
 
 ## Stack technique
 
@@ -27,7 +27,7 @@ Axiora est une plateforme SaaS qui aide les acheteurs publics à piloter leur st
 ## Architecture
 
 ```
-axiora/
+stratt/
 ├── backend/                  # API Go/Gin
 │   ├── cmd/api/main.go       # Point d'entrée — Gin, routes, DI
 │   ├── internal/
@@ -130,14 +130,14 @@ GET    /api/v1/analytics/overview
 ### Docker (recommandé)
 
 ```bash
-git clone <repo> && cd axiora
+git clone <repo> && cd stratt
 cp .env.example .env          # éditez JWT_SECRET
 
 docker compose up --build -d  # lance les 6 services
 docker compose exec api ./api seed  # données initiales
 
 open http://localhost:3000
-# Login : admin@axiora.io / admin1234
+# Login : admin@stratt.io / admin1234
 ```
 
 ### Développement local
@@ -154,14 +154,14 @@ make dev            # API :8080 + Frontend :3000
 
 ## Services exposés
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| Frontend | http://localhost:3000 | admin@axiora.io / admin1234 |
-| API | http://localhost:8080/health | — |
-| MinIO Console | http://localhost:9001 | axiora_minio / axiora_minio_secret |
-| Meilisearch | http://localhost:7700 | — |
-| PostgreSQL | localhost:5432 | axiora / axiora_dev_password |
-| Redis | localhost:6379 | — |
+| Service | URL | Credentials                        |
+|---------|-----|------------------------------------|
+| Frontend | http://localhost:3000 | admin@stratt.io / admin1234        |
+| API | http://localhost:8080/health | —                                  |
+| MinIO Console | http://localhost:9001 | stratt_minio / stratt_minio_secret |
+| Meilisearch | http://localhost:7700 | —                                  |
+| PostgreSQL | localhost:5432 | stratt / stratt_dev_password       |
+| Redis | localhost:6379 | —                                  |
 
 ## Licence
 

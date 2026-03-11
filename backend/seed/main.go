@@ -6,19 +6,19 @@ import (
 	"fmt"
 	"log"
 
-	crmmod "github.com/axiora/backend/modules/crm"
-	billingmod "github.com/axiora/backend/modules/billing"
-	marchesmod "github.com/axiora/backend/modules/marches"
-	nomenclaturemod "github.com/axiora/backend/modules/nomenclature"
-	hrmod "github.com/axiora/backend/modules/hr"
-	inventorymod "github.com/axiora/backend/modules/inventory"
-	procurementmod "github.com/axiora/backend/modules/procurement"
-	accountingmod "github.com/axiora/backend/modules/accounting"
+	accountingmod "github.com/stratt/backend/modules/accounting"
+	billingmod "github.com/stratt/backend/modules/billing"
+	crmmod "github.com/stratt/backend/modules/crm"
+	hrmod "github.com/stratt/backend/modules/hr"
+	inventorymod "github.com/stratt/backend/modules/inventory"
+	marchesmod "github.com/stratt/backend/modules/marches"
+	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
+	procurementmod "github.com/stratt/backend/modules/procurement"
 
-	"github.com/axiora/backend/internal/config"
-	"github.com/axiora/backend/internal/database"
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/config"
+	"github.com/stratt/backend/internal/database"
+	"github.com/stratt/backend/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -78,8 +78,8 @@ func main() {
 	// ── Admin user ────────────────────────────────────────
 	hash, _ := bcrypt.GenerateFromPassword([]byte("admin1234"), bcrypt.DefaultCost)
 	admin := models.User{
-		Name:          "Admin Axiora",
-		Email:         "admin@axiora.io",
+		Name:          "Admin STRATT",
+		Email:         "admin@stratt.io",
 		PasswordHash:  string(hash),
 		EmailVerified: true,
 	}
@@ -87,7 +87,7 @@ func main() {
 	fmt.Printf("✓ Admin user: %s / admin1234\n", admin.Email)
 
 	// ── Demo organization ─────────────────────────────────
-	org := models.Organization{Name: "Axiora Demo", Slug: "axiora-demo", Plan: "pro"}
+	org := models.Organization{Name: "STRATT Demo", Slug: "stratt-demo", Plan: "pro"}
 	db.Where("slug = ?", org.Slug).FirstOrCreate(&org)
 
 	member := models.OrganizationMember{OrganizationID: org.ID, UserID: admin.ID, Status: "active"}
@@ -327,14 +327,14 @@ func main() {
 
 	// ── HR: Employees ─────────────────────────────────────
 	employees := []hrmod.Employee{
-		{TenantID: org.ID, FirstName: "Lucas", LastName: "Fontaine", Email: "l.fontaine@axiora.io", Phone: "+33 6 12 34 56 78", Department: "Ingénierie", JobTitle: "Lead Développeur Backend", HireDate: "2023-03-15", Salary: 58000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Emma", LastName: "Girard", Email: "e.girard@axiora.io", Phone: "+33 6 23 45 67 89", Department: "Ingénierie", JobTitle: "Développeuse Frontend", HireDate: "2023-06-01", Salary: 48000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Hugo", LastName: "Leclerc", Email: "h.leclerc@axiora.io", Phone: "+33 6 34 56 78 90", Department: "Produit", JobTitle: "Product Manager", HireDate: "2022-09-12", Salary: 62000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Léa", LastName: "Rousseau", Email: "l.rousseau@axiora.io", Phone: "+33 6 45 67 89 01", Department: "Commercial", JobTitle: "Account Executive", HireDate: "2024-01-08", Salary: 42000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Pierre", LastName: "Fournier", Email: "p.fournier@axiora.io", Phone: "+33 6 56 78 90 12", Department: "Support", JobTitle: "Customer Success Manager", HireDate: "2023-11-20", Salary: 38000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Anaïs", LastName: "Morin", Email: "a.morin@axiora.io", Phone: "+33 6 67 89 01 23", Department: "Marketing", JobTitle: "Marketing Manager", HireDate: "2022-04-03", Salary: 52000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Théo", LastName: "Blanc", Email: "t.blanc@axiora.io", Phone: "+33 6 78 90 12 34", Department: "Ingénierie", JobTitle: "DevOps Engineer", HireDate: "2024-02-14", Salary: 55000, Status: "active"},
-		{TenantID: org.ID, FirstName: "Julie", LastName: "Henry", Email: "j.henry@axiora.io", Phone: "+33 6 89 01 23 45", Department: "Finance", JobTitle: "Contrôleur de Gestion", HireDate: "2021-08-30", Salary: 50000, Status: "on_leave"},
+		{TenantID: org.ID, FirstName: "Lucas", LastName: "Fontaine", Email: "l.fontaine@stratt.io", Phone: "+33 6 12 34 56 78", Department: "Ingénierie", JobTitle: "Lead Développeur Backend", HireDate: "2023-03-15", Salary: 58000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Emma", LastName: "Girard", Email: "e.girard@stratt.io", Phone: "+33 6 23 45 67 89", Department: "Ingénierie", JobTitle: "Développeuse Frontend", HireDate: "2023-06-01", Salary: 48000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Hugo", LastName: "Leclerc", Email: "h.leclerc@stratt.io", Phone: "+33 6 34 56 78 90", Department: "Produit", JobTitle: "Product Manager", HireDate: "2022-09-12", Salary: 62000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Léa", LastName: "Rousseau", Email: "l.rousseau@stratt.io", Phone: "+33 6 45 67 89 01", Department: "Commercial", JobTitle: "Account Executive", HireDate: "2024-01-08", Salary: 42000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Pierre", LastName: "Fournier", Email: "p.fournier@stratt.io", Phone: "+33 6 56 78 90 12", Department: "Support", JobTitle: "Customer Success Manager", HireDate: "2023-11-20", Salary: 38000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Anaïs", LastName: "Morin", Email: "a.morin@stratt.io", Phone: "+33 6 67 89 01 23", Department: "Marketing", JobTitle: "Marketing Manager", HireDate: "2022-04-03", Salary: 52000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Théo", LastName: "Blanc", Email: "t.blanc@stratt.io", Phone: "+33 6 78 90 12 34", Department: "Ingénierie", JobTitle: "DevOps Engineer", HireDate: "2024-02-14", Salary: 55000, Status: "active"},
+		{TenantID: org.ID, FirstName: "Julie", LastName: "Henry", Email: "j.henry@stratt.io", Phone: "+33 6 89 01 23 45", Department: "Finance", JobTitle: "Contrôleur de Gestion", HireDate: "2021-08-30", Salary: 50000, Status: "on_leave"},
 	}
 	for i := range employees {
 		db.Create(&employees[i])

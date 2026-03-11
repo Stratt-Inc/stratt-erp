@@ -10,7 +10,7 @@ YELLOW:= \033[33m
 ##@ Aide
 
 help: ## Affiche cette aide
-	@awk 'BEGIN {FS = ":.*##"; printf "\n$(BOLD)Axiora ERP SaaS — Commandes$(RESET)\n\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2 } /^##@/ { printf "\n$(BOLD)%s$(RESET)\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\n$(BOLD)STRATT ERP SaaS — Commandes$(RESET)\n\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2 } /^##@/ { printf "\n$(BOLD)%s$(RESET)\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 ##@ Setup
 
@@ -32,7 +32,7 @@ up: ## Lance toute la stack (build inclus)
 	@echo "$(GREEN)✓ Stack complète démarrée$(RESET)"
 	@echo "  Frontend : http://localhost:3000"
 	@echo "  API      : http://localhost:8080"
-	@echo "  MinIO    : http://localhost:9001  (axiora_minio / axiora_minio_secret)"
+	@echo "  MinIO    : http://localhost:9001  (stratt_minio / stratt_minio_secret)"
 	@echo "  Méili    : http://localhost:7700"
 
 up-infra: ## Lance uniquement l'infrastructure (postgres, redis, minio, meilisearch)

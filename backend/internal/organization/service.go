@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/axiora/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/models"
 )
 
 var (
@@ -28,8 +28,8 @@ func NewService(repo *Repository) *Service {
 }
 
 type CreateInput struct {
-	Name   string
-	Slug   string
+	Name    string
+	Slug    string
 	OwnerID uuid.UUID
 }
 

@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/auth";
 
 export function DemoBanner() {
   const email = useAuthStore((s) => s.user?.email);
-  if (email !== "admin@axiora.io") return null;
+  if (email !== "admin@stratt.io") return null;
 
   return (
     <div
@@ -33,5 +33,5 @@ export function DemoBanner() {
 }
 
 export function useIsDemo() {
-  return useAuthStore((s) => s.user?.email === "admin@axiora.io");
+  return useAuthStore((s) => s.user?.email === "admin@stratt.io");
 }

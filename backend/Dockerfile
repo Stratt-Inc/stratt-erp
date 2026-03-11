@@ -24,8 +24,8 @@ RUN apk add --no-cache ca-certificates tzdata curl
 
 COPY --from=builder /app/bin/api ./api
 
-RUN addgroup -S axiora && adduser -S axiora -G axiora
-USER axiora
+RUN addgroup -S stratt && adduser -S stratt -G stratt
+USER stratt
 
 EXPOSE 8080
 
