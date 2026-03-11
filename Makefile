@@ -68,7 +68,7 @@ dev: ## Lance l'API Go et le frontend en parallèle (nécessite make up-infra)
 	  wait
 
 dev-api: ## Lance uniquement l'API Go
-	cd backend && go run ./cmd/api
+	@set -a; source .env; set +a; cd backend && go run ./cmd/api
 
 dev-frontend: ## Lance uniquement le frontend Next.js
 	cd frontend && npm run dev
@@ -76,10 +76,10 @@ dev-frontend: ## Lance uniquement le frontend Next.js
 ##@ Base de données
 
 seed: ## Peuple la DB avec les données initiales (permissions, modules, admin user)
-	cd backend && go run ./seed/main.go
+	@set -a; source .env; set +a; cd backend && go run ./seed/main.go
 
 migrate: ## Applique les migrations SQL manuellement
-	@psql $${DATABASE_URL} < backend/migrations/001_schema.sql && echo "$(GREEN)✓ Migrations appliquées$(RESET)"
+	@set -a; source .env; set +a; psql "$${DATABASE_URL}" < backend/migrations/001_schema.sql && echo "$(GREEN)✓ Migrations appliquées$(RESET)"
 
 ##@ Build
 
