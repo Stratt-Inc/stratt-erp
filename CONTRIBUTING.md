@@ -11,9 +11,9 @@ Standards de développement, conventions et workflow Git.
 ```
 main              ← production (protégée, merge via PR uniquement)
 develop           ← intégration continue
-feature/AXI-{n}-description
-bugfix/AXI-{n}-description
-hotfix/AXI-{n}-description
+feature/STRATT-{n}-description
+bugfix/STRATT-{n}-description
+hotfix/STRATT-{n}-description
 release/v{major}.{minor}.{patch}
 ```
 
@@ -21,7 +21,7 @@ release/v{major}.{minor}.{patch}
 - `main` et `develop` : push direct interdit, PR obligatoire
 - Toute branche `feature/*` part de `develop`
 - Les `hotfix/*` partent de `main` et mergent sur `main` + `develop`
-- Les branches doivent référencer le ticket : `feature/AXI-42-crm-contacts-filters`
+- Les branches doivent référencer le ticket : `feature/STRATT-42-crm-contacts-filters`
 
 ### Pull Requests
 
