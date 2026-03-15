@@ -4,7 +4,7 @@ Plateforme ERP SaaS modulaire et multi-tenant pour entreprises modernes.
 
 > SaaS de stratégie des achats publics pour les collectivités territoriales et établissements publics.
 
-[![CI](https://github.com/makcimerrr/stratt/actions/workflows/ci.yml/badge.svg)](https://github.com/makcimerrr/stratt/actions/workflows/ci.yml)
+[![CI](https://github.com/Stratt-Inc/stratt-erp/actions/workflows/ci.yml/badge.svg)](https://github.com/Stratt-Inc/stratt-erp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Vue d'ensemble
