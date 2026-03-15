@@ -1,10 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  ComposedChart, Bar, Line, XAxis, YAxis,
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
+} from "recharts";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
-import { BarChart2, Users, FileText, Package, Briefcase, TrendingUp, Handshake, DollarSign } from "lucide-react";
+import {
+  BarChart2, Users, FileText, Package, Briefcase,
+  TrendingUp, Handshake, DollarSign, Download,
+} from "lucide-react";
+
+// ── Types ──────────────────────────────────────────────────────────────
 
 interface Overview {
   total_contacts: number;
@@ -16,8 +26,54 @@ interface Overview {
   total_products: number;
 }
 
+interface ABCRow {
+  label: string;
+  total: number;
+  rank: number;
+  share: number;
+  cumulative: number;
+  class: "A" | "B" | "C";
+}
+
+interface ABCResult {
+  dimension: string;
+  total_spend: number;
+  threshold_a: number;
+  threshold_b: number;
+  rows: ABCRow[];
+}
+
+// ── Constants ─────────────────────────────────────────────────────────
+
+const CLASS_COLORS: Record<string, string> = { A: "#5B6BF5", B: "#10B981", C: "#F59E0B" };
+const CLASS_BG: Record<string, string> = {
+  A: "rgba(91,107,245,0.12)", B: "rgba(16,185,129,0.12)", C: "rgba(245,158,11,0.12)",
+};
+
+function formatEur(n: number) {
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+}
+
+function downloadCSV(rows: ABCRow[], dimension: string) {
+  const header = "Rang,Libellé,Montant (€),Part (%),Cumulé (%),Classe\n";
+  const lines = rows.map((r) =>
+    `${r.rank},"${r.label}",${r.total.toFixed(2)},${r.share.toFixed(2)},${r.cumulative.toFixed(2)},${r.class}`
+  ).join("\n");
+  const blob = new Blob([header + lines], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `abc_${dimension}_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Sub-components ─────────────────────────────────────────────────────
+
 function MetricCard({ label, value, icon: Icon, color, sub }: {
-  label: string; value: string | number; icon: React.FC<{ className?: string; style?: React.CSSProperties }>; color: string; sub?: string;
+  label: string; value: string | number;
+  icon: React.FC<{ className?: string; style?: React.CSSProperties }>;
+  color: string; sub?: string;
 }) {
   return (
     <div className="bg-card rounded-xl border border-border p-5 hover:shadow-sm transition-shadow">
@@ -27,9 +83,7 @@ function MetricCard({ label, value, icon: Icon, color, sub }: {
         </div>
         {sub && (
           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>
-            {sub}
-          </span>
+            style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>{sub}</span>
         )}
       </div>
       <p className="text-3xl font-extrabold font-mono tabular-nums text-foreground">{value}</p>
@@ -53,17 +107,9 @@ function ProgressBar({ label, value, max, color }: { label: string; value: numbe
   );
 }
 
-export default function AnalyticsPage() {
-  const { accessToken, currentOrg } = useAuthStore();
-  const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
+// ── Overview Tab ───────────────────────────────────────────────────────
 
-  const { data: overview, isLoading } = useQuery<Overview>({
-    queryKey: ["analytics", "overview", currentOrg?.id],
-    queryFn: () => api.get("/api/v1/analytics/overview", opts),
-    enabled: !!accessToken && !!currentOrg,
-    refetchInterval: 30_000,
-  });
-
+function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: boolean }) {
   const metrics = [
     { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5B6BF5" },
     { label: "Leads", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#06B6D4" },
@@ -73,90 +119,277 @@ export default function AnalyticsPage() {
     { label: "Employés", value: overview?.total_employees ?? 0, icon: Briefcase, color: "#EC4899" },
     { label: "Produits", value: overview?.total_products ?? 0, icon: Package, color: "#6366F1" },
   ];
-
   const maxValue = Math.max(
-    overview?.total_contacts ?? 0,
-    overview?.total_leads ?? 0,
-    overview?.total_deals ?? 0,
-    overview?.total_invoices ?? 0,
-    overview?.total_employees ?? 0,
-    overview?.total_products ?? 0,
-    1,
+    overview?.total_contacts ?? 0, overview?.total_leads ?? 0, overview?.total_deals ?? 0,
+    overview?.total_invoices ?? 0, overview?.total_employees ?? 0, overview?.total_products ?? 0, 1,
   );
 
-  return (
-    <div className="space-y-8">
-      <DemoBanner />
-
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
-          <BarChart2 className="w-3.5 h-3.5" style={{ color: "#06B6D4" }} />
-        </div>
-        <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
-        <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-full"
-          style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>
-          Temps réel
-        </span>
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="h-32 bg-muted rounded-xl animate-pulse" />
+        ))}
       </div>
+    );
+  }
 
-      {isLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} className="h-32 bg-muted rounded-xl animate-pulse" />
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {metrics.map((m) => <MetricCard key={m.label} {...m} />)}
+        <div className="lg:col-span-1 bg-card rounded-xl border border-border p-5 flex flex-col justify-between"
+          style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.06), rgba(155,111,232,0.06))" }}>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
+          <div className="flex items-end gap-1 mt-2">
+            <span className="text-3xl font-extrabold font-mono text-foreground">
+              {overview && overview.total_contacts + overview.total_leads + overview.total_deals > 0 ? "✓" : "—"}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {overview?.total_contacts ?? 0} contacts · {overview?.total_leads ?? 0} leads · {overview?.total_deals ?? 0} deals
+          </p>
+        </div>
+      </div>
+      <div className="bg-card rounded-xl border border-border p-6">
+        <h2 className="text-sm font-bold text-foreground mb-5">Distribution des données</h2>
+        <div className="space-y-4">
+          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5B6BF5" />
+          <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="#06B6D4" />
+          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#9B6FE8" />
+          <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="#F59E0B" />
+          <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="#EC4899" />
+          <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="#6366F1" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5B6BF5" },
+          { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "#F59E0B" },
+          { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "#6366F1" },
+        ].map((card) => (
+          <div key={card.title} className="rounded-xl border border-border bg-card p-5">
+            <div className="w-2 h-2 rounded-full mb-3" style={{ background: card.color }} />
+            <h3 className="text-sm font-bold text-foreground mb-1">{card.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── ABC Tab ────────────────────────────────────────────────────────────
+
+function ABCTab() {
+  const { accessToken, currentOrg } = useAuthStore();
+  const [dimension, setDimension] = useState<"supplier" | "category">("supplier");
+  const [thresholdA, setThresholdA] = useState(80);
+  const [thresholdB, setThresholdB] = useState(95);
+
+  const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
+
+  const { data, isLoading, isError } = useQuery<ABCResult>({
+    queryKey: ["analytics", "abc", currentOrg?.id, dimension, thresholdA, thresholdB],
+    queryFn: () =>
+      api.get(`/api/v1/analytics/abc?dimension=${dimension}&threshold_a=${thresholdA}&threshold_b=${thresholdB}`, opts),
+    enabled: !!accessToken && !!currentOrg,
+  });
+
+  const chartData = (data?.rows ?? []).slice(0, 30).map((r) => ({
+    name: r.label.length > 18 ? r.label.slice(0, 16) + "…" : r.label,
+    montant: r.total,
+    cumule: r.cumulative,
+  }));
+
+  const countA = data?.rows.filter((r) => r.class === "A").length ?? 0;
+  const countB = data?.rows.filter((r) => r.class === "B").length ?? 0;
+  const countC = data?.rows.filter((r) => r.class === "C").length ?? 0;
+
+  return (
+    <div className="space-y-6">
+      {/* Controls */}
+      <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-border bg-card items-end">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Dimension</label>
+          <div className="flex gap-2">
+            {(["supplier", "category"] as const).map((d) => (
+              <button key={d} onClick={() => setDimension(d)}
+                className={["px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
+                  dimension === d ? "text-white" : "text-muted-foreground bg-muted/30 hover:bg-muted/60"].join(" ")}
+                style={dimension === d ? { background: "#5B6BF5" } : undefined}>
+                {d === "supplier" ? "Fournisseurs" : "Familles d'achat"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-4">
+          {[{ label: "Seuil A (%)", val: thresholdA, set: setThresholdA, min: 50, max: 90 },
+            { label: "Seuil A+B (%)", val: thresholdB, set: setThresholdB, min: thresholdA + 1, max: 99 }
+          ].map(({ label, val, set, min, max }) => (
+            <div key={label} className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</label>
+              <input type="number" min={min} max={max} value={val}
+                onChange={(e) => set(Number(e.target.value))}
+                className="w-20 px-2 py-1.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
           ))}
         </div>
-      ) : (
-        <>
-          {/* KPI Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {metrics.map((m) => (
-              <MetricCard key={m.label} {...m} />
-            ))}
+        {data && (
+          <button onClick={() => downloadCSV(data.rows, dimension)}
+            className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+            <Download className="w-3.5 h-3.5" />Export CSV
+          </button>
+        )}
+      </div>
 
-            {/* Revenue highlight */}
-            <div className="lg:col-span-1 bg-card rounded-xl border border-border p-5 flex flex-col justify-between"
-              style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.06), rgba(155,111,232,0.06))" }}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
-              <div className="flex items-end gap-1 mt-2">
-                <span className="text-3xl font-extrabold font-mono text-foreground">
-                  {overview && overview.total_contacts + overview.total_leads + overview.total_deals > 0 ? "✓" : "—"}
-                </span>
+      {/* KPIs */}
+      {data && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Dépense totale</p>
+            <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{formatEur(data.total_spend)}</p>
+          </div>
+          {(["A", "B", "C"] as const).map((cls) => {
+            const count = cls === "A" ? countA : cls === "B" ? countB : countC;
+            const label = cls === "A" ? "Stratégiques" : cls === "B" ? "Intermédiaires" : "Secondaires";
+            return (
+              <div key={cls} className="rounded-xl border border-border bg-card p-4"
+                style={{ borderLeftWidth: 3, borderLeftColor: CLASS_COLORS[cls] }}>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Classe {cls} — {label}</p>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                    style={{ color: CLASS_COLORS[cls], background: CLASS_BG[cls] }}>{cls}</span>
+                </div>
+                <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{count}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {dimension === "supplier" ? "fournisseurs" : "familles"}
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                {overview?.total_contacts ?? 0} contacts · {overview?.total_leads ?? 0} leads · {overview?.total_deals ?? 0} deals
-              </p>
-            </div>
-          </div>
-
-          {/* Distribution chart (CSS-only bars) */}
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h2 className="text-sm font-bold text-foreground mb-5">Distribution des données</h2>
-            <div className="space-y-4">
-              <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5B6BF5" />
-              <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="#06B6D4" />
-              <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#9B6FE8" />
-              <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="#F59E0B" />
-              <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="#EC4899" />
-              <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="#6366F1" />
-            </div>
-          </div>
-
-          {/* Info cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5B6BF5" },
-              { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "#F59E0B" },
-              { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "#6366F1" },
-            ].map((card) => (
-              <div key={card.title} className="rounded-xl border border-border bg-card p-5">
-                <div className="w-2 h-2 rounded-full mb-3" style={{ background: card.color }} />
-                <h3 className="text-sm font-bold text-foreground mb-1">{card.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
-              </div>
-            ))}
-          </div>
-        </>
+            );
+          })}
+        </div>
       )}
+
+      {/* Pareto chart */}
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h2 className="text-sm font-semibold text-foreground mb-5">
+          Courbe de Pareto — Top 30 {dimension === "supplier" ? "fournisseurs" : "familles"}
+        </h2>
+        {isLoading && <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">Chargement…</div>}
+        {isError && <div className="h-64 flex items-center justify-center text-destructive text-sm">Erreur lors du chargement</div>}
+        {!isLoading && !isError && chartData.length === 0 && (
+          <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
+            Aucune donnée — créez des commandes fournisseurs pour voir le classement ABC.
+          </div>
+        )}
+        {!isLoading && chartData.length > 0 && (
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 60, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-40} textAnchor="end" interval={0} />
+              <YAxis yAxisId="left" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k€`} />
+              <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `${v}%`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                formatter={(value: number, name: string) =>
+                  name === "montant" ? [formatEur(value), "Montant"] : [`${(value as number).toFixed(1)}%`, "% cumulé"]} />
+              <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} formatter={(v) => v === "montant" ? "Montant (€)" : "% cumulé"} />
+              <ReferenceLine yAxisId="right" y={thresholdA} stroke={CLASS_COLORS.A} strokeDasharray="6 3"
+                label={{ value: `A (${thresholdA}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.A }} />
+              <ReferenceLine yAxisId="right" y={thresholdB} stroke={CLASS_COLORS.B} strokeDasharray="6 3"
+                label={{ value: `B (${thresholdB}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.B }} />
+              <Bar yAxisId="left" dataKey="montant" fill="#5B6BF5" opacity={0.85} radius={[3, 3, 0, 0]} />
+              <Line yAxisId="right" type="monotone" dataKey="cumule" stroke="#F59E0B" strokeWidth={2} dot={false} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+
+      {/* Detail table */}
+      {data && data.rows.length > 0 && (
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border">
+            <h2 className="text-sm font-semibold text-foreground">
+              Détail ({data.rows.length} {dimension === "supplier" ? "fournisseurs" : "familles"})
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  {["Rang", "Libellé", "Montant", "Part (%)", "Cumulé (%)", "Classe"].map((col) => (
+                    <th key={col} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-muted-foreground">{col}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((row) => (
+                  <tr key={row.rank} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-3 font-mono text-muted-foreground text-xs">#{row.rank}</td>
+                    <td className="px-4 py-3 font-medium text-foreground max-w-xs truncate">{row.label}</td>
+                    <td className="px-4 py-3 font-mono tabular-nums text-foreground">{formatEur(row.total)}</td>
+                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.share.toFixed(1)}%</td>
+                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
+                        style={{ color: CLASS_COLORS[row.class], background: CLASS_BG[row.class] }}>{row.class}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────
+
+export default function AnalyticsPage() {
+  const { accessToken, currentOrg } = useAuthStore();
+  const [tab, setTab] = useState<"overview" | "abc">("overview");
+  const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
+
+  const { data: overview, isLoading } = useQuery<Overview>({
+    queryKey: ["analytics", "overview", currentOrg?.id],
+    queryFn: () => api.get("/api/v1/analytics/overview", opts),
+    enabled: !!accessToken && !!currentOrg,
+    refetchInterval: 30_000,
+  });
+
+  return (
+    <div className="space-y-6">
+      <DemoBanner />
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
+            <BarChart2 className="w-3.5 h-3.5" style={{ color: "#06B6D4" }} />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
+          <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>Temps réel</span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-lg bg-muted/30 w-fit">
+        {([
+          { id: "overview", label: "Vue d'ensemble" },
+          { id: "abc", label: "Classement ABC" },
+        ] as const).map(({ id, label }) => (
+          <button key={id} onClick={() => setTab(id)}
+            className={["px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
+              tab === id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"].join(" ")}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" && <OverviewTab overview={overview} isLoading={isLoading} />}
+      {tab === "abc" && <ABCTab />}
     </div>
   );
 }
