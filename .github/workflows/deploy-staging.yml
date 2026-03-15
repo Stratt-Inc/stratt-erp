@@ -9,8 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FRONTEND_IMAGE: ghcr.io/makcimerrr/stratt/frontend
-  BACKEND_IMAGE: ghcr.io/makcimerrr/stratt/backend
+  FRONTEND_IMAGE: ghcr.io/stratt-inc/stratt-erp/frontend
+  BACKEND_IMAGE: ghcr.io/stratt-inc/stratt-erp/backend
 
 jobs:
   deploy-staging:
@@ -53,3 +53,9 @@ jobs:
           tags: ${{ env.BACKEND_IMAGE }}:staging-${{ github.sha }}
           cache-from: type=gha,scope=backend-staging
           cache-to: type=gha,scope=backend-staging,mode=max
+
+      - name: Trigger Coolify Deploy — Staging
+        run: |
+          curl -fsSL -X POST "${{ secrets.COOLIFY_WEBHOOK_URL_STAGING }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            -H "Content-Type: application/json"

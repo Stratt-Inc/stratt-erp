@@ -11,8 +11,8 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  FRONTEND_IMAGE: ghcr.io/makcimerrr/stratt/frontend
-  BACKEND_IMAGE: ghcr.io/makcimerrr/stratt/backend
+  FRONTEND_IMAGE: ghcr.io/stratt-inc/stratt-erp/frontend
+  BACKEND_IMAGE: ghcr.io/stratt-inc/stratt-erp/backend
 
 jobs:
   deploy-production:
@@ -70,3 +70,9 @@ jobs:
           generate_release_notes: false
           make_latest: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Coolify Deploy — Production
+        run: |
+          curl -fsSL -X POST "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            -H "Content-Type: application/json"
