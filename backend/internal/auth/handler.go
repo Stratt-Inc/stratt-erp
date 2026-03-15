@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/axiora/backend/internal/ctxutil"
 	"github.com/axiora/backend/internal/models"
 	"github.com/gofiber/fiber/v2"
 )
@@ -84,12 +85,11 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 
 // POST /api/v1/auth/logout
 func (h *Handler) Logout(c *fiber.Ctx) error {
-	sessionID := c.Locals("session_id")
-	if sessionID == nil {
+	sid, ok := ctxutil.GetSessionID(c)
+	if !ok {
 		return c.Status(401).JSON(models.Err("not authenticated"))
 	}
-
-	_ = h.svc.Logout(c.Context(), sessionID.(interface{ GetUUID() [16]byte }))
+	_ = h.svc.Logout(c.Context(), sid)
 	clearRefreshCookie(c)
 	return c.JSON(models.Msg("logged out successfully"))
 }
@@ -121,12 +121,12 @@ func (h *Handler) Refresh(c *fiber.Ctx) error {
 
 // GET /api/v1/auth/me
 func (h *Handler) Me(c *fiber.Ctx) error {
-	userID := c.Locals("user_id")
-	if userID == nil {
+	uid, ok := ctxutil.GetUserID(c)
+	if !ok {
 		return c.Status(401).JSON(models.Err("not authenticated"))
 	}
 
-	user, err := h.svc.Me(c.Context(), c.Locals("user_id_uuid").([16]byte))
+	user, err := h.svc.Me(c.Context(), uid)
 	if err != nil {
 		return c.Status(404).JSON(models.Err("user not found"))
 	}

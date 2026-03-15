@@ -4,6 +4,13 @@ import (
 	"log"
 
 	"github.com/axiora/backend/internal/models"
+	"github.com/axiora/backend/modules/accounting"
+	"github.com/axiora/backend/modules/billing"
+	crmmod "github.com/axiora/backend/modules/crm"
+	"github.com/axiora/backend/modules/hr"
+	"github.com/axiora/backend/modules/inventory"
+	"github.com/axiora/backend/modules/marches"
+	"github.com/axiora/backend/modules/procurement"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -50,24 +57,26 @@ func AutoMigrate(db *gorm.DB) error {
 		// Audit
 		&models.AuditLog{},
 		// ERP — CRM
-		&models.Contact{},
-		&models.Lead{},
-		&models.Deal{},
-		&models.Activity{},
+		&crmmod.Contact{},
+		&crmmod.Lead{},
+		&crmmod.Deal{},
+		&crmmod.Activity{},
 		// ERP — Accounting
-		&models.Account{},
-		&models.Transaction{},
+		&accounting.Account{},
+		&accounting.Transaction{},
 		// ERP — Billing
-		&models.Invoice{},
-		&models.InvoiceItem{},
+		&billing.Invoice{},
+		&billing.InvoiceItem{},
 		// ERP — Inventory
-		&models.Product{},
-		&models.StockMovement{},
+		&inventory.Product{},
+		&inventory.StockMovement{},
 		// ERP — HR
-		&models.Employee{},
-		&models.LeaveRequest{},
+		&hr.Employee{},
+		&hr.LeaveRequest{},
 		// ERP — Procurement
-		&models.PurchaseOrder{},
-		&models.PurchaseOrderItem{},
+		&procurement.PurchaseOrder{},
+		&procurement.PurchaseOrderItem{},
+		// ERP — Marchés publics
+		&marches.Marche{},
 	)
 }

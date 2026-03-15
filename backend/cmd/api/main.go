@@ -21,6 +21,7 @@ import (
 	crmmod "github.com/axiora/backend/modules/crm"
 	"github.com/axiora/backend/modules/hr"
 	"github.com/axiora/backend/modules/inventory"
+	"github.com/axiora/backend/modules/marches"
 	"github.com/axiora/backend/modules/procurement"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -76,6 +77,7 @@ func main() {
 	inventoryHandler := inventory.NewHandler(db)
 	hrHandler := hr.NewHandler(db)
 	procurementHandler := procurement.NewHandler(db)
+	marchesHandler := marches.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
 
 	// ── Middleware factories ───────────────────────────────
@@ -168,6 +170,9 @@ func main() {
 
 	procGroup := v1.Group("/procurement", requireAuth, requireOrg, requirePerm("procurement.read"))
 	procurement.RegisterRoutes(procGroup, procurementHandler)
+
+	marchesGroup := v1.Group("/marches", requireAuth, requireOrg, requirePerm("procurement.read"))
+	marches.RegisterRoutes(marchesGroup, marchesHandler)
 
 	analyticsGroup := v1.Group("/analytics", requireAuth, requireOrg, requirePerm("analytics.read"))
 	analytics.RegisterRoutes(analyticsGroup, analyticsHandler)
