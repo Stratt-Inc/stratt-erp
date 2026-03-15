@@ -17,16 +17,16 @@ dist-ssr
 *.local
 
 # Next.js
-apps/web/.next/
-apps/web/out/
+frontend/.next/
+frontend/out/
 
 # Packages build
 packages/*/dist/
 services/ai/dist/
 
 # Go binary outputs
-apps/api/bin/
-apps/api/*.exe
+backend/bin/
+backend/*.exe
 
 # Environment
 .env
@@ -50,3 +50,7 @@ apps/api/*.exe
 
 # Test coverage
 coverage/
+
+maquette/
+
+docs/references/
