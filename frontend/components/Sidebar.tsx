@@ -21,11 +21,12 @@ import {
   Download,
   LifeBuoy,
   Shield,
+  HelpCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
 const pilotageNav = [
-  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard" },
   { label: "Planification", href: "/planification", icon: Calendar },
   { label: "Cartographie", href: "/cartographie", icon: Map },
   { label: "Nomenclature", href: "/nomenclature", icon: BookOpen },
@@ -33,7 +34,7 @@ const pilotageNav = [
 ];
 
 const erpNav = [
-  { label: "CRM", href: "/crm", icon: Users },
+  { label: "CRM", href: "/crm", icon: Users, tour: "crm" },
   { label: "Comptabilité", href: "/accounting", icon: Calculator },
   { label: "Facturation", href: "/billing", icon: FileText },
   { label: "Inventaire", href: "/inventory", icon: Package },
@@ -44,9 +45,10 @@ const erpNav = [
 
 const systemeNav = [
   { label: "Organisations", href: "/organizations", icon: Building2 },
-  { label: "Paramètres", href: "/settings", icon: Settings },
+  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings" },
   { label: "Administration", href: "/administration", icon: Shield },
   { label: "Support", href: "/support", icon: LifeBuoy },
+  { label: "Aide", href: "/help", icon: HelpCircle },
 ];
 
 export function Sidebar() {
@@ -63,12 +65,13 @@ export function Sidebar() {
   };
 
   const renderNav = (items: typeof pilotageNav, activeIndicator = true) =>
-    items.map(({ label, href, icon: Icon }) => {
+    items.map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
         <Link
           key={href}
           href={href}
+          {...(tour ? { "data-tour": tour } : {})}
           className={[
             "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors relative",
             active ? "text-white" : "text-white/50 hover:text-white/80 hover:bg-white/5",
