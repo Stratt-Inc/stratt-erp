@@ -62,7 +62,8 @@ ps: ## Status des conteneurs
 
 dev: ## Lance l'API Go et le frontend en parallèle (nécessite make up-infra)
 	@echo "$(CYAN)Démarrage dev (API :8080, Frontend :3000)...$(RESET)"
-	@trap 'kill 0' SIGINT; \
+	@set -a; source .env; set +a; \
+	trap 'kill 0' SIGINT; \
 	  (cd backend && go run ./cmd/api) & \
 	  (cd frontend && npm run dev) & \
 	  wait
