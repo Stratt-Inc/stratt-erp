@@ -27,6 +27,7 @@ import (
 	crmmod "github.com/stratt/backend/modules/crm"
 	"github.com/stratt/backend/modules/hr"
 	"github.com/stratt/backend/modules/inventory"
+	"github.com/stratt/backend/modules/decp"
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
@@ -80,6 +81,7 @@ func main() {
 	hrHandler := hr.NewHandler(db)
 	procurementHandler := procurement.NewHandler(db)
 	marchesHandler := marches.NewHandler(db)
+	decpHandler := decp.NewHandler(db)
 	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
 
@@ -156,6 +158,7 @@ func main() {
 	procurement.RegisterRoutes(v1.Group("/procurement", requireAuth, requireOrg, requirePerm("procurement.read")), procurementHandler)
 	analytics.RegisterRoutes(v1.Group("/analytics", requireAuth, requireOrg, requirePerm("analytics.read")), analyticsHandler)
 	marches.RegisterRoutes(v1.Group("/marches", requireAuth, requireOrg, requirePerm("procurement.read")), marchesHandler)
+	decp.RegisterRoutes(v1.Group("/decp", requireAuth, requireOrg, requirePerm("procurement.read")), decpHandler)
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
 
 	// ── Start ─────────────────────────────────────────────
