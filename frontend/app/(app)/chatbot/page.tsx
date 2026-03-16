@@ -95,7 +95,7 @@ export default function ChatbotPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-[#5B6BF5]" />
+            <MessageSquare className="w-6 h-6 text-[#5C93FF]" />
             Chatbot nomenclature
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -105,13 +105,13 @@ export default function ChatbotPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setTab("tokens")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "tokens" ? "bg-[#5B6BF5] text-white" : "text-muted-foreground hover:text-foreground"}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "tokens" ? "bg-[#5C93FF] text-white" : "text-muted-foreground hover:text-foreground"}`}
           >
             Tokens
           </button>
           <button
             onClick={() => setTab("analytics")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "analytics" ? "bg-[#5B6BF5] text-white" : "text-muted-foreground hover:text-foreground"}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "analytics" ? "bg-[#5C93FF] text-white" : "text-muted-foreground hover:text-foreground"}`}
           >
             Analytiques
           </button>
@@ -128,7 +128,7 @@ export default function ChatbotPage() {
                 <div>
                   <label className="text-xs text-muted-foreground mb-1 block">Libellé</label>
                   <input
-                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5B6BF5]/30"
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5C93FF]/30"
                     placeholder="ex : Agents comptabilité"
                     value={newLabel}
                     onChange={(e) => setNewLabel(e.target.value)}
@@ -141,7 +141,7 @@ export default function ChatbotPage() {
                   <input
                     type="number"
                     min={0}
-                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5B6BF5]/30"
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5C93FF]/30"
                     value={newExpiry}
                     onChange={(e) => setNewExpiry(parseInt(e.target.value) || 0)}
                   />
@@ -151,7 +151,7 @@ export default function ChatbotPage() {
                 <button
                   onClick={() => createToken.mutate()}
                   disabled={createToken.isPending}
-                  className="px-4 py-2 bg-[#5B6BF5] text-white rounded-lg text-sm font-medium hover:bg-[#4a5ae4] disabled:opacity-50"
+                  className="px-4 py-2 bg-[#5C93FF] text-white rounded-lg text-sm font-medium hover:bg-[#4a5ae4] disabled:opacity-50"
                 >
                   {createToken.isPending ? "Création…" : "Créer le lien"}
                 </button>
@@ -166,7 +166,7 @@ export default function ChatbotPage() {
           ) : (
             <button
               onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#5B6BF5] transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#5C93FF] transition-colors text-sm"
             >
               <Plus className="w-4 h-4" />
               Créer un lien public
@@ -261,7 +261,7 @@ export default function ChatbotPage() {
               <p className="text-sm text-muted-foreground mt-1">Avis négatifs 👎</p>
             </div>
             <div className="border border-border rounded-xl p-5 bg-card text-center">
-              <p className="text-3xl font-bold text-[#5B6BF5]">
+              <p className="text-3xl font-bold text-[#5C93FF]">
                 {totalFeedback > 0 ? Math.round((feedbackPositive / totalFeedback) * 100) : 0}%
               </p>
               <p className="text-sm text-muted-foreground mt-1">Satisfaction</p>
@@ -280,7 +280,7 @@ export default function ChatbotPage() {
               {(analytics.top_questions ?? []).map((q, i) => (
                 <div key={i} className="px-5 py-3 flex items-center justify-between gap-4">
                   <p className="text-sm truncate flex-1">{q.question}</p>
-                  <span className="text-xs font-semibold bg-[#5B6BF5]/10 text-[#5B6BF5] px-2 py-0.5 rounded-full flex-shrink-0">
+                  <span className="text-xs font-semibold bg-[#5C93FF]/10 text-[#5C93FF] px-2 py-0.5 rounded-full flex-shrink-0">
                     ×{q.count}
                   </span>
                 </div>

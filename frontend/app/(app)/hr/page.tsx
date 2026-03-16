@@ -84,7 +84,7 @@ export default function HRPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Nouvel employé
           </button>
         )}
@@ -94,7 +94,7 @@ export default function HRPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: "#EC4899" },
-          { label: "Départements", value: departments.size, icon: Briefcase, color: "#5B6BF5" },
+          { label: "Départements", value: departments.size, icon: Briefcase, color: "#5C93FF" },
           { label: "Congés en attente", value: leaves.filter(l => l.status === "pending").length, icon: Clock, color: "#F59E0B" },
           { label: "Masse salariale", value: `${totalSalary.toLocaleString("fr-FR")} €`, icon: Briefcase, color: "#10B981" },
         ].map(({ label, value, color }) => (
@@ -117,7 +117,7 @@ export default function HRPage() {
             }`}>
             {t.label}
             <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full"
-              style={{ background: tab === t.id ? "rgba(91,107,245,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5B6BF5" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -152,7 +152,7 @@ export default function HRPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold text-white flex-shrink-0"
-                            style={{ background: "linear-gradient(135deg,#EC4899,#9B6FE8)" }}>
+                            style={{ background: "linear-gradient(135deg,#EC4899,#24DDB8)" }}>
                             {e.first_name?.[0]?.toUpperCase()}
                           </div>
                           <div>

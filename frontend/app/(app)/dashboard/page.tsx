@@ -28,19 +28,19 @@ interface MarcheStats {
 }
 
 const pilotageModules = [
-  { label: "Planification", href: "/planification", icon: Calendar, color: "#5B6BF5", description: "Marchés publics & calendrier" },
+  { label: "Planification", href: "/planification", icon: Calendar, color: "#5C93FF", description: "Marchés publics & calendrier" },
   { label: "Cartographie", href: "/cartographie", icon: Map, color: "#06B6D4", description: "Dépenses par famille" },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "#6366F1", description: "Arborescence des codes achats" },
+  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "#5C93FF", description: "Arborescence des codes achats" },
   { label: "Documents", href: "/exports", icon: Download, color: "#F59E0B", description: "Rapports & exports PDF" },
 ];
 
 const erpModules = [
-  { label: "CRM", href: "/crm", icon: Users, color: "#5B6BF5", description: "Contacts, leads & deals" },
+  { label: "CRM", href: "/crm", icon: Users, color: "#5C93FF", description: "Contacts, leads & deals" },
   { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#10B981", description: "Comptes & transactions" },
   { label: "Facturation", href: "/billing", icon: FileText, color: "#F59E0B", description: "Devis & factures" },
-  { label: "Inventaire", href: "/inventory", icon: Package, color: "#6366F1", description: "Produits & stocks" },
+  { label: "Inventaire", href: "/inventory", icon: Package, color: "#5C93FF", description: "Produits & stocks" },
   { label: "RH", href: "/hr", icon: Briefcase, color: "#EC4899", description: "Employés & congés" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#8B5CF6", description: "Commandes fournisseurs" },
+  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#5C93FF", description: "Commandes fournisseurs" },
   { label: "Analytics", href: "/analytics", icon: BarChart2, color: "#06B6D4", description: "Rapports & tableaux de bord" },
 ];
 
@@ -74,18 +74,18 @@ export default function DashboardPage() {
   const firstName = user?.name?.split(" ")[0] ?? "vous";
 
   const marcheKpis = [
-    { label: "Marchés en cours", value: marcheStats?.en_cours ?? 0, icon: CalendarRange, color: "#5B6BF5" },
+    { label: "Marchés en cours", value: marcheStats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
     { label: "Alertes actives",  value: marcheStats?.alertes ?? 0,   icon: AlertTriangle,  color: "#EF4444" },
     { label: "Budget prévisionnel", value: `${budgetK} k€`,          icon: TrendingUp,     color: "#10B981" },
     { label: "Charge prévisionnelle", value: `${marcheStats?.charge_total ?? 0} j/h`, icon: Scale, color: "#F59E0B" },
   ];
 
   const erpStats = [
-    { label: "Contacts", value: overview?.total_contacts ?? 0,   icon: Users,     color: "#5B6BF5" },
+    { label: "Contacts", value: overview?.total_contacts ?? 0,   icon: Users,     color: "#5C93FF" },
     { label: "Leads",    value: overview?.total_leads ?? 0,      icon: TrendingUp, color: "#10B981" },
     { label: "Factures", value: overview?.total_invoices ?? 0,   icon: FileText,  color: "#F59E0B" },
     { label: "CA payé",  value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#06B6D4" },
-    { label: "Produits", value: overview?.total_products ?? 0,   icon: Package,   color: "#6366F1" },
+    { label: "Produits", value: overview?.total_products ?? 0,   icon: Package,   color: "#5C93FF" },
     { label: "Employés", value: overview?.total_employees ?? 0,  icon: Briefcase, color: "#EC4899" },
   ];
 
@@ -174,7 +174,7 @@ export default function DashboardPage() {
               ))}
             </div>
             <div className="px-4 py-2.5 border-t border-border">
-              <a href="/cartographie" className="text-[10px] font-semibold flex items-center gap-1 hover:underline" style={{ color: "#5B6BF5" }}>
+              <a href="/cartographie" className="text-[10px] font-semibold flex items-center gap-1 hover:underline" style={{ color: "#5C93FF" }}>
                 Voir toutes les anomalies <ChevronRight className="w-3 h-3" />
               </a>
             </div>

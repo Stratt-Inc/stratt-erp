@@ -70,7 +70,7 @@ const pluriannuelData = [
 
 const statutColors: Record<string, { bg: string; text: string; border: string }> = {
   planifie:  { bg: "rgba(107,114,128,0.08)", text: "hsl(220,9%,46%)",  border: "rgba(107,114,128,0.2)" },
-  en_cours:  { bg: "rgba(91,107,245,0.08)",  text: "#5B6BF5",         border: "rgba(91,107,245,0.2)" },
+  en_cours:  { bg: "rgba(92,147,255,0.1)",  text: "#5C93FF",         border: "rgba(92,147,255,0.2)" },
   alerte:    { bg: "rgba(239,68,68,0.08)",   text: "#EF4444",         border: "rgba(239,68,68,0.2)" },
   termine:   { bg: "rgba(107,114,128,0.08)", text: "hsl(220,9%,46%)", border: "rgba(107,114,128,0.2)" },
 };
@@ -86,7 +86,7 @@ const prioriteColors: Record<string, { bg: string; text: string }> = {
 };
 
 // Color palette for calendar event bars
-const EVENT_COLORS = ["#5B6BF5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4", "#F97316", "#EC4899"];
+const EVENT_COLORS = ["#5C93FF", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4", "#F97316", "#EC4899"];
 
 const MONTH_NAMES = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 const DAY_NAMES = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
@@ -212,7 +212,7 @@ export default function PlanificationPage() {
           <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border border-border text-foreground hover:bg-muted/50 transition-colors">
             <Filter className="w-3.5 h-3.5" /> Filtres avancés
           </button>
-          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-3.5 h-3.5" /> Nouveau marché
           </button>
         </div>
@@ -229,7 +229,7 @@ export default function PlanificationPage() {
         ].map((kpi) => (
           <div key={kpi.label} className="bg-card border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <kpi.icon className="w-3.5 h-3.5" style={{ color: kpi.alert ? "#F59E0B" : "#5B6BF5" }} />
+              <kpi.icon className="w-3.5 h-3.5" style={{ color: kpi.alert ? "#F59E0B" : "#5C93FF" }} />
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{kpi.label}</span>
             </div>
             <span className="text-xl font-bold" style={{ color: kpi.alert ? "#F59E0B" : undefined }}>{kpi.value}</span>
@@ -251,7 +251,7 @@ export default function PlanificationPage() {
                 <XAxis dataKey="mois" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
                 <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                <Bar dataKey="charge" name="Charge" fill="#5B6BF5" radius={[2, 2, 0, 0]} maxBarSize={14} />
+                <Bar dataKey="charge" name="Charge" fill="#5C93FF" radius={[2, 2, 0, 0]} maxBarSize={14} />
                 <Bar dataKey="capacite" name="Capacité" fill="hsl(var(--muted))" radius={[2, 2, 0, 0]} maxBarSize={14} />
               </BarChart>
             </ResponsiveContainer>
@@ -275,13 +275,13 @@ export default function PlanificationPage() {
                 <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={30} />
                 <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} />
                 <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="#5B6BF5" strokeWidth={2} dot={{ r: 3 }} />
+                <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="#5C93FF" strokeWidth={2} dot={{ r: 3 }} />
                 <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <div className="flex gap-4 mt-2 justify-center">
-            {[{ label: "Nb marchés", color: "#5B6BF5" }, { label: "Montant (M€)", color: "#10B981" }].map((l) => (
+            {[{ label: "Nb marchés", color: "#5C93FF" }, { label: "Montant (M€)", color: "#10B981" }].map((l) => (
               <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <div className="w-2 h-0.5 rounded" style={{ background: l.color }} />
                 {l.label}
@@ -348,7 +348,7 @@ export default function PlanificationPage() {
                           key={m.id}
                           onClick={() => setSelectedId(isSelected ? null : m.id)}
                           className="cursor-pointer transition-colors hover:bg-muted/30"
-                          style={isSelected ? { background: "rgba(91,107,245,0.04)" } : undefined}
+                          style={isSelected ? { background: "rgba(92,147,255,0.06)" } : undefined}
                         >
                           <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">{m.reference}</td>
                           <td className="px-3 py-2.5 text-[13px] font-medium text-foreground max-w-[200px] truncate">{m.objet}</td>
@@ -489,7 +489,7 @@ export default function PlanificationPage() {
                   return (
                     <div key={day} className="bg-card min-h-[56px] p-1 relative">
                       <span className={`text-[11px] font-medium w-5 h-5 flex items-center justify-center rounded-full ${isToday ? "text-white" : "text-foreground"}`}
-                        style={isToday ? { background: "#5B6BF5" } : undefined}>
+                        style={isToday ? { background: "#5C93FF" } : undefined}>
                         {day}
                       </span>
                       <div className="mt-0.5 space-y-0.5">

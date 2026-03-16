@@ -143,7 +143,7 @@ export function OnboardingTour() {
           className="fixed z-[9999] rounded-xl pointer-events-none"
           style={{
             ...highlightStyle,
-            boxShadow: "0 0 0 9999px rgba(0,0,0,0.55), 0 0 0 2px #5B6BF5",
+            boxShadow: "0 0 0 9999px rgba(0,0,0,0.55), 0 0 0 2px #5C93FF",
             transition: "all 0.2s ease",
           }}
         />
@@ -164,7 +164,7 @@ export function OnboardingTour() {
             <div className="flex items-center gap-2">
               <div
                 className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
               >
                 <Zap size={14} className="text-white fill-white" />
               </div>
@@ -188,7 +188,7 @@ export function OnboardingTour() {
                 <div
                   key={i}
                   className="w-1.5 h-1.5 rounded-full transition-colors"
-                  style={{ background: i === step ? "#5B6BF5" : "#E5E7EB" }}
+                  style={{ background: i === step ? "#5C93FF" : "#E5E7EB" }}
                 />
               ))}
             </div>
@@ -205,7 +205,7 @@ export function OnboardingTour() {
               <button
                 onClick={next}
                 className="flex items-center gap-1 px-3 py-1.5 text-xs text-white rounded-lg"
-                style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
               >
                 {step < TOUR_STEPS.length - 1 ? (
                   <>Suivant <ChevronRight size={13} /></>

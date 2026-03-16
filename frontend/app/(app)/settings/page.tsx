@@ -27,7 +27,7 @@ function Toggle({ enabled, onToggle, disabled }: { enabled: boolean; onToggle: (
       style={{
         width: 44,
         height: 24,
-        background: enabled ? "#5B6BF5" : "hsl(var(--muted))",
+        background: enabled ? "#5C93FF" : "hsl(var(--muted))",
       }}
     >
       <span
@@ -134,7 +134,7 @@ export default function SettingsPage() {
           <div className="rounded-xl border border-dashed border-border p-8 text-center">
             <p className="text-sm text-muted-foreground">{desc}</p>
             <span className="inline-flex mt-3 text-xs font-semibold px-3 py-1 rounded-full"
-              style={{ background: "rgba(91,107,245,0.1)", color: "#5B6BF5" }}>
+              style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}>
               Bientôt disponible
             </span>
           </div>

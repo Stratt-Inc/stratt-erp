@@ -13,7 +13,6 @@ import {
   BarChart2,
   Settings,
   LogOut,
-  Zap,
   Building2,
   Calendar,
   Map,
@@ -68,7 +67,7 @@ export function Sidebar() {
     router.push("/login");
   };
 
-  const renderNav = (items: typeof pilotageNav, activeIndicator = true) =>
+  const renderNav = (items: typeof pilotageNav) =>
     items.map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
@@ -77,37 +76,57 @@ export function Sidebar() {
           href={href}
           {...(tour ? { "data-tour": tour } : {})}
           className={[
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors relative",
-            active ? "text-white" : "text-white/50 hover:text-white/80 hover:bg-white/5",
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 relative",
+            active
+              ? "text-white"
+              : "text-white/40 hover:text-white/75 hover:bg-white/5",
           ].join(" ")}
-          style={active ? { background: "rgba(91,107,245,0.15)" } : undefined}
+          style={active ? { background: "rgba(92,147,255,0.12)" } : undefined}
         >
-          {active && activeIndicator && (
+          {active && (
             <span
               className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
-              style={{ background: "#5B6BF5" }}
+              style={{ background: "#24DDB8" }}
             />
           )}
-          <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={active ? 2.5 : 2} />
+          <Icon
+            className="w-4 h-4 flex-shrink-0"
+            strokeWidth={active ? 2.5 : 1.75}
+            style={active ? { color: "#5C93FF" } : undefined}
+          />
           {label}
         </Link>
       );
     });
 
   return (
-    <aside className="w-64 flex-shrink-0 flex flex-col h-full" style={{ background: "hsl(234 42% 7%)" }}>
+    <aside
+      className="w-60 flex-shrink-0 flex flex-col h-full"
+      style={{ background: "#09111E", borderRight: "1px solid #141F2E" }}
+    >
       {/* Logo */}
-      <div className="px-5 py-5 border-b" style={{ borderColor: "hsl(234 30% 14%)" }}>
-        <div className="flex items-center gap-2.5">
+      <div className="px-5 py-5" style={{ borderBottom: "1px solid #141F2E" }}>
+        <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 select-none"
+            style={{
+              background: "#141F2E",
+              border: "1px solid #1A2535",
+              boxShadow: "0 0 0 1px rgba(36,221,184,0.12), 0 4px 12px rgba(0,0,0,0.4)",
+            }}
           >
-            <Zap className="w-4 h-4 text-white fill-white" />
+            <span
+              className="text-[11px] font-bold tracking-tight leading-none"
+              style={{ color: "#24DDB8" }}
+            >
+              tt
+            </span>
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-none">STRATT</p>
-            <p className="text-white/40 text-[10px] mt-0.5 truncate">
+            <p className="font-bold text-sm leading-none tracking-tight" style={{ color: "#F0F4FF" }}>
+              stratt
+            </p>
+            <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.28)" }}>
               {currentOrg?.name ?? "Sélectionner une org"}
             </p>
           </div>
@@ -116,43 +135,49 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-3 overflow-y-auto">
-        <p className="px-3 pt-1 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em]"
+          style={{ color: "rgba(255,255,255,0.22)" }}>
           Pilotage
         </p>
-        <div className="space-y-0.5 mb-2">{renderNav(pilotageNav)}</div>
+        <div className="space-y-0.5 mb-3">{renderNav(pilotageNav)}</div>
 
-        <div className="border-t mb-2" style={{ borderColor: "hsl(234 30% 14%)" }} />
+        <div className="my-3" style={{ borderTop: "1px solid #141F2E" }} />
 
-        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
+        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em]"
+          style={{ color: "rgba(255,255,255,0.22)" }}>
           ERP
         </p>
-        <div className="space-y-0.5 mb-2">{renderNav(erpNav)}</div>
+        <div className="space-y-0.5 mb-3">{renderNav(erpNav)}</div>
 
-        <div className="border-t mb-2" style={{ borderColor: "hsl(234 30% 14%)" }} />
+        <div className="my-3" style={{ borderTop: "1px solid #141F2E" }} />
 
-        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
+        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em]"
+          style={{ color: "rgba(255,255,255,0.22)" }}>
           Système
         </p>
         <div className="space-y-0.5">{renderNav(systemeNav)}</div>
       </nav>
 
       {/* User */}
-      <div className="px-3 py-4 border-t" style={{ borderColor: "hsl(234 30% 14%)" }}>
-        <div className="flex items-center gap-3 px-2 py-2">
+      <div className="px-3 py-3" style={{ borderTop: "1px solid #141F2E" }}>
+        <div className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg transition-colors hover:bg-white/5 group cursor-default">
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)", color: "#09111E" }}
           >
             {user?.name?.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-white text-xs font-semibold truncate">{user?.name}</p>
-            <p className="text-white/40 text-[10px] truncate">{user?.email}</p>
+            <p className="text-white/80 text-xs font-semibold truncate leading-none">{user?.name}</p>
+            <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.28)" }}>
+              {user?.email}
+            </p>
           </div>
           <button
             onClick={handleLogout}
             title="Déconnexion"
-            className="p-1.5 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-colors"
+            className="p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 hover:text-white/70"
+            style={{ color: "rgba(255,255,255,0.35)" }}
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

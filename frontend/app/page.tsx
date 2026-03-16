@@ -5,7 +5,7 @@ const modules = [
     id: "crm",
     name: "CRM",
     description: "Contacts, leads et opportunités",
-    color: "#5B6BF5",
+    color: "#5C93FF",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
@@ -147,37 +147,37 @@ export default function LandingPage() {
         .orb-1 { animation: float-slow 8s ease-in-out infinite; }
         .orb-2 { animation: float-slower 11s ease-in-out infinite 1.5s; }
         .orb-3 { animation: float-slow 9s ease-in-out infinite 3s; }
-        .module-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(91,107,245,0.13); }
+        .module-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(92,147,255,0.13); }
         .module-card { transition: transform 0.22s ease, box-shadow 0.22s ease; }
-        .feature-card:hover { border-color: rgba(91,107,245,0.35); background: rgba(91,107,245,0.03); }
+        .feature-card:hover { border-color: rgba(92,147,255,0.3); background: rgba(92,147,255,0.05); }
         .feature-card { transition: border-color 0.2s, background 0.2s; }
-        .nav-cta:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(91,107,245,0.35); }
+        .nav-cta:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(92,147,255,0.3); }
         .nav-cta { transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s; }
-        .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(91,107,245,0.42); }
+        .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(92,147,255,0.35); }
         .hero-cta-primary { transition: transform 0.2s, box-shadow 0.2s; }
-        .hero-cta-secondary:hover { background: rgba(91,107,245,0.07); border-color: rgba(91,107,245,0.4); }
+        .hero-cta-secondary:hover { background: rgba(92,147,255,0.07); border-color: rgba(36,221,184,0.25); }
         .hero-cta-secondary { transition: background 0.2s, border-color 0.2s; }
         .grid-bg {
-          background-image: linear-gradient(rgba(91,107,245,0.045) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(91,107,245,0.045) 1px, transparent 1px);
+          background-image: linear-gradient(rgba(92,147,255,0.04) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(92,147,255,0.04) 1px, transparent 1px);
           background-size: 48px 48px;
         }
         .demo-badge {
-          background: linear-gradient(135deg, rgba(91,107,245,0.08), rgba(155,111,232,0.08));
-          border: 1px solid rgba(91,107,245,0.18);
+          background: linear-gradient(135deg, rgba(92,147,255,0.1), rgba(155,111,232,0.08));
+          border: 1px solid rgba(92,147,255,0.15);
         }
-        .stat-divider:not(:last-child) { border-right: 1px solid rgba(91,107,245,0.12); }
+        .stat-divider:not(:last-child) { border-right: 1px solid rgba(92,147,255,0.12); }
       `}</style>
 
       {/* ══════════════════════════════════════════
           NAVIGATION
       ══════════════════════════════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-[62px]"
-        style={{ background: "rgba(250,250,253,0.82)", backdropFilter: "blur(14px)", borderBottom: "1px solid rgba(91,107,245,0.1)" }}>
+        style={{ background: "rgba(250,250,253,0.82)", backdropFilter: "blur(14px)", borderBottom: "1px solid rgba(92,147,255,0.1)" }}>
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline">
-          <div style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}
+          <div style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 14px rgba(36,221,184,0.25)" }}
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
@@ -195,7 +195,7 @@ export default function LandingPage() {
           </Link>
           <Link href="/signup"
             className="nav-cta px-4 py-2 rounded-lg text-sm font-semibold text-white no-underline"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             Essayer gratuitement
           </Link>
         </div>
@@ -203,7 +203,7 @@ export default function LandingPage() {
         {/* Mobile CTA */}
         <Link href="/signup"
           className="md:hidden nav-cta px-3.5 py-1.5 rounded-lg text-sm font-semibold text-white no-underline"
-          style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
           Essayer
         </Link>
       </nav>
@@ -215,7 +215,7 @@ export default function LandingPage() {
 
         {/* Orb backgrounds */}
         <div className="orb-1 absolute top-[12%] left-[8%] w-[440px] h-[440px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(91,107,245,0.18) 0%, transparent 70%)", filter: "blur(1px)" }} />
+          style={{ background: "radial-gradient(circle, rgba(92,147,255,0.15) 0%, transparent 70%)", filter: "blur(1px)" }} />
         <div className="orb-2 absolute bottom-[10%] right-[6%] w-[380px] h-[380px] rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(155,111,232,0.16) 0%, transparent 70%)", filter: "blur(1px)" }} />
         <div className="orb-3 absolute top-[45%] right-[20%] w-[260px] h-[260px] rounded-full pointer-events-none"
@@ -225,7 +225,7 @@ export default function LandingPage() {
         <div className="relative z-10 max-w-[820px] mx-auto">
           {/* Badge */}
           <div className="anim-fade-up inline-flex items-center gap-2 demo-badge rounded-full px-4 py-1.5 mb-8">
-            <span style={{ color: "#5B6BF5" }} className="text-xs font-semibold tracking-wide">✦ NOUVEAU</span>
+            <span style={{ color: "#5C93FF" }} className="text-xs font-semibold tracking-wide">✦ NOUVEAU</span>
             <span className="text-xs text-[#6B7280]">Agents IA Claude intégrés pour vos workflows</span>
           </div>
 
@@ -247,7 +247,7 @@ export default function LandingPage() {
           <div className="anim-fade-up-d3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link href="/signup"
               className="hero-cta-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[15px] font-bold text-white no-underline"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)", boxShadow: "0 6px 28px rgba(91,107,245,0.32)" }}>
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 6px 28px rgba(36,221,184,0.25)" }}>
               Commencer gratuitement
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
@@ -264,11 +264,11 @@ export default function LandingPage() {
 
           {/* Demo credentials badge */}
           <div className="anim-fade-up-d4 inline-flex items-center gap-2 px-4 py-2 rounded-full demo-badge">
-            <span style={{ color: "#5B6BF5" }} className="text-xs">✦</span>
+            <span style={{ color: "#5C93FF" }} className="text-xs">✦</span>
             <span className="text-xs text-[#6B7280]">Accès démo immédiat —</span>
-            <code className="text-xs font-mono text-[#5B6BF5] font-semibold">admin@stratt.io</code>
+            <code className="text-xs font-mono text-[#5C93FF] font-semibold">admin@stratt.io</code>
             <span className="text-xs text-[#9CA3AF]">/</span>
-            <code className="text-xs font-mono text-[#5B6BF5] font-semibold">admin1234</code>
+            <code className="text-xs font-mono text-[#5C93FF] font-semibold">admin1234</code>
           </div>
         </div>
 
@@ -284,7 +284,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════════
           STATS BAR
       ══════════════════════════════════════════ */}
-      <section className="border-y border-[rgba(91,107,245,0.1)] bg-white">
+      <section className="border-y border-[rgba(92,147,255,0.1)] bg-white">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4">
           {stats.map((stat, i) => (
             <div key={i} className={`stat-divider flex flex-col items-center justify-center py-8 px-6 gap-1`}>
@@ -305,7 +305,7 @@ export default function LandingPage() {
           {/* Section header */}
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 demo-badge rounded-full px-4 py-1.5 mb-4">
-              <span style={{ color: "#5B6BF5" }} className="text-xs font-semibold tracking-wide">7 MODULES</span>
+              <span style={{ color: "#5C93FF" }} className="text-xs font-semibold tracking-wide">7 MODULES</span>
             </div>
             <h2 className="text-[clamp(1.8rem,4vw,2.8rem)] font-extrabold tracking-tight text-[#0C1033] mb-4">
               Tout ce dont votre<br />
@@ -338,10 +338,10 @@ export default function LandingPage() {
             ))}
 
             {/* CTA card */}
-            <div className="module-card rounded-2xl p-6 border border-dashed border-[rgba(91,107,245,0.3)] flex flex-col items-center justify-center text-center gap-3 cursor-default"
-              style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.04), rgba(155,111,232,0.04))" }}>
+            <div className="module-card rounded-2xl p-6 border border-dashed border-[rgba(92,147,255,0.2)] flex flex-col items-center justify-center text-center gap-3 cursor-default"
+              style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.06), rgba(155,111,232,0.04))" }}>
               <div className="w-11 h-11 rounded-xl flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)" }}>
+                style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
@@ -362,7 +362,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 demo-badge rounded-full px-4 py-1.5 mb-4">
-              <span style={{ color: "#5B6BF5" }} className="text-xs font-semibold tracking-wide">CONÇU POUR L&apos;ENTREPRISE</span>
+              <span style={{ color: "#5C93FF" }} className="text-xs font-semibold tracking-wide">CONÇU POUR L&apos;ENTREPRISE</span>
             </div>
             <h2 className="text-[clamp(1.8rem,4vw,2.8rem)] font-extrabold tracking-tight text-[#0C1033] mb-4">
               Une architecture<br />
@@ -374,7 +374,7 @@ export default function LandingPage() {
             {features.map((feat, i) => (
               <div key={i} className="feature-card bg-white rounded-2xl p-7 border border-[#E8EAF0]">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5"
-                  style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.12), rgba(155,111,232,0.12))", color: "#5B6BF5" }}>
+                  style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.12), rgba(155,111,232,0.12))", color: "#5C93FF" }}>
                   {feat.icon}
                 </div>
                 <h3 className="font-bold text-[16px] text-[#0C1033] mb-2">{feat.title}</h3>
@@ -386,8 +386,8 @@ export default function LandingPage() {
           {/* Tech stack pills */}
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             {["Next.js 15", "Go 1.24", "PostgreSQL 16", "Redis", "Claude AI", "Docker"].map((tech) => (
-              <span key={tech} className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold text-[#5B6BF5] border border-[rgba(91,107,245,0.2)]"
-                style={{ background: "rgba(91,107,245,0.06)" }}>
+              <span key={tech} className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold text-[#5C93FF] border border-[rgba(92,147,255,0.2)]"
+                style={{ background: "rgba(92,147,255,0.08)" }}>
                 {tech}
               </span>
             ))}
@@ -446,7 +446,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo + tagline */}
           <div className="flex items-center gap-3">
-            <div style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.3)" }}
+            <div style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 14px rgba(92,147,255,0.2)" }}
               className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
@@ -460,9 +460,9 @@ export default function LandingPage() {
 
           {/* Links */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5B6BF5] transition-colors no-underline">Confidentialité</a>
-            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5B6BF5] transition-colors no-underline">CGU</a>
-            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5B6BF5] transition-colors no-underline">Documentation</a>
+            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5C93FF] transition-colors no-underline">Confidentialité</a>
+            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5C93FF] transition-colors no-underline">CGU</a>
+            <a href="#" className="text-[13px] text-[#9CA3AF] hover:text-[#5C93FF] transition-colors no-underline">Documentation</a>
           </div>
 
           {/* Copyright */}

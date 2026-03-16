@@ -45,9 +45,9 @@ interface ABCResult {
 
 // ── Constants ─────────────────────────────────────────────────────────
 
-const CLASS_COLORS: Record<string, string> = { A: "#5B6BF5", B: "#10B981", C: "#F59E0B" };
+const CLASS_COLORS: Record<string, string> = { A: "#5C93FF", B: "#10B981", C: "#F59E0B" };
 const CLASS_BG: Record<string, string> = {
-  A: "rgba(91,107,245,0.12)", B: "rgba(16,185,129,0.12)", C: "rgba(245,158,11,0.12)",
+  A: "rgba(92,147,255,0.12)", B: "rgba(16,185,129,0.12)", C: "rgba(245,158,11,0.12)",
 };
 
 function formatEur(n: number) {
@@ -111,9 +111,9 @@ function ProgressBar({ label, value, max, color }: { label: string; value: numbe
 
 function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: boolean }) {
   const metrics = [
-    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5B6BF5" },
+    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5C93FF" },
     { label: "Leads", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#06B6D4" },
-    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "#9B6FE8" },
+    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "#24DDB8" },
     { label: "CA encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: DollarSign, color: "#10B981", sub: "Total payé" },
     { label: "Factures", value: overview?.total_invoices ?? 0, icon: FileText, color: "#F59E0B" },
     { label: "Employés", value: overview?.total_employees ?? 0, icon: Briefcase, color: "#EC4899" },
@@ -139,7 +139,7 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {metrics.map((m) => <MetricCard key={m.label} {...m} />)}
         <div className="lg:col-span-1 bg-card rounded-xl border border-border p-5 flex flex-col justify-between"
-          style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.06), rgba(155,111,232,0.06))" }}>
+          style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.08), rgba(36,221,184,0.06))" }}>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
           <div className="flex items-end gap-1 mt-2">
             <span className="text-3xl font-extrabold font-mono text-foreground">
@@ -154,9 +154,9 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
       <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="text-sm font-bold text-foreground mb-5">Distribution des données</h2>
         <div className="space-y-4">
-          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5B6BF5" />
+          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5C93FF" />
           <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="#06B6D4" />
-          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#9B6FE8" />
+          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#24DDB8" />
           <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="#F59E0B" />
           <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="#EC4899" />
           <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="#6366F1" />
@@ -164,7 +164,7 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5B6BF5" },
+          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5C93FF" },
           { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "#F59E0B" },
           { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "#6366F1" },
         ].map((card) => (
@@ -217,7 +217,7 @@ function ABCTab() {
               <button key={d} onClick={() => setDimension(d)}
                 className={["px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
                   dimension === d ? "text-white" : "text-muted-foreground bg-muted/30 hover:bg-muted/60"].join(" ")}
-                style={dimension === d ? { background: "#5B6BF5" } : undefined}>
+                style={dimension === d ? { background: "#5C93FF" } : undefined}>
                 {d === "supplier" ? "Fournisseurs" : "Familles d'achat"}
               </button>
             ))}
@@ -298,7 +298,7 @@ function ABCTab() {
                 label={{ value: `A (${thresholdA}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.A }} />
               <ReferenceLine yAxisId="right" y={thresholdB} stroke={CLASS_COLORS.B} strokeDasharray="6 3"
                 label={{ value: `B (${thresholdB}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.B }} />
-              <Bar yAxisId="left" dataKey="montant" fill="#5B6BF5" opacity={0.85} radius={[3, 3, 0, 0]} />
+              <Bar yAxisId="left" dataKey="montant" fill="#5C93FF" opacity={0.85} radius={[3, 3, 0, 0]} />
               <Line yAxisId="right" type="monotone" dataKey="cumule" stroke="#F59E0B" strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>

@@ -179,7 +179,7 @@ export default function NomenclaturePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
           >
             <Plus className="w-3.5 h-3.5" /> Nouvelle entrée
           </button>
@@ -197,7 +197,7 @@ export default function NomenclaturePage() {
         ].map(({ label, value, icon: Icon }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-4 hover:shadow-sm transition-shadow">
             <div className="flex items-center gap-2 mb-2">
-              <Icon className="w-3.5 h-3.5" style={{ color: "#5B6BF5" }} />
+              <Icon className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</span>
             </div>
             <span className="text-xl font-bold font-mono text-foreground">{value}</span>
@@ -223,7 +223,7 @@ export default function NomenclaturePage() {
         {/* Tree */}
         <div className="flex-1 min-w-0 bg-card rounded-xl border border-border overflow-hidden">
           <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-            <FolderTree className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+            <FolderTree className="w-4 h-4" style={{ color: "#5C93FF" }} />
             <h2 className="text-sm font-semibold text-foreground">Arborescence nomenclaturale</h2>
           </div>
           <div>
@@ -238,7 +238,7 @@ export default function NomenclaturePage() {
           {/* Edit panel */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-              <Edit3 className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <Edit3 className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Édition</h2>
             </div>
             {selected ? (
@@ -309,7 +309,7 @@ export default function NomenclaturePage() {
                   <button
                     onClick={() => showToast("Modification enregistrée avec succès.", "success")}
                     className="flex-1 py-1.5 text-[11px] font-semibold rounded-lg text-white"
-                    style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+                    style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
                   >
                     Enregistrer
                   </button>
@@ -326,13 +326,13 @@ export default function NomenclaturePage() {
           {/* Versions */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-              <History className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <History className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Versions</h2>
             </div>
             <div className="p-3 space-y-1.5">
               {versions.map((v) => (
                 <div key={v.version} className="flex items-start gap-2 p-1.5 rounded hover:bg-muted/30 text-[11px]">
-                  <span className="font-mono font-semibold w-8 flex-shrink-0" style={{ color: "#5B6BF5" }}>{v.version}</span>
+                  <span className="font-mono font-semibold w-8 flex-shrink-0" style={{ color: "#5C93FF" }}>{v.version}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-foreground leading-snug">{v.note}</p>
                     <p className="text-muted-foreground mt-0.5">{v.auteur} — {v.date}</p>
@@ -345,7 +345,7 @@ export default function NomenclaturePage() {
           {/* Journal */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-              <BookOpen className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <BookOpen className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Journal des modifications</h2>
             </div>
             <div className="p-3 space-y-1.5">

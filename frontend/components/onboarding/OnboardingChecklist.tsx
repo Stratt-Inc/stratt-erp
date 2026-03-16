@@ -84,7 +84,7 @@ export function OnboardingChecklist() {
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer"
-        style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+        style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
         onClick={() => setCollapsed((v) => !v)}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -112,7 +112,7 @@ export function OnboardingChecklist() {
       <div className="h-1 bg-gray-100">
         <div
           className="h-1 transition-all duration-500"
-          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5B6BF5, #9B6FE8)" }}
+          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5C93FF, #24DDB8)" }}
         />
       </div>
 

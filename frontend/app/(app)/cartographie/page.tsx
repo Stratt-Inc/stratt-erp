@@ -169,7 +169,7 @@ export default function CartographiePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
           >
             <BarChart3 className="w-3.5 h-3.5" /> Générer cartographie
           </button>
@@ -187,7 +187,7 @@ export default function CartographiePage() {
         ].map(({ label, value, icon: Icon, alert }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-4 hover:shadow-sm transition-shadow">
             <div className="flex items-center gap-2 mb-2">
-              <Icon className="w-3.5 h-3.5" style={{ color: alert ? "#EF4444" : "#5B6BF5" }} />
+              <Icon className="w-3.5 h-3.5" style={{ color: alert ? "#EF4444" : "#5C93FF" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</span>
             </div>
             <span className="text-xl font-bold font-mono" style={{ color: alert ? "#EF4444" : "hsl(var(--foreground))" }}>{value}</span>
@@ -216,7 +216,7 @@ export default function CartographiePage() {
         <div className="lg:col-span-8 bg-card rounded-xl border border-border p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <Layers className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Cartographie par famille d&apos;achats homogène</h2>
             </div>
             <span className="text-xs text-muted-foreground font-mono">84,2 M€ total</span>
@@ -359,7 +359,7 @@ export default function CartographiePage() {
                 <YAxis dataKey="direction" type="category" width={88} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v} M€`} />
                 <Bar dataKey="prevu" name="Prévu" fill="hsl(var(--muted))" radius={[0, 2, 2, 0]} />
-                <Bar dataKey="execute" name="Exécuté" fill="#5B6BF5" radius={[0, 2, 2, 0]} />
+                <Bar dataKey="execute" name="Exécuté" fill="#5C93FF" radius={[0, 2, 2, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -387,7 +387,7 @@ export default function CartographiePage() {
                   <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: textColor }}>{a.type}</span>
                   <p className="text-sm text-foreground mt-0.5 leading-snug">{a.message}</p>
                 </div>
-                <button onClick={demo} className="text-xs font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0" style={{ color: "#5B6BF5" }}>
+                <button onClick={demo} className="text-xs font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0" style={{ color: "#5C93FF" }}>
                   Détails <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>

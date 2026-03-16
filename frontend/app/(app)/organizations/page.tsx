@@ -52,7 +52,7 @@ export default function OrganizationsPage() {
           <button
             onClick={() => setShowCreate(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #7B5BE8)" }}
+            style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
           >
             <Plus className="w-4 h-4" />
             Nouvelle organisation
@@ -103,7 +103,7 @@ export default function OrganizationsPage() {
               onClick={() => create.mutate({ name, slug })}
               disabled={!name || create.isPending}
               className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
-              style={{ background: "linear-gradient(135deg, #5B6BF5, #7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
             >
               {create.isPending ? "Création…" : "Créer"}
             </button>
@@ -129,14 +129,14 @@ export default function OrganizationsPage() {
           >
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white"
-                style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}>
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}>
                 {org.name.charAt(0).toUpperCase()}
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <p className="font-semibold text-foreground">{org.name}</p>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
-                    style={{ background: "rgba(91,107,245,0.1)", color: "#5B6BF5" }}>
+                    style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}>
                     {org.plan}
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function OrganizationsPage() {
               </div>
               {currentOrg?.id === org.id && (
                 <div className="w-6 h-6 rounded-full flex items-center justify-center"
-                  style={{ background: "#5B6BF5" }}>
+                  style={{ background: "#5C93FF" }}>
                   <Check className="w-3.5 h-3.5 text-white" />
                 </div>
               )}

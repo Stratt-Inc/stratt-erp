@@ -21,7 +21,7 @@ interface PurchaseOrder {
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   draft: { label: "Brouillon", color: "#6B7280" },
-  sent: { label: "Envoyée", color: "#5B6BF5" },
+  sent: { label: "Envoyée", color: "#5C93FF" },
   received: { label: "Reçue", color: "#10B981" },
   cancelled: { label: "Annulée", color: "#EF4444" },
 };
@@ -57,7 +57,7 @@ export default function ProcurementPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Nouvelle commande
           </button>
         )}
@@ -68,7 +68,7 @@ export default function ProcurementPage() {
         {[
           { label: "Total commandes", value: orders.length, color: "#8B5CF6" },
           { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#10B981" },
-          { label: "En attente", value: pending, color: "#5B6BF5" },
+          { label: "En attente", value: pending, color: "#5C93FF" },
           { label: "Reçues", value: received, color: "#06B6D4" },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-card rounded-xl border border-border p-4">

@@ -74,7 +74,7 @@ export default function GlossairePage() {
             }`}
             style={
               category === cat
-                ? { background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }
+                ? { background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }
                 : {}
             }
           >
@@ -90,7 +90,7 @@ export default function GlossairePage() {
           className={`w-7 h-7 rounded text-xs font-medium transition-colors ${
             !letter ? "text-white" : "text-gray-500 hover:bg-gray-100"
           }`}
-          style={!letter ? { background: "#5B6BF5" } : {}}
+          style={!letter ? { background: "#5C93FF" } : {}}
         >
           Tous
         </button>
@@ -106,7 +106,7 @@ export default function GlossairePage() {
                 ? "text-gray-700 hover:bg-gray-100"
                 : "text-gray-200 cursor-default"
             }`}
-            style={letter === l ? { background: "#5B6BF5" } : {}}
+            style={letter === l ? { background: "#5C93FF" } : {}}
           >
             {l}
           </button>

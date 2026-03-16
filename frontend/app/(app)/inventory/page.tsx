@@ -49,7 +49,7 @@ export default function InventoryPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Nouveau produit
           </button>
         )}
@@ -61,7 +61,7 @@ export default function InventoryPage() {
           { label: "Produits actifs", value: products.filter((p) => p.is_active).length, color: "#6366F1" },
           { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, color: "#10B981" },
           { label: "Stock faible", value: lowStock.length, color: lowStock.length > 0 ? "#EF4444" : "#6B7280" },
-          { label: "Catégories", value: new Set(products.map(p => p.category)).size, color: "#5B6BF5" },
+          { label: "Catégories", value: new Set(products.map(p => p.category)).size, color: "#5C93FF" },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-card rounded-xl border border-border p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>

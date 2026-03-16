@@ -28,7 +28,7 @@ interface Transaction {
 }
 
 const typeColors: Record<string, string> = {
-  asset: "#5B6BF5", liability: "#EF4444", equity: "#9B6FE8",
+  asset: "#5C93FF", liability: "#EF4444", equity: "#24DDB8",
   revenue: "#10B981", expense: "#F59E0B",
 };
 const typeLabels: Record<string, string> = {
@@ -74,7 +74,7 @@ export default function AccountingPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -83,7 +83,7 @@ export default function AccountingPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, color: "#5B6BF5" },
+          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, color: "#5C93FF" },
           { label: "Transactions", value: txns.length, color: "#6B7280" },
           { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, color: "#10B981" },
           { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, color: "#EF4444" },

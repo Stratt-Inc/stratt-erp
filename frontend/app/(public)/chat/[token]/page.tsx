@@ -77,18 +77,18 @@ export default function PublicChatPage({
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ background: "hsl(234 42% 7%)", color: "#fff" }}
+      style={{ background: "#09111E", color: "#fff" }}
     >
       {/* Header */}
       <header
         className="flex items-center gap-3 px-5 py-4 border-b"
-        style={{ borderColor: "hsl(234 30% 14%)" }}
+        style={{ borderColor: "#141F2E" }}
       >
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{
-            background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)",
-            boxShadow: "0 4px 14px rgba(91,107,245,0.4)",
+            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+            boxShadow: "0 4px 14px rgba(36,221,184,0.25)",
           }}
         >
           <Zap className="w-4 h-4 text-white fill-white" />
@@ -102,7 +102,7 @@ export default function PublicChatPage({
             <span className="text-xs text-white/50">Mode strict</span>
             <button
               onClick={() => setStrict((v) => !v)}
-              className={`relative w-9 h-5 rounded-full transition-colors ${strict ? "bg-[#5B6BF5]" : "bg-white/10"}`}
+              className={`relative w-9 h-5 rounded-full transition-colors ${strict ? "bg-[#5C93FF]" : "bg-white/10"}`}
             >
               <span
                 className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${strict ? "translate-x-4" : ""}`}
@@ -118,9 +118,9 @@ export default function PublicChatPage({
           <div className="text-center pt-16 space-y-3">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto"
-              style={{ background: "rgba(91,107,245,0.15)" }}
+              style={{ background: "rgba(92,147,255,0.12)" }}
             >
-              <Zap className="w-7 h-7 text-[#5B6BF5]" />
+              <Zap className="w-7 h-7 text-[#5C93FF]" />
             </div>
             <p className="text-white/70 font-medium">
               Posez votre question sur la nomenclature budgétaire
@@ -144,13 +144,13 @@ export default function PublicChatPage({
               }`}
               style={
                 m.role === "user"
-                  ? { background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }
-                  : { background: "hsl(234 35% 14%)", border: "1px solid hsl(234 30% 20%)" }
+                  ? { background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }
+                  : { background: "#0D1829", border: "1px solid #1A2535" }
               }
             >
               <p className="whitespace-pre-wrap">{m.content}</p>
               {m.role === "assistant" && m.id && (
-                <div className="flex items-center gap-2 mt-2 pt-2" style={{ borderTop: "1px solid hsl(234 30% 20%)" }}>
+                <div className="flex items-center gap-2 mt-2 pt-2" style={{ borderTop: "1px solid #1A2535" }}>
                   <span className="text-white/30 text-xs">Utile ?</span>
                   <button
                     onClick={() => sendFeedback(m.id!, true)}
@@ -174,9 +174,9 @@ export default function PublicChatPage({
           <div className="flex justify-start">
             <div
               className="rounded-2xl px-4 py-3 flex items-center gap-2"
-              style={{ background: "hsl(234 35% 14%)", border: "1px solid hsl(234 30% 20%)" }}
+              style={{ background: "#0D1829", border: "1px solid #1A2535" }}
             >
-              <Loader2 className="w-4 h-4 text-[#5B6BF5] animate-spin" />
+              <Loader2 className="w-4 h-4 text-[#5C93FF] animate-spin" />
               <span className="text-white/40 text-sm">Analyse en cours…</span>
             </div>
           </div>
@@ -194,12 +194,12 @@ export default function PublicChatPage({
       {/* Input */}
       <div
         className="px-4 py-4 border-t"
-        style={{ borderColor: "hsl(234 30% 14%)", background: "hsl(234 42% 7%)" }}
+        style={{ borderColor: "#141F2E", background: "#09111E" }}
       >
         <div className="max-w-3xl mx-auto flex gap-3">
           <input
-            className="flex-1 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#5B6BF5]/50"
-            style={{ background: "hsl(234 35% 12%)", border: "1px solid hsl(234 30% 18%)" }}
+            className="flex-1 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#5C93FF]/50"
+            style={{ background: "#0D1829", border: "1px solid #1A2535" }}
             placeholder="Décrivez l'achat ou la dépense…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -209,7 +209,7 @@ export default function PublicChatPage({
             onClick={send}
             disabled={!input.trim() || loading}
             className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+            style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
           >
             <Send className="w-4 h-4 text-white" />
           </button>

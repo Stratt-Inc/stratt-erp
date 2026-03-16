@@ -59,7 +59,7 @@ interface ExportPayload {
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
   success:                 { label: "Publié",          color: "#10B981", icon: CheckCircle },
-  generated:               { label: "Généré",          color: "#5B6BF5", icon: FileJson },
+  generated:               { label: "Généré",          color: "#5C93FF", icon: FileJson },
   published_with_warnings: { label: "Publié (alertes)", color: "#F59E0B", icon: AlertTriangle },
   failed:                  { label: "Échec",           color: "#EF4444", icon: XCircle },
 };
@@ -195,7 +195,7 @@ export default function DECPPage() {
 
       {/* Regulatory notice */}
       <div className="flex items-start gap-3 p-3 rounded-xl border text-[12px]"
-        style={{ background: "rgba(91,107,245,0.04)", borderColor: "rgba(91,107,245,0.2)" }}>
+        style={{ background: "rgba(92,147,255,0.06)", borderColor: "rgba(92,147,255,0.2)" }}>
         <Info className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
         <div className="text-muted-foreground leading-relaxed">
           <span className="font-semibold text-foreground">Obligation légale</span> — La publication des DECP est obligatoire pour tous les acheteurs publics
@@ -309,7 +309,7 @@ export default function DECPPage() {
                 onClick={downloadJSON}
                 disabled={loadingExport || !exportData}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+                style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
               >
                 <FileJson className="w-4 h-4" />
                 {loadingExport ? "Génération…" : "Télécharger DECP.json"}

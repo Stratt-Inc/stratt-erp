@@ -1,40 +1,81 @@
-import { Zap } from "lucide-react";
-
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex">
-      {/* Left panel — branding */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12"
-        style={{ background: "linear-gradient(135deg, hsl(234 42% 7%), hsl(234 35% 12%))" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}>
-            <Zap className="w-5 h-5 text-white fill-white" />
+      {/* Left panel — branding navy */}
+      <div
+        className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 relative overflow-hidden"
+        style={{ background: "#09111E" }}
+      >
+        {/* Subtle grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(92,147,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(92,147,255,1) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        {/* Green glow bottom-left */}
+        <div
+          className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10 pointer-events-none"
+          style={{ background: "radial-gradient(circle, #24DDB8, transparent 70%)", transform: "translate(-40%, 40%)" }}
+        />
+        {/* Blue glow top-right */}
+        <div
+          className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-8 pointer-events-none"
+          style={{ background: "radial-gradient(circle, #5C93FF, transparent 70%)", transform: "translate(40%, -40%)" }}
+        />
+
+        {/* Logo */}
+        <div className="relative flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center select-none"
+            style={{
+              background: "#141F2E",
+              border: "1px solid #1A2535",
+              boxShadow: "0 0 0 1px rgba(36,221,184,0.15), 0 8px 20px rgba(0,0,0,0.5)",
+            }}
+          >
+            <span className="text-[13px] font-bold tracking-tight" style={{ color: "#24DDB8" }}>tt</span>
           </div>
-          <span className="text-white font-bold text-lg tracking-tight">STRATT</span>
+          <span className="text-white font-bold text-lg tracking-tight">stratt</span>
         </div>
 
-        <div className="space-y-6">
-          <h1 className="text-4xl font-bold text-white leading-tight">
-            L&apos;ERP SaaS<br />
-            <span style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              pour votre équipe.
+        {/* Headline */}
+        <div className="relative space-y-6">
+          <h1 className="text-4xl font-bold leading-tight" style={{ color: "#F0F4FF" }}>
+            L&apos;ERP pour la<br />
+            <span style={{
+              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              commande publique.
             </span>
           </h1>
-          <p className="text-white/60 text-lg leading-relaxed">
-            CRM, comptabilité, facturation, inventaire, RH et achats dans une seule plateforme multi-tenant.
+          <p style={{ color: "rgba(255,255,255,0.5)" }} className="text-base leading-relaxed max-w-sm">
+            CRM, comptabilité, facturation, inventaire, RH et achats — conçu pour les acheteurs publics.
           </p>
-          <div className="flex gap-4 pt-4">
+          <div className="flex flex-wrap gap-2 pt-2">
             {["CRM", "Comptabilité", "Facturation", "Inventaire", "RH", "Achats"].map((m) => (
-              <span key={m} className="text-xs font-semibold px-3 py-1 rounded-full"
-                style={{ background: "rgba(91,107,245,0.15)", color: "#9B6FE8", border: "1px solid rgba(91,107,245,0.3)" }}>
+              <span
+                key={m}
+                className="text-xs font-medium px-2.5 py-1 rounded-md"
+                style={{
+                  background: "rgba(92,147,255,0.1)",
+                  color: "#5C93FF",
+                  border: "1px solid rgba(92,147,255,0.2)",
+                }}
+              >
                 {m}
               </span>
             ))}
           </div>
         </div>
 
-        <p className="text-white/30 text-sm">© 2026 STRATT. Tous droits réservés.</p>
+        <p className="relative text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>
+          © 2026 STRATT. Tous droits réservés.
+        </p>
       </div>
 
       {/* Right panel — form */}
@@ -42,11 +83,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}>
-              <Zap className="w-4 h-4 text-white fill-white" />
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center select-none"
+              style={{ background: "#09111E", border: "1px solid #1A2535" }}
+            >
+              <span className="text-[11px] font-bold" style={{ color: "#24DDB8" }}>tt</span>
             </div>
-            <span className="font-bold text-lg">STRATT</span>
+            <span className="font-bold text-lg tracking-tight">stratt</span>
           </div>
           {children}
         </div>

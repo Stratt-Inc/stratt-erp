@@ -39,10 +39,10 @@ interface Deal {
 interface PagedResponse<T> { items: T[]; total: number; }
 
 const statusColors: Record<string, string> = {
-  new: "#5B6BF5", contacted: "#06B6D4", qualified: "#10B981", lost: "#EF4444",
+  new: "#5C93FF", contacted: "#06B6D4", qualified: "#10B981", lost: "#EF4444",
 };
 const stageColors: Record<string, string> = {
-  prospecting: "#6B7280", proposal: "#5B6BF5", negotiation: "#F59E0B",
+  prospecting: "#6B7280", proposal: "#5C93FF", negotiation: "#F59E0B",
   closed_won: "#10B981", closed_lost: "#EF4444",
 };
 const stageLabels: Record<string, string> = {
@@ -92,7 +92,7 @@ export default function CRMPage() {
   });
 
   const stats = [
-    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5B6BF5" },
+    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5C93FF" },
     { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "#06B6D4" },
     { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "#10B981" },
     {
@@ -119,8 +119,8 @@ export default function CRMPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(91,107,245,0.1)" }}>
-              <Users className="w-3.5 h-3.5" style={{ color: "#5B6BF5" }} />
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(92,147,255,0.1)" }}>
+              <Users className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
             </div>
             <h1 className="text-2xl font-bold text-foreground">CRM</h1>
           </div>
@@ -128,7 +128,7 @@ export default function CRMPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -158,7 +158,7 @@ export default function CRMPage() {
             }`}>
             {t.label}
             <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold"
-              style={{ background: tab === t.id ? "rgba(91,107,245,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5B6BF5" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -216,7 +216,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)" }}>
+                    style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
                     {c.first_name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <span className="font-medium text-sm text-foreground">{c.first_name} {c.last_name}</span>
@@ -227,7 +227,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
               <td className="px-4 py-3">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: c.type === "company" ? "rgba(91,107,245,0.1)" : "rgba(6,182,212,0.1)", color: c.type === "company" ? "#5B6BF5" : "#06B6D4" }}>
+                  style={{ background: c.type === "company" ? "rgba(92,147,255,0.1)" : "rgba(6,182,212,0.1)", color: c.type === "company" ? "#5C93FF" : "#06B6D4" }}>
                   {c.type === "company" ? "Société" : "Personne"}
                 </span>
               </td>

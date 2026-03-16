@@ -102,7 +102,7 @@ export default function ExportsPage() {
         <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden">
           <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <FileText className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Sections du document</h2>
             </div>
             <span className="text-xs text-muted-foreground">{selectedCount} sélectionnées · ~{totalPages} pages</span>
@@ -115,10 +115,10 @@ export default function ExportsPage() {
                 className={`flex items-start gap-3 px-5 py-3 cursor-pointer transition-colors ${
                   s.checked ? "bg-primary/[0.03]" : "hover:bg-muted/30"
                 }`}
-                style={s.checked ? { borderLeft: "2px solid rgba(91,107,245,0.4)" } : { borderLeft: "2px solid transparent" }}
+                style={s.checked ? { borderLeft: "2px solid rgba(36,221,184,0.25)" } : { borderLeft: "2px solid transparent" }}
               >
                 {s.checked
-                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#5B6BF5" }} />
+                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#5C93FF" }} />
                   : <Square className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-muted-foreground" />
                 }
                 <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ export default function ExportsPage() {
               onClick={handleGenerate}
               disabled={generating || selectedCount === 0}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Génération en cours…</>
