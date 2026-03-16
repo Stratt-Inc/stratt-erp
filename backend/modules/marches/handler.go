@@ -1,6 +1,9 @@
 package marches
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stratt/backend/internal/models"
 	"github.com/stratt/backend/middleware"
@@ -67,4 +70,86 @@ func (h *Handler) Stats(c *gin.Context) {
 		"budget_total": res.Budget,
 		"charge_total": res.Charge,
 	}))
+}
+
+// GET /api/v1/marches/calendar?year=2026&month=3
+// Returns all marchés that overlap the given month (have at least one date field in range).
+func (h *Handler) Calendar(c *gin.Context) {
+	orgID, _ := middleware.GetOrgID(c)
+	ctx := c.Request.Context()
+
+	now := time.Now()
+	year := parseInt(c.DefaultQuery("year", strconv.Itoa(now.Year())), now.Year())
+	month := parseInt(c.DefaultQuery("month", strconv.Itoa(int(now.Month()))), int(now.Month()))
+	if month < 1 || month > 12 {
+		month = int(now.Month())
+	}
+
+	start := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	end := start.AddDate(0, 1, 0)
+
+	var marches []Marche
+	h.db.WithContext(ctx).
+		Where("tenant_id = ?", orgID).
+		Where(
+			// overlap: marche starts before end of month AND ends after start of month
+			// A marché is included if any of its dates falls in the month, or it spans across it.
+			`(date_lancement < ? AND (date_fin IS NULL OR date_fin >= ?)) OR
+			 (date_lancement IS NULL AND date_fin >= ? AND date_fin < ?) OR
+			 (date_attribution >= ? AND date_attribution < ?) OR
+			 (date_lancement >= ? AND date_lancement < ?)`,
+			end, start,
+			start, end,
+			start, end,
+			start, end,
+		).
+		Order("date_lancement ASC NULLS LAST, created_at ASC").
+		Find(&marches)
+
+	c.JSON(200, models.OK(gin.H{
+		"year":    year,
+		"month":   month,
+		"marches": marches,
+	}))
+}
+
+// GET /api/v1/marches/alertes?days=30
+// Returns marchés with date_attribution or date_fin within the next N days.
+func (h *Handler) Alertes(c *gin.Context) {
+	orgID, _ := middleware.GetOrgID(c)
+	ctx := c.Request.Context()
+
+	days := parseInt(c.DefaultQuery("days", "30"), 30)
+	if days < 1 || days > 365 {
+		days = 30
+	}
+
+	horizon := time.Now().AddDate(0, 0, days)
+	now := time.Now()
+
+	var marches []Marche
+	h.db.WithContext(ctx).
+		Where("tenant_id = ? AND statut NOT IN ('termine','annule')", orgID).
+		Where(
+			`(date_attribution >= ? AND date_attribution <= ?) OR
+			 (date_fin >= ? AND date_fin <= ?)`,
+			now, horizon,
+			now, horizon,
+		).
+		Order("date_attribution ASC NULLS LAST, date_fin ASC NULLS LAST").
+		Find(&marches)
+
+	c.JSON(200, models.OK(gin.H{
+		"days":    days,
+		"horizon": horizon.Format(time.RFC3339),
+		"marches": marches,
+	}))
+}
+
+func parseInt(s string, def int) int {
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return def
+	}
+	return v
 }
