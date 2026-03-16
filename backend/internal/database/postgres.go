@@ -10,6 +10,7 @@ import (
 	hrmod "github.com/stratt/backend/modules/hr"
 	inventorymod "github.com/stratt/backend/modules/inventory"
 	decpmod "github.com/stratt/backend/modules/decp"
+	boampmod "github.com/stratt/backend/modules/boamp"
 	marchesmod "github.com/stratt/backend/modules/marches"
 	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
 	procurementmod "github.com/stratt/backend/modules/procurement"
@@ -82,6 +83,8 @@ func AutoMigrate(db *gorm.DB) error {
 		&marchesmod.Marche{},
 		// DECP
 		&decpmod.DECPPublication{},
+		// BOAMP
+		&boampmod.BOAMPVeille{},
 		// Nomenclature
 		&nomenclaturemod.NomenclatureNode{},
 	)

@@ -28,6 +28,7 @@ import (
 	"github.com/stratt/backend/modules/hr"
 	"github.com/stratt/backend/modules/inventory"
 	"github.com/stratt/backend/modules/decp"
+	"github.com/stratt/backend/modules/boamp"
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
@@ -82,6 +83,7 @@ func main() {
 	procurementHandler := procurement.NewHandler(db)
 	marchesHandler := marches.NewHandler(db)
 	decpHandler := decp.NewHandler(db)
+	boampHandler := boamp.NewHandler(db)
 	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
 
@@ -159,6 +161,7 @@ func main() {
 	analytics.RegisterRoutes(v1.Group("/analytics", requireAuth, requireOrg, requirePerm("analytics.read")), analyticsHandler)
 	marches.RegisterRoutes(v1.Group("/marches", requireAuth, requireOrg, requirePerm("procurement.read")), marchesHandler)
 	decp.RegisterRoutes(v1.Group("/decp", requireAuth, requireOrg, requirePerm("procurement.read")), decpHandler)
+	boamp.RegisterRoutes(v1.Group("/boamp", requireAuth, requireOrg, requirePerm("procurement.read")), boampHandler)
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
 
 	// ── Start ─────────────────────────────────────────────
