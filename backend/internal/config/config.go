@@ -45,6 +45,9 @@ type Config struct {
 
 	// App
 	FrontendURL string
+
+	// INSEE SIRENE API
+	InseeToken string
 }
 
 var C *Config
@@ -75,6 +78,7 @@ func Load() (*Config, error) {
 		SMTPPassword:        getEnv("SMTP_PASSWORD", ""),
 		SMTPFrom:            getEnv("SMTP_FROM", "noreply@stratt.io"),
 		FrontendURL:         getEnv("FRONTEND_URL", "http://localhost:3000"),
+		InseeToken:          getEnv("INSEE_TOKEN", ""),
 	}
 
 	C = c
