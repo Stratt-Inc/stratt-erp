@@ -14,6 +14,7 @@ import (
 	marchesmod "github.com/stratt/backend/modules/marches"
 	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
 	procurementmod "github.com/stratt/backend/modules/procurement"
+	sirenemod "github.com/stratt/backend/modules/sirene"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -87,5 +88,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&boampmod.BOAMPVeille{},
 		// Nomenclature
 		&nomenclaturemod.NomenclatureNode{},
+		// SIRENE
+		&sirenemod.SIRENEEnrichment{},
 	)
 }

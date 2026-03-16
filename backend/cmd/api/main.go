@@ -32,6 +32,7 @@ import (
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
+	"github.com/stratt/backend/modules/sirene"
 )
 
 func main() {
@@ -86,6 +87,7 @@ func main() {
 	boampHandler := boamp.NewHandler(db)
 	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
+	sireneHandler := sirene.NewHandler(db, cfg.InseeToken)
 
 	// ── Middleware factories ───────────────────────────────
 	requireAuth := middleware.RequireAuth(authSvc)
@@ -163,6 +165,7 @@ func main() {
 	decp.RegisterRoutes(v1.Group("/decp", requireAuth, requireOrg, requirePerm("procurement.read")), decpHandler)
 	boamp.RegisterRoutes(v1.Group("/boamp", requireAuth, requireOrg, requirePerm("procurement.read")), boampHandler)
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
+	sirene.RegisterRoutes(v1.Group("/sirene", requireAuth, requireOrg, requirePerm("procurement.read")), sireneHandler)
 
 	// ── Start ─────────────────────────────────────────────
 	srv := &http.Server{
