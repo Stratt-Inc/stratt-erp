@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { Sidebar } from "./Sidebar";
 import { ToastContainer } from "./ToastContainer";
+import { OnboardingTour } from "./onboarding/OnboardingTour";
+import { OnboardingChecklist } from "./onboarding/OnboardingChecklist";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -27,6 +29,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </main>
       <ToastContainer />
+      <OnboardingTour />
+      <OnboardingChecklist />
     </div>
   );
 }
