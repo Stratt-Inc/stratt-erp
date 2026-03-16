@@ -6,15 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/stratt/backend/internal/config"
 	"github.com/stratt/backend/internal/models"
 )
 
 type Handler struct {
 	svc *Service
+	cfg *config.Config
 }
 
-func NewHandler(svc *Service) *Handler {
-	return &Handler{svc: svc}
+func NewHandler(svc *Service, cfg *config.Config) *Handler {
+	return &Handler{svc: svc, cfg: cfg}
 }
 
 // POST /api/v1/auth/signup
@@ -51,10 +53,11 @@ func (h *Handler) Signup(c *gin.Context) {
 		return
 	}
 
-	setRefreshCookie(c, refresh, 30*24*time.Hour)
+	h.setRefreshCookie(c, refresh, 30*24*time.Hour)
 	c.JSON(201, models.OK(gin.H{
-		"user":         user,
-		"access_token": access,
+		"user":          user,
+		"access_token":  access,
+		"refresh_token": refresh,
 	}))
 }
 
@@ -84,10 +87,11 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	setRefreshCookie(c, refresh, 30*24*time.Hour)
+	h.setRefreshCookie(c, refresh, 30*24*time.Hour)
 	c.JSON(200, models.OK(gin.H{
-		"user":         user,
-		"access_token": access,
+		"user":          user,
+		"access_token":  access,
+		"refresh_token": refresh,
 	}))
 }
 
@@ -102,7 +106,7 @@ func (h *Handler) Logout(c *gin.Context) {
 	if uid, ok := val.(uuid.UUID); ok {
 		_ = h.svc.Logout(c.Request.Context(), uid)
 	}
-	clearRefreshCookie(c)
+	h.clearRefreshCookie(c)
 	c.JSON(200, models.Msg("logged out successfully"))
 }
 
@@ -124,13 +128,13 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 	access, refresh, err := h.svc.Refresh(c.Request.Context(), refreshToken)
 	if err != nil {
-		clearRefreshCookie(c)
+		h.clearRefreshCookie(c)
 		c.JSON(401, models.Err("invalid or expired refresh token"))
 		return
 	}
 
-	setRefreshCookie(c, refresh, 30*24*time.Hour)
-	c.JSON(200, models.OK(gin.H{"access_token": access}))
+	h.setRefreshCookie(c, refresh, 30*24*time.Hour)
+	c.JSON(200, models.OK(gin.H{"access_token": access, "refresh_token": refresh}))
 }
 
 // GET /api/v1/auth/me
@@ -154,10 +158,12 @@ func (h *Handler) Me(c *gin.Context) {
 	c.JSON(200, models.OK(user))
 }
 
-func setRefreshCookie(c *gin.Context, token string, maxAge time.Duration) {
-	c.SetCookie("refresh_token", token, int(maxAge.Seconds()), "/api/v1/auth", "", true, true)
+func (h *Handler) setRefreshCookie(c *gin.Context, token string, maxAge time.Duration) {
+	secure := h.cfg.IsProduction()
+	c.SetCookie("refresh_token", token, int(maxAge.Seconds()), "/api/v1/auth", "", secure, true)
 }
 
-func clearRefreshCookie(c *gin.Context) {
-	c.SetCookie("refresh_token", "", -1, "/api/v1/auth", "", true, true)
+func (h *Handler) clearRefreshCookie(c *gin.Context) {
+	secure := h.cfg.IsProduction()
+	c.SetCookie("refresh_token", "", -1, "/api/v1/auth", "", secure, true)
 }
