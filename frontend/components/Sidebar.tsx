@@ -22,6 +22,7 @@ import {
   LifeBuoy,
   Shield,
   HelpCircle,
+  GraduationCap,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
@@ -47,6 +48,7 @@ const systemeNav = [
   { label: "Organisations", href: "/organizations", icon: Building2 },
   { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings" },
   { label: "Administration", href: "/administration", icon: Shield },
+  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap },
   { label: "Support", href: "/support", icon: LifeBuoy },
   { label: "Aide", href: "/help", icon: HelpCircle },
 ];
