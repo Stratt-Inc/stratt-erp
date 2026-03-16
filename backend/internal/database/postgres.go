@@ -9,6 +9,7 @@ import (
 	crmmod "github.com/stratt/backend/modules/crm"
 	hrmod "github.com/stratt/backend/modules/hr"
 	inventorymod "github.com/stratt/backend/modules/inventory"
+	decpmod "github.com/stratt/backend/modules/decp"
 	marchesmod "github.com/stratt/backend/modules/marches"
 	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
 	procurementmod "github.com/stratt/backend/modules/procurement"
@@ -79,6 +80,8 @@ func AutoMigrate(db *gorm.DB) error {
 		&procurementmod.PurchaseOrderItem{},
 		// Marchés publics
 		&marchesmod.Marche{},
+		// DECP
+		&decpmod.DECPPublication{},
 		// Nomenclature
 		&nomenclaturemod.NomenclatureNode{},
 	)
