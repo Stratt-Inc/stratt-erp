@@ -37,7 +37,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           >
             <span className="text-[13px] font-bold tracking-tight" style={{ color: "#24DDB8" }}>tt</span>
           </div>
-          <span className="text-white font-bold text-lg tracking-tight">stratt</span>
+          <span className="text-white font-bold text-lg tracking-tight" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>stratt</span>
         </div>
 
         {/* Headline */}
@@ -89,7 +89,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             >
               <span className="text-[11px] font-bold" style={{ color: "#24DDB8" }}>tt</span>
             </div>
-            <span className="font-bold text-lg tracking-tight">stratt</span>
+            <span className="font-bold text-lg tracking-tight" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>stratt</span>
           </div>
           {children}
         </div>

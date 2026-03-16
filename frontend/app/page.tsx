@@ -484,6 +484,7 @@ export default function LandingPage() {
               backgroundClip: "text",
               fontWeight: 800,
               fontSize: "20px",
+              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
               letterSpacing: "-0.04em",
             }}
           >
@@ -1195,7 +1196,8 @@ export default function LandingPage() {
                 backgroundClip: "text",
                 fontWeight: 800,
                 fontSize: "36px",
-                letterSpacing: "-0.04em",
+                fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+              letterSpacing: "-0.04em",
               }}>stratt</span>
             </div>
 

@@ -134,6 +134,7 @@ export function Sidebar() {
       >
         <p
           className="text-gradient-primary font-extrabold text-[22px] leading-none tracking-[-0.04em]"
+          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
           stratt
         </p>
