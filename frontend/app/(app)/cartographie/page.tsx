@@ -190,7 +190,7 @@ export default function CartographiePage() {
               <Icon className="w-3.5 h-3.5" style={{ color: alert ? "#EF4444" : "#5C93FF" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</span>
             </div>
-            <span className="text-xl font-bold font-mono" style={{ color: alert ? "#EF4444" : "hsl(var(--foreground))" }}>{value}</span>
+            <span className="text-xl font-bold font-display" style={{ color: alert ? "#EF4444" : "hsl(var(--foreground))" }}>{value}</span>
           </div>
         ))}
       </div>
@@ -239,7 +239,7 @@ export default function CartographiePage() {
               <div key={cat.label} className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ background: cat.color }} />
                 <span className="text-[11px] text-muted-foreground">{cat.label}</span>
-                <span className="text-[11px] font-semibold font-mono text-foreground">{cat.total} M€</span>
+                <span className="text-[11px] font-semibold num text-foreground">{cat.total} M€</span>
               </div>
             ))}
           </div>
@@ -262,7 +262,7 @@ export default function CartographiePage() {
               <div key={d.name} className="flex items-center gap-2 text-xs">
                 <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
                 <span className="text-muted-foreground flex-1 truncate">{d.name}</span>
-                <span className="font-semibold font-mono tabular-nums text-foreground">{d.value} M€</span>
+                <span className="font-semibold num text-foreground">{d.value} M€</span>
               </div>
             ))}
           </div>
@@ -290,9 +290,9 @@ export default function CartographiePage() {
             {seuilsData.map((s) => (
               <tr key={s.code} className="hover:bg-muted/30 transition-colors">
                 <td className="px-5 py-3 text-sm font-medium text-foreground">{s.code}</td>
-                <td className="px-5 py-3 text-right text-sm font-semibold font-mono tabular-nums text-foreground">{s.depense}</td>
-                <td className="px-5 py-3 text-right text-sm font-mono tabular-nums text-muted-foreground">{s.seuil}</td>
-                <td className="px-5 py-3 text-right text-sm font-mono tabular-nums">
+                <td className="px-5 py-3 text-right text-sm font-semibold num text-foreground">{s.depense}</td>
+                <td className="px-5 py-3 text-right text-sm num text-muted-foreground">{s.seuil}</td>
+                <td className="px-5 py-3 text-right text-sm num">
                   <span style={{ color: s.ratio > 1 ? "#EF4444" : "#10B981", fontWeight: s.ratio > 1 ? 700 : 400 }}>
                     {s.ratio.toFixed(1)}x
                   </span>
@@ -332,8 +332,8 @@ export default function CartographiePage() {
               {comparatif.map((c) => (
                 <tr key={c.famille} className="hover:bg-muted/30 transition-colors">
                   <td className="px-5 py-3 text-sm font-medium text-foreground">{c.famille}</td>
-                  <td className="px-5 py-3 text-right text-sm font-semibold font-mono tabular-nums text-foreground">{c.n}</td>
-                  <td className="px-5 py-3 text-right text-sm font-mono tabular-nums text-muted-foreground">{c.n1}</td>
+                  <td className="px-5 py-3 text-right text-sm font-semibold num text-foreground">{c.n}</td>
+                  <td className="px-5 py-3 text-right text-sm num text-muted-foreground">{c.n1}</td>
                   <td className="px-5 py-3 text-right">
                     <span
                       className="inline-flex items-center gap-0.5 text-xs font-semibold"

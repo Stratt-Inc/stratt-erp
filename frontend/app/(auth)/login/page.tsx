@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { ApiError } from "@/lib/api";
+import { TTIconOutline } from "@/components/BrandLogo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,8 +31,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
+    <div className="relative space-y-8">
+      {/* TTIconOutline watermark */}
+      <div
+        className="absolute pointer-events-none select-none"
+        style={{
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -52%)",
+          opacity: 0.04,
+          zIndex: 0,
+        }}
+      >
+        <TTIconOutline size={620} color="#000000" />
+      </div>
+      <div className="relative z-10">
         <h2 className="text-2xl font-bold text-foreground">Connexion</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Pas encore de compte ?{" "}
@@ -41,7 +55,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
         {error && (
           <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
             {error}
@@ -96,7 +110,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="text-center">
+      <div className="relative z-10 text-center">
         <p className="text-xs text-muted-foreground">
           Compte démo :{" "}
           <button

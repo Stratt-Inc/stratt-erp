@@ -5,6 +5,14 @@ import Link from "next/link";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
+const roadmapModules = [
+  { name: "Veille BOAMP", description: "Surveillance des AAO & alertes CPV", color: "#8B5CF6", eta: "Q2 2026" },
+  { name: "DECP Export", description: "Publication données essentielles contrats", color: "#06B6D4", eta: "Q2 2026" },
+  { name: "Signature électronique", description: "Dossiers dématérialisés intégrés", color: "#F59E0B", eta: "Q3 2026" },
+  { name: "BI & Reporting", description: "Tableaux de bord personnalisables", color: "#EC4899", eta: "Q3 2026" },
+  { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#10B981", eta: "Q4 2026" },
+];
+
 const modules = [
   {
     id: "crm",
@@ -113,6 +121,36 @@ const features = [
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
         <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+      </svg>
+    ),
+  },
+  {
+    title: "Audit & traçabilité",
+    description:
+      "Journal d'audit complet et immuable. Chaque action est horodatée, attribuée et exportable pour les contrôles.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+      </svg>
+    ),
+  },
+  {
+    title: "Conformité réglementaire",
+    description:
+      "Conçu pour le Code de la commande publique. Seuils, procédures et obligations légales intégrés nativement.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+        <circle cx="12" cy="12" r="10" /><polyline points="9 12 11 14 15 10" />
+      </svg>
+    ),
+  },
+  {
+    title: "Temps réel & alertes",
+    description:
+      "Détection automatique des anomalies — fractionnements, seuils dépassés, MAPA irréguliers. Alertes actionnables.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
       </svg>
     ),
   },
@@ -263,35 +301,6 @@ function TTIconOutline({ size, color, style, className }: TTIconOutlineProps) {
   );
 }
 
-interface StrattWordmarkProps {
-  width: number;
-  color: string;
-  style?: React.CSSProperties;
-  className?: string;
-}
-
-function StrattWordmark({ width, color, style, className }: StrattWordmarkProps) {
-  const height = width * (113.29 / 411.86);
-  return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 411.86 113.29"
-      fill={color}
-      xmlns="http://www.w3.org/2000/svg"
-      style={style}
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M70.48,67.76c-2.49-1.77-5.39-3.24-8.6-4.33-3.28-1.09-6.66-2.05-10.07-2.83-3.34-.78-6.66-1.5-9.9-2.18-3.24-.68-6.21-1.43-8.74-2.29-2.63-.89-4.78-2.01-6.42-3.45-1.74-1.5-2.63-3.45-2.63-5.84,0-1.98.51-3.62,1.54-4.85.96-1.13,2.18-2.05,3.58-2.66,1.37-.58,2.87-.96,4.54-1.16,1.57-.17,3.07-.24,4.44-.24,4.37,0,8.23.85,11.47,2.53,3.21,1.67,5.09,4.78,5.6,9.22h20.96c-.51-4.78-1.84-8.84-3.89-12.01-2.22-3.41-5.05-6.18-8.4-8.23-3.34-2.05-7.24-3.55-11.54-4.4-8.74-1.77-18.33-1.74-27.13-.1-4.37.82-8.33,2.25-11.81,4.27-3.45,1.98-6.25,4.74-8.36,8.19-2.08,3.41-3.14,7.92-3.14,13.31,0,3.65.75,6.72,2.22,9.22,1.5,2.53,3.52,4.64,5.97,6.28,2.49,1.67,5.39,3.07,8.6,4.1,3.24,1.06,6.66,1.98,10.07,2.73,8.5,1.81,15.26,3.62,20,5.43,5.12,1.91,7.71,4.88,7.71,8.84,0,2.32-.58,4.27-1.67,5.8-1.09,1.5-2.46,2.7-4.06,3.62-1.57.85-3.34,1.5-5.29,1.91-4.54.96-8.64.72-12.46-.24-2.29-.61-4.33-1.5-6.08-2.73-1.77-1.26-3.24-2.87-4.37-4.81-1.02-1.77-1.57-3.86-1.67-6.21H0c.34,5.26,1.6,9.69,3.79,13.21,2.32,3.75,5.32,6.79,8.94,9.04,3.65,2.29,7.88,3.96,12.59,4.95,9.32,1.95,19.42,1.95,28.94.07,4.61-.92,8.81-2.56,12.39-4.85,3.55-2.25,6.48-5.29,8.7-9.01,2.18-3.72,3.31-8.4,3.31-13.93,0-3.86-.75-7.13-2.25-9.73-1.47-2.63-3.48-4.85-5.94-6.62Z" />
-      <path d="M118.27,21.61V0h-14.13s0,22.62,0,22.62c0,1.88-1.53,3.41-3.41,3.41h-19.05v14.24h10.07c2.42,0,4.4,1.98,4.4,4.4v47.65c0,4.2.68,7.65,2.05,10.17,1.4,2.53,3.28,4.51,5.63,5.87,2.42,1.4,5.26,2.35,8.46,2.83,5.32.82,11.3.85,17.54.58,2.05-.1,4.03-.27,5.87-.55v-16.72c-.89.17-1.74.27-2.59.34-1.23.1-2.56.17-3.93.17-4.3,0-7.13-.75-8.67-2.25-1.54-1.54-2.25-4.37-2.25-8.67v-27.07c0-1.91-.9-3.7-2.42-4.84l-11.71-8.77v-3.14h31.57v-14.23h-13.04c-2.42,0-4.4-1.98-4.4-4.44Z" />
-      <path d="M185.64,24.99c-2.7.85-5.29,2.08-7.68,3.69-2.39,1.57-4.51,3.48-6.35,5.7-1.84,2.22-3.34,4.64-4.4,7.24l-.24.55h-1.74v-16.14h-20.96v85.09h22.12v-38.26c0-3.96.41-7.71,1.19-11.09.82-3.45,2.18-6.52,4.1-9.11,1.91-2.63,4.51-4.71,7.61-6.25,4.16-1.98,9.59-2.7,16.08-2.01,1.16.14,2.18.27,3.11.41v-20.48c-1.6-.41-3.07-.61-4.37-.61-2.9,0-5.77.41-8.46,1.3Z" />
-      <path d="M281.21,92.68v-45.16c0-5.05-1.13-9.15-3.38-12.19-2.25-3.07-5.22-5.5-8.74-7.2-3.65-1.74-7.68-2.94-12.01-3.52-9.11-1.3-18.26-1.33-27.34.48-4.61.92-8.84,2.49-12.56,4.68-3.69,2.15-6.76,5.09-9.11,8.64-2.25,3.38-3.58,7.61-3.99,12.59h22.15c.55-4.51,2.22-7.85,4.95-9.9,2.83-2.12,6.72-3.17,11.6-3.17,2.15,0,4.2.14,6.08.44,1.91.27,3.65.85,5.19,1.77,1.5.92,2.73,2.22,3.65,3.82.92,1.67,1.37,3.86,1.37,6.55.14,2.7-.72,4.81-2.49,6.28-1.64,1.37-3.82,2.39-6.69,3.11-2.76.68-5.8,1.19-9.39,1.54-3.41.34-6.93.79-10.51,1.33-3.58.58-7.13,1.33-10.58,2.25-3.41.92-6.48,2.32-9.15,4.16-2.59,1.81-4.78,4.3-6.42,7.34-1.67,3.04-2.53,7-2.53,11.78,0,4.33.75,8.12,2.18,11.23,1.43,3.07,3.48,5.7,6.08,7.71,2.53,2.05,5.6,3.58,9.08,4.57,3.55.99,7.37,1.47,11.37,1.47,5.26,0,10.48-.75,15.53-2.29,4.98-1.54,9.35-4.23,13.04-8.02l1.33-1.33.14,1.84c.14,1.43.34,2.83.58,4.2.27,1.26.55,2.35.89,3.41h22.12c-.82-1.81-1.4-4.16-1.77-7.1-.44-3.52-.65-7.34-.65-11.33ZM259.06,78.41c0,1.37-.14,3.17-.44,5.46-.27,2.32-1.06,4.64-2.36,6.96-1.3,2.29-3.31,4.27-6.01,5.9-2.7,1.67-6.52,2.49-11.37,2.49-1.88,0-3.79-.17-5.67-.51-1.91-.38-3.55-.99-5.02-1.88-1.47-.92-2.63-2.18-3.48-3.75-.85-1.6-1.3-3.55-1.3-5.77,0-2.42.44-4.37,1.3-5.97.82-1.54,1.95-2.87,3.34-3.89,1.37-.99,2.94-1.77,4.78-2.39,1.74-.55,3.55-1.02,5.39-1.37,1.74-.31,3.65-.58,5.77-.85,1.81-.21,3.62-.48,5.39-.82s3.34-.75,4.74-1.23c1.43-.48,2.56-1.09,3.52-1.95l1.4-1.23v10.79Z" />
-      <path d="M411.86,40.28v-14.23h-21.95c-2.45,0-4.44-1.99-4.44-4.44V0h-14.13s0,22.62,0,22.62c0,1.88-1.53,3.41-3.41,3.41h-31.06c-2.45,0-4.44-1.98-4.44-4.43V0h-14.13s0,22.62,0,22.62c0,1.88-1.53,3.41-3.41,3.41h-27.92v14.24h18.91c2.44,0,4.44,2,4.44,4.44v47.61c0,4.2.68,7.61,2.05,10.17,1.4,2.59,3.28,4.51,5.67,5.87,2.42,1.4,5.22,2.35,8.43,2.83,5.32.82,11.3.85,17.54.58,2.08-.1,4.06-.27,5.9-.55v-16.72c-.92.17-1.77.27-2.63.34-1.23.1-2.56.17-3.93.17-4.3,0-7.13-.75-8.64-2.25-1.54-1.54-2.29-4.37-2.29-8.67v-27.15c0-1.88-.89-3.64-2.39-4.77l-11.74-8.77v-3.14h40.65c2.42,0,4.4,1.98,4.4,4.4v47.65c0,4.16.72,7.61,2.08,10.17,1.4,2.53,3.28,4.51,5.63,5.87,2.42,1.4,5.26,2.35,8.43,2.83,5.36.82,11.33.85,17.54.58,2.08-.1,4.06-.27,5.9-.55v-16.72c-.89.17-1.74.27-2.59.34-1.23.1-2.56.17-3.93.17-4.3,0-7.13-.75-8.67-2.25-1.54-1.54-2.29-4.37-2.29-8.67v-27.13c0-1.88-.89-3.65-2.39-4.78l-11.71-8.77v-3.14h40.48Z" />
-    </svg>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
@@ -348,8 +357,8 @@ export default function LandingPage() {
 
   return (
     <div
-      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#09111E", overflowX: "clip" }}
-      className="min-h-screen text-[#F0F4FF]"
+      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#F7F9FF", overflowX: "clip" }}
+      className="min-h-screen text-[#0F1F3D]"
     >
       {/* ── Global styles ── */}
       <style>{`
@@ -432,7 +441,7 @@ export default function LandingPage() {
 
         /* Nav link hover */
         .nav-link { transition: color 0.15s; }
-        .nav-link:hover { color: #F0F4FF; }
+        .nav-link:hover { color: #0F1F3D; }
 
         /* CTA button hover */
         .btn-primary { transition: filter 0.2s, transform 0.2s; }
@@ -440,8 +449,8 @@ export default function LandingPage() {
 
         .hero-grid {
           background-image:
-            linear-gradient(rgba(92,147,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.05) 1px, transparent 1px);
+            linear-gradient(rgba(92,147,255,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(92,147,255,0.08) 1px, transparent 1px);
           background-size: 60px 60px;
         }
 
@@ -452,8 +461,8 @@ export default function LandingPage() {
 
         .cta-grid {
           background-image:
-            linear-gradient(rgba(92,147,255,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.04) 1px, transparent 1px);
+            linear-gradient(rgba(92,147,255,0.07) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(92,147,255,0.07) 1px, transparent 1px);
           background-size: 60px 60px;
         }
       `}</style>
@@ -463,12 +472,23 @@ export default function LandingPage() {
       ══════════════════════════════════════ */}
       <nav
         className="nav-blur fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-16"
-        style={{ background: "rgba(9,17,30,0.85)", borderBottom: "1px solid rgba(92,147,255,0.08)" }}
+        style={{ background: "rgba(247,249,255,0.92)", borderBottom: "1px solid rgba(92,147,255,0.12)" }}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 select-none">
-          <TTIconFilled size={32} color="#24DDB8" />
-          <StrattWordmark width={90} color="#F0F4FF" />
+        <Link href="/" className="select-none">
+          <span
+            style={{
+              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontWeight: 800,
+              fontSize: "20px",
+              letterSpacing: "-0.04em",
+            }}
+          >
+            stratt
+          </span>
         </Link>
 
         {/* Desktop links */}
@@ -476,21 +496,21 @@ export default function LandingPage() {
           <Link
             href="#modules"
             className="nav-link text-sm font-medium"
-            style={{ color: "#BABABA" }}
+            style={{ color: "#637089" }}
           >
             Modules
           </Link>
           <Link
             href="#features"
             className="nav-link text-sm font-medium"
-            style={{ color: "#BABABA" }}
+            style={{ color: "#637089" }}
           >
             Fonctionnalités
           </Link>
           <Link
             href="/login"
             className="nav-link text-sm font-medium"
-            style={{ color: "#BABABA" }}
+            style={{ color: "#637089" }}
           >
             Se connecter
           </Link>
@@ -511,7 +531,7 @@ export default function LandingPage() {
       ══════════════════════════════════════ */}
       <section
         className="relative hero-grid flex flex-col items-center justify-center text-center overflow-hidden pt-32 pb-0"
-        style={{ minHeight: "100vh", background: "#09111E" }}
+        style={{ minHeight: "100vh", background: "#F7F9FF" }}
       >
         {/* Orb blue — top-left */}
         <div
@@ -551,7 +571,7 @@ export default function LandingPage() {
             zIndex: 1,
           }}
         >
-          <TTIconOutline size={520} color="#5C93FF" />
+          <TTIconOutline size={520} color="#00000" />
         </div>
 
         {/* Foreground content */}
@@ -591,7 +611,7 @@ export default function LandingPage() {
           <p
             style={{
               fontSize: "clamp(1rem, 2vw, 1.2rem)",
-              color: "#BABABA",
+              color: "#637089",
               maxWidth: "600px",
               lineHeight: 1.6,
               animation: "fade-in 0.7s 0.22s ease both",
@@ -618,7 +638,7 @@ export default function LandingPage() {
             <Link
               href="/login"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
-              style={{ border: "1px solid rgba(92,147,255,0.35)", color: "#F0F4FF", background: "rgba(92,147,255,0.05)" }}
+              style={{ border: "1px solid rgba(92,147,255,0.35)", color: "#0F1F3D", background: "rgba(92,147,255,0.05)" }}
             >
               Voir la démo
             </Link>
@@ -628,9 +648,9 @@ export default function LandingPage() {
           <div
             className="inline-flex items-center gap-3 px-4 py-2 rounded-lg text-xs"
             style={{
-              background: "rgba(9,17,30,0.7)",
-              border: "1px solid rgba(92,147,255,0.15)",
-              color: "#BABABA",
+              background: "rgba(255,255,255,0.8)",
+              border: "1px solid rgba(92,147,255,0.18)",
+              color: "#637089",
               animation: "fade-in 0.7s 0.46s ease both",
               opacity: 0,
             }}
@@ -645,7 +665,7 @@ export default function LandingPage() {
           <div
             className="flex items-center gap-3 text-xs"
             style={{
-              color: "#BABABA",
+              color: "#637089",
               animation: "fade-in 0.7s 0.56s ease both",
               opacity: 0,
             }}
@@ -660,7 +680,7 @@ export default function LandingPage() {
                     borderRadius: "50%",
                     background: c,
                     display: "inline-block",
-                    border: "1.5px solid rgba(9,17,30,0.8)",
+                    border: "1.5px solid rgba(247,249,255,0.9)",
                     marginLeft: i > 0 ? -3 : 0,
                   }}
                 />
@@ -676,7 +696,7 @@ export default function LandingPage() {
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(to bottom, transparent 0%, rgba(9,17,30,0.75) 100%)",
+              background: "linear-gradient(to bottom, transparent 0%, rgba(247,249,255,0.75) 100%)",
               pointerEvents: "none",
               zIndex: 2,
             }}
@@ -696,9 +716,9 @@ export default function LandingPage() {
       ══════════════════════════════════════ */}
       <div
         style={{
-          background: "rgba(14,25,41,0.9)",
-          borderTop: "1px solid rgba(92,147,255,0.08)",
-          borderBottom: "1px solid rgba(92,147,255,0.08)",
+          background: "rgba(237,242,255,0.9)",
+          borderTop: "1px solid rgba(92,147,255,0.12)",
+          borderBottom: "1px solid rgba(92,147,255,0.12)",
           overflow: "hidden",
           padding: "14px 0",
         }}
@@ -729,7 +749,7 @@ export default function LandingPage() {
                       fontWeight: 600,
                       letterSpacing: "0.12em",
                       textTransform: "uppercase",
-                      color: item === "stratt" ? "#5C93FF" : "#BABABA",
+                      color: item === "stratt" ? "#5C93FF" : "#637089",
                     }}
                   >
                     {item}
@@ -747,9 +767,9 @@ export default function LandingPage() {
       <section
         className="py-24 px-6"
         style={{
-          background: "#09111E",
-          borderTop: "1px solid rgba(92,147,255,0.07)",
-          borderBottom: "1px solid rgba(92,147,255,0.07)",
+          background: "#F7F9FF",
+          borderTop: "1px solid rgba(92,147,255,0.1)",
+          borderBottom: "1px solid rgba(92,147,255,0.1)",
         }}
       >
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -779,7 +799,7 @@ export default function LandingPage() {
                   fontWeight: 600,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "#BABABA",
+                  color: "#637089",
                 }}
               >
                 {stat.label}
@@ -792,7 +812,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           MODULES
       ══════════════════════════════════════ */}
-      <section id="modules" className="relative py-24 px-6" style={{ background: "#09111E" }}>
+      <section id="modules" className="relative py-24 px-6" style={{ background: "#F7F9FF" }}>
         {/* Background TTIconOutline watermark */}
         <div
           className="absolute pointer-events-none"
@@ -831,67 +851,148 @@ export default function LandingPage() {
             <p
               data-reveal
               data-reveal-delay="2"
-              style={{ color: "#BABABA", maxWidth: "520px", lineHeight: 1.6 }}
+              style={{ color: "#637089", maxWidth: "520px", lineHeight: 1.6 }}
             >
               Des modules pensés pour l&apos;achat public, intégrés nativement pour
               une expérience fluide et cohérente.
             </p>
           </div>
 
-          {/* Cards grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Cards grid — module instruments */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {modules.map((mod, i) => (
               <div
                 key={mod.id}
                 data-reveal
                 data-reveal-delay={String((i % 6) + 1)}
-                className="module-card rounded-2xl p-6 flex flex-col gap-4 relative overflow-hidden"
+                className="module-card rounded-2xl flex flex-col overflow-hidden relative"
                 style={{
-                  background: "#0E1929",
-                  border: "1px solid rgba(92,147,255,0.1)",
+                  background: "#FFFFFF",
+                  border: `1px solid rgba(92,147,255,0.12)`,
+                  boxShadow: "0 1px 4px rgba(30,50,80,0.06)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = `${mod.color}40`;
+                  el.style.transform = "translateY(-3px)";
+                  el.style.boxShadow = `0 12px 36px ${mod.color}18`;
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "rgba(92,147,255,0.12)";
+                  el.style.transform = "translateY(0)";
+                  el.style.boxShadow = "0 1px 4px rgba(30,50,80,0.06)";
                 }}
               >
-                {/* Card number */}
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 14,
-                    right: 16,
-                    fontSize: "0.68rem",
-                    fontFamily: "monospace",
-                    fontWeight: 700,
-                    color: "rgba(92,147,255,0.2)",
-                    letterSpacing: "0.04em",
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
+                {/* Tinted header zone */}
                 <div
-                  className="flex items-center justify-center w-10 h-10 rounded-xl"
-                  style={{ background: `${mod.color}1A`, color: mod.color }}
+                  className="px-5 pt-5 pb-4 relative overflow-hidden"
+                  style={{ background: `${mod.color}08` }}
                 >
-                  {mod.icon}
-                </div>
-                <div>
-                  <div style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "4px" }}>
-                    {mod.name}
-                  </div>
-                  <div style={{ fontSize: "0.875rem", color: "#BABABA", lineHeight: 1.5 }}>
-                    {mod.description}
-                  </div>
-                </div>
-                <div className="mt-auto">
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-1 text-xs font-semibold transition-opacity hover:opacity-70"
-                    style={{ color: mod.color }}
+                  {/* Card index watermark */}
+                  <span style={{
+                    position: "absolute", top: 10, right: 14,
+                    fontSize: "0.65rem", fontFamily: "monospace", fontWeight: 700,
+                    color: `${mod.color}30`, letterSpacing: "0.06em",
+                  }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <div
+                    className="flex items-center justify-center w-11 h-11 rounded-[12px]"
+                    style={{ background: `${mod.color}1C`, border: `1px solid ${mod.color}28`, color: mod.color }}
                   >
-                    →
-                  </a>
+                    {mod.icon}
+                  </div>
+
+                  {/* Ghost icon background */}
+                  <div className="absolute right-0 bottom-0 pointer-events-none" style={{ color: mod.color, opacity: 0.07 }}>
+                    <div style={{ transform: "translate(20%, 20%) scale(2.2)" }}>
+                      {mod.icon}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gradient divider */}
+                <div style={{ height: 1, background: `linear-gradient(90deg, ${mod.color}30, transparent)` }} />
+
+                {/* Content */}
+                <div className="px-5 py-4 flex flex-col gap-2 flex-1">
+                  <p style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0F1F3D" }}>{mod.name}</p>
+                  <p style={{ fontSize: "0.82rem", color: "#637089", lineHeight: 1.5 }}>{mod.description}</p>
+
+                  <div className="mt-auto pt-2">
+                    <span
+                      className="inline-flex items-center gap-1 text-xs font-bold"
+                      style={{ color: mod.color }}
+                    >
+                      Explorer →
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* ── Roadmap — modules à venir ── */}
+          <div className="mt-16">
+            <div
+              data-reveal
+              className="flex flex-col items-center text-center gap-3 mb-8"
+            >
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
+                style={{ background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)", color: "#8B5CF6" }}
+              >
+                Roadmap produit
+              </div>
+              <h3
+                style={{ fontSize: "clamp(1.2rem, 3vw, 1.6rem)", fontWeight: 800, letterSpacing: "-0.02em", color: "#0F1F3D" }}
+              >
+                Prochainement disponible
+              </h3>
+              <p style={{ color: "#637089", fontSize: "0.875rem", maxWidth: "440px", lineHeight: 1.6 }}>
+                Stratt évolue en continu. Voici les modules en cours de développement.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+              {roadmapModules.map((mod, i) => (
+                <div
+                  key={mod.name}
+                  data-reveal
+                  data-reveal-delay={String((i % 5) + 1)}
+                  className="rounded-xl px-4 py-4 flex items-center gap-3 relative overflow-hidden"
+                  style={{
+                    background: "rgba(255,255,255,0.6)",
+                    border: "1px solid rgba(92,147,255,0.1)",
+                    opacity: 0.85,
+                  }}
+                >
+                  {/* Color dot */}
+                  <div
+                    className="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${mod.color}10`, border: `1px solid ${mod.color}20` }}
+                  >
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: mod.color, display: "inline-block" }} />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0F1F3D" }}>{mod.name}</p>
+                    <p style={{ fontSize: "0.72rem", color: "#637089", marginTop: 2 }}>{mod.description}</p>
+                  </div>
+
+                  {/* ETA badge */}
+                  <span
+                    className="text-[9px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{ background: `${mod.color}12`, color: mod.color, border: `1px solid ${mod.color}20` }}
+                  >
+                    {mod.eta}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -899,7 +1000,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           FEATURES
       ══════════════════════════════════════ */}
-      <section id="features" className="py-24 px-6" style={{ background: "#0A1422" }}>
+      <section id="features" className="py-24 px-6" style={{ background: "#EEF3FF" }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
             {/* Left — sticky brand + tagline */}
@@ -937,7 +1038,7 @@ export default function LandingPage() {
               <p
                 data-reveal-left
                 data-reveal-delay="3"
-                style={{ color: "#BABABA", lineHeight: 1.7, maxWidth: "440px" }}
+                style={{ color: "#637089", lineHeight: 1.7, maxWidth: "440px" }}
               >
                 Architecture cloud-native, sécurité enterprise et intégration IA
                 pour que vos équipes se concentrent sur l&apos;essentiel.
@@ -974,8 +1075,8 @@ export default function LandingPage() {
                   data-reveal-delay={String(i + 1)}
                   className="feature-card rounded-2xl p-6 flex flex-col gap-3"
                   style={{
-                    background: "rgba(14,25,41,0.8)",
-                    border: "1px solid rgba(92,147,255,0.1)",
+                    background: "rgba(255,255,255,0.85)",
+                    border: "1px solid rgba(92,147,255,0.14)",
                     paddingLeft: "1.75rem",
                   }}
                 >
@@ -986,7 +1087,7 @@ export default function LandingPage() {
                     {feat.icon}
                   </div>
                   <div style={{ fontWeight: 700, fontSize: "1rem" }}>{feat.title}</div>
-                  <div style={{ color: "#BABABA", fontSize: "0.875rem", lineHeight: 1.6 }}>
+                  <div style={{ color: "#637089", fontSize: "0.875rem", lineHeight: 1.6 }}>
                     {feat.description}
                   </div>
                 </div>
@@ -999,7 +1100,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           TECH STACK
       ══════════════════════════════════════ */}
-      <section className="py-16 px-6" style={{ background: "#09111E" }}>
+      <section className="py-16 px-6" style={{ background: "#F7F9FF" }}>
         <div className="max-w-4xl mx-auto flex flex-col items-center gap-8">
           <p
             data-reveal
@@ -1008,7 +1109,7 @@ export default function LandingPage() {
               fontWeight: 600,
               letterSpacing: "0.16em",
               textTransform: "uppercase",
-              color: "#BABABA",
+              color: "#637089",
               fontFamily: "monospace",
             }}
           >
@@ -1020,7 +1121,7 @@ export default function LandingPage() {
             className="flex flex-wrap justify-center gap-3"
           >
             {[
-              { label: "Next.js 15", color: "#F0F4FF" },
+              { label: "Next.js 15", color: "#0F1F3D" },
               { label: "Go 1.24", color: "#5C93FF" },
               { label: "PostgreSQL 16", color: "#24DDB8" },
               { label: "Redis", color: "#EC4899" },
@@ -1047,13 +1148,13 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           CTA BANNER
       ══════════════════════════════════════ */}
-      <section className="py-24 px-6" style={{ background: "#09111E" }}>
+      <section className="py-24 px-6" style={{ background: "#F7F9FF" }}>
         <div className="max-w-4xl mx-auto">
           <div
             data-reveal
             className="relative rounded-3xl p-12 md:p-16 flex flex-col items-center text-center gap-8 overflow-hidden cta-grid"
             style={{
-              background: "#0E1929",
+              background: "#FFFFFF",
               border: "1px solid rgba(36,221,184,0.18)",
             }}
           >
@@ -1082,12 +1183,20 @@ export default function LandingPage() {
                 boxShadow: "0 0 32px rgba(36,221,184,0.15)",
               }}
             >
-              <TTIconFilled size={48} color="#24DDB8" />
+              <span style={{ fontSize: "22px", fontWeight: 800, color: "#24DDB8", letterSpacing: "-0.03em" }}>tt</span>
             </div>
 
             {/* StrattWordmark */}
             <div className="relative z-10">
-              <StrattWordmark width={160} color="rgba(240,244,255,0.8)" />
+              <span style={{
+                background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                fontWeight: 800,
+                fontSize: "36px",
+                letterSpacing: "-0.04em",
+              }}>stratt</span>
             </div>
 
             <h2
@@ -1105,7 +1214,7 @@ export default function LandingPage() {
 
             <p
               className="relative z-10"
-              style={{ color: "#BABABA", maxWidth: "460px", lineHeight: 1.7 }}
+              style={{ color: "#637089", maxWidth: "460px", lineHeight: 1.7 }}
             >
               Rejoignez plus de 500 organisations qui font confiance à Stratt
               pour piloter leurs achats publics avec efficacité et transparence.
@@ -1122,7 +1231,7 @@ export default function LandingPage() {
               <Link
                 href="/login"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
-                style={{ border: "1px solid rgba(240,244,255,0.15)", color: "#F0F4FF" }}
+                style={{ border: "1px solid rgba(15,31,61,0.2)", color: "#0F1F3D" }}
               >
                 Compte démo
               </Link>
@@ -1137,14 +1246,21 @@ export default function LandingPage() {
       <footer
         className="py-10 px-6 flex flex-col md:flex-row items-center justify-between gap-6"
         style={{
-          borderTop: "1px solid rgba(92,147,255,0.08)",
-          background: "#09111E",
+          borderTop: "1px solid rgba(92,147,255,0.12)",
+          background: "#EEF3FF",
         }}
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <TTIconFilled size={24} color="#24DDB8" />
-          <StrattWordmark width={80} color="rgba(186,186,186,0.7)" />
+          <span style={{
+            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            fontWeight: 800,
+            fontSize: "18px",
+            letterSpacing: "-0.04em",
+          }}>stratt</span>
         </div>
 
         {/* Links */}
@@ -1157,8 +1273,8 @@ export default function LandingPage() {
             <a
               key={l.label}
               href={l.href}
-              style={{ color: "#BABABA", fontSize: "0.8rem" }}
-              className="hover:text-[#F0F4FF] transition-colors"
+              style={{ color: "#637089", fontSize: "0.8rem" }}
+              className="hover:text-[#0F1F3D] transition-colors"
             >
               {l.label}
             </a>
@@ -1166,7 +1282,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Copyright */}
-        <p style={{ color: "#BABABA", fontSize: "0.78rem" }}>
+        <p style={{ color: "#637089", fontSize: "0.78rem" }}>
           © {new Date().getFullYear()} Stratt. Tous droits réservés.
         </p>
       </footer>

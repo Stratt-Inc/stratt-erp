@@ -45,15 +45,14 @@ export default function ProcurementPage() {
     <div className="space-y-6">
       <DemoBanner />
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(6,182,212,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(139,92,246,0.1)" }}>
-              <ShoppingCart className="w-3.5 h-3.5" style={{ color: "#8B5CF6" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Achats</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#06B6D4", boxShadow: "0 0 6px #06B6D4" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module achats</span>
           </div>
-          <p className="text-sm text-muted-foreground">Commandes fournisseurs et gestion des approvisionnements</p>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Bons de commande et gestion des fournisseurs</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
@@ -66,14 +65,15 @@ export default function ProcurementPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total commandes", value: orders.length, color: "#8B5CF6" },
-          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#10B981" },
-          { label: "En attente", value: pending, color: "#5C93FF" },
-          { label: "Reçues", value: received, color: "#06B6D4" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
-            <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+          { label: "Total commandes", value: orders.length, color: "#8B5CF6", icon: ShoppingCart },
+          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#10B981", icon: ShoppingCart },
+          { label: "En attente", value: pending, color: "#5C93FF", icon: ShoppingCart },
+          { label: "Reçues", value: received, color: "#06B6D4", icon: ShoppingCart },
+        ].map(({ label, value, color, icon: Icon }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -104,7 +104,7 @@ export default function ProcurementPage() {
               {orders.map((o) => {
                 const cfg = statusConfig[o.status] ?? statusConfig.draft;
                 return (
-                  <tr key={o.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={o.id} data-row>
                     <td className="px-4 py-3 text-sm font-mono font-semibold text-foreground">{o.number}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
@@ -115,8 +115,8 @@ export default function ProcurementPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{o.order_date}</td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{o.delivery_date || "—"}</td>
-                    <td className="px-4 py-3 text-right text-sm font-mono text-muted-foreground">{o.subtotal.toLocaleString("fr-FR")} €</td>
-                    <td className="px-4 py-3 text-right text-sm font-mono font-bold text-foreground">{o.total.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3 text-right text-sm num text-muted-foreground">{o.subtotal.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3 text-right text-sm num font-bold text-foreground">{o.total.toLocaleString("fr-FR")} €</td>
                   </tr>
                 );
               })}

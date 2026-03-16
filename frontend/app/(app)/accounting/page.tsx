@@ -62,15 +62,14 @@ export default function AccountingPage() {
     <div className="space-y-6">
       <DemoBanner />
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(16,185,129,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(16,185,129,0.1)" }}>
-              <Calculator className="w-3.5 h-3.5" style={{ color: "#10B981" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Comptabilité</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#10B981", boxShadow: "0 0 6px #10B981" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module comptabilité</span>
           </div>
-          <p className="text-sm text-muted-foreground">Plan comptable, transactions et rapports financiers</p>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Plan comptable</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Comptes, transactions et rapports financiers</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
@@ -80,17 +79,18 @@ export default function AccountingPage() {
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats — signal tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, color: "#5C93FF" },
-          { label: "Transactions", value: txns.length, color: "#6B7280" },
-          { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, color: "#10B981" },
-          { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, color: "#EF4444" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
-            <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, icon: Calculator, color: "#5C93FF" },
+          { label: "Transactions", value: txns.length, icon: Calculator, color: "#6B7280" },
+          { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "#10B981" },
+          { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "#EF4444" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -131,7 +131,7 @@ export default function AccountingPage() {
                       {typeLabels[a.type] ?? a.type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-sm font-mono font-bold"
+                  <td className="px-4 py-3 text-right text-sm num font-bold"
                     style={{ color: a.balance >= 0 ? "#10B981" : "#EF4444" }}>
                     {a.balance.toLocaleString("fr-FR")} €
                   </td>
@@ -165,7 +165,7 @@ export default function AccountingPage() {
                       {t.type === "credit" ? "Crédit" : "Débit"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-sm font-mono font-bold"
+                  <td className="px-4 py-3 text-right text-sm num font-bold"
                     style={{ color: t.type === "credit" ? "#10B981" : "#EF4444" }}>
                     {t.type === "credit" ? "+" : "-"}{t.amount.toLocaleString("fr-FR")} €
                   </td>

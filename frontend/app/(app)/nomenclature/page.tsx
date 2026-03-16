@@ -200,7 +200,7 @@ export default function NomenclaturePage() {
               <Icon className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</span>
             </div>
-            <span className="text-xl font-bold font-mono text-foreground">{value}</span>
+            <span className="text-xl font-bold font-display text-foreground">{value}</span>
           </div>
         ))}
       </div>
@@ -264,7 +264,7 @@ export default function NomenclaturePage() {
                 {selected.montant && (
                   <div>
                     <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Montant consolidé</label>
-                    <div className="mt-1 text-xs font-semibold font-mono text-foreground">{selected.montant}</div>
+                    <div className="mt-1 text-xs font-semibold num text-foreground">{selected.montant}</div>
                   </div>
                 )}
                 {selected.seuil && (

@@ -69,10 +69,10 @@ const pluriannuelData = [
 ];
 
 const statutColors: Record<string, { bg: string; text: string; border: string }> = {
-  planifie:  { bg: "rgba(107,114,128,0.08)", text: "hsl(220,9%,46%)",  border: "rgba(107,114,128,0.2)" },
+  planifie:  { bg: "rgba(107,114,128,0.08)", text: "rgba(30,50,80,0.48)",  border: "rgba(107,114,128,0.2)" },
   en_cours:  { bg: "rgba(92,147,255,0.1)",  text: "#5C93FF",         border: "rgba(92,147,255,0.2)" },
   alerte:    { bg: "rgba(239,68,68,0.08)",   text: "#EF4444",         border: "rgba(239,68,68,0.2)" },
-  termine:   { bg: "rgba(107,114,128,0.08)", text: "hsl(220,9%,46%)", border: "rgba(107,114,128,0.2)" },
+  termine:   { bg: "rgba(107,114,128,0.08)", text: "rgba(30,50,80,0.48)", border: "rgba(107,114,128,0.2)" },
 };
 
 const statutLabels: Record<string, string> = {
@@ -80,7 +80,7 @@ const statutLabels: Record<string, string> = {
 };
 
 const prioriteColors: Record<string, { bg: string; text: string }> = {
-  normale:   { bg: "rgba(107,114,128,0.1)", text: "hsl(220,9%,46%)" },
+  normale:   { bg: "rgba(107,114,128,0.1)", text: "rgba(30,50,80,0.48)" },
   haute:     { bg: "rgba(245,158,11,0.1)",  text: "#F59E0B" },
   critique:  { bg: "rgba(239,68,68,0.1)",   text: "#EF4444" },
 };
@@ -200,12 +200,15 @@ export default function PlanificationPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between pb-5" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-1">Module planification</p>
-          <h1 className="text-2xl font-bold text-foreground">Planification stratégique des passations</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            {stats?.total ?? 0} marchés planifiés · {budgetK} k€ prévisionnels · Exercice 2026
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module planification</span>
+          </div>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Passations de marchés</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">
+            {stats?.total ?? 0} marchés · {budgetK} k€ prévisionnels · Exercice 2026
           </p>
         </div>
         <div className="flex gap-2">
@@ -218,21 +221,19 @@ export default function PlanificationPage() {
         </div>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs — signal tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {[
-          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, alert: false },
-          { label: "Charge prévisionnelle", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, alert: true },
-          { label: "Chevauchements", value: "3", icon: Layers, alert: false },
-          { label: "Impact budgétaire", value: `${budgetK} k€`, icon: TrendingUp, alert: false },
-          { label: "Alertes seuils", value: stats?.alertes ?? 0, icon: AlertTriangle, alert: true },
+          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
+          { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "#06B6D4" },
+          { label: "Chevauchements", value: "3", icon: Layers, color: "#8B5CF6" },
+          { label: "Budget impact", value: `${budgetK} k€`, icon: TrendingUp, color: "#24DDB8" },
+          { label: "Alertes seuils", value: stats?.alertes ?? 0, icon: AlertTriangle, color: "#F59E0B" },
         ].map((kpi) => (
-          <div key={kpi.label} className="bg-card border border-border rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <kpi.icon className="w-3.5 h-3.5" style={{ color: kpi.alert ? "#F59E0B" : "#5C93FF" }} />
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{kpi.label}</span>
-            </div>
-            <span className="text-xl font-bold" style={{ color: kpi.alert ? "#F59E0B" : undefined }}>{kpi.value}</span>
+          <div key={kpi.label} className="stat-tile" style={{ "--tile-color": kpi.color } as React.CSSProperties}>
+            <p className="stat-number">{kpi.value}</p>
+            <p className="stat-label">{kpi.label}</p>
+            <kpi.icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -347,13 +348,13 @@ export default function PlanificationPage() {
                         <tr
                           key={m.id}
                           onClick={() => setSelectedId(isSelected ? null : m.id)}
-                          className="cursor-pointer transition-colors hover:bg-muted/30"
+                          className="cursor-pointer data-row transition-colors"
                           style={isSelected ? { background: "rgba(92,147,255,0.06)" } : undefined}
                         >
                           <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">{m.reference}</td>
                           <td className="px-3 py-2.5 text-[13px] font-medium text-foreground max-w-[200px] truncate">{m.objet}</td>
                           <td className="px-3 py-2.5 text-[11px] text-muted-foreground">{m.service}</td>
-                          <td className="px-3 py-2.5 text-[13px] font-semibold tabular-nums text-foreground">{m.montant.toLocaleString("fr-FR")} €</td>
+                          <td className="px-3 py-2.5 num text-[15px] text-foreground">{m.montant.toLocaleString("fr-FR")} €</td>
                           <td className="px-3 py-2.5 text-[11px] text-foreground">{m.procedure}</td>
                           <td className="px-3 py-2.5 text-[11px] text-muted-foreground tabular-nums">{m.echeance}</td>
                           <td className="px-3 py-2.5 text-[11px] tabular-nums text-foreground">{m.charge}</td>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import {
   MessageSquare,
   Plus,
@@ -43,6 +44,7 @@ export default function ChatbotPage() {
   const [newExpiry, setNewExpiry] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
 
+  const isDemo = useIsDemo();
   const orgId = currentOrg?.id ?? "";
 
   const { data: tokensData } = useQuery<ChatToken[]>({
@@ -91,6 +93,7 @@ export default function ChatbotPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <DemoBanner />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -121,7 +124,7 @@ export default function ChatbotPage() {
       {tab === "tokens" && (
         <>
           {/* Create token */}
-          {showCreate ? (
+          {showCreate && !isDemo ? (
             <div className="border border-border rounded-xl p-5 space-y-4 bg-card">
               <h3 className="font-semibold text-sm">Nouveau lien chatbot</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -164,13 +167,15 @@ export default function ChatbotPage() {
               </div>
             </div>
           ) : (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#5C93FF] transition-colors text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Créer un lien public
-            </button>
+            !isDemo && (
+              <button
+                onClick={() => setShowCreate(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#5C93FF] transition-colors text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Créer un lien public
+              </button>
+            )
           )}
 
           {/* Token list */}
@@ -226,7 +231,7 @@ export default function ChatbotPage() {
                   >
                     <Link2 className="w-4 h-4" />
                   </a>
-                  {!t.revoked && (
+                  {!t.revoked && !isDemo && (
                     <button
                       onClick={() => revokeToken.mutate(t.id)}
                       title="Révoquer"

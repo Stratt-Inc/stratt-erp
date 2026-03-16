@@ -37,15 +37,14 @@ export default function InventoryPage() {
     <div className="space-y-6">
       <DemoBanner />
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(99,102,241,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(99,102,241,0.1)" }}>
-              <Package className="w-3.5 h-3.5" style={{ color: "#6366F1" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Inventaire</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module Inventaire</span>
           </div>
-          <p className="text-sm text-muted-foreground">Produits, stocks et gestion des références</p>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Stocks & Produits</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Produits, stocks et gestion des références</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
@@ -55,20 +54,18 @@ export default function InventoryPage() {
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats — signal tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, color: "#6366F1" },
-          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, color: "#10B981" },
-          { label: "Stock faible", value: lowStock.length, color: lowStock.length > 0 ? "#EF4444" : "#6B7280" },
-          { label: "Catégories", value: new Set(products.map(p => p.category)).size, color: "#5C93FF" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
-            <p className="text-2xl font-bold font-mono text-foreground"
-              style={{ color: label === "Stock faible" && typeof value === "number" && value > 0 ? color : undefined }}>
-              {value}
-            </p>
+          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: "#8B5CF6" },
+          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "#10B981" },
+          { label: "Stock faible", value: lowStock.length, icon: AlertTriangle, color: lowStock.length > 0 ? "#EF4444" : "#6B7280" },
+          { label: "Catégories", value: new Set(products.map(p => p.category)).size, icon: Package, color: "#5C93FF" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -79,10 +76,10 @@ export default function InventoryPage() {
           style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)" }}>
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: "#EF4444" }} />
           <div>
-            <p className="text-sm font-semibold" style={{ color: "#991B1B" }}>
+            <p className="text-sm font-semibold" style={{ color: "#FCA5A5" }}>
               {lowStock.length} produit{lowStock.length > 1 ? "s" : ""} en stock faible
             </p>
-            <p className="text-xs mt-0.5" style={{ color: "#B91C1C" }}>
+            <p className="text-xs mt-0.5" style={{ color: "#F87171" }}>
               {lowStock.map(p => p.name).join(", ")}
             </p>
           </div>
@@ -115,7 +112,7 @@ export default function InventoryPage() {
               {products.map((p) => {
                 const isLow = p.stock <= p.reorder_at && p.reorder_at > 0;
                 return (
-                  <tr key={p.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={p.id} className="data-row transition-colors">
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium text-foreground">{p.name}</p>
                       {p.description && <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[200px]">{p.description}</p>}
@@ -123,12 +120,12 @@ export default function InventoryPage() {
                     <td className="px-4 py-3 text-sm font-mono text-muted-foreground hidden md:table-cell">{p.sku || "—"}</td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{p.category || "—"}</td>
                     <td className="px-4 py-3 text-right">
-                      <span className="text-sm font-mono font-bold" style={{ color: isLow ? "#EF4444" : "#10B981" }}>
+                      <span className="num text-[16px] font-semibold" style={{ color: isLow ? "#EF4444" : "#10B981" }}>
                         {p.stock} {p.unit}
                       </span>
                       {isLow && <span className="ml-1 text-[10px] text-red-500">⚠</span>}
                     </td>
-                    <td className="px-4 py-3 text-right text-sm font-mono text-foreground hidden md:table-cell">
+                    <td className="px-4 py-3 text-right num text-[15px] text-foreground hidden md:table-cell">
                       {p.unit_price.toLocaleString("fr-FR")} €
                     </td>
                     <td className="px-4 py-3">

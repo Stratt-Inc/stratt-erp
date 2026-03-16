@@ -44,25 +44,24 @@ export default function BillingPage() {
   const totalPending = pending.reduce((s, i) => s + i.total, 0);
 
   const stats = [
-    { label: "Total factures", value: invoices.length, color: "#5C93FF" },
-    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "#10B981" },
-    { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "#F59E0B" },
-    { label: "En retard", value: overdue.length, color: "#EF4444" },
+    { label: "Total factures", value: invoices.length, color: "#5C93FF", icon: FileText },
+    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "#10B981", icon: FileText },
+    { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "#F59E0B", icon: FileText },
+    { label: "En retard", value: overdue.length, color: "#EF4444", icon: FileText },
   ];
 
   return (
     <div className="space-y-6">
       <DemoBanner />
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(245,158,11,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(245,158,11,0.1)" }}>
-              <FileText className="w-3.5 h-3.5" style={{ color: "#F59E0B" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Facturation</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#F59E0B", boxShadow: "0 0 6px #F59E0B" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module facturation</span>
           </div>
-          <p className="text-sm text-muted-foreground">Devis, factures et suivi des paiements</p>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Facturation</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Devis, factures et suivi des paiements</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
@@ -74,12 +73,11 @@ export default function BillingPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map(({ label, value, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
-            <p className="text-2xl font-bold font-mono text-foreground" style={typeof value === "number" && label === "En retard" && value > 0 ? { color } : {}}>
-              {value}
-            </p>
+        {stats.map(({ label, value, color, icon: Icon }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -107,7 +105,7 @@ export default function BillingPage() {
                 const cfg = statusConfig[inv.status] ?? statusConfig.draft;
                 const Icon = cfg.icon;
                 return (
-                  <tr key={inv.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={inv.id} data-row>
                     <td className="px-4 py-3 text-sm font-mono font-semibold text-foreground">{inv.number}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
@@ -118,8 +116,8 @@ export default function BillingPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{inv.issue_date}</td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{inv.due_date || "—"}</td>
-                    <td className="px-4 py-3 text-right text-sm font-mono text-muted-foreground">{inv.subtotal.toLocaleString("fr-FR")} €</td>
-                    <td className="px-4 py-3 text-right text-sm font-mono font-bold text-foreground">{inv.total.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3 text-right text-sm num text-muted-foreground">{inv.subtotal.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3 text-right text-sm num font-bold text-foreground">{inv.total.toLocaleString("fr-FR")} €</td>
                   </tr>
                 );
               })}

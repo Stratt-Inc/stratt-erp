@@ -116,15 +116,14 @@ export default function CRMPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(92,147,255,0.1)" }}>
-              <Users className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">CRM</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module CRM</span>
           </div>
-          <p className="text-sm text-muted-foreground">Contacts, leads et opportunités commerciales</p>
+          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Gestion commerciale</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Contacts, leads et opportunités</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
@@ -134,17 +133,13 @@ export default function CRMPage() {
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats — signal tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${color}14` }}>
-                <Icon className="w-3.5 h-3.5" style={{ color }} />
-              </div>
-            </div>
-            <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -158,7 +153,7 @@ export default function CRMPage() {
             }`}>
             {t.label}
             <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold"
-              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(30,50,80,0.07)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -212,7 +207,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
         </thead>
         <tbody className="divide-y divide-border">
           {items.map((c) => (
-            <tr key={c.id} className="hover:bg-muted/30 transition-colors">
+            <tr key={c.id} className="data-row transition-colors">
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
@@ -255,7 +250,7 @@ function LeadsTable({ items }: { items: Lead[] }) {
         </thead>
         <tbody className="divide-y divide-border">
           {items.map((l) => (
-            <tr key={l.id} className="hover:bg-muted/30 transition-colors">
+            <tr key={l.id} className="data-row transition-colors">
               <td className="px-4 py-3 text-sm font-medium text-foreground">{l.title}</td>
               <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">
                 {l.contact ? `${l.contact.first_name} ${l.contact.last_name}` : "—"}
@@ -264,7 +259,7 @@ function LeadsTable({ items }: { items: Lead[] }) {
                 <StatusBadge label={statusLabels[l.status] ?? l.status} color={statusColors[l.status] ?? "#6B7280"} />
               </td>
               <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{l.source || "—"}</td>
-              <td className="px-4 py-3 text-right text-sm font-mono font-semibold text-foreground">
+              <td className="px-4 py-3 text-right num text-[15px] font-semibold text-foreground">
                 {l.value ? `${l.value.toLocaleString("fr-FR")} €` : "—"}
               </td>
             </tr>
@@ -291,7 +286,7 @@ function DealsTable({ items }: { items: Deal[] }) {
         </thead>
         <tbody className="divide-y divide-border">
           {items.map((d) => (
-            <tr key={d.id} className="hover:bg-muted/30 transition-colors">
+            <tr key={d.id} className="data-row transition-colors">
               <td className="px-4 py-3 text-sm font-medium text-foreground">{d.title}</td>
               <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">
                 {d.contact ? `${d.contact.first_name} ${d.contact.last_name}` : "—"}
@@ -307,7 +302,7 @@ function DealsTable({ items }: { items: Deal[] }) {
                   <span className="text-xs font-mono text-muted-foreground w-8">{d.probability}%</span>
                 </div>
               </td>
-              <td className="px-4 py-3 text-right text-sm font-mono font-bold text-foreground">
+              <td className="px-4 py-3 text-right num text-[15px] font-semibold text-foreground">
                 {d.value.toLocaleString("fr-FR")} €
               </td>
             </tr>

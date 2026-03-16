@@ -414,7 +414,7 @@ export default function BOAMPPage() {
                     </button>
                     <button
                       onClick={() => deleteVeilleMutation.mutate(v.id)}
-                      className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                      className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

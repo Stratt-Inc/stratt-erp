@@ -86,7 +86,7 @@ function MetricCard({ label, value, icon: Icon, color, sub }: {
             style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>{sub}</span>
         )}
       </div>
-      <p className="text-3xl font-extrabold font-mono tabular-nums text-foreground">{value}</p>
+      <p className="text-3xl font-extrabold font-display text-foreground">{value}</p>
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{label}</p>
     </div>
   );
@@ -98,7 +98,7 @@ function ProgressBar({ label, value, max, color }: { label: string; value: numbe
     <div className="space-y-1.5">
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground font-medium">{label}</span>
-        <span className="font-mono font-bold text-foreground">{value.toLocaleString("fr-FR")}</span>
+        <span className="num font-bold text-foreground">{value.toLocaleString("fr-FR")}</span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
@@ -142,7 +142,7 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
           style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.08), rgba(36,221,184,0.06))" }}>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
           <div className="flex items-end gap-1 mt-2">
-            <span className="text-3xl font-extrabold font-mono text-foreground">
+            <span className="text-3xl font-extrabold font-display text-foreground">
               {overview && overview.total_contacts + overview.total_leads + overview.total_deals > 0 ? "✓" : "—"}
             </span>
           </div>
@@ -248,7 +248,7 @@ function ABCTab() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Dépense totale</p>
-            <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{formatEur(data.total_spend)}</p>
+            <p className="text-2xl font-bold font-display text-foreground">{formatEur(data.total_spend)}</p>
           </div>
           {(["A", "B", "C"] as const).map((cls) => {
             const count = cls === "A" ? countA : cls === "B" ? countB : countC;
@@ -261,7 +261,7 @@ function ABCTab() {
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                     style={{ color: CLASS_COLORS[cls], background: CLASS_BG[cls] }}>{cls}</span>
                 </div>
-                <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{count}</p>
+                <p className="text-2xl font-bold font-display text-foreground">{count}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {dimension === "supplier" ? "fournisseurs" : "familles"}
                 </p>
@@ -327,9 +327,9 @@ function ABCTab() {
                   <tr key={row.rank} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3 font-mono text-muted-foreground text-xs">#{row.rank}</td>
                     <td className="px-4 py-3 font-medium text-foreground max-w-xs truncate">{row.label}</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-foreground">{formatEur(row.total)}</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.share.toFixed(1)}%</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
+                    <td className="px-4 py-3 num text-foreground">{formatEur(row.total)}</td>
+                    <td className="px-4 py-3 num text-muted-foreground">{row.share.toFixed(1)}%</td>
+                    <td className="px-4 py-3 num text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
                         style={{ color: CLASS_COLORS[row.class], background: CLASS_BG[row.class] }}>{row.class}</span>

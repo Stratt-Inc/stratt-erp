@@ -71,7 +71,8 @@ const tabs = [
 function EtatBadge({ etat }: { etat: string }) {
   if (etat === "A") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+        style={{ background: "rgba(16,185,129,0.12)", color: "#10B981" }}>
         <CheckCircle size={12} />
         Actif
       </span>
@@ -79,14 +80,16 @@ function EtatBadge({ etat }: { etat: string }) {
   }
   if (etat === "C") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+        style={{ background: "rgba(239,68,68,0.12)", color: "#EF4444" }}>
         <XCircle size={12} />
         Cessé
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+      style={{ background: "rgba(30,50,80,0.07)", color: "rgba(30,50,80,0.5)" }}>
       {etat || "—"}
     </span>
   );
@@ -94,13 +97,13 @@ function EtatBadge({ etat }: { etat: string }) {
 
 function SIRENECard({ data }: { data: SIRENEData | SIRENEEnrichment }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+    <div className="bg-card border border-border rounded-xl p-5 space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-lg font-semibold text-gray-900">
+          <p className="text-lg font-semibold text-foreground">
             {data.denomination_sociale || "—"}
           </p>
-          <p className="text-sm text-gray-500 font-mono">
+          <p className="text-sm text-muted-foreground font-mono">
             SIRET {data.siret} · SIREN {data.siren}
           </p>
         </div>
@@ -108,33 +111,33 @@ function SIRENECard({ data }: { data: SIRENEData | SIRENEEnrichment }) {
       </div>
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div>
-          <p className="text-gray-500">Adresse</p>
-          <p className="text-gray-800">
+          <p className="text-muted-foreground text-xs mb-0.5">Adresse</p>
+          <p className="text-foreground">
             {[data.adresse, data.code_postal, data.commune]
               .filter(Boolean)
               .join(", ") || "—"}
           </p>
         </div>
         <div>
-          <p className="text-gray-500">Forme juridique</p>
-          <p className="text-gray-800">{data.forme_juridique || "—"}</p>
+          <p className="text-muted-foreground text-xs mb-0.5">Forme juridique</p>
+          <p className="text-foreground">{data.forme_juridique || "—"}</p>
         </div>
         <div>
-          <p className="text-gray-500">Code NAF</p>
-          <p className="text-gray-800">{data.code_naf || "—"}</p>
+          <p className="text-muted-foreground text-xs mb-0.5">Code NAF</p>
+          <p className="text-foreground">{data.code_naf || "—"}</p>
         </div>
         <div>
-          <p className="text-gray-500">Effectifs</p>
-          <p className="text-gray-800">{data.tranche_effectifs || "—"}</p>
+          <p className="text-muted-foreground text-xs mb-0.5">Effectifs</p>
+          <p className="text-foreground">{data.tranche_effectifs || "—"}</p>
         </div>
         <div>
-          <p className="text-gray-500">Date de création</p>
-          <p className="text-gray-800">{data.date_creation || "—"}</p>
+          <p className="text-muted-foreground text-xs mb-0.5">Date de création</p>
+          <p className="text-foreground">{data.date_creation || "—"}</p>
         </div>
         {data.date_cessation && (
           <div>
-            <p className="text-gray-500">Date de cessation</p>
-            <p className="text-red-600 font-medium">{data.date_cessation}</p>
+            <p className="text-muted-foreground text-xs mb-0.5">Date de cessation</p>
+            <p className="font-medium" style={{ color: "#F87171" }}>{data.date_cessation}</p>
           </div>
         )}
       </div>
@@ -194,29 +197,29 @@ export default function SirenePage() {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-blue-50 rounded-lg">
-          <Building2 size={24} className="text-blue-600" />
+        <div className="p-2 rounded-lg" style={{ background: "rgba(92,147,255,0.12)", border: "1px solid rgba(92,147,255,0.2)" }}>
+          <Building2 size={24} style={{ color: "#5C93FF" }} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             Qualification SIRENE
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Enrichissement des fournisseurs via l&apos;API INSEE SIRENE
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 gap-1">
+      <div className="flex border-b border-border gap-1">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
               activeTab === t.id
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             {t.label}
@@ -227,8 +230,8 @@ export default function SirenePage() {
       {/* Lookup tab */}
       {activeTab === "lookup" && (
         <div className="space-y-5">
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <p className="text-sm font-medium text-gray-700 mb-3">
+          <div className="bg-card border border-border rounded-xl p-5">
+            <p className="text-sm font-medium text-foreground mb-3">
               Rechercher un établissement par SIRET (14 chiffres)
             </p>
             <div className="flex gap-3">
@@ -239,12 +242,13 @@ export default function SirenePage() {
                 onKeyDown={(e) => e.key === "Enter" && handleLookup()}
                 placeholder="Ex : 73282932000074"
                 maxLength={17}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                className="flex-1 px-3 py-2 border border-border rounded-lg text-sm bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 font-mono"
               />
               <button
                 onClick={handleLookup}
                 disabled={lookupFetching}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50 transition-colors"
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
               >
                 {lookupFetching ? (
                   <RefreshCw size={15} className="animate-spin" />
@@ -259,14 +263,15 @@ export default function SirenePage() {
           {lookupResult && (
             <>
               {lookupResult.error ? (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-                  <XCircle size={18} className="text-red-500 shrink-0" />
-                  <p className="text-sm text-red-700">{lookupResult.error}</p>
+                <div className="rounded-xl p-4 flex items-center gap-3"
+                  style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                  <XCircle size={18} style={{ color: "#EF4444" }} className="shrink-0" />
+                  <p className="text-sm" style={{ color: "#F87171" }}>{lookupResult.error}</p>
                 </div>
               ) : lookupResult.data ? (
                 <div className="space-y-2">
                   {lookupResult.cached && (
-                    <p className="text-xs text-gray-400 flex items-center gap-1">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <RefreshCw size={11} />
                       Résultat depuis le cache local
                     </p>
@@ -283,20 +288,20 @@ export default function SirenePage() {
       {activeTab === "enrichments" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {enrichments.length} enrichissement(s) en cache
             </p>
             {enrichFetching && (
-              <RefreshCw size={14} className="animate-spin text-gray-400" />
+              <RefreshCw size={14} className="animate-spin text-muted-foreground" />
             )}
           </div>
 
           {enrichments.length === 0 && !enrichFetching ? (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center">
-              <Building2 size={32} className="text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">
+            <div className="bg-card border border-border rounded-xl p-10 text-center">
+              <Building2 size={32} className="text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">
                 Aucun enrichissement pour le moment. Utilisez{" "}
-                <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+                <code className="text-xs px-1 py-0.5 rounded border border-border" style={{ color: "#5C93FF" }}>
                   POST /sirene/enrich/:contact_id
                 </code>{" "}
                 pour enrichir un contact.
@@ -307,16 +312,16 @@ export default function SirenePage() {
               {enrichments.map((e) => (
                 <div
                   key={e.id}
-                  className="bg-white border border-gray-200 rounded-xl overflow-hidden"
+                  className="bg-card border border-border rounded-xl overflow-hidden"
                 >
                   <div className="flex items-center justify-between px-5 py-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <EtatBadge etat={e.etat_administratif} />
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {e.denomination_sociale || e.siret}
                         </p>
-                        <p className="text-xs text-gray-400 font-mono">
+                        <p className="text-xs text-muted-foreground font-mono">
                           SIRET {e.siret}
                         </p>
                       </div>
@@ -326,7 +331,7 @@ export default function SirenePage() {
                         onClick={() =>
                           setExpandedId(expandedId === e.id ? null : e.id)
                         }
-                        className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                       >
                         {expandedId === e.id ? (
                           <ChevronUp size={15} />
@@ -337,7 +342,7 @@ export default function SirenePage() {
                       <button
                         onClick={() => clearCache.mutate(e.contact_id)}
                         disabled={clearCache.isPending}
-                        className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
                         title="Vider le cache"
                       >
                         <Trash2 size={15} />
@@ -345,9 +350,9 @@ export default function SirenePage() {
                     </div>
                   </div>
                   {expandedId === e.id && (
-                    <div className="border-t border-gray-100 px-5 py-4">
+                    <div className="border-t border-border px-5 py-4">
                       <SIRENECard data={e} />
-                      <p className="text-xs text-gray-400 mt-3">
+                      <p className="text-xs text-muted-foreground mt-3">
                         Mis à jour le{" "}
                         {new Date(e.fetched_at).toLocaleDateString("fr-FR", {
                           day: "2-digit",
@@ -374,21 +379,19 @@ export default function SirenePage() {
       {activeTab === "alerts" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {alertsResult?.count ?? 0} fournisseur(s) avec statut cessé
             </p>
             {alertsFetching && (
-              <RefreshCw size={14} className="animate-spin text-gray-400" />
+              <RefreshCw size={14} className="animate-spin text-muted-foreground" />
             )}
           </div>
 
           {(alertsResult?.count ?? 0) > 0 && (
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
-              <AlertTriangle
-                size={18}
-                className="text-orange-500 shrink-0 mt-0.5"
-              />
-              <p className="text-sm text-orange-700">
+            <div className="rounded-xl p-4 flex items-start gap-3"
+              style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)" }}>
+              <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
+              <p className="text-sm" style={{ color: "#FCD34D" }}>
                 <strong>{alertsResult?.count} fournisseur(s)</strong> ont un
                 statut &laquo;&nbsp;Cessé&nbsp;&raquo; dans la base SIRENE.
                 Vérifiez leur situation avant de passer de nouvelles commandes.
@@ -397,12 +400,9 @@ export default function SirenePage() {
           )}
 
           {!alertsFetching && (alertsResult?.count ?? 0) === 0 ? (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-10 text-center">
-              <CheckCircle
-                size={32}
-                className="text-green-400 mx-auto mb-3"
-              />
-              <p className="text-sm text-green-700 font-medium">
+            <div className="bg-card border border-border rounded-xl p-10 text-center">
+              <CheckCircle size={32} className="mx-auto mb-3" style={{ color: "#10B981" }} />
+              <p className="text-sm font-medium" style={{ color: "#6EE7B7" }}>
                 Aucune alerte — tous vos fournisseurs enrichis sont actifs.
               </p>
             </div>
