@@ -454,8 +454,8 @@ export default function LandingPage() {
 
   return (
     <div
-      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#09111E" }}
-      className="min-h-screen text-[#F0F4FF] overflow-x-hidden"
+      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#09111E", overflowX: "clip" }}
+      className="min-h-screen text-[#F0F4FF]"
     >
       {/* ── Global styles ── */}
       <style>{`
