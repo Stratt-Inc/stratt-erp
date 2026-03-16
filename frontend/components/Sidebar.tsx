@@ -23,6 +23,7 @@ import {
   Shield,
   HelpCircle,
   GraduationCap,
+  MessageSquare,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
@@ -31,6 +32,7 @@ const pilotageNav = [
   { label: "Planification", href: "/planification", icon: Calendar },
   { label: "Cartographie", href: "/cartographie", icon: Map },
   { label: "Nomenclature", href: "/nomenclature", icon: BookOpen },
+  { label: "Chatbot", href: "/chatbot", icon: MessageSquare },
   { label: "Documents", href: "/exports", icon: Download },
 ];
 

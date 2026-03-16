@@ -32,6 +32,7 @@ import (
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
+	"github.com/stratt/backend/modules/chatbot"
 	"github.com/stratt/backend/modules/sirene"
 )
 
@@ -88,6 +89,7 @@ func main() {
 	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
 	sireneHandler := sirene.NewHandler(db, cfg.InseeToken)
+	chatbotHandler := chatbot.NewHandler(db, cfg.AnthropicKey)
 
 	// ── Middleware factories ───────────────────────────────
 	requireAuth := middleware.RequireAuth(authSvc)
@@ -166,6 +168,11 @@ func main() {
 	boamp.RegisterRoutes(v1.Group("/boamp", requireAuth, requireOrg, requirePerm("procurement.read")), boampHandler)
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
 	sirene.RegisterRoutes(v1.Group("/sirene", requireAuth, requireOrg, requirePerm("procurement.read")), sireneHandler)
+	chatbot.RegisterRoutes(v1.Group("/chatbot", requireAuth, requireOrg, requirePerm("procurement.read")), chatbotHandler)
+
+	// ── Public routes (no auth) ────────────────────────────
+	public := r.Group("/api/public")
+	chatbot.RegisterPublicRoutes(public.Group("/chatbot"), chatbotHandler)
 
 	// ── Start ─────────────────────────────────────────────
 	srv := &http.Server{
