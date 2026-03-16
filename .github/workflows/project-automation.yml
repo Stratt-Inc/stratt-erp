@@ -21,13 +21,15 @@ on:
     types: [opened, ready_for_review, review_requested, closed]
   pull_request_review:
     types: [submitted]
+  check_suite:
+    types: [completed]
   push:
     branches: [staging, main]
     tags:
       - "v*.*.*"
 
 permissions:
-  issues: read
+  issues: write
   pull-requests: read
 
 env:
@@ -221,32 +223,54 @@ jobs:
             }' > /dev/null && echo "✅ In Review — $ISSUE_NODE_ID"
           done
 
-  # ── Review approuvée → 🧪 Testing ─────────────────────────────────────────
-  pr-review-approved:
-    name: PR review approved → Testing
+  # ── CI échoue → 🚫 ajouter label "blocked" sur issues liées ──────────────
+  ci-failed:
+    name: CI failed → add blocked label
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    if: |
+      github.event_name == 'check_suite' &&
+      github.event.check_suite.conclusion == 'failure'
     steps:
-      - name: Set linked issues → Testing
+      - name: Add blocked label to linked issues
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
         run: |
-          ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
-            ... on PullRequest { closingIssuesReferences(first:10) { nodes { id } } }
-          }}' --jq '.data.node.closingIssuesReferences.nodes[].id')
-          for ISSUE_NODE_ID in $ISSUES; do
-            ITEM_ID=$(gh api graphql -f query='query { node(id: "'"$ISSUE_NODE_ID"'") {
-              ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
-            }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
-            [ -z "$ITEM_ID" ] && continue
-            gh api graphql -f query='mutation {
-              updateProjectV2ItemFieldValue(input: {
-                projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
-                fieldId: "'"$FIELD_ID"'"
-                value: { singleSelectOptionId: "'"$OPT_TESTING"'" }
-              }) { projectV2Item { id } }
-            }' > /dev/null && echo "✅ Testing — $ISSUE_NODE_ID"
+          PR_NUMBERS=$(echo '${{ toJson(github.event.check_suite.pull_requests) }}' | jq -r '.[].number // empty')
+          [ -z "$PR_NUMBERS" ] && echo "No PRs linked, skipping" && exit 0
+          for PR_NUMBER in $PR_NUMBERS; do
+            PR_NODE_ID=$(gh api /repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.node_id')
+            ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
+              ... on PullRequest { closingIssuesReferences(first:10) { nodes { number } } }
+            }}' --jq '.data.node.closingIssuesReferences.nodes[].number')
+            for ISSUE_NUMBER in $ISSUES; do
+              gh issue edit "$ISSUE_NUMBER" --add-label "blocked" --repo "${{ github.repository }}" \
+                && echo "🚫 blocked → #$ISSUE_NUMBER"
+            done
+          done
+
+  # ── CI réussit → ✅ retirer label "blocked" sur issues liées ──────────────
+  ci-passed:
+    name: CI passed → remove blocked label
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'check_suite' &&
+      github.event.check_suite.conclusion == 'success'
+    steps:
+      - name: Remove blocked label from linked issues
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          PR_NUMBERS=$(echo '${{ toJson(github.event.check_suite.pull_requests) }}' | jq -r '.[].number // empty')
+          [ -z "$PR_NUMBERS" ] && echo "No PRs linked, skipping" && exit 0
+          for PR_NUMBER in $PR_NUMBERS; do
+            PR_NODE_ID=$(gh api /repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.node_id')
+            ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
+              ... on PullRequest { closingIssuesReferences(first:10) { nodes { number } } }
+            }}' --jq '.data.node.closingIssuesReferences.nodes[].number')
+            for ISSUE_NUMBER in $ISSUES; do
+              gh issue edit "$ISSUE_NUMBER" --remove-label "blocked" --repo "${{ github.repository }}" 2>/dev/null \
+                && echo "✅ unblocked → #$ISSUE_NUMBER" || true
+            done
           done
 
   # ── PR mergée sur develop → ✅ Done ───────────────────────────────────────
