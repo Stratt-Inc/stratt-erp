@@ -14,6 +14,7 @@ import (
 	marchesmod "github.com/stratt/backend/modules/marches"
 	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
 	procurementmod "github.com/stratt/backend/modules/procurement"
+	chatbotmod "github.com/stratt/backend/modules/chatbot"
 	sirenemod "github.com/stratt/backend/modules/sirene"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -90,5 +91,9 @@ func AutoMigrate(db *gorm.DB) error {
 		&nomenclaturemod.NomenclatureNode{},
 		// SIRENE
 		&sirenemod.SIRENEEnrichment{},
+		// Chatbot
+		&chatbotmod.ChatToken{},
+		&chatbotmod.ChatMessage{},
+		&chatbotmod.ChatFeedback{},
 	)
 }

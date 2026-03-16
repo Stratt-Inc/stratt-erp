@@ -16,18 +16,18 @@ name: Project — Status Automation
 
 on:
   issues:
-    types: [opened, assigned, labeled, unlabeled, closed, reopened]
+    types: [opened, labeled, unlabeled, closed, reopened]
   pull_request:
     types: [opened, ready_for_review, review_requested, closed]
-  pull_request_review:
-    types: [submitted]
+  check_suite:
+    types: [completed]
   push:
     branches: [staging, main]
     tags:
       - "v*.*.*"
 
 permissions:
-  issues: read
+  issues: write
   pull-requests: read
 
 env:
@@ -69,29 +69,6 @@ jobs:
             }) { projectV2Item { id } }
           }'
 
-  # ── Issue assignée → 🎯 Todo ───────────────────────────────────────────────
-  issue-assigned:
-    name: Issue assigned → Todo
-    runs-on: ubuntu-latest
-    if: github.event_name == 'issues' && github.event.action == 'assigned'
-    steps:
-      - name: Set Status → Todo
-        env:
-          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
-        run: |
-          ITEM_ID=$(gh api graphql -f query='query { node(id: "'"$ISSUE_NODE_ID"'") {
-            ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
-          }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
-          [ -z "$ITEM_ID" ] && exit 0
-          gh api graphql -f query='mutation {
-            updateProjectV2ItemFieldValue(input: {
-              projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
-              fieldId: "'"$FIELD_ID"'"
-              value: { singleSelectOptionId: "'"$OPT_TODO"'" }
-            }) { projectV2Item { id } }
-          }' && echo "✅ Todo — #${{ github.event.issue.number }}"
-
   # ── Label "blocked" ajouté → 🚫 Blocked ───────────────────────────────────
   issue-blocked:
     name: Issue labeled blocked → Blocked
@@ -115,13 +92,13 @@ jobs:
             }) { projectV2Item { id } }
           }' && echo "✅ Blocked — #${{ github.event.issue.number }}"
 
-  # ── Label "blocked" retiré → ⚡ In Progress ───────────────────────────────
+  # ── Label "blocked" retiré → ⚡ In Progress (seulement si statut = Blocked) ─
   issue-unblocked:
     name: Issue unlabeled blocked → In Progress
     runs-on: ubuntu-latest
     if: github.event_name == 'issues' && github.event.action == 'unlabeled' && github.event.label.name == 'blocked'
     steps:
-      - name: Set Status → In Progress
+      - name: Set Status → In Progress (only if currently Blocked)
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
@@ -130,6 +107,15 @@ jobs:
             ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
           }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
           [ -z "$ITEM_ID" ] && exit 0
+          CURRENT=$(gh api graphql -f query='query { node(id: "'"$ITEM_ID"'") {
+            ... on ProjectV2Item { fieldValueByName(name:"Status") {
+              ... on ProjectV2ItemFieldSingleSelectValue { optionId }
+            }}
+          }}' --jq '.data.node.fieldValueByName.optionId')
+          if [ "$CURRENT" != "$OPT_BLOCKED" ]; then
+            echo "Status is not Blocked (current: $CURRENT) — skipping transition"
+            exit 0
+          fi
           gh api graphql -f query='mutation {
             updateProjectV2ItemFieldValue(input: {
               projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
@@ -244,32 +230,54 @@ jobs:
             }' > /dev/null && echo "✅ In Review — $ISSUE_NODE_ID"
           done
 
-  # ── Review approuvée → 🧪 Testing ─────────────────────────────────────────
-  pr-review-approved:
-    name: PR review approved → Testing
+  # ── CI échoue → 🚫 ajouter label "blocked" sur issues liées ──────────────
+  ci-failed:
+    name: CI failed → add blocked label
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    if: |
+      github.event_name == 'check_suite' &&
+      github.event.check_suite.conclusion == 'failure'
     steps:
-      - name: Set linked issues → Testing
+      - name: Add blocked label to linked issues
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
         run: |
-          ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
-            ... on PullRequest { closingIssuesReferences(first:10) { nodes { id } } }
-          }}' --jq '.data.node.closingIssuesReferences.nodes[].id')
-          for ISSUE_NODE_ID in $ISSUES; do
-            ITEM_ID=$(gh api graphql -f query='query { node(id: "'"$ISSUE_NODE_ID"'") {
-              ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
-            }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
-            [ -z "$ITEM_ID" ] && continue
-            gh api graphql -f query='mutation {
-              updateProjectV2ItemFieldValue(input: {
-                projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
-                fieldId: "'"$FIELD_ID"'"
-                value: { singleSelectOptionId: "'"$OPT_TESTING"'" }
-              }) { projectV2Item { id } }
-            }' > /dev/null && echo "✅ Testing — $ISSUE_NODE_ID"
+          PR_NUMBERS=$(echo '${{ toJson(github.event.check_suite.pull_requests) }}' | jq -r '.[].number // empty')
+          [ -z "$PR_NUMBERS" ] && echo "No PRs linked, skipping" && exit 0
+          for PR_NUMBER in $PR_NUMBERS; do
+            PR_NODE_ID=$(gh api /repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.node_id')
+            ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
+              ... on PullRequest { closingIssuesReferences(first:10) { nodes { number } } }
+            }}' --jq '.data.node.closingIssuesReferences.nodes[].number')
+            for ISSUE_NUMBER in $ISSUES; do
+              gh issue edit "$ISSUE_NUMBER" --add-label "blocked" --repo "${{ github.repository }}" \
+                && echo "🚫 blocked → #$ISSUE_NUMBER"
+            done
+          done
+
+  # ── CI réussit → ✅ retirer label "blocked" sur issues liées ──────────────
+  ci-passed:
+    name: CI passed → remove blocked label
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'check_suite' &&
+      github.event.check_suite.conclusion == 'success'
+    steps:
+      - name: Remove blocked label from linked issues
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          PR_NUMBERS=$(echo '${{ toJson(github.event.check_suite.pull_requests) }}' | jq -r '.[].number // empty')
+          [ -z "$PR_NUMBERS" ] && echo "No PRs linked, skipping" && exit 0
+          for PR_NUMBER in $PR_NUMBERS; do
+            PR_NODE_ID=$(gh api /repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.node_id')
+            ISSUES=$(gh api graphql -f query='query { node(id: "'"$PR_NODE_ID"'") {
+              ... on PullRequest { closingIssuesReferences(first:10) { nodes { number } } }
+            }}' --jq '.data.node.closingIssuesReferences.nodes[].number')
+            for ISSUE_NUMBER in $ISSUES; do
+              gh issue edit "$ISSUE_NUMBER" --remove-label "blocked" --repo "${{ github.repository }}" 2>/dev/null \
+                && echo "✅ unblocked → #$ISSUE_NUMBER" || true
+            done
           done
 
   # ── PR mergée sur develop → ✅ Done ───────────────────────────────────────
@@ -304,16 +312,16 @@ jobs:
             }' > /dev/null && echo "✅ Done — $ISSUE_NODE_ID"
           done
 
-  # ── PR fermée sans merge → 🎯 Todo ────────────────────────────────────────
+  # ── PR fermée sans merge → ⚡ In Progress ─────────────────────────────────
   pr-closed:
-    name: PR closed without merge → Todo
+    name: PR closed without merge → In Progress
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'pull_request' &&
       github.event.action == 'closed' &&
       github.event.pull_request.merged == false
     steps:
-      - name: Set linked issues → Todo
+      - name: Set linked issues → In Progress
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           PR_NODE_ID: ${{ github.event.pull_request.node_id }}
@@ -330,9 +338,9 @@ jobs:
               updateProjectV2ItemFieldValue(input: {
                 projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
                 fieldId: "'"$FIELD_ID"'"
-                value: { singleSelectOptionId: "'"$OPT_TODO"'" }
+                value: { singleSelectOptionId: "'"$OPT_IN_PROGRESS"'" }
               }) { projectV2Item { id } }
-            }' > /dev/null && echo "↩️  Todo — $ISSUE_NODE_ID"
+            }' > /dev/null && echo "↩️  In Progress — $ISSUE_NODE_ID"
           done
 
   # ── Push sur staging → Done → 🧪 Testing ──────────────────────────────────
