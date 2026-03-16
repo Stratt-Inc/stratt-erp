@@ -16,7 +16,7 @@ name: Project — Status Automation
 
 on:
   issues:
-    types: [opened, assigned, labeled, unlabeled, closed, reopened]
+    types: [opened, labeled, unlabeled, closed, reopened]
   pull_request:
     types: [opened, ready_for_review, review_requested, closed]
   pull_request_review:
@@ -68,29 +68,6 @@ jobs:
               value: { singleSelectOptionId: "'"$OPT_BACKLOG"'" }
             }) { projectV2Item { id } }
           }'
-
-  # ── Issue assignée → 🎯 Todo ───────────────────────────────────────────────
-  issue-assigned:
-    name: Issue assigned → Todo
-    runs-on: ubuntu-latest
-    if: github.event_name == 'issues' && github.event.action == 'assigned'
-    steps:
-      - name: Set Status → Todo
-        env:
-          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
-        run: |
-          ITEM_ID=$(gh api graphql -f query='query { node(id: "'"$ISSUE_NODE_ID"'") {
-            ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
-          }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
-          [ -z "$ITEM_ID" ] && exit 0
-          gh api graphql -f query='mutation {
-            updateProjectV2ItemFieldValue(input: {
-              projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
-              fieldId: "'"$FIELD_ID"'"
-              value: { singleSelectOptionId: "'"$OPT_TODO"'" }
-            }) { projectV2Item { id } }
-          }' && echo "✅ Todo — #${{ github.event.issue.number }}"
 
   # ── Label "blocked" ajouté → 🚫 Blocked ───────────────────────────────────
   issue-blocked:
