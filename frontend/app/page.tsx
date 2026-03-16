@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 
-// ─── Data ───────────────────────────────────────────────────────────────────
+// ─── Data ────────────────────────────────────────────────────────────────────
 
 const modules = [
   {
@@ -125,332 +124,146 @@ const stats = [
   { value: "24/7", label: "Support" },
 ];
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── NetworkViz ───────────────────────────────────────────────────────────────
 
-interface GlobeState {
-  rotation: number;
-  arcProgress: number;
-  intensity: number;
-}
-
-interface ProjectedPoint {
-  x: number;
-  y: number;
-  visible: boolean;
-  depth: number;
-}
-
-// ─── Globe ───────────────────────────────────────────────────────────────────
-
-const cx = 260;
-const cy = 260;
-const r = 195;
-
-const cities = [
-  { name: "Paris",  lon: 2.3,   lat: 48.9 },
-  { name: "Moscow", lon: 37.6,  lat: 55.7 },
-  { name: "Rio",    lon: -43.2, lat: -22.9 },
-  { name: "Dubai",  lon: 55.3,  lat: 25.2 },
-  { name: "Seoul",  lon: 126.9, lat: 37.6 },
+const NODES: { x: number; y: number }[] = [
+  { x: 60,   y: 80  }, { x: 160,  y: 40  }, { x: 260,  y: 100 }, { x: 360,  y: 60  },
+  { x: 460,  y: 120 }, { x: 560,  y: 50  }, { x: 660,  y: 90  }, { x: 760,  y: 40  },
+  { x: 860,  y: 110 }, { x: 960,  y: 60  }, { x: 1060, y: 100 }, { x: 1140, y: 70  },
+  { x: 80,   y: 180 }, { x: 180,  y: 160 }, { x: 280,  y: 200 }, { x: 400,  y: 170 },
+  { x: 500,  y: 210 }, { x: 600,  y: 160 }, { x: 700,  y: 200 }, { x: 800,  y: 150 },
+  { x: 900,  y: 200 }, { x: 1000, y: 170 }, { x: 1100, y: 190 }, { x: 1150, y: 220 },
+  { x: 50,   y: 290 }, { x: 150,  y: 270 }, { x: 250,  y: 310 }, { x: 370,  y: 280 },
+  { x: 470,  y: 320 }, { x: 580,  y: 270 }, { x: 680,  y: 300 }, { x: 790,  y: 270 },
+  { x: 880,  y: 310 }, { x: 980,  y: 280 }, { x: 1080, y: 300 }, { x: 1160, y: 310 },
+  { x: 100,  y: 370 }, { x: 300,  y: 360 }, { x: 600,  y: 380 }, { x: 900,  y: 360 }, { x: 1100, y: 370 },
 ];
 
-const connections = [
-  { from: 0, to: 1, startAt: 0.0 },
-  { from: 1, to: 2, startAt: 0.2 },
-  { from: 0, to: 3, startAt: 0.4 },
-  { from: 3, to: 4, startAt: 0.6 },
-  { from: 2, to: 4, startAt: 0.8 },
-];
+// Precompute connections (distance < 160)
+const NET_CONNECTIONS: [number, number][] = (() => {
+  const conns: [number, number][] = [];
+  for (let i = 0; i < NODES.length; i++) {
+    for (let j = i + 1; j < NODES.length; j++) {
+      const dx = NODES[i].x - NODES[j].x;
+      const dy = NODES[i].y - NODES[j].y;
+      if (Math.sqrt(dx * dx + dy * dy) < 160) {
+        conns.push([i, j]);
+      }
+    }
+  }
+  return conns;
+})();
 
-const meridianLons = [-80, -50, -20, 0, 20, 50, 80, 110];
-const parallelLats = [-60, -30, 0, 30, 60];
-
-function project(lon: number, lat: number, rotation: number): ProjectedPoint {
-  const effLon = ((lon + rotation) * Math.PI) / 180;
-  const latRad = (lat * Math.PI) / 180;
-  return {
-    x: cx + r * Math.cos(latRad) * Math.sin(effLon),
-    y: cy - r * Math.sin(latRad),
-    visible: Math.cos(effLon) * Math.cos(latRad) >= -0.1,
-    depth: Math.cos(effLon) * Math.cos(latRad),
-  };
+interface NetworkVizProps {
+  activationLevel: number;
+  height?: number;
+  className?: string;
 }
 
-function buildArc(p1: ProjectedPoint, p2: ProjectedPoint): string {
-  const mx = (p1.x + p2.x) / 2;
-  const my = (p1.y + p2.y) / 2;
-  const dx = cx - mx;
-  const dy = cy - my;
-  const cpx = mx - dx * 0.3;
-  const cpy = my - dy * 0.3;
-  return `M ${p1.x} ${p1.y} Q ${cpx} ${cpy} ${p2.x} ${p2.y}`;
-}
-
-function WireframeGlobe({ rotation, arcProgress, intensity }: GlobeState) {
-  const glowAlpha = 0.06 + intensity * 0.14;
-  const outlineAlpha = 0.4 + intensity * 0.35;
+function NetworkViz({ activationLevel, height = 400, className = "" }: NetworkVizProps) {
+  const activeCount = Math.floor(activationLevel * NODES.length);
 
   return (
     <svg
-      width="520"
-      height="520"
-      viewBox="0 0 520 520"
+      width="100%"
+      height={height}
+      viewBox="0 0 1200 400"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ display: "block" }}
+      className={className}
       aria-hidden="true"
     >
-      <defs>
-        <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={`rgba(92,147,255,${glowAlpha})`} />
-          <stop offset="60%" stopColor="rgba(9,17,30,0.5)" />
-          <stop offset="100%" stopColor="rgba(9,17,30,0)" />
-        </radialGradient>
-        <radialGradient id="globeCoreBg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={`rgba(36,221,184,${0.03 + intensity * 0.05})`} />
-          <stop offset="100%" stopColor="rgba(9,17,30,0)" />
-        </radialGradient>
-        <clipPath id="globeClip">
-          <circle cx={cx} cy={cy} r={r} />
-        </clipPath>
-        <filter id="arcGlow">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
-      {/* Background glow */}
-      <circle cx={cx} cy={cy} r={r + 80} fill="url(#globeGlow)" />
-      <circle cx={cx} cy={cy} r={r} fill="url(#globeCoreBg)" />
-
-      {/* Meridians */}
-      {meridianLons.map((baseLon) => {
-        const effLon = baseLon + rotation;
-        const effLonRad = (effLon * Math.PI) / 180;
-        const sinL = Math.sin(effLonRad);
-        const cosL = Math.cos(effLonRad);
-        const rx = r * Math.abs(sinL);
-        const isFront = cosL >= 0;
+      {/* Connections */}
+      {NET_CONNECTIONS.map(([i, j], idx) => {
+        const active = i < activeCount && j < activeCount;
         return (
-          <ellipse
-            key={baseLon}
-            cx={cx}
-            cy={cy}
-            rx={rx}
-            ry={r}
-            stroke={isFront ? `rgba(92,147,255,${0.18 + intensity * 0.18})` : `rgba(92,147,255,${0.07 + intensity * 0.05})`}
-            strokeWidth={isFront ? 0.9 : 0.6}
-            strokeDasharray={isFront ? undefined : "3 6"}
-            fill="none"
+          <line
+            key={idx}
+            x1={NODES[i].x} y1={NODES[i].y}
+            x2={NODES[j].x} y2={NODES[j].y}
+            stroke={active ? "rgba(36,221,184,0.45)" : "rgba(92,147,255,0.07)"}
+            strokeWidth={active ? 1.2 : 0.8}
           />
         );
       })}
 
-      {/* Parallels */}
-      {parallelLats.map((lat) => {
-        const latRad = (lat * Math.PI) / 180;
-        const cosLat = Math.cos(latRad);
-        const sinLat = Math.sin(latRad);
-        const ellipseRx = r * cosLat;
-        const ellipseRy = ellipseRx * 0.18;
-        const offsetY = -r * sinLat;
+      {/* Nodes */}
+      {NODES.map((node, i) => {
+        const active = i < activeCount;
         return (
-          <ellipse
-            key={lat}
-            cx={cx}
-            cy={cy + offsetY}
-            rx={ellipseRx}
-            ry={ellipseRy}
-            stroke={`rgba(92,147,255,${0.1 + intensity * 0.1})`}
-            strokeWidth="0.7"
-            fill="none"
-          />
-        );
-      })}
-
-      {/* Globe outline */}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r}
-        stroke={`rgba(92,147,255,${outlineAlpha})`}
-        strokeWidth="1.4"
-        fill="none"
-      />
-
-      {/* SMIL scan line */}
-      <line
-        x1={cx - r * 0.85}
-        y1={cy - r * 0.9}
-        x2={cx + r * 0.85}
-        y2={cy - r * 0.9}
-        stroke="#24DDB8"
-        strokeWidth="1"
-        clipPath="url(#globeClip)"
-      >
-        <animate attributeName="y1" from={cy - r * 0.9} to={cy + r * 0.9} dur="6s" repeatCount="indefinite" />
-        <animate attributeName="y2" from={cy - r * 0.9} to={cy + r * 0.9} dur="6s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0;0.55;0.55;0" keyTimes="0;0.08;0.92;1" dur="6s" repeatCount="indefinite" />
-      </line>
-
-      {/* Connection arcs */}
-      {connections.map((conn, i) => {
-        const p1 = project(cities[conn.from].lon, cities[conn.from].lat, rotation);
-        const p2 = project(cities[conn.to].lon, cities[conn.to].lat, rotation);
-        if (!p1.visible || !p2.visible) return null;
-        const rawProg = (arcProgress - conn.startAt) / 0.25;
-        const progress = Math.max(0, Math.min(1, rawProg));
-        if (progress <= 0) return null;
-        const d = buildArc(p1, p2);
-        return (
-          <path
-            key={i}
-            d={d}
-            stroke="#24DDB8"
-            strokeWidth="1.4"
-            fill="none"
-            pathLength="1"
-            strokeDasharray="1"
-            strokeDashoffset={1 - progress}
-            strokeLinecap="round"
-            filter="url(#arcGlow)"
-            opacity={0.5 + progress * 0.5}
-          />
-        );
-      })}
-
-      {/* City dots */}
-      {cities.map((city) => {
-        const pos = project(city.lon, city.lat, rotation);
-        if (!pos.visible) return null;
-        const depthFade = Math.max(0.3, pos.depth);
-        return (
-          <g key={city.name} opacity={depthFade}>
-            {/* Pulse ring (SMIL) */}
-            <circle cx={pos.x} cy={pos.y} r={5} fill="none" stroke="#24DDB8" strokeWidth="1" opacity="0.6">
-              <animate attributeName="r" values="5;13" dur="2.4s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.6;0" dur="2.4s" repeatCount="indefinite" />
-            </circle>
-            {/* Dot */}
-            <circle cx={pos.x} cy={pos.y} r={3.5} fill="#24DDB8" />
-            {/* Label */}
-            <text
-              x={pos.x + 9}
-              y={pos.y - 6}
-              fill="rgba(240,244,255,0.75)"
-              fontSize="9"
-              fontFamily="'JetBrains Mono', monospace"
-              fontWeight="500"
-            >
-              {city.name}
-            </text>
+          <g key={i}>
+            {active && (
+              <circle cx={node.x} cy={node.y} r={8} fill="none" stroke="rgba(36,221,184,0.3)" strokeWidth={1}>
+                <animate attributeName="r" values="8;16" dur={`${1.5 + (i % 5) * 0.3}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.4;0" dur={`${1.5 + (i % 5) * 0.3}s`} repeatCount="indefinite" />
+              </circle>
+            )}
+            <circle
+              cx={node.x} cy={node.y}
+              r={active ? 4 : 2.5}
+              fill={active ? "#24DDB8" : "rgba(92,147,255,0.25)"}
+              style={{ transition: "fill 0.5s" }}
+            />
           </g>
         );
       })}
-
-      {/* Orbit path (hidden) */}
-      <path
-        id="globeOrbitPath"
-        d={`M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.01} ${cy - r}`}
-        fill="none"
-        stroke="none"
-      />
-
-      {/* Orbiting dot */}
-      <circle r="4" fill="#5C93FF" opacity="0.85">
-        <animateMotion dur="14s" repeatCount="indefinite">
-          <mpath href="#globeOrbitPath" />
-        </animateMotion>
-      </circle>
-
-      {/* Crosshair */}
-      <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy} stroke="rgba(36,221,184,0.4)" strokeWidth="0.8" />
-      <line x1={cx} y1={cy - 14} x2={cx} y2={cy + 14} stroke="rgba(36,221,184,0.4)" strokeWidth="0.8" />
-      <circle cx={cx} cy={cy} r={2.5} fill="#24DDB8" opacity={0.5 + intensity * 0.5} />
-
-      {/* Cardinal labels */}
-      <text x={cx} y={cy - r - 10} textAnchor="middle" fill="rgba(92,147,255,0.3)" fontSize="9" fontFamily="'JetBrains Mono', monospace">90°N</text>
-      <text x={cx} y={cy + r + 18} textAnchor="middle" fill="rgba(92,147,255,0.3)" fontSize="9" fontFamily="'JetBrains Mono', monospace">90°S</text>
-      <text x={cx - r - 10} y={cy + 4} textAnchor="end" fill="rgba(92,147,255,0.3)" fontSize="9" fontFamily="'JetBrains Mono', monospace">180°</text>
-      <text x={cx + r + 10} y={cy + 4} textAnchor="start" fill="rgba(92,147,255,0.3)" fontSize="9" fontFamily="'JetBrains Mono', monospace">0°</text>
     </svg>
   );
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
-  const [globeState, setGlobeState] = useState<GlobeState>({
-    rotation: 0,
-    arcProgress: 0,
-    intensity: 0,
-  });
-  const [sectionLabel, setSectionLabel] = useState("OVERVIEW");
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const targetProgress = useRef(0);
-  const currentProgress = useRef(0);
-  const rafId = useRef<number | null>(null);
-  const lastGlobeState = useRef<GlobeState>({ rotation: 0, arcProgress: 0, intensity: 0 });
-
+  // Mount flag
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Locomotive Scroll v5 (dynamic import)
   useEffect(() => {
-    const onScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollHeight > 0) {
-        targetProgress.current = window.scrollY / scrollHeight;
-      }
-    };
-
-    const tick = () => {
-      currentProgress.current +=
-        (targetProgress.current - currentProgress.current) * 0.06;
-
-      const p = currentProgress.current;
-      const rotation = p * 360;
-      const arcProgress = Math.max(0, (p - 0.15) / 0.7);
-      const intensity = p;
-
-      const next: GlobeState = { rotation, arcProgress, intensity };
-      const prev = lastGlobeState.current;
-
-      // Only update state if values changed meaningfully
-      if (
-        Math.abs(next.rotation - prev.rotation) > 0.05 ||
-        Math.abs(next.arcProgress - prev.arcProgress) > 0.005 ||
-        Math.abs(next.intensity - prev.intensity) > 0.005
-      ) {
-        lastGlobeState.current = next;
-        setGlobeState(next);
-
-        // Section label
-        if (p < 0.25) setSectionLabel("OVERVIEW");
-        else if (p < 0.5) setSectionLabel("MODULES");
-        else if (p < 0.75) setSectionLabel("PLATFORM");
-        else setSectionLabel("READY");
-      }
-
-      rafId.current = requestAnimationFrame(tick);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    rafId.current = requestAnimationFrame(tick);
-
+    let ls: InstanceType<typeof import("locomotive-scroll").default> | null = null;
+    import("locomotive-scroll").then(({ default: LocomotiveScroll }) => {
+      ls = new LocomotiveScroll({
+        lenisOptions: { lerp: 0.07, duration: 1.2, smoothWheel: true },
+      });
+    });
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+      ls?.destroy();
     };
   }, []);
 
-  const rotationDisplay = (globeState.rotation % 360).toFixed(1);
-  const arcPct = Math.round(globeState.arcProgress * 100);
-  const progressPct = Math.min(100, globeState.intensity * 100);
+  // Scroll progress
+  useEffect(() => {
+    const onScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll > 0) setScrollProgress(window.scrollY / maxScroll);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // IntersectionObserver for reveal animations
+  useEffect(() => {
+    if (!mounted) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll("[data-reveal], [data-reveal-left]").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [mounted]);
+
+  // NetworkViz activation: scrollProgress 0→0.3 maps to 0→1
+  const networkActivation = Math.min(1, scrollProgress / 0.3);
 
   return (
     <div
@@ -459,694 +272,768 @@ export default function LandingPage() {
     >
       {/* ── Global styles ── */}
       <style>{`
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: auto !important; }
 
         @keyframes fade-up {
-          from { opacity: 0; transform: translateY(24px); }
+          from { opacity: 0; transform: translateY(32px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-left {
+          from { opacity: 0; transform: translateX(-30px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        @keyframes pulse-node {
+          0%, 100% { r: 6; opacity: 0.7; }
+          50%       { r: 10; opacity: 0.3; }
+        }
+        @keyframes float-orb {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50%       { transform: translateY(-30px) scale(1.05); }
         }
         @keyframes chip-float {
           0%, 100% { transform: translateY(0); }
           50%       { transform: translateY(-5px); }
         }
-        @keyframes scroll-bounce {
-          0%, 100% { transform: translateY(0) translateX(-50%); opacity: 0.45; }
-          50%       { transform: translateY(6px) translateX(-50%); opacity: 0.9; }
-        }
-        @keyframes orb-drift {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50%       { transform: translateY(-20px) scale(1.03); }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
 
-        .anim-fade-up   { animation: fade-up 0.7s ease both; }
-        .anim-fade-up-d1 { animation: fade-up 0.7s 0.10s ease both; }
-        .anim-fade-up-d2 { animation: fade-up 0.7s 0.22s ease both; }
-        .anim-fade-up-d3 { animation: fade-up 0.7s 0.34s ease both; }
-        .anim-fade-up-d4 { animation: fade-up 0.7s 0.46s ease both; }
-        .anim-fade-up-d5 { animation: fade-up 0.7s 0.58s ease both; }
+        [data-reveal] {
+          opacity: 0;
+          transform: translateY(28px);
+          transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        [data-reveal].in-view {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        [data-reveal-left] {
+          opacity: 0;
+          transform: translateX(-28px);
+          transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        [data-reveal-left].in-view {
+          opacity: 1;
+          transform: translateX(0);
+        }
 
+        [data-reveal-delay="1"] { transition-delay: 0.1s; }
+        [data-reveal-delay="2"] { transition-delay: 0.2s; }
+        [data-reveal-delay="3"] { transition-delay: 0.3s; }
+        [data-reveal-delay="4"] { transition-delay: 0.4s; }
+        [data-reveal-delay="5"] { transition-delay: 0.5s; }
+        [data-reveal-delay="6"] { transition-delay: 0.6s; }
+
+        .orb-a { animation: float-orb  9s ease-in-out infinite; }
+        .orb-b { animation: float-orb 12s ease-in-out infinite 2s; }
         .chip-1 { animation: chip-float 3.2s ease-in-out infinite; }
         .chip-2 { animation: chip-float 3.8s ease-in-out infinite 0.6s; }
         .chip-3 { animation: chip-float 2.9s ease-in-out infinite 1.2s; }
-        .chip-4 { animation: chip-float 4.1s ease-in-out infinite 1.8s; }
-
-        .orb-a { animation: orb-drift  8s ease-in-out infinite; }
-        .orb-b { animation: orb-drift 11s ease-in-out infinite 2s; }
-
-        .module-card { transition: transform 0.22s ease, box-shadow 0.22s ease; }
-        .module-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(92,147,255,0.12); }
-
-        .feature-card { transition: border-color 0.2s, box-shadow 0.2s; }
-        .feature-card:hover { border-color: rgba(92,147,255,0.28); box-shadow: 0 8px 32px rgba(92,147,255,0.08); }
-
-        .nav-cta { transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s; }
-        .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(36,221,184,0.28); }
-
-        .hero-cta-primary { transition: transform 0.2s, box-shadow 0.2s; }
-        .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(36,221,184,0.38); }
-
-        .hero-cta-secondary { transition: background 0.2s, border-color 0.2s; }
-        .hero-cta-secondary:hover { background: rgba(92,147,255,0.07) !important; border-color: rgba(36,221,184,0.28) !important; }
-
-        .scroll-indicator { animation: scroll-bounce 1.8s ease-in-out infinite; }
 
         .text-gradient-hero {
-          background: linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .text-gradient-section {
-          background: linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%);
+          background: linear-gradient(135deg, #5C93FF, #24DDB8);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
-        .badge-green {
-          background: rgba(36,221,184,0.08);
-          border: 1px solid rgba(36,221,184,0.22);
+        .module-card {
+          transition: transform 0.22s ease, box-shadow 0.22s ease;
         }
-        .badge-blue {
-          background: rgba(92,147,255,0.08);
-          border: 1px solid rgba(92,147,255,0.18);
+        .module-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 48px rgba(92,147,255,0.12);
         }
 
-        .cta-grid-bg {
+        .hero-grid {
           background-image:
-            linear-gradient(rgba(92,147,255,0.055) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.055) 1px, transparent 1px);
-          background-size: 40px 40px;
+            linear-gradient(rgba(92,147,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(92,147,255,0.05) 1px, transparent 1px);
+          background-size: 60px 60px;
         }
 
-        .stat-item:not(:last-child) {
-          border-right: 1px solid rgba(92,147,255,0.1);
+        .nav-blur {
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
         }
-
-        /* Right panel monospace */
-        .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
-
-        /* Scrollbar dark */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #09111E; }
-        ::-webkit-scrollbar-thumb { background: rgba(92,147,255,0.2); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(92,147,255,0.35); }
       `}</style>
 
-      {/* ══════════════════════════════════════════
-          NAVIGATION
-      ══════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════
+          NAV
+      ══════════════════════════════════════ */}
       <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-[62px]"
-        style={{
-          background: "rgba(9,17,30,0.9)",
-          backdropFilter: "blur(18px)",
-          borderBottom: "1px solid rgba(92,147,255,0.1)",
-        }}
+        className="nav-blur fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-16"
+        style={{ background: "rgba(9,17,30,0.8)", borderBottom: "1px solid rgba(92,147,255,0.08)" }}
       >
-        <Link href="/" className="flex items-center gap-2.5 no-underline">
-          <div
+        {/* Logo — text mark */}
+        <a href="/" className="flex items-center gap-2 select-none">
+          <span
             style={{
-              background: "#141F2E",
-              border: "1.5px solid rgba(36,221,184,0.3)",
-              boxShadow: "0 0 16px rgba(36,221,184,0.15)",
+              fontWeight: 800,
+              fontSize: "1.25rem",
+              letterSpacing: "-0.02em",
+              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
-            className="w-8 h-8 rounded-[8px] flex items-center justify-center flex-shrink-0"
           >
-            <span
-              style={{
-                color: "#24DDB8",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: "13px",
-                letterSpacing: "-0.5px",
-              }}
-            >
-              tt
-            </span>
-          </div>
-          <span className="font-bold text-[17px] text-[#F0F4FF] tracking-tight">stratt</span>
-        </Link>
+            stratt
+          </span>
+          <span
+            style={{
+              fontSize: "0.6rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              color: "#24DDB8",
+              border: "1px solid rgba(36,221,184,0.4)",
+              borderRadius: "4px",
+              padding: "1px 5px",
+              lineHeight: 1.6,
+            }}
+          >
+            ERP
+          </span>
+        </a>
 
-        <div className="hidden md:flex items-center gap-7">
-          <a href="#modules" className="text-sm text-[rgba(240,244,255,0.5)] hover:text-[#F0F4FF] transition-colors no-underline">
-            Modules
-          </a>
-          <a href="#features" className="text-sm text-[rgba(240,244,255,0.5)] hover:text-[#F0F4FF] transition-colors no-underline">
-            Fonctionnalités
-          </a>
-          <Link href="/login" className="text-sm text-[rgba(240,244,255,0.5)] hover:text-[#F0F4FF] transition-colors no-underline font-medium">
-            Se connecter
-          </Link>
-          <Link
-            href="/signup"
-            className="nav-cta px-4 py-2 rounded-lg text-sm font-semibold text-[#09111E] no-underline"
-            style={{ background: "#24DDB8" }}
-          >
-            Essayer gratuitement
-          </Link>
+        {/* Links */}
+        <div className="hidden md:flex items-center gap-8">
+          {["Modules", "Fonctionnalités", "Se connecter"].map((l) => (
+            <a
+              key={l}
+              href="#"
+              style={{ color: "#BABABA", fontSize: "0.875rem", fontWeight: 500 }}
+              className="hover:text-[#F0F4FF] transition-colors"
+            >
+              {l}
+            </a>
+          ))}
         </div>
 
-        <Link
-          href="/signup"
-          className="md:hidden nav-cta px-3.5 py-1.5 rounded-lg text-sm font-semibold text-[#09111E] no-underline"
-          style={{ background: "#24DDB8" }}
+        {/* CTA */}
+        <a
+          href="#"
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:brightness-110"
+          style={{ background: "#24DDB8", color: "#09111E" }}
         >
-          Essayer
-        </Link>
+          Essayer gratuitement
+        </a>
       </nav>
 
-      {/* ══════════════════════════════════════════
-          MAIN TWO-COLUMN LAYOUT
-      ══════════════════════════════════════════ */}
-      <div className="pt-[62px] flex flex-col lg:flex-row">
+      {/* ══════════════════════════════════════
+          HERO
+      ══════════════════════════════════════ */}
+      <section
+        className="relative hero-grid flex flex-col items-center justify-center text-center overflow-hidden pt-32 pb-0"
+        style={{ minHeight: "100vh", background: "#09111E" }}
+      >
+        {/* Orbs */}
+        <div
+          className="orb-a absolute pointer-events-none"
+          style={{
+            top: "-10%",
+            left: "-8%",
+            width: "600px",
+            height: "600px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(92,147,255,0.18) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        <div
+          className="orb-b absolute pointer-events-none"
+          style={{
+            bottom: "5%",
+            right: "-5%",
+            width: "500px",
+            height: "500px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(36,221,184,0.14) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
 
-        {/* ── LEFT COLUMN (55%) ─────────────────── */}
-        <div className="w-full lg:w-[55%]">
-
-          {/* ── HERO ── */}
-          <section
-            className="relative min-h-screen lg:min-h-0 flex flex-col justify-center px-6 md:px-10 lg:px-12 py-20 overflow-hidden"
-            style={{ background: "#09111E" }}
-          >
-            {/* Grid background */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(92,147,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(92,147,255,0.03) 1px, transparent 1px)",
-                backgroundSize: "52px 52px",
-              }}
-            />
-            {/* Glow orbs */}
-            <div className="orb-a absolute top-[8%] left-[-4%] w-[480px] h-[480px] rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, rgba(92,147,255,0.1) 0%, transparent 65%)" }} />
-            <div className="orb-b absolute bottom-[4%] right-[-8%] w-[380px] h-[380px] rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, rgba(36,221,184,0.07) 0%, transparent 65%)" }} />
-
-            {/* Globe — mobile only (shown in hero on mobile) */}
-            {mounted && (
-              <div className="lg:hidden relative z-10 flex items-center justify-center mb-10">
-                <div className="w-full max-w-[340px]">
-                  <WireframeGlobe rotation={globeState.rotation} arcProgress={globeState.arcProgress} intensity={globeState.intensity} />
-                </div>
-              </div>
-            )}
-
-            {/* Hero content */}
-            <div className="relative z-10 flex flex-col gap-7 max-w-[600px]">
-              {/* Badge */}
-              <div className="anim-fade-up">
-                <div className="inline-flex items-center gap-2 badge-green rounded-full px-4 py-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#24DDB8] inline-block" />
-                  <span style={{ color: "#24DDB8" }} className="text-xs font-semibold tracking-widest uppercase">
-                    Achat Public · Marchés Publics
-                  </span>
-                </div>
-              </div>
-
-              {/* Headline */}
-              <h1 className="anim-fade-up-d1 text-[clamp(2.4rem,5vw,3.8rem)] font-extrabold leading-[1.07] tracking-[-0.03em]">
-                <span className="text-[#F0F4FF]">La plateforme</span>
-                <br />
-                <span className="text-gradient-hero">intelligente</span>
-                <br />
-                <span className="text-[#F0F4FF]">pour l&apos;achat public.</span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="anim-fade-up-d2 text-[clamp(0.95rem,1.6vw,1.05rem)] text-[rgba(240,244,255,0.48)] max-w-[480px] leading-relaxed">
-                CRM, achats, comptabilité, facturation et analytics — unifiés dans une seule plateforme multi-tenant alimentée par l&apos;IA Claude.
-              </p>
-
-              {/* CTAs */}
-              <div className="anim-fade-up-d3 flex flex-col sm:flex-row items-start gap-3">
-                <Link
-                  href="/signup"
-                  className="hero-cta-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[15px] font-bold text-[#09111E] no-underline"
-                  style={{ background: "#24DDB8", boxShadow: "0 6px 28px rgba(36,221,184,0.28)" }}
-                >
-                  Commencer gratuitement
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/login"
-                  className="hero-cta-secondary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[15px] font-semibold text-[#F0F4FF] no-underline"
-                  style={{ borderColor: "rgba(240,244,255,0.14)", border: "1px solid rgba(240,244,255,0.14)", background: "rgba(240,244,255,0.04)" }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                  Voir la démo
-                </Link>
-              </div>
-
-              {/* Demo credentials */}
-              <div className="anim-fade-up-d4">
-                <div
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-                  style={{ background: "rgba(92,147,255,0.06)", border: "1px solid rgba(92,147,255,0.14)" }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#5C93FF]" />
-                  <span className="text-xs text-[rgba(240,244,255,0.4)]">Accès démo —</span>
-                  <code className="text-xs mono text-[#5C93FF] font-semibold">admin@stratt.io</code>
-                  <span className="text-xs text-[rgba(240,244,255,0.22)]">/</span>
-                  <code className="text-xs mono text-[#5C93FF] font-semibold">admin1234</code>
-                </div>
-              </div>
-
-              {/* Floating chips */}
-              <div className="anim-fade-up-d5 flex flex-wrap gap-2">
-                {[
-                  { label: "Multi-tenant", cls: "chip-1" },
-                  { label: "IA Claude",    cls: "chip-2" },
-                  { label: "API REST",     cls: "chip-3" },
-                  { label: "Open Source",  cls: "chip-4" },
-                ].map(({ label, cls }) => (
-                  <span
-                    key={label}
-                    className={`${cls} inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold`}
-                    style={{
-                      background: "rgba(92,147,255,0.08)",
-                      border: "1px solid rgba(92,147,255,0.18)",
-                      color: "rgba(240,244,255,0.65)",
-                    }}
-                  >
-                    <span className="w-1 h-1 rounded-full bg-[#24DDB8]" />
-                    {label}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Scroll indicator */}
-            <div
-              className="scroll-indicator absolute bottom-8 left-1/2 flex flex-col items-center gap-1.5 lg:hidden"
-            >
-              <span className="text-[10px] tracking-[0.15em] uppercase text-[rgba(240,244,255,0.28)]">
-                scroll
-              </span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(240,244,255,0.28)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </section>
-
-          {/* ── STATS BAR ── */}
-          <section
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col items-center gap-6">
+          {/* Badge */}
+          <div
+            className="chip-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold"
             style={{
-              background: "#0E1929",
-              borderTop: "1px solid rgba(92,147,255,0.1)",
-              borderBottom: "1px solid rgba(92,147,255,0.1)",
+              background: "rgba(36,221,184,0.1)",
+              border: "1px solid rgba(36,221,184,0.35)",
+              color: "#24DDB8",
+              animation: "fade-in 0.6s ease both",
             }}
           >
-            <div className="grid grid-cols-2 md:grid-cols-4">
-              {stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className="stat-item flex flex-col items-center justify-center py-10 px-6 gap-1.5"
-                >
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#24DDB8", display: "inline-block" }} />
+            Achat Public · Marchés Publics
+          </div>
+
+          {/* H1 */}
+          <h1
+            style={{
+              fontSize: "clamp(2.4rem, 6vw, 4.2rem)",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              letterSpacing: "-0.03em",
+              animation: "fade-in 0.7s 0.1s ease both",
+              opacity: 0,
+            }}
+          >
+            La plateforme{" "}
+            <span className="text-gradient-hero">intelligente</span>
+            <br />
+            pour l'achat public.
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            style={{
+              fontSize: "clamp(1rem, 2vw, 1.2rem)",
+              color: "#BABABA",
+              maxWidth: "600px",
+              lineHeight: 1.6,
+              animation: "fade-in 0.7s 0.22s ease both",
+              opacity: 0,
+            }}
+          >
+            Stratt ERP centralise vos achats, contrats, fournisseurs et
+            dépenses dans une plateforme unifiée pensée pour les acheteurs
+            publics.
+          </p>
+
+          {/* CTAs */}
+          <div
+            className="flex flex-col sm:flex-row items-center gap-3"
+            style={{ animation: "fade-in 0.7s 0.34s ease both", opacity: 0 }}
+          >
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold transition-all hover:brightness-110 hover:-translate-y-0.5"
+              style={{ background: "#24DDB8", color: "#09111E" }}
+            >
+              Démarrer gratuitement
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
+              style={{ border: "1px solid rgba(92,147,255,0.35)", color: "#F0F4FF", background: "rgba(92,147,255,0.05)" }}
+            >
+              Voir la démo
+            </a>
+          </div>
+
+          {/* Demo credentials badge */}
+          <div
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-lg text-xs"
+            style={{
+              background: "rgba(9,17,30,0.7)",
+              border: "1px solid rgba(92,147,255,0.15)",
+              color: "#BABABA",
+              animation: "fade-in 0.7s 0.46s ease both",
+              opacity: 0,
+            }}
+          >
+            <span>Démo :</span>
+            <code style={{ color: "#5C93FF", fontFamily: "monospace" }}>demo@stratt.fr</code>
+            <span style={{ color: "rgba(186,186,186,0.4)" }}>/</span>
+            <code style={{ color: "#5C93FF", fontFamily: "monospace" }}>demo1234</code>
+          </div>
+        </div>
+
+        {/* NetworkViz — hero base visual */}
+        <div className="relative z-10 w-full mt-12" style={{ height: 400 }}>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 0%, rgba(9,17,30,0.6) 100%)",
+              pointerEvents: "none",
+              zIndex: 2,
+            }}
+          />
+          {mounted && (
+            <NetworkViz
+              activationLevel={networkActivation}
+              height={400}
+              className="w-full"
+            />
+          )}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          MARQUEE DIVIDER
+      ══════════════════════════════════════ */}
+      <div
+        style={{
+          background: "rgba(14,25,41,0.9)",
+          borderTop: "1px solid rgba(92,147,255,0.08)",
+          borderBottom: "1px solid rgba(92,147,255,0.08)",
+          overflow: "hidden",
+          padding: "14px 0",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            whiteSpace: "nowrap",
+            animation: "marquee 28s linear infinite",
+            width: "max-content",
+          }}
+        >
+          {[0, 1].map((rep) => (
+            <span key={rep} style={{ display: "inline-flex", alignItems: "center" }}>
+              {[
+                "stratt", "ERP", "CRM", "Achats", "Comptabilité",
+                "Analytics", "RH", "Facturation",
+              ].map((item, i) => (
+                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginRight: "2.5rem" }}>
+                  <span style={{ color: "#24DDB8", fontSize: "0.6rem" }}>◆</span>
                   <span
-                    className="text-[2rem] font-extrabold tracking-tight"
                     style={{
-                      background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
+                      fontSize: "0.78rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color: item === "stratt" ? "#5C93FF" : "#BABABA",
                     }}
                   >
-                    {stat.value}
+                    {item}
                   </span>
-                  <span className="text-[10px] uppercase tracking-[0.12em] text-[rgba(240,244,255,0.35)] font-medium">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── MODULES ── */}
-          <section
-            id="modules"
-            className="px-6 md:px-10 lg:px-12 py-24"
-            style={{ background: "#09111E" }}
-          >
-            {/* Header */}
-            <div className="mb-12">
-              <div className="inline-flex items-center gap-2 badge-blue rounded-full px-4 py-1.5 mb-4">
-                <span style={{ color: "#5C93FF" }} className="text-xs font-semibold tracking-widest uppercase">
-                  7 Modules
                 </span>
-              </div>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.6rem)] font-extrabold tracking-tight leading-tight mb-4">
-                <span className="text-[#F0F4FF]">Tout ce dont votre</span>
-                <br />
-                <span className="text-gradient-section">organisation a besoin</span>
-              </h2>
-              <p className="text-[rgba(240,244,255,0.4)] max-w-[420px] text-[15px] leading-relaxed">
-                Activez uniquement les modules dont vous avez besoin. Chaque module est indépendant et interconnecté.
-              </p>
-            </div>
-
-            {/* Grid — 2 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {modules.map((mod) => (
-                <div
-                  key={mod.id}
-                  className="module-card rounded-2xl p-5 border cursor-default"
-                  style={{
-                    background: "rgba(14,25,41,0.8)",
-                    borderColor: "rgba(92,147,255,0.1)",
-                  }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
-                      style={{ background: `${mod.color}18`, color: mod.color }}
-                    >
-                      {mod.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-[15px] text-[#F0F4FF] mb-1">{mod.name}</h3>
-                      <p className="text-sm text-[rgba(240,244,255,0.38)] leading-snug">{mod.description}</p>
-                    </div>
-                  </div>
-                  <div
-                    className="mt-4 pt-4 flex items-center gap-1.5"
-                    style={{ borderTop: "1px solid rgba(92,147,255,0.08)" }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: mod.color }} />
-                    <span className="text-[10px] text-[rgba(240,244,255,0.3)] uppercase tracking-[0.08em] font-medium">
-                      Inclus dans tous les plans
-                    </span>
-                  </div>
-                </div>
               ))}
+            </span>
+          ))}
+        </div>
+      </div>
 
-              {/* Placeholder card */}
-              <div
-                className="module-card rounded-2xl p-5 border border-dashed flex flex-col items-center justify-center text-center gap-3 cursor-default"
+      {/* ══════════════════════════════════════
+          STATS
+      ══════════════════════════════════════ */}
+      <section className="py-24 px-6" style={{ background: "#09111E" }}>
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <div
+              key={stat.label}
+              data-reveal
+              data-reveal-delay={String(i + 1)}
+              className="flex flex-col items-center gap-2 text-center"
+            >
+              <span
                 style={{
-                  borderColor: "rgba(92,147,255,0.18)",
-                  background: "linear-gradient(135deg, rgba(92,147,255,0.04), rgba(36,221,184,0.025))",
+                  fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
+                  fontWeight: 800,
+                  letterSpacing: "-0.03em",
+                  background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {stat.value}
+              </span>
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "#BABABA",
+                }}
+              >
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          MODULES
+      ══════════════════════════════════════ */}
+      <section className="py-24 px-6" style={{ background: "#09111E" }}>
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col items-center text-center gap-4 mb-16">
+            <div
+              data-reveal
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
+              style={{
+                background: "rgba(92,147,255,0.1)",
+                border: "1px solid rgba(92,147,255,0.3)",
+                color: "#5C93FF",
+              }}
+            >
+              7 modules intégrés
+            </div>
+            <h2
+              data-reveal
+              style={{
+                fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.025em",
+                lineHeight: 1.15,
+              }}
+            >
+              Tout ce dont votre{" "}
+              <span className="text-gradient-hero">organisation a besoin</span>
+            </h2>
+            <p data-reveal style={{ color: "#BABABA", maxWidth: "520px", lineHeight: 1.6 }}>
+              Des modules pensés pour l'achat public, intégrés nativement pour
+              une expérience fluide et cohérente.
+            </p>
+          </div>
+
+          {/* Cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {modules.map((mod, i) => (
+              <div
+                key={mod.id}
+                data-reveal
+                data-reveal-delay={String((i % 6) + 1)}
+                className="module-card rounded-2xl p-6 flex flex-col gap-4"
+                style={{
+                  background: "#0E1929",
+                  border: "1px solid rgba(92,147,255,0.1)",
                 }}
               >
                 <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.2), rgba(36,221,184,0.15))" }}
+                  className="flex items-center justify-center w-10 h-10 rounded-xl"
+                  style={{ background: `${mod.color}1A`, color: mod.color }}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#24DDB8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
+                  {mod.icon}
                 </div>
                 <div>
-                  <p className="font-bold text-[14px] text-[rgba(240,244,255,0.7)]">D&apos;autres modules</p>
-                  <p className="text-[12px] text-[rgba(240,244,255,0.3)] mt-0.5">à venir prochainement</p>
+                  <div
+                    style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "4px" }}
+                  >
+                    {mod.name}
+                  </div>
+                  <div style={{ fontSize: "0.875rem", color: "#BABABA", lineHeight: 1.5 }}>
+                    {mod.description}
+                  </div>
+                </div>
+                <div className="mt-auto">
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-1 text-xs font-semibold transition-colors hover:opacity-80"
+                    style={{ color: mod.color }}
+                  >
+                    En savoir plus
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                  </a>
                 </div>
               </div>
-            </div>
-          </section>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* ── FEATURES ── */}
-          <section
-            id="features"
-            className="px-6 md:px-10 lg:px-12 py-24"
-            style={{ background: "#0E1929" }}
-          >
-            <div className="mb-12">
-              <div className="inline-flex items-center gap-2 badge-blue rounded-full px-4 py-1.5 mb-4">
-                <span style={{ color: "#5C93FF" }} className="text-xs font-semibold tracking-widest uppercase">
-                  Conçu pour l&apos;entreprise
-                </span>
+      {/* ══════════════════════════════════════
+          FEATURES
+      ══════════════════════════════════════ */}
+      <section className="py-24 px-6" style={{ background: "#0A1422" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Left — tagline */}
+            <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+              <div
+                data-reveal-left
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold w-fit"
+                style={{
+                  background: "rgba(36,221,184,0.08)",
+                  border: "1px solid rgba(36,221,184,0.3)",
+                  color: "#24DDB8",
+                }}
+              >
+                Plateforme
               </div>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.6rem)] font-extrabold tracking-tight leading-tight mb-4">
-                <span className="text-[#F0F4FF]">Une architecture</span>
+              <h2
+                data-reveal-left
+                data-reveal-delay="1"
+                style={{
+                  fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
+                  fontWeight: 800,
+                  lineHeight: 1.15,
+                  letterSpacing: "-0.025em",
+                }}
+              >
+                Conçu pour{" "}
+                <span className="text-gradient-hero">la performance</span>
                 <br />
-                <span className="text-gradient-section">pensée pour la croissance</span>
+                à grande échelle.
               </h2>
+              <p
+                data-reveal-left
+                data-reveal-delay="2"
+                style={{ color: "#BABABA", lineHeight: 1.7, maxWidth: "440px" }}
+              >
+                Architecture cloud-native, sécurité enterprise et intégration IA
+                pour que vos équipes se concentrent sur l'essentiel.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Right — feature cards */}
+            <div className="flex flex-col gap-5">
               {features.map((feat, i) => (
                 <div
-                  key={i}
-                  className="feature-card rounded-2xl p-6 border"
+                  key={feat.title}
+                  data-reveal
+                  data-reveal-delay={String(i + 1)}
+                  className="rounded-2xl p-6 flex flex-col gap-3"
                   style={{
-                    background: "rgba(9,17,30,0.6)",
-                    borderColor: "rgba(92,147,255,0.1)",
+                    background: "rgba(14,25,41,0.8)",
+                    border: "1px solid rgba(92,147,255,0.1)",
+                    transition: "border-color 0.2s, box-shadow 0.2s",
                   }}
                 >
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-5"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(92,147,255,0.14), rgba(36,221,184,0.08))",
-                      color: "#5C93FF",
-                    }}
+                    className="flex items-center justify-center w-9 h-9 rounded-lg"
+                    style={{ background: "rgba(36,221,184,0.1)", color: "#24DDB8" }}
                   >
                     {feat.icon}
                   </div>
-                  <h3 className="font-bold text-[15px] text-[#F0F4FF] mb-2">{feat.title}</h3>
-                  <p className="text-sm text-[rgba(240,244,255,0.38)] leading-relaxed">{feat.description}</p>
+                  <div style={{ fontWeight: 700, fontSize: "1rem" }}>{feat.title}</div>
+                  <div style={{ color: "#BABABA", fontSize: "0.875rem", lineHeight: 1.6 }}>
+                    {feat.description}
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
 
-            {/* Tech stack pills */}
-            <div className="mt-10 flex flex-wrap gap-2.5">
-              {["Next.js 15", "Go 1.24", "PostgreSQL 16", "Redis", "Claude AI", "Docker"].map((tech) => (
-                <span
-                  key={tech}
-                  className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold text-[#5C93FF]"
-                  style={{
-                    background: "rgba(92,147,255,0.07)",
-                    border: "1px solid rgba(92,147,255,0.18)",
-                  }}
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </section>
-
-          {/* ── CTA ── */}
-          <section
-            className="px-6 md:px-10 lg:px-12 py-24"
-            style={{ background: "#09111E" }}
-          >
+          {/* NetworkViz mini */}
+          <div className="mt-20" data-reveal>
             <div
-              className="rounded-3xl overflow-hidden relative px-8 py-14 cta-grid-bg"
-              style={{ background: "#0E1929", border: "1px solid rgba(92,147,255,0.12)" }}
-            >
-              {/* Accent stripe */}
-              <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #24DDB8, transparent)" }} />
-
-              {/* Glows */}
-              <div className="absolute top-[-25%] left-[-5%] w-[300px] h-[300px] rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(36,221,184,0.1) 0%, transparent 65%)" }} />
-              <div className="absolute bottom-[-25%] right-[-5%] w-[280px] h-[280px] rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(92,147,255,0.08) 0%, transparent 65%)" }} />
-
-              <div className="relative z-10 text-center">
-                <div className="inline-flex items-center gap-2 badge-green rounded-full px-4 py-1.5 mb-6">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#24DDB8]" />
-                  <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: "#24DDB8" }}>
-                    Démarrez maintenant
-                  </span>
-                </div>
-
-                <h2 className="text-[clamp(1.7rem,3.5vw,2.5rem)] font-extrabold text-[#F0F4FF] tracking-tight mb-4 leading-tight">
-                  Prêt à transformer
-                  <br />votre gestion ?
-                </h2>
-                <p className="text-[rgba(240,244,255,0.45)] text-[15px] mb-10 max-w-sm mx-auto">
-                  Démarrez en 5 minutes, sans carte bancaire.
-                </p>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link
-                    href="/signup"
-                    className="hero-cta-primary inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-[15px] font-bold text-[#09111E] no-underline"
-                    style={{ background: "#24DDB8", boxShadow: "0 6px 28px rgba(36,221,184,0.28)" }}
-                  >
-                    Commencer gratuitement
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="hero-cta-secondary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[15px] font-semibold text-[#F0F4FF] no-underline"
-                    style={{ border: "1px solid rgba(240,244,255,0.14)", background: "rgba(240,244,255,0.05)" }}
-                  >
-                    Compte démo
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── FOOTER ── */}
-          <footer
-            className="px-6 md:px-10 lg:px-12 py-10"
-            style={{ background: "#09111E", borderTop: "1px solid rgba(92,147,255,0.08)" }}
-          >
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              {/* Logo */}
-              <div className="flex items-center gap-3">
-                <div
-                  style={{
-                    background: "#141F2E",
-                    border: "1.5px solid rgba(36,221,184,0.25)",
-                    boxShadow: "0 0 12px rgba(36,221,184,0.1)",
-                  }}
-                  className="w-7 h-7 rounded-[7px] flex items-center justify-center flex-shrink-0"
-                >
-                  <span style={{ color: "#24DDB8", fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: "11px", letterSpacing: "-0.5px" }}>
-                    tt
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-bold text-[15px] text-[#F0F4FF] tracking-tight">stratt</span>
-                  <span className="text-[11px] text-[rgba(240,244,255,0.28)]">ERP SaaS</span>
-                </div>
-              </div>
-
-              {/* Links */}
-              <div className="flex items-center gap-6">
-                {["Confidentialité", "CGU", "Documentation"].map((l) => (
-                  <a key={l} href="#" className="text-[13px] text-[rgba(240,244,255,0.32)] hover:text-[#5C93FF] transition-colors no-underline">
-                    {l}
-                  </a>
-                ))}
-              </div>
-
-              <p className="text-[12px] text-[rgba(240,244,255,0.22)]">
-                © 2026 stratt. Tous droits réservés.
-              </p>
-            </div>
-          </footer>
-        </div>
-
-        {/* ── RIGHT COLUMN (45%) — STICKY GLOBE ── */}
-        <div className="hidden lg:block w-[45%] relative flex-shrink-0">
-          <div
-            style={{
-              position: "sticky",
-              top: "62px",
-              height: "calc(100vh - 62px)",
-              background: "#09111E",
-              borderLeft: "1px solid rgba(92,147,255,0.08)",
-              overflow: "hidden",
-            }}
-          >
-            {/* Vertical progress bar — right edge */}
-            <div
+              className="relative overflow-hidden rounded-2xl"
               style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                width: "2px",
-                height: "100%",
-                background: "rgba(92,147,255,0.08)",
-                zIndex: 20,
+                border: "1px solid rgba(36,221,184,0.12)",
+                background: "rgba(9,17,30,0.6)",
               }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: `${progressPct}%`,
-                  background: "#24DDB8",
-                  transition: "height 0.1s ease",
-                  boxShadow: "0 0 8px rgba(36,221,184,0.4)",
-                }}
-              />
-            </div>
-
-            {/* Top monospace data block */}
-            <div
-              className="mono absolute top-5 left-5 z-20 text-[11px] leading-[1.7]"
-              style={{ color: "rgba(240,244,255,0.45)" }}
-            >
-              <span style={{ color: "#24DDB8" }}>[SYSTEM ONLINE]</span>
-              <br />
-              <span style={{ color: "rgba(240,244,255,0.3)" }}>SECTION:</span>{" "}
-              <span style={{ color: "#F0F4FF", fontWeight: 700 }}>{sectionLabel}</span>
-              <br />
-              <span style={{ color: "rgba(240,244,255,0.3)" }}>LON:</span>{" "}
-              <span style={{ color: "#5C93FF" }}>{rotationDisplay}°</span>
-              <br />
-              <span style={{ color: "rgba(240,244,255,0.3)" }}>ARC:</span>{" "}
-              <span style={{ color: "#24DDB8" }}>{arcPct}% MAPPED</span>
-            </div>
-
-            {/* Globe — centered */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* Background subtle grid */}
               <div
                 style={{
                   position: "absolute",
                   inset: 0,
-                  backgroundImage:
-                    "linear-gradient(rgba(92,147,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(92,147,255,0.025) 1px, transparent 1px)",
-                  backgroundSize: "44px 44px",
+                  background: "linear-gradient(to right, rgba(9,17,30,0.7) 0%, transparent 30%, transparent 70%, rgba(9,17,30,0.7) 100%)",
                   pointerEvents: "none",
+                  zIndex: 2,
                 }}
               />
-
-              {/* Corner brackets */}
-              {[
-                { top: 12, left: 12, borderRight: "none", borderBottom: "none" },
-                { top: 12, right: 16, borderLeft: "none", borderBottom: "none" },
-                { bottom: 48, left: 12, borderRight: "none", borderTop: "none" },
-                { bottom: 48, right: 16, borderLeft: "none", borderTop: "none" },
-              ].map((style, i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: "absolute",
-                    width: 20,
-                    height: 20,
-                    border: "1.5px solid rgba(92,147,255,0.22)",
-                    ...style,
-                  }}
-                />
-              ))}
-
               {mounted && (
-                <div style={{ width: "min(480px, 90%)" }}>
-                  <WireframeGlobe
-                    rotation={globeState.rotation}
-                    arcProgress={globeState.arcProgress}
-                    intensity={globeState.intensity}
-                  />
-                </div>
+                <NetworkViz activationLevel={0.7} height={220} className="w-full" />
               )}
-            </div>
-
-            {/* Bottom coordinate readout */}
-            <div
-              className="mono absolute bottom-5 left-5 right-16 z-20 text-[10px] leading-[1.8]"
-              style={{ color: "rgba(240,244,255,0.28)" }}
-            >
-              <span style={{ color: "rgba(240,244,255,0.45)" }}>LAT 48°52&apos;N&nbsp;&nbsp;LON 2°21&apos;E</span>
-              <br />
-              <span style={{ color: "#24DDB8", letterSpacing: "0.08em" }}>STRATT NETWORK</span>
-              <span style={{ color: "rgba(240,244,255,0.28)" }}> — </span>
-              <span style={{ color: "#24DDB8" }}>ONLINE</span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          TECH STACK
+      ══════════════════════════════════════ */}
+      <section className="py-20 px-6" style={{ background: "#09111E" }}>
+        <div className="max-w-4xl mx-auto flex flex-col items-center gap-8">
+          <p
+            data-reveal
+            style={{
+              fontSize: "0.72rem",
+              fontWeight: 600,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "#BABABA",
+            }}
+          >
+            Stack technique
+          </p>
+          <div
+            data-reveal
+            data-reveal-delay="1"
+            className="flex flex-wrap justify-center gap-3"
+          >
+            {[
+              { label: "Next.js 15", color: "#F0F4FF" },
+              { label: "Go 1.24", color: "#5C93FF" },
+              { label: "PostgreSQL 16", color: "#24DDB8" },
+              { label: "Redis", color: "#EC4899" },
+              { label: "Claude AI", color: "#F59E0B" },
+              { label: "Docker", color: "#5C93FF" },
+            ].map((tech) => (
+              <span
+                key={tech.label}
+                className="px-4 py-1.5 rounded-full text-sm font-semibold"
+                style={{
+                  border: `1px solid ${tech.color}33`,
+                  color: tech.color,
+                  background: `${tech.color}0D`,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {tech.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          CTA BANNER
+      ══════════════════════════════════════ */}
+      <section className="py-24 px-6" style={{ background: "#09111E" }}>
+        <div className="max-w-4xl mx-auto">
+          <div
+            data-reveal
+            className="relative rounded-3xl p-12 md:p-16 flex flex-col items-center text-center gap-8 overflow-hidden"
+            style={{
+              background: "#0E1929",
+              border: "1px solid rgba(36,221,184,0.18)",
+              backgroundImage:
+                "linear-gradient(rgba(92,147,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(92,147,255,0.04) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+            }}
+          >
+            {/* Green glow */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "-40%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "500px",
+                height: "300px",
+                borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(36,221,184,0.12) 0%, transparent 70%)",
+                filter: "blur(40px)",
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Logo mark */}
+            <div
+              className="relative z-10 flex items-center justify-center w-16 h-16 rounded-2xl"
+              style={{ background: "rgba(36,221,184,0.12)", border: "1px solid rgba(36,221,184,0.3)" }}
+            >
+              <span
+                style={{
+                  fontWeight: 900,
+                  fontSize: "1.4rem",
+                  letterSpacing: "-0.03em",
+                  background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                tt
+              </span>
+            </div>
+
+            <h2
+              className="relative z-10"
+              style={{
+                fontSize: "clamp(1.8rem, 4vw, 2.6rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.025em",
+                lineHeight: 1.2,
+              }}
+            >
+              Prêt à transformer votre{" "}
+              <span className="text-gradient-hero">gestion&nbsp;?</span>
+            </h2>
+
+            <p
+              className="relative z-10"
+              style={{ color: "#BABABA", maxWidth: "460px", lineHeight: 1.7 }}
+            >
+              Rejoignez plus de 500 organisations qui font confiance à Stratt
+              pour piloter leurs achats publics avec efficacité et transparence.
+            </p>
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-3">
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-bold transition-all hover:brightness-110 hover:-translate-y-0.5"
+                style={{ background: "#24DDB8", color: "#09111E" }}
+              >
+                Démarrer gratuitement
+              </a>
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
+                style={{ border: "1px solid rgba(240,244,255,0.15)", color: "#F0F4FF" }}
+              >
+                Contacter les ventes
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════ */}
+      <footer
+        className="py-10 px-6 flex flex-col md:flex-row items-center justify-between gap-6"
+        style={{
+          borderTop: "1px solid rgba(92,147,255,0.08)",
+          background: "#09111E",
+        }}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <span
+            style={{
+              fontWeight: 800,
+              fontSize: "1.1rem",
+              letterSpacing: "-0.02em",
+              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            stratt
+          </span>
+          <span
+            style={{
+              fontSize: "0.58rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              color: "#BABABA",
+              border: "1px solid rgba(186,186,186,0.25)",
+              borderRadius: "4px",
+              padding: "1px 4px",
+            }}
+          >
+            ERP
+          </span>
+        </div>
+
+        {/* Links */}
+        <nav className="flex items-center gap-6">
+          {["Confidentialité", "CGU", "Documentation"].map((l) => (
+            <a
+              key={l}
+              href="#"
+              style={{ color: "#BABABA", fontSize: "0.8rem" }}
+              className="hover:text-[#F0F4FF] transition-colors"
+            >
+              {l}
+            </a>
+          ))}
+        </nav>
+
+        {/* Copyright */}
+        <p style={{ color: "#BABABA", fontSize: "0.78rem" }}>
+          © {new Date().getFullYear()} Stratt. Tous droits réservés.
+        </p>
+      </footer>
     </div>
   );
 }
