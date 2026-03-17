@@ -50,7 +50,7 @@ export default function SupportPage() {
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full"
-                style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5C93FF, #24DDB8)" }}
+                style={{ width: `${pct}%`, background: "#5C93FF" }}
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function SupportPage() {
                   className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                     m.done ? "" : "border-2 border-border"
                   }`}
-                  style={m.done ? { background: "linear-gradient(135deg,#5C93FF,#24DDB8)" } : {}}
+                  style={m.done ? { background: "#5C93FF" } : {}}
                 >
                   {m.done ? (
                     <Award className="w-3.5 h-3.5 text-white" />
@@ -116,7 +116,7 @@ export default function SupportPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-sm font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               Contacter le support
             </button>
