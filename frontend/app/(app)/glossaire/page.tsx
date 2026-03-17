@@ -34,14 +34,14 @@ export default function GlossairePage() {
   );
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg" style={{ background: "rgba(92,147,255,0.12)", border: "1px solid rgba(92,147,255,0.2)" }}>
-          <BookOpen size={24} style={{ color: "#5C93FF" }} />
+          <BookOpen size={20} style={{ color: "#5C93FF" }} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Glossaire</h1>
+          <h1 className="text-[20px] font-bold text-foreground">Glossaire</h1>
           <p className="text-sm text-muted-foreground">
             {GLOSSAIRE.length} termes de la commande publique — Code de la Commande Publique (CCP)
           </p>
@@ -56,17 +56,17 @@ export default function GlossairePage() {
           value={query}
           onChange={(e) => { setQuery(e.target.value); setLetter(null); }}
           placeholder="Rechercher un terme, un sigle ou une définition..."
-          className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl text-sm bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full pl-10 pr-4 py-2 border border-border rounded-xl text-sm bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
       {/* Categories */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-1.5 flex-wrap">
         {["Toutes", ...CATEGORIES_GLOSSAIRE].map((cat) => (
           <button
             key={cat}
             onClick={() => setCategory(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
               category === cat
                 ? "text-white"
                 : "text-muted-foreground hover:text-foreground"
@@ -83,7 +83,7 @@ export default function GlossairePage() {
       </div>
 
       {/* Alphabet nav */}
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-0.5">
         <button
           onClick={() => setLetter(null)}
           className={`w-7 h-7 rounded text-xs font-medium transition-colors ${
@@ -123,12 +123,12 @@ export default function GlossairePage() {
 
       {/* Terms list */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Search size={32} className="mx-auto mb-3 opacity-40" />
+        <div className="text-center py-10 text-muted-foreground">
+          <Search size={28} className="mx-auto mb-2 opacity-40" />
           <p className="text-sm">Aucun terme trouvé</p>
         </div>
       ) : (
-        <div className="space-y-1.5">
+        <div className="space-y-1 max-h-[calc(100vh-280px)] overflow-y-auto">
           {filtered.map((term) => {
             const key = term.sigle ?? term.terme;
             const isOpen = expanded === key;
@@ -139,7 +139,7 @@ export default function GlossairePage() {
               >
                 <button
                   onClick={() => setExpanded(isOpen ? null : key)}
-                  className="w-full flex items-center gap-4 px-5 py-3.5 text-left hover:bg-muted/30 transition-colors"
+                  className="w-full flex items-center gap-4 px-4 py-2.5 text-left hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     {term.sigle && (
@@ -172,7 +172,7 @@ export default function GlossairePage() {
                 </button>
 
                 {isOpen && (
-                  <div className="border-t border-border px-5 py-4 space-y-3 bg-muted/20">
+                  <div className="border-t border-border px-4 py-3 space-y-2 bg-muted/20">
                     <p className="text-sm text-foreground leading-relaxed">
                       {term.definition}
                     </p>
@@ -210,7 +210,7 @@ export default function GlossairePage() {
         </div>
       )}
 
-      <p className="text-center text-xs text-muted-foreground pb-4">
+      <p className="text-center text-xs text-muted-foreground pb-2">
         Sources : Code de la Commande Publique (CCP) — Legifrance · Mis à jour 2024
       </p>
     </div>
