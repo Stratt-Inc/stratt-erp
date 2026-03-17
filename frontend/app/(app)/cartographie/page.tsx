@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { Highlight } from "@/components/Highlight";
 import { useDemoAction } from "@/store/toast";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip,
@@ -138,14 +139,7 @@ export default function CartographiePage() {
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Cartographie{" "}
-            <span style={{
-              background: "linear-gradient(135deg, #06B6D4 0%, #24DDB8 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>
-              des achats
-            </span>
+            <Highlight variant="underline" color="teal">des achats</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes
@@ -158,7 +152,7 @@ export default function CartographiePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+            style={{ background: "#5C93FF" }}
           >
             <BarChart3 className="w-3.5 h-3.5" /> Générer cartographie
           </button>
@@ -451,7 +445,7 @@ export default function CartographiePage() {
                 <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Prévu</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-2 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(16,185,129,0.5), rgba(16,185,129,0.85))" }} />
+                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(16,185,129,0.85)" }} />
                 <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Exécuté</span>
               </div>
             </div>
@@ -464,8 +458,8 @@ export default function CartographiePage() {
               const delta      = ((d.execute - d.prevu) / d.prevu) * 100;
               const isOver     = delta > 0;
               const execColor  = isOver
-                ? "linear-gradient(90deg, rgba(239,68,68,0.45), rgba(239,68,68,0.8))"
-                : "linear-gradient(90deg, rgba(16,185,129,0.45), rgba(16,185,129,0.8))";
+                ? "rgba(239,68,68,0.8)"
+                : "rgba(16,185,129,0.8)";
               const deltaColor = isOver ? "#EF4444" : "#10B981";
               const deltaBg    = isOver ? "rgba(239,68,68,0.07)" : "rgba(16,185,129,0.07)";
               return (
