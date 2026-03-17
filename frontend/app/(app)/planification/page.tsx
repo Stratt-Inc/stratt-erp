@@ -215,7 +215,7 @@ export default function PlanificationPage() {
           <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border border-border text-foreground hover:bg-muted/50 transition-colors">
             <Filter className="w-3.5 h-3.5" /> Filtres avancés
           </button>
-          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "#5C93FF" }}>
             <Plus className="w-3.5 h-3.5" /> Nouveau marché
           </button>
         </div>
