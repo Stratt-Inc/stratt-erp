@@ -24,15 +24,15 @@ import (
 	"github.com/stratt/backend/modules/accounting"
 	"github.com/stratt/backend/modules/analytics"
 	"github.com/stratt/backend/modules/billing"
+	"github.com/stratt/backend/modules/boamp"
+	"github.com/stratt/backend/modules/chatbot"
 	crmmod "github.com/stratt/backend/modules/crm"
+	"github.com/stratt/backend/modules/decp"
 	"github.com/stratt/backend/modules/hr"
 	"github.com/stratt/backend/modules/inventory"
-	"github.com/stratt/backend/modules/decp"
-	"github.com/stratt/backend/modules/boamp"
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
-	"github.com/stratt/backend/modules/chatbot"
 	"github.com/stratt/backend/modules/sirene"
 )
 
@@ -72,7 +72,7 @@ func main() {
 	_ = auditSvc
 
 	// ── Handlers ──────────────────────────────────────────
-	authHandler := auth.NewHandler(authSvc)
+	authHandler := auth.NewHandler(authSvc, cfg)
 	orgHandler := organization.NewHandler(orgSvc)
 	rbacHandler := rbac.NewHandler(rbacSvc)
 	moduleHandler := module.NewHandler(db)

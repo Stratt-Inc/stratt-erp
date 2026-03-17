@@ -143,7 +143,7 @@ export function OnboardingTour() {
           className="fixed z-[9999] rounded-xl pointer-events-none"
           style={{
             ...highlightStyle,
-            boxShadow: "0 0 0 9999px rgba(0,0,0,0.55), 0 0 0 2px #5B6BF5",
+            boxShadow: "0 0 0 9999px rgba(0,0,0,0.55), 0 0 0 2px #5C93FF",
             transition: "all 0.2s ease",
           }}
         />
@@ -152,33 +152,36 @@ export function OnboardingTour() {
       {/* Tooltip */}
       {tooltipStyle && (
         <div
-          className="fixed z-[10000] bg-white rounded-2xl shadow-2xl p-5"
+          className="fixed z-[10000] rounded-2xl shadow-2xl p-5"
           style={{
             top: tooltipStyle.top,
             left: tooltipStyle.left,
             width: tooltipStyle.maxWidth,
             transition: "all 0.2s ease",
+            background: "hsl(216 48% 8%)",
+            border: "1px solid rgba(92,147,255,0.2)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(92,147,255,0.08)",
           }}
         >
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2">
               <div
                 className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
               >
                 <Zap size={14} className="text-white fill-white" />
               </div>
-              <p className="text-sm font-bold text-gray-900">{currentStep.title}</p>
+              <p className="text-sm font-bold text-foreground">{currentStep.title}</p>
             </div>
             <button
               onClick={finish}
-              className="text-gray-400 hover:text-gray-600 p-0.5 rounded"
+              className="text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors"
             >
               <X size={14} />
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 leading-relaxed mb-4">
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
             {currentStep.content}
           </p>
 
@@ -188,7 +191,7 @@ export function OnboardingTour() {
                 <div
                   key={i}
                   className="w-1.5 h-1.5 rounded-full transition-colors"
-                  style={{ background: i === step ? "#5B6BF5" : "#E5E7EB" }}
+                  style={{ background: i === step ? "#5C93FF" : "rgba(215,230,245,0.15)" }}
                 />
               ))}
             </div>
@@ -196,7 +199,7 @@ export function OnboardingTour() {
               {step > 0 && (
                 <button
                   onClick={prev}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <ChevronLeft size={13} />
                   Précédent
@@ -205,7 +208,7 @@ export function OnboardingTour() {
               <button
                 onClick={next}
                 className="flex items-center gap-1 px-3 py-1.5 text-xs text-white rounded-lg"
-                style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
               >
                 {step < TOUR_STEPS.length - 1 ? (
                   <>Suivant <ChevronRight size={13} /></>

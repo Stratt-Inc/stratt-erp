@@ -22,7 +22,7 @@ const demoUsers = [
 ];
 
 const roleConfig: Record<string, { bg: string; color: string; border: string }> = {
-  "Administrateur": { bg: "rgba(91,107,245,0.08)", color: "#5B6BF5", border: "rgba(91,107,245,0.2)" },
+  "Administrateur": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF", border: "rgba(92,147,255,0.2)" },
   "Direction": { bg: "rgba(16,185,129,0.08)", color: "#10B981", border: "rgba(16,185,129,0.2)" },
   "Service achats": { bg: "rgba(6,182,212,0.08)", color: "#06B6D4", border: "rgba(6,182,212,0.2)" },
   "Lecture seule": { bg: "rgba(107,114,128,0.08)", color: "#6B7280", border: "rgba(107,114,128,0.2)" },
@@ -38,7 +38,7 @@ const journalEntries = [
 ];
 
 const actionColors: Record<string, { bg: string; color: string }> = {
-  "Connexion": { bg: "rgba(91,107,245,0.1)", color: "#5B6BF5" },
+  "Connexion": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF" },
   "Modification": { bg: "rgba(245,158,11,0.1)", color: "#F59E0B" },
   "Export": { bg: "rgba(6,182,212,0.1)", color: "#06B6D4" },
   "Création": { bg: "rgba(16,185,129,0.1)", color: "#10B981" },
@@ -119,7 +119,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               <Plus className="w-3.5 h-3.5" /> Ajouter
             </button>
@@ -169,7 +169,7 @@ export default function AdministrationPage() {
             {/* Organisation */}
             <div className="bg-card rounded-xl border border-border p-5">
               <div className="flex items-center gap-2 mb-4">
-                <Settings className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+                <Settings className="w-4 h-4" style={{ color: "#5C93FF" }} />
                 <h2 className="text-sm font-semibold text-foreground">Organisation</h2>
               </div>
               <div className="space-y-2 text-xs">
@@ -190,7 +190,7 @@ export default function AdministrationPage() {
             {/* Exercices budgétaires */}
             <div className="bg-card rounded-xl border border-border p-5">
               <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+                <Calendar className="w-4 h-4" style={{ color: "#5C93FF" }} />
                 <h2 className="text-sm font-semibold text-foreground">Exercices budgétaires</h2>
               </div>
               <div className="space-y-2">
@@ -230,7 +230,7 @@ export default function AdministrationPage() {
                 { label: "Authentification", value: "SSO / 2FA", icon: Users },
               ].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="p-4 rounded-xl border border-border bg-card text-center hover:shadow-sm transition-shadow">
-                  <Icon className="w-4 h-4 mx-auto mb-2" style={{ color: "#5B6BF5" }} />
+                  <Icon className="w-4 h-4 mx-auto mb-2" style={{ color: "#5C93FF" }} />
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">{label}</p>
                   <p className="text-xs font-semibold text-foreground">{value}</p>
                 </div>
@@ -284,7 +284,7 @@ export default function AdministrationPage() {
           {/* Formation incluse */}
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <BookOpen className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Formation incluse</h2>
             </div>
             <p className="text-xs text-muted-foreground mb-3">2 heures de formation incluses dans votre abonnement.</p>
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-xs font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               Ouvrir un ticket
             </button>

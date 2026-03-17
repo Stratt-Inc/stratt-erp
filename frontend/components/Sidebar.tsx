@@ -13,7 +13,6 @@ import {
   BarChart2,
   Settings,
   LogOut,
-  Zap,
   Building2,
   Calendar,
   Map,
@@ -24,6 +23,7 @@ import {
   HelpCircle,
   GraduationCap,
   MessageSquare,
+  ChevronRight,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
@@ -32,7 +32,7 @@ const pilotageNav = [
   { label: "Planification", href: "/planification", icon: Calendar },
   { label: "Cartographie", href: "/cartographie", icon: Map },
   { label: "Nomenclature", href: "/nomenclature", icon: BookOpen },
-  { label: "Chatbot", href: "/chatbot", icon: MessageSquare },
+  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare },
   { label: "Documents", href: "/exports", icon: Download },
 ];
 
@@ -68,7 +68,14 @@ export function Sidebar() {
     router.push("/login");
   };
 
-  const renderNav = (items: typeof pilotageNav, activeIndicator = true) =>
+  const initials = user?.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() ?? "?";
+
+  const renderNav = (items: typeof pilotageNav) =>
     items.map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
@@ -76,85 +83,154 @@ export function Sidebar() {
           key={href}
           href={href}
           {...(tour ? { "data-tour": tour } : {})}
-          className={[
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors relative",
-            active ? "text-white" : "text-white/50 hover:text-white/80 hover:bg-white/5",
-          ].join(" ")}
-          style={active ? { background: "rgba(91,107,245,0.15)" } : undefined}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 relative group"
+          style={
+            active
+              ? {
+                  color: "#1E3A5F",
+                  background: "linear-gradient(135deg, rgba(92,147,255,0.12), rgba(92,147,255,0.05))",
+                  boxShadow: "inset 0 0 0 1px rgba(92,147,255,0.18)",
+                }
+              : { color: "rgba(30,50,80,0.52)" }
+          }
         >
-          {active && activeIndicator && (
+          {active && (
             <span
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
-              style={{ background: "#5B6BF5" }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] rounded-r-full"
+              style={{ background: "linear-gradient(180deg, #5C93FF, #24DDB8)" }}
             />
           )}
-          <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={active ? 2.5 : 2} />
-          {label}
+          <Icon
+            className="w-[15px] h-[15px] flex-shrink-0 transition-colors"
+            strokeWidth={active ? 2.25 : 1.75}
+            style={{ color: active ? "#5C93FF" : undefined }}
+          />
+          <span style={active ? {} : { transition: "color 0.15s" }}
+            className={active ? "" : "group-hover:!text-[rgba(30,50,80,0.85)]"}>
+            {label}
+          </span>
+          {active && (
+            <ChevronRight
+              className="w-3 h-3 ml-auto opacity-40"
+              style={{ color: "#5C93FF" }}
+            />
+          )}
         </Link>
       );
     });
 
   return (
-    <aside className="w-64 flex-shrink-0 flex flex-col h-full" style={{ background: "hsl(234 42% 7%)" }}>
+    <aside
+      className="w-[228px] flex-shrink-0 flex flex-col h-full relative"
+      style={{
+        background: "hsl(var(--sidebar))",
+        borderRight: "1px solid hsl(var(--sidebar-border))",
+      }}
+    >
       {/* Logo */}
-      <div className="px-5 py-5 border-b" style={{ borderColor: "hsl(234 30% 14%)" }}>
-        <div className="flex items-center gap-2.5">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}
-          >
-            <Zap className="w-4 h-4 text-white fill-white" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-none">STRATT</p>
-            <p className="text-white/40 text-[10px] mt-0.5 truncate">
-              {currentOrg?.name ?? "Sélectionner une org"}
-            </p>
-          </div>
-        </div>
+      <div
+        className="px-5 py-4 flex-shrink-0"
+        style={{ borderBottom: "1px solid hsl(var(--sidebar-border))" }}
+      >
+        <p
+          className="text-gradient-primary font-extrabold text-[22px] leading-none tracking-[-0.04em]"
+          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+        >
+          stratt
+        </p>
+        <p
+          className="text-[10px] mt-[5px] truncate font-medium"
+          style={{ color: "rgba(30,50,80,0.42)" }}
+        >
+          {currentOrg?.name ?? "—"}
+        </p>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto">
-        <p className="px-3 pt-1 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
-          Pilotage
-        </p>
-        <div className="space-y-0.5 mb-2">{renderNav(pilotageNav)}</div>
+      {/* Navigation */}
+      <nav className="flex-1 px-2.5 py-2.5 overflow-y-auto scrollbar-thin space-y-4">
 
-        <div className="border-t mb-2" style={{ borderColor: "hsl(234 30% 14%)" }} />
+        <div>
+          <p
+            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+            style={{ color: "rgba(30,50,80,0.3)" }}
+          >
+            Pilotage
+          </p>
+          <div className="space-y-[2px]">{renderNav(pilotageNav)}</div>
+        </div>
 
-        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
-          ERP
-        </p>
-        <div className="space-y-0.5 mb-2">{renderNav(erpNav)}</div>
+        <div
+          className="mx-2"
+          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+        />
 
-        <div className="border-t mb-2" style={{ borderColor: "hsl(234 30% 14%)" }} />
+        <div>
+          <p
+            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+            style={{ color: "rgba(30,50,80,0.3)" }}
+          >
+            ERP
+          </p>
+          <div className="space-y-[2px]">{renderNav(erpNav)}</div>
+        </div>
 
-        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: "hsl(234 30% 40%)" }}>
-          Système
-        </p>
-        <div className="space-y-0.5">{renderNav(systemeNav)}</div>
+        <div
+          className="mx-2"
+          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+        />
+
+        <div>
+          <p
+            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+            style={{ color: "rgba(30,50,80,0.3)" }}
+          >
+            Système
+          </p>
+          <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
+        </div>
       </nav>
 
-      {/* User */}
-      <div className="px-3 py-4 border-t" style={{ borderColor: "hsl(234 30% 14%)" }}>
-        <div className="flex items-center gap-3 px-2 py-2">
+      {/* User footer */}
+      <div
+        className="px-2.5 py-2.5 flex-shrink-0"
+        style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+      >
+        <div
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg group cursor-default transition-all duration-150 hover:bg-black/[0.04]"
+        >
+          {/* Avatar */}
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%)",
+              color: "#fff",
+            }}
           >
-            {user?.name?.charAt(0).toUpperCase()}
+            {initials}
           </div>
+
           <div className="flex-1 min-w-0">
-            <p className="text-white text-xs font-semibold truncate">{user?.name}</p>
-            <p className="text-white/40 text-[10px] truncate">{user?.email}</p>
+            <p
+              className="text-[12px] font-semibold truncate leading-none"
+              style={{ color: "rgba(30,50,80,0.82)" }}
+            >
+              {user?.name}
+            </p>
+            <p
+              className="text-[10px] mt-[3px] truncate"
+              style={{ color: "rgba(30,50,80,0.38)" }}
+            >
+              {user?.email}
+            </p>
           </div>
+
           <button
             onClick={handleLogout}
             title="Déconnexion"
-            className="p-1.5 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-colors"
+            className="p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100"
+            style={{ color: "rgba(30,50,80,0.35)" }}
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <LogOut className="w-3.5 h-3.5" style={{ transition: "color 0.15s" }} />
           </button>
         </div>
       </div>

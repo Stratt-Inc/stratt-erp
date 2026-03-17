@@ -4,13 +4,13 @@ import { useToastStore } from "@/store/toast";
 import { X, Info, CheckCircle, AlertTriangle } from "lucide-react";
 
 const icons = {
-  info: <Info className="w-4 h-4 flex-shrink-0" style={{ color: "#5B6BF5" }} />,
+  info: <Info className="w-4 h-4 flex-shrink-0" style={{ color: "#5C93FF" }} />,
   success: <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: "#10B981" }} />,
   warning: <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: "#F59E0B" }} />,
 };
 
 const accents = {
-  info: "rgba(91,107,245,0.12)",
+  info: "rgba(92,147,255,0.12)",
   success: "rgba(16,185,129,0.12)",
   warning: "rgba(245,158,11,0.12)",
 };

@@ -4,16 +4,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import {
-  MessageSquare,
-  Plus,
-  Trash2,
-  Copy,
-  Check,
-  BarChart2,
-  Link2,
-  Clock,
-  Shield,
+  MessageSquare, Plus, Trash2, Copy, Check,
+  BarChart2, Link2, Clock, Shield, Bot, User, ThumbsUp, ThumbsDown, Sparkles, ChevronDown,
 } from "lucide-react";
 
 interface ChatToken {
@@ -34,15 +28,162 @@ interface Analytics {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+const DEMO_CONVERSATION = [
+  {
+    role: "user",
+    text: "Comment classer l'achat d'une flotte de PC portables pour les agents ?",
+  },
+  {
+    role: "assistant",
+    text: "L'achat de PC portables relève de la famille **Fournitures**, sous-famille **Fournitures informatiques** (code 02.01). Le seuil de procédure applicable est **90 000 € HT** — au-delà, une procédure formalisée (appel d'offres) est requise selon l'art. L2124-1 du CCP.",
+    badge: "02.01 – Fournitures informatiques",
+    confidence: 98,
+  },
+  {
+    role: "user",
+    text: "Et pour la maintenance des climatiseurs dans les bâtiments administratifs ?",
+  },
+  {
+    role: "assistant",
+    text: "La maintenance des climatiseurs relève de la famille **Services**, sous-famille **Maintenance et réparation** (code 03.04). Ce code couvre toutes les prestations de maintenance préventive et corrective des équipements techniques. Seuil : **90 000 € HT**.",
+    badge: "03.04 – Maintenance et réparation",
+    confidence: 95,
+  },
+];
+
+const TOKEN_DEMO_CONVERSATIONS: { q: string; a: string }[][] = [
+  [
+    { q: "Quel code pour l'achat de papier de bureau ?", a: "**01.02 – Fournitures de bureau**. Consommables bureautiques courants. Seuil : 90 000 € HT." },
+    { q: "Et pour des cartouches d'encre ?", a: "Même famille : **01.02 – Fournitures de bureau**. Les consommables d'impression sont inclus dans ce code. Seuil identique : 90 000 € HT." },
+  ],
+  [
+    { q: "Comment classer une flotte de PC portables ?", a: "**02.01 – Fournitures informatiques**. Ce code couvre tout le matériel informatique mobile. Procédure formalisée au-delà de **90 000 € HT**." },
+    { q: "Et des écrans de bureau séparés ?", a: "Toujours **02.01 – Fournitures informatiques**. Les périphériques d'affichage sont rattachés à la même sous-famille que le matériel informatique." },
+  ],
+  [
+    { q: "Maintenance des climatiseurs — quelle famille ?", a: "**03.04 – Maintenance et réparation**. Couvre la maintenance préventive et corrective des équipements techniques. Seuil : 90 000 € HT." },
+    { q: "Seuil pour des prestations de nettoyage ?", a: "**03.01 – Services de nettoyage**. Attention : ce type de marché dépasse souvent le seuil de **221 000 € HT**, imposant une publication au JOUE." },
+  ],
+];
+
+function TokenCard({
+  t, index, copied, isDemo, onCopy, onRevoke,
+}: {
+  t: ChatToken;
+  index: number;
+  copied: string | null;
+  isDemo: boolean;
+  onCopy: (token: string) => void;
+  onRevoke: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const convo = TOKEN_DEMO_CONVERSATIONS[index % TOKEN_DEMO_CONVERSATIONS.length];
+
+  return (
+    <div className={`bg-card rounded-xl border border-border transition-opacity ${t.revoked ? "opacity-40" : ""}`}>
+      {/* Main row */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${t.revoked ? "bg-red-400" : "bg-emerald-500"}`} />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground truncate">{t.label || "Sans libellé"}</p>
+          <div className="flex items-center gap-3 mt-0.5">
+            <span className="text-[11px] text-muted-foreground font-mono truncate max-w-[160px]">{t.token.slice(0, 16)}…</span>
+            {t.expires_at && (
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {new Date(t.expires_at).toLocaleDateString("fr-FR")}
+              </span>
+            )}
+            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+              <BarChart2 className="w-3 h-3" />
+              {t.use_count} utilisation{t.use_count !== 1 ? "s" : ""}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Expand conversation */}
+          {!t.revoked && (
+            <button onClick={() => setOpen((v) => !v)} title="Voir un exemple"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+            </button>
+          )}
+          <button onClick={() => onCopy(t.token)} disabled={t.revoked} title="Copier le lien"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-30">
+            {copied === t.token ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+          </button>
+          <a href={`/chat/${t.token}`} target="_blank" rel="noopener noreferrer"
+            className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${t.revoked ? "pointer-events-none opacity-30" : ""}`}>
+            <Link2 className="w-3.5 h-3.5" />
+          </a>
+          {!t.revoked && !isDemo && (
+            <button onClick={() => onRevoke(t.id)} title="Révoquer"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+          {t.revoked && (
+            <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+              <Shield className="w-2.5 h-2.5" /> Révoqué
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Mini conversation preview */}
+      {open && !t.revoked && (
+        <div className="border-t border-border px-4 py-3 space-y-2.5"
+          style={{ background: "linear-gradient(to bottom, rgba(92,147,255,0.02), transparent)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground/60 mb-1">
+            Exemple de conversation
+          </p>
+          {convo.map((msg, i) => (
+            <div key={i} className="space-y-1.5">
+              {/* User */}
+              <div className="flex justify-end">
+                <div className="flex items-start gap-1.5 flex-row-reverse max-w-[85%]">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <User className="w-2.5 h-2.5 text-primary" />
+                  </div>
+                  <div className="px-3 py-1.5 rounded-xl rounded-tr-sm text-[11px] leading-relaxed text-foreground"
+                    style={{ background: "rgba(92,147,255,0.09)" }}>
+                    {msg.q}
+                  </div>
+                </div>
+              </div>
+              {/* Assistant */}
+              <div className="flex items-start gap-1.5 max-w-[85%]">
+                <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                  <Bot className="w-2.5 h-2.5 text-white" />
+                </div>
+                <div className="px-3 py-1.5 rounded-xl rounded-tl-sm bg-muted/50 text-[11px] leading-relaxed text-foreground">
+                  {msg.a.split("**").map((part, j) =>
+                    j % 2 === 1
+                      ? <strong key={j} className="font-semibold">{part}</strong>
+                      : <span key={j}>{part}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ChatbotPage() {
   const { currentOrg, accessToken: token } = useAuthStore();
   const qc = useQueryClient();
-  const [tab, setTab] = useState<"tokens" | "analytics">("tokens");
+  const [tab, setTab] = useState<"apercu" | "tokens" | "analytics">("apercu");
   const [copied, setCopied] = useState<string | null>(null);
   const [newLabel, setNewLabel] = useState("");
   const [newExpiry, setNewExpiry] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
 
+  const isDemo = useIsDemo();
   const orgId = currentOrg?.id ?? "";
 
   const { data: tokensData } = useQuery<ChatToken[]>({
@@ -59,11 +200,7 @@ export default function ChatbotPage() {
 
   const createToken = useMutation({
     mutationFn: () =>
-      api.post(
-        "/api/v1/chatbot/tokens",
-        { label: newLabel, expires_in_days: newExpiry },
-        { orgId, token: token ?? "" }
-      ),
+      api.post("/api/v1/chatbot/tokens", { label: newLabel, expires_in_days: newExpiry }, { orgId, token: token ?? "" }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["chatbot-tokens", orgId] });
       setShowCreate(false);
@@ -85,208 +222,310 @@ export default function ChatbotPage() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const feedbackPositive = analytics?.feedback.find((f) => f.liked)?.count ?? 0;
-  const feedbackNegative = analytics?.feedback.find((f) => !f.liked)?.count ?? 0;
+  const feedbackPositive = analytics?.feedback?.find((f) => f.liked)?.count ?? 0;
+  const feedbackNegative = analytics?.feedback?.find((f) => !f.liked)?.count ?? 0;
   const totalFeedback = feedbackPositive + feedbackNegative;
 
+  const TABS = [
+    { id: "apercu" as const, label: "Aperçu" },
+    { id: "tokens" as const, label: "Liens publics" },
+    { id: "analytics" as const, label: "Analytiques" },
+  ];
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="space-y-3">
+      <DemoBanner />
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-[#5B6BF5]" />
-            Chatbot nomenclature
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module IA</span>
+          </div>
+          <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
+            Assistant{" "}
+            <span style={{
+              background: "linear-gradient(135deg, #8B5CF6 0%, #5C93FF 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              nomenclature
+            </span>
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Générez des liens publics vers l&apos;assistant IA de classification budgétaire
+          <p className="text-[12px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+            Classification budgétaire intelligente · IA entraînée sur le CCP · Liens publics partageables
           </p>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setTab("tokens")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "tokens" ? "bg-[#5B6BF5] text-white" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            Tokens
-          </button>
-          <button
-            onClick={() => setTab("analytics")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "analytics" ? "bg-[#5B6BF5] text-white" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            Analytiques
-          </button>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl flex-shrink-0"
+          style={{ background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.15)" }}>
+          <Sparkles className="w-3.5 h-3.5" style={{ color: "#8B5CF6" }} />
+          <span className="text-[11px] font-semibold" style={{ color: "#8B5CF6" }}>Propulsé par Claude</span>
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-lg bg-muted/30 w-fit">
+        {TABS.map(({ id, label }) => (
+          <button key={id} onClick={() => setTab(id)}
+            className={["px-4 py-1.5 rounded-md text-xs font-semibold transition-colors",
+              tab === id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"].join(" ")}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── APERÇU ── */}
+      {tab === "apercu" && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+          {/* Chat preview */}
+          <div className="lg:col-span-3 bg-card rounded-xl border border-border overflow-hidden flex flex-col">
+            {/* Chat header */}
+            <div className="px-4 py-3 border-b border-border flex items-center gap-3"
+              style={{ background: "linear-gradient(to right, rgba(139,92,246,0.04), rgba(92,147,255,0.03))" }}>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                <Bot className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Assistant nomenclature</p>
+                <p className="text-[10px] text-muted-foreground">Classification budgétaire · CCP 2024</p>
+              </div>
+              <div className="ml-auto flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] text-muted-foreground font-medium">En ligne</span>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+              {DEMO_CONVERSATION.map((msg, i) => (
+                <div key={i} className={`flex gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                  {/* Avatar */}
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                    msg.role === "user"
+                      ? "bg-primary/10"
+                      : ""
+                  }`}
+                    style={msg.role === "assistant" ? { background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" } : undefined}>
+                    {msg.role === "user"
+                      ? <User className="w-3 h-3 text-primary" />
+                      : <Bot className="w-3 h-3 text-white" />
+                    }
+                  </div>
+
+                  {/* Bubble */}
+                  <div className={`max-w-[80%] space-y-1.5 ${msg.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
+                    <div className={`px-3 py-2 rounded-xl text-xs leading-relaxed ${
+                      msg.role === "user"
+                        ? "bg-primary/8 text-foreground rounded-tr-sm"
+                        : "bg-muted/50 text-foreground rounded-tl-sm"
+                    }`}
+                      style={msg.role === "user" ? { background: "rgba(92,147,255,0.08)" } : undefined}>
+                      {msg.text.split("**").map((part, j) =>
+                        j % 2 === 1
+                          ? <strong key={j} className="font-semibold">{part}</strong>
+                          : <span key={j}>{part}</span>
+                      )}
+                    </div>
+                    {msg.badge && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{ background: "rgba(139,92,246,0.1)", color: "#8B5CF6" }}>
+                          {msg.badge}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          Confiance {msg.confidence}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Input */}
+            <div className="px-4 py-3 border-t border-border">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-background text-xs text-muted-foreground">
+                <MessageSquare className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Posez une question sur la classification budgétaire…</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Info panels */}
+          <div className="lg:col-span-2 space-y-3">
+            {/* How it works */}
+            <div className="bg-card rounded-xl border border-border p-3 space-y-2.5">
+              <div className="section-header" style={{ marginBottom: 0 }}>
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#8B5CF6" }} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Fonctionnement</span>
+              </div>
+              {[
+                { step: "1", text: "Générez un lien public sécurisé", color: "#5C93FF" },
+                { step: "2", text: "Partagez-le aux agents ou directions", color: "#8B5CF6" },
+                { step: "3", text: "L'IA classe les achats selon votre nomenclature", color: "#24DDB8" },
+                { step: "4", text: "Suivez les usages dans les analytiques", color: "#10B981" },
+              ].map(({ step, text, color }) => (
+                <div key={step} className="flex items-center gap-2.5">
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                    style={{ background: color }}>
+                    {step}
+                  </div>
+                  <p className="text-xs text-foreground">{text}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick stats */}
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, color: "#5C93FF" },
+                { label: "Utilisations", value: (tokensData ?? []).reduce((s, t) => s + t.use_count, 0), color: "#8B5CF6" },
+                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#10B981" },
+                { label: "Questions fréquentes", value: analytics?.top_questions?.length ?? "—", color: "#F59E0B" },
+              ].map(({ label, value, color }) => (
+                <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+                  <p className="stat-number-sm">{value}</p>
+                  <p className="stat-label">{label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            {!isDemo && (
+              <button
+                onClick={() => setTab("tokens")}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}
+              >
+                <Plus className="w-3.5 h-3.5" /> Créer un lien public
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── TOKENS ── */}
       {tab === "tokens" && (
-        <>
-          {/* Create token */}
-          {showCreate ? (
-            <div className="border border-border rounded-xl p-5 space-y-4 bg-card">
-              <h3 className="font-semibold text-sm">Nouveau lien chatbot</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Libellé</label>
+        <div className="space-y-3">
+          {showCreate && !isDemo ? (
+            <div className="bg-card rounded-xl border border-primary/20 p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">Nouveau lien chatbot</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Libellé</label>
                   <input
-                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5B6BF5]/30"
+                    className="w-full border border-border rounded-lg px-3 py-1.5 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
                     placeholder="ex : Agents comptabilité"
                     value={newLabel}
                     onChange={(e) => setNewLabel(e.target.value)}
                   />
                 </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">
-                    Expiration (jours, 0 = jamais)
-                  </label>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Expiration (jours, 0 = jamais)</label>
                   <input
-                    type="number"
-                    min={0}
-                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-[#5B6BF5]/30"
+                    type="number" min={0}
+                    className="w-full border border-border rounded-lg px-3 py-1.5 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
                     value={newExpiry}
                     onChange={(e) => setNewExpiry(parseInt(e.target.value) || 0)}
                   />
                 </div>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => createToken.mutate()}
-                  disabled={createToken.isPending}
-                  className="px-4 py-2 bg-[#5B6BF5] text-white rounded-lg text-sm font-medium hover:bg-[#4a5ae4] disabled:opacity-50"
-                >
+                <button onClick={() => createToken.mutate()} disabled={createToken.isPending}
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
+                  style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
                   {createToken.isPending ? "Création…" : "Créer le lien"}
                 </button>
-                <button
-                  onClick={() => setShowCreate(false)}
-                  className="px-4 py-2 text-muted-foreground hover:text-foreground text-sm"
-                >
+                <button onClick={() => setShowCreate(false)}
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border hover:bg-muted/50 transition-colors">
                   Annuler
                 </button>
               </div>
             </div>
           ) : (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#5B6BF5] transition-colors text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Créer un lien public
-            </button>
+            !isDemo && (
+              <button onClick={() => setShowCreate(true)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                <Plus className="w-3.5 h-3.5" /> Créer un lien public
+              </button>
+            )
           )}
 
-          {/* Token list */}
           <div className="space-y-2">
             {(tokensData ?? []).length === 0 && (
-              <p className="text-muted-foreground text-sm text-center py-10">
-                Aucun lien créé pour l&apos;instant
-              </p>
+              <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-dashed border-border">
+                <MessageSquare className="w-8 h-8 text-muted-foreground/30 mb-2" />
+                <p className="text-sm font-semibold text-foreground">Aucun lien créé</p>
+                <p className="text-xs text-muted-foreground mt-1">Créez votre premier lien public pour partager l&apos;assistant.</p>
+              </div>
             )}
-            {(tokensData ?? []).map((t) => (
-              <div
+            {(tokensData ?? []).map((t, i) => (
+              <TokenCard
                 key={t.id}
-                className={`border rounded-xl p-4 flex items-center gap-4 bg-card transition-opacity ${t.revoked ? "opacity-40" : ""}`}
-              >
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${t.revoked ? "bg-red-500" : "bg-emerald-500"}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{t.label || "Sans libellé"}</p>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <span className="text-xs text-muted-foreground font-mono truncate max-w-[180px]">
-                      {t.token.slice(0, 16)}…
-                    </span>
-                    {t.expires_at && (
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {new Date(t.expires_at).toLocaleDateString("fr-FR")}
-                      </span>
-                    )}
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <BarChart2 className="w-3 h-3" />
-                      {t.use_count} utilisations
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => copyLink(t.token)}
-                    disabled={t.revoked}
-                    title="Copier le lien"
-                    className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-30"
-                  >
-                    {copied === t.token ? (
-                      <Check className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                  <a
-                    href={`/chat/${t.token}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ${t.revoked ? "pointer-events-none opacity-30" : ""}`}
-                    title="Ouvrir le lien"
-                  >
-                    <Link2 className="w-4 h-4" />
-                  </a>
-                  {!t.revoked && (
-                    <button
-                      onClick={() => revokeToken.mutate(t.id)}
-                      title="Révoquer"
-                      className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                  {t.revoked && (
-                    <span className="flex items-center gap-1 text-xs text-red-400 px-2">
-                      <Shield className="w-3 h-3" />
-                      Révoqué
-                    </span>
-                  )}
-                </div>
+                t={t}
+                index={i}
+                copied={copied}
+                isDemo={isDemo}
+                onCopy={copyLink}
+                onRevoke={(id) => revokeToken.mutate(id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── ANALYTICS ── */}
+      {tab === "analytics" && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {[
+              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#10B981" },
+              { label: "Avis négatifs", value: feedbackNegative, icon: ThumbsDown, color: "#EF4444" },
+              { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", icon: BarChart2, color: "#5C93FF" },
+              { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, icon: Link2, color: "#8B5CF6" },
+            ].map(({ label, value, icon: Icon, color }) => (
+              <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+                <p className="stat-number">{value}</p>
+                <p className="stat-label">{label}</p>
+                <Icon className="stat-tile-icon" />
               </div>
             ))}
           </div>
-        </>
-      )}
 
-      {tab === "analytics" && analytics && (
-        <div className="space-y-6">
-          {/* Feedback stats */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="border border-border rounded-xl p-5 bg-card text-center">
-              <p className="text-3xl font-bold text-emerald-500">{feedbackPositive}</p>
-              <p className="text-sm text-muted-foreground mt-1">Avis positifs 👍</p>
-            </div>
-            <div className="border border-border rounded-xl p-5 bg-card text-center">
-              <p className="text-3xl font-bold text-red-400">{feedbackNegative}</p>
-              <p className="text-sm text-muted-foreground mt-1">Avis négatifs 👎</p>
-            </div>
-            <div className="border border-border rounded-xl p-5 bg-card text-center">
-              <p className="text-3xl font-bold text-[#5B6BF5]">
-                {totalFeedback > 0 ? Math.round((feedbackPositive / totalFeedback) * 100) : 0}%
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">Satisfaction</p>
-            </div>
-          </div>
-
-          {/* Top questions */}
-          <div className="border border-border rounded-xl bg-card">
-            <div className="px-5 py-4 border-b border-border">
-              <h3 className="font-semibold text-sm">Questions les plus fréquentes</h3>
-            </div>
-            <div className="divide-y divide-border">
-              {(analytics.top_questions ?? []).length === 0 && (
-                <p className="text-muted-foreground text-sm px-5 py-6">Aucune question pour l&apos;instant</p>
-              )}
-              {(analytics.top_questions ?? []).map((q, i) => (
-                <div key={i} className="px-5 py-3 flex items-center justify-between gap-4">
-                  <p className="text-sm truncate flex-1">{q.question}</p>
-                  <span className="text-xs font-semibold bg-[#5B6BF5]/10 text-[#5B6BF5] px-2 py-0.5 rounded-full flex-shrink-0">
-                    ×{q.count}
-                  </span>
+          {analytics && (
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+                <h2 className="text-sm font-semibold text-foreground">Questions les plus fréquentes</h2>
+              </div>
+              {(analytics.top_questions ?? []).length === 0 ? (
+                <p className="text-xs text-muted-foreground px-4 py-6 text-center">Aucune question pour l&apos;instant</p>
+              ) : (
+                <div className="divide-y divide-border">
+                  {analytics.top_questions.map((q, i) => (
+                    <div key={i} className="data-row px-4 py-2.5 flex items-center justify-between gap-4">
+                      <p className="text-sm text-foreground truncate flex-1">{q.question}</p>
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
+                        style={{ background: "rgba(139,92,246,0.1)", color: "#8B5CF6" }}>
+                        ×{q.count}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          )}
+
+          {!analytics && (
+            <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-dashed border-border">
+              <BarChart2 className="w-8 h-8 text-muted-foreground/30 mb-2" />
+              <p className="text-sm font-semibold text-foreground">Aucune donnée analytique</p>
+              <p className="text-xs text-muted-foreground mt-1">Les statistiques apparaîtront après les premières utilisations.</p>
+            </div>
+          )}
         </div>
       )}
     </div>

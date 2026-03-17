@@ -212,7 +212,7 @@ export default function BOAMPPage() {
                 onClick={handleSearch}
                 disabled={loadingSearch}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+                style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
               >
                 <Search className="w-3.5 h-3.5" />
                 {loadingSearch ? "Recherche…" : "Rechercher sur BOAMP"}
@@ -263,7 +263,7 @@ export default function BOAMPPage() {
                     <tr key={a.reference} className="hover:bg-muted/20 transition-colors">
                       <td className="px-3 py-2.5">
                         <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold"
-                          style={{ background: "rgba(91,107,245,0.08)", color: "#5B6BF5" }}>
+                          style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}>
                           {a.type_avis || "AO"}
                         </span>
                       </td>
@@ -318,7 +318,7 @@ export default function BOAMPPage() {
             <button
               onClick={() => setShowNewVeille(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white transition-colors"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               <Plus className="w-3.5 h-3.5" /> Nouvelle veille
             </button>
@@ -351,7 +351,7 @@ export default function BOAMPPage() {
                   onClick={() => createVeilleMutation.mutate()}
                   disabled={!newVeille.nom || createVeilleMutation.isPending}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+                  style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
                 >
                   {createVeilleMutation.isPending ? "Enregistrement…" : "Enregistrer"}
                 </button>
@@ -414,7 +414,7 @@ export default function BOAMPPage() {
                     </button>
                     <button
                       onClick={() => deleteVeilleMutation.mutate(v.id)}
-                      className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                      className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

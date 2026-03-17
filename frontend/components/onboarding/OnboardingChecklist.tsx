@@ -80,11 +80,11 @@ export function OnboardingChecklist() {
   if (dismissed || allDone) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="fixed bottom-6 right-6 z-40 w-80 rounded-2xl overflow-hidden" style={{ background: "hsl(216 48% 8%)", border: "1px solid rgba(92,147,255,0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer"
-        style={{ background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)" }}
+        style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
         onClick={() => setCollapsed((v) => !v)}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -109,16 +109,16 @@ export function OnboardingChecklist() {
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 bg-gray-100">
+      <div className="h-1 bg-muted">
         <div
           className="h-1 transition-all duration-500"
-          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5B6BF5, #9B6FE8)" }}
+          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5C93FF, #24DDB8)" }}
         />
       </div>
 
       {/* Checklist */}
       {!collapsed && (
-        <div className="divide-y divide-gray-50">
+        <div className="divide-y divide-border">
           {CHECKLIST.map((item) => (
             <div key={item.id} className="flex items-start gap-3 px-4 py-3">
               <button
@@ -126,28 +126,29 @@ export function OnboardingChecklist() {
                 className="mt-0.5 shrink-0 transition-colors"
               >
                 {items[item.id] ? (
-                  <CheckCircle size={18} className="text-green-500" />
+                  <CheckCircle size={18} style={{ color: "#10B981" }} />
                 ) : (
-                  <Circle size={18} className="text-gray-300" />
+                  <Circle size={18} className="text-muted-foreground/40" />
                 )}
               </button>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${items[item.id] ? "line-through text-gray-400" : "text-gray-800"}`}>
+                <p className={`text-sm font-medium ${items[item.id] ? "line-through text-muted-foreground" : "text-foreground"}`}>
                   {item.label}
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                   {item.description}
                 </p>
                 {item.id === "tour" && !items[item.id] && (
                   <button
                     onClick={() => restartTour()}
-                    className="text-xs text-blue-500 hover:text-blue-700 mt-1"
+                    className="text-xs mt-1 hover:underline"
+                    style={{ color: "#5C93FF" }}
                   >
                     Lancer le tour →
                   </button>
                 )}
                 {item.href && !items[item.id] && (
-                  <a href={item.href} className="text-xs text-blue-500 hover:text-blue-700 mt-1 block">
+                  <a href={item.href} className="text-xs mt-1 block hover:underline" style={{ color: "#5C93FF" }}>
                     Aller → {item.href}
                   </a>
                 )}
