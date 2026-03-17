@@ -159,7 +159,7 @@ export default function ExportsPage() {
               onClick={handleGenerate}
               disabled={generating || selectedCount === 0}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Génération en cours…</>
