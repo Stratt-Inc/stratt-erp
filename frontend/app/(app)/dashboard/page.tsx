@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { Highlight } from "@/components/Highlight";
 import {
   Users, FileText, Package, Briefcase, TrendingUp, ShoppingCart,
   BarChart2, Calculator, Calendar, Map, BookOpen, Download,
@@ -86,9 +87,7 @@ export default function DashboardPage() {
           </p>
           <h1 className="text-[24px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Bonjour,{" "}
-            <span style={{ background: "linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {firstName}
-            </span>
+            <Highlight variant="underline" color="blue">{firstName}</Highlight>
           </h1>
           <p className="text-[11px] mt-0.5 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             {currentOrg?.name ?? "Organisation"}
@@ -144,7 +143,7 @@ export default function DashboardPage() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "hsl(var(--border))"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}
               >
                 <Icon className="absolute -right-2 -top-2 w-16 h-16 transition-all duration-300 group-hover:scale-110" style={{ color, opacity: 0.05 }} />
-                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, ${color}50, transparent)` }} />
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `${color}50` }} />
                 <div>
                   <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
                   <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.4)" }}>{description}</p>
@@ -221,7 +220,7 @@ export default function DashboardPage() {
                     )}
                   </div>
                 </div>
-                <div style={{ height: 1, background: `linear-gradient(90deg, ${color}35, transparent)` }} />
+                <div style={{ height: 1, background: `${color}35` }} />
                 <div className="px-3 py-1.5">
                   <p className="text-[10px] font-bold text-foreground truncate">{label}</p>
                 </div>
