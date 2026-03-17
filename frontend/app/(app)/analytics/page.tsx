@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import {
   BarChart2, Users, FileText, Package, Briefcase,
-  TrendingUp, Handshake, DollarSign, Download,
+  TrendingUp, Handshake, DollarSign, Download, Grid3x3,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -347,11 +347,192 @@ function ABCTab() {
   );
 }
 
+// ── Kraljic Matrix Tab ─────────────────────────────────────────────────
+
+const KRALJIC_ITEMS = [
+  // Stratégique (high spend, high risk)
+  { name: "Maintenance informatique", spend: 187_400, risk: 82, segment: "strategic" as const, supplier: "Soc. Informatique du Nord", recommendation: "Partenariat long terme, contrat-cadre" },
+  { name: "Maintenance équipements", spend: 241_800, risk: 90, segment: "strategic" as const, supplier: "Maintenance Équipements SA", recommendation: "Sécuriser — dépendance critique" },
+  // Levier (high spend, low risk)
+  { name: "Fournitures de bureau", spend: 38_600, risk: 18, segment: "leverage" as const, supplier: "Bureau Technique SARL", recommendation: "Appels d'offres, négociation prix" },
+  { name: "Services de nettoyage", spend: 94_200, risk: 22, segment: "leverage" as const, supplier: "Nettoyage Pro Services", recommendation: "Mise en concurrence — optimiser coût" },
+  // Goulot (low spend, high risk)
+  { name: "Logiciels spécialisés", spend: 14_200, risk: 78, segment: "bottleneck" as const, supplier: "Éditeur unique", recommendation: "Prévoir un backup — risque rupture" },
+  { name: "Pièces techniques rares", spend: 8_900, risk: 71, segment: "bottleneck" as const, supplier: "Fournisseur exclusif", recommendation: "Stock de sécurité, double sourcing" },
+  // Routine (low spend, low risk)
+  { name: "Papeterie", spend: 6_200, risk: 9, segment: "routine" as const, supplier: "Multi-fournisseurs", recommendation: "Standardiser — automatiser la commande" },
+  { name: "Boissons & café", spend: 3_400, risk: 5, segment: "routine" as const, supplier: "GS Distribution", recommendation: "Catalogue — achat libre service" },
+  { name: "Services postaux", spend: 4_100, risk: 8, segment: "routine" as const, supplier: "La Poste", recommendation: "Contrat annuel simplifié" },
+  { name: "Formation continue", spend: 67_300, risk: 15, segment: "leverage" as const, supplier: "Formation Excellence", recommendation: "Grouper les sessions — réduire le coût/agent" },
+];
+
+const SEGMENT_CONFIG = {
+  strategic: { label: "Stratégique", color: "#EF4444", bg: "rgba(239,68,68,0.08)", desc: "Fort enjeu, forte dépendance", action: "Partenariat" },
+  leverage: { label: "Levier", color: "#10B981", bg: "rgba(16,185,129,0.08)", desc: "Fort enjeu, faible dépendance", action: "Négocier" },
+  bottleneck: { label: "Goulot", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", desc: "Faible enjeu, forte dépendance", action: "Sécuriser" },
+  routine: { label: "Routine", color: "#6B7280", bg: "rgba(107,114,128,0.08)", desc: "Faible enjeu, faible dépendance", action: "Standardiser" },
+};
+
+function KraljicTab() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const selectedItem = KRALJIC_ITEMS.find((i) => i.name === selected);
+
+  return (
+    <div className="space-y-3">
+      {/* Legend + stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {(Object.entries(SEGMENT_CONFIG) as [keyof typeof SEGMENT_CONFIG, typeof SEGMENT_CONFIG[keyof typeof SEGMENT_CONFIG]][]).map(([key, cfg]) => {
+          const items = KRALJIC_ITEMS.filter((i) => i.segment === key);
+          const totalSpend = items.reduce((s, i) => s + i.spend, 0);
+          return (
+            <div key={key} className="rounded-xl border bg-card p-3" style={{ borderLeftWidth: 3, borderLeftColor: cfg.color }}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: cfg.color }}>{cfg.label}</span>
+                <span className="text-[10px] text-muted-foreground">{items.length} familles</span>
+              </div>
+              <p className="text-lg font-extrabold text-foreground">{totalSpend.toLocaleString("fr-FR")} €</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{cfg.desc}</p>
+              <div className="mt-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit"
+                style={{ background: cfg.bg, color: cfg.color }}>
+                → {cfg.action}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        {/* Matrix */}
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-4">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Matrice de Kraljic — Portefeuille achats</h2>
+          <div className="relative" style={{ height: 340 }}>
+            {/* Axis labels */}
+            <div className="absolute left-0 top-0 bottom-8 flex flex-col items-center justify-between" style={{ width: 28 }}>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground" style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                Risque supply ↑
+              </span>
+            </div>
+            <div className="absolute bottom-0 left-8 right-0 flex justify-between items-center" style={{ height: 20 }}>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Enjeu financier →</span>
+            </div>
+
+            {/* Quadrants */}
+            <div className="absolute inset-0 left-8 bottom-6 grid grid-cols-2 grid-rows-2 gap-0.5">
+              {/* Top-left: Goulot */}
+              <div className="rounded-tl-lg flex items-start justify-start p-2" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#F59E0B" }}>Goulot</span>
+              </div>
+              {/* Top-right: Stratégique */}
+              <div className="rounded-tr-lg flex items-start justify-end p-2" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#EF4444" }}>Stratégique</span>
+              </div>
+              {/* Bottom-left: Routine */}
+              <div className="rounded-bl-lg flex items-end justify-start p-2" style={{ background: "rgba(107,114,128,0.06)", border: "1px solid rgba(107,114,128,0.12)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#6B7280" }}>Routine</span>
+              </div>
+              {/* Bottom-right: Levier */}
+              <div className="rounded-br-lg flex items-end justify-end p-2" style={{ background: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#10B981" }}>Levier</span>
+              </div>
+
+              {/* Dots */}
+              {KRALJIC_ITEMS.map((item) => {
+                const cfg = SEGMENT_CONFIG[item.segment];
+                // x: spend 0-300k → 0-100%, y: risk 0-100 → 100%-0% (inverted)
+                const x = Math.min((item.spend / 280_000) * 90 + 5, 93);
+                const y = Math.max(100 - (item.risk / 100) * 90 - 5, 5);
+                const size = Math.max(8, Math.min(20, Math.sqrt(item.spend / 1000) * 2));
+                const isSelected = selected === item.name;
+                return (
+                  <button
+                    key={item.name}
+                    title={item.name}
+                    onClick={() => setSelected(isSelected ? null : item.name)}
+                    className="absolute rounded-full flex items-center justify-center transition-all hover:scale-125 z-10"
+                    style={{
+                      left: `${item.segment === "bottleneck" || item.segment === "routine" ? x * 0.45 : x * 0.45 + 50}%`,
+                      top: `${item.segment === "strategic" || item.segment === "bottleneck" ? y * 0.45 : y * 0.45 + 50}%`,
+                      width: size, height: size,
+                      background: cfg.color,
+                      boxShadow: isSelected ? `0 0 0 3px ${cfg.color}40, 0 0 12px ${cfg.color}60` : `0 2px 4px ${cfg.color}40`,
+                      border: isSelected ? `2px solid ${cfg.color}` : "2px solid white",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center mt-1">Cliquez sur un point pour voir le détail · Taille = volume d&apos;achat</p>
+        </div>
+
+        {/* Side panel */}
+        <div className="space-y-2">
+          {selectedItem ? (
+            <div className="bg-card rounded-xl border border-border p-4 space-y-3"
+              style={{ borderLeftWidth: 3, borderLeftColor: SEGMENT_CONFIG[selectedItem.segment].color }}>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest"
+                  style={{ color: SEGMENT_CONFIG[selectedItem.segment].color }}>
+                  {SEGMENT_CONFIG[selectedItem.segment].label}
+                </span>
+                <h3 className="text-sm font-bold text-foreground mt-0.5">{selectedItem.name}</h3>
+                <p className="text-[11px] text-muted-foreground">{selectedItem.supplier}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg p-2.5" style={{ background: "rgba(92,147,255,0.06)" }}>
+                  <p className="text-[10px] text-muted-foreground">Dépense annuelle</p>
+                  <p className="text-sm font-bold text-foreground num">{selectedItem.spend.toLocaleString("fr-FR")} €</p>
+                </div>
+                <div className="rounded-lg p-2.5" style={{ background: "rgba(239,68,68,0.06)" }}>
+                  <p className="text-[10px] text-muted-foreground">Risque supply</p>
+                  <p className="text-sm font-bold text-foreground">{selectedItem.risk}/100</p>
+                </div>
+              </div>
+              <div className="rounded-lg p-2.5 space-y-1" style={{ background: SEGMENT_CONFIG[selectedItem.segment].bg }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: SEGMENT_CONFIG[selectedItem.segment].color }}>
+                  Recommandation
+                </p>
+                <p className="text-[12px] text-foreground leading-snug">{selectedItem.recommendation}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-card rounded-xl border border-dashed border-border p-6 flex flex-col items-center justify-center text-center">
+              <Grid3x3 className="w-8 h-8 text-muted-foreground/30 mb-2" />
+              <p className="text-sm font-semibold text-foreground">Sélectionnez un poste</p>
+              <p className="text-xs text-muted-foreground mt-1">Cliquez sur un point de la matrice pour voir les détails et la recommandation.</p>
+            </div>
+          )}
+
+          {/* All items list */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <div className="px-3 py-2 border-b border-border">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Tous les postes</p>
+            </div>
+            <div className="divide-y divide-border max-h-52 overflow-y-auto">
+              {KRALJIC_ITEMS.map((item) => {
+                const cfg = SEGMENT_CONFIG[item.segment];
+                return (
+                  <button key={item.name} onClick={() => setSelected(item.name === selected ? null : item.name)}
+                    className={`w-full data-row px-3 py-2 flex items-center gap-2 text-left ${selected === item.name ? "bg-muted/30" : ""}`}>
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: cfg.color }} />
+                    <p className="text-xs text-foreground truncate flex-1">{item.name}</p>
+                    <span className="text-[10px] num text-muted-foreground flex-shrink-0">{(item.spend / 1000).toFixed(0)}k€</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
   const { accessToken, currentOrg } = useAuthStore();
-  const [tab, setTab] = useState<"overview" | "abc">("overview");
+  const [tab, setTab] = useState<"overview" | "abc" | "kraljic">("overview");
   const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
 
   const { data: overview, isLoading } = useQuery<Overview>({
@@ -382,7 +563,7 @@ export default function AnalyticsPage() {
             </span>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
-            Vue consolidée · Classement ABC · Courbe de Pareto
+            Vue consolidée · Classement ABC · Matrice Kraljic · Courbe de Pareto
           </p>
         </div>
         <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
@@ -394,6 +575,7 @@ export default function AnalyticsPage() {
         {([
           { id: "overview", label: "Vue d'ensemble" },
           { id: "abc", label: "Classement ABC" },
+          { id: "kraljic", label: "Matrice Kraljic" },
         ] as const).map(({ id, label }) => (
           <button key={id} onClick={() => setTab(id)}
             className={["px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
@@ -405,6 +587,7 @@ export default function AnalyticsPage() {
 
       {tab === "overview" && <OverviewTab overview={overview} isLoading={isLoading} />}
       {tab === "abc" && <ABCTab />}
+      {tab === "kraljic" && <KraljicTab />}
     </div>
   );
 }
