@@ -127,7 +127,7 @@ export default function CRMPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -211,7 +211,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+                    style={{ background: "#5C93FF" }}>
                     {c.first_name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <span className="font-medium text-sm text-foreground">{c.first_name} {c.last_name}</span>
