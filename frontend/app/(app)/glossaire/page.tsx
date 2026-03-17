@@ -73,7 +73,7 @@ export default function GlossairePage() {
             }`}
             style={
               category === cat
-                ? { background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }
+                ? { background: "#5C93FF" }
                 : { background: "rgba(30,50,80,0.07)" }
             }
           >
