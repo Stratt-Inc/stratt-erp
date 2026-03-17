@@ -200,7 +200,7 @@ function ComplianceTab() {
           {DEMO_FRACTIONNEMENT.map((f) => (
             <div key={f.supplier} className="px-4 py-3 flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
-                style={{ background: f.score >= 70 ? "linear-gradient(135deg,#EF4444,#F59E0B)" : "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+                style={{ background: f.score >= 70 ? "#EF4444" : "#5C93FF" }}>
                 {f.score}
               </div>
               <div className="flex-1 min-w-0">
@@ -264,7 +264,7 @@ export default function ProcurementPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Nouvelle commande
           </button>
         )}
