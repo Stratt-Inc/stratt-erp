@@ -88,7 +88,7 @@ export function Sidebar() {
             active
               ? {
                   color: "#1E3A5F",
-                  background: "linear-gradient(135deg, rgba(92,147,255,0.12), rgba(92,147,255,0.05))",
+                  background: "rgba(92,147,255,0.09)",
                   boxShadow: "inset 0 0 0 1px rgba(92,147,255,0.18)",
                 }
               : { color: "rgba(30,50,80,0.52)" }
@@ -97,7 +97,7 @@ export function Sidebar() {
           {active && (
             <span
               className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] rounded-r-full"
-              style={{ background: "linear-gradient(180deg, #5C93FF, #24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             />
           )}
           <Icon
@@ -133,8 +133,8 @@ export function Sidebar() {
         style={{ borderBottom: "1px solid hsl(var(--sidebar-border))" }}
       >
         <p
-          className="text-gradient-primary font-extrabold text-[22px] leading-none tracking-[-0.04em]"
-          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+          className="font-extrabold text-[22px] leading-none tracking-[-0.04em]"
+          style={{ color: "#5C93FF", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
           stratt
         </p>
@@ -202,7 +202,7 @@ export function Sidebar() {
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
             style={{
-              background: "linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%)",
+              background: "#5C93FF",
               color: "#fff",
             }}
           >

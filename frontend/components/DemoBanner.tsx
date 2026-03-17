@@ -10,7 +10,7 @@ export function DemoBanner() {
     <div
       className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm mb-6"
       style={{
-        background: "linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.06))",
+        background: "rgba(245,158,11,0.08)",
         border: "1px solid rgba(245,158,11,0.2)",
       }}
     >
