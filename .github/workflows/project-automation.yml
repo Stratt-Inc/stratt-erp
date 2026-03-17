@@ -16,7 +16,7 @@ name: Project — Status Automation
 
 on:
   issues:
-    types: [opened, labeled, unlabeled, closed, reopened]
+    types: [opened, labeled, unlabeled, closed, reopened, assigned]
   pull_request:
     types: [opened, ready_for_review, review_requested, closed]
   check_suite:
@@ -146,6 +146,38 @@ jobs:
               value: { singleSelectOptionId: "'"$OPT_DONE"'" }
             }) { projectV2Item { id } }
           }' && echo "✅ Done — #${{ github.event.issue.number }}"
+
+  # ── Issue assignée → ⚡ In Progress ───────────────────────────────────────
+  issue-assigned:
+    name: Issue assigned → In Progress
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'assigned'
+    steps:
+      - name: Set Status → In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='query { node(id: "'"$ISSUE_NODE_ID"'") {
+            ... on Issue { projectItems(first:5) { nodes { id project { id } } } }
+          }}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "'"$PROJECT_ID"'") | .id')
+          [ -z "$ITEM_ID" ] && echo "Issue not in project, skipping" && exit 0
+          CURRENT=$(gh api graphql -f query='query { node(id: "'"$ITEM_ID"'") {
+            ... on ProjectV2Item { fieldValueByName(name:"Status") {
+              ... on ProjectV2ItemFieldSingleSelectValue { optionId }
+            }}
+          }}' --jq '.data.node.fieldValueByName.optionId // empty')
+          if [ "$CURRENT" = "$OPT_DONE" ] || [ "$CURRENT" = "$OPT_SHIPPED" ] || [ "$CURRENT" = "$OPT_TESTING" ]; then
+            echo "Status is $CURRENT — not overriding to In Progress"
+            exit 0
+          fi
+          gh api graphql -f query='mutation {
+            updateProjectV2ItemFieldValue(input: {
+              projectId: "'"$PROJECT_ID"'" itemId: "'"$ITEM_ID"'"
+              fieldId: "'"$FIELD_ID"'"
+              value: { singleSelectOptionId: "'"$OPT_IN_PROGRESS"'" }
+            }) { projectV2Item { id } }
+          }' && echo "⚡ In Progress — #${{ github.event.issue.number }}"
 
   # ── Issue réouverte → ⚡ In Progress ──────────────────────────────────────
   issue-reopened:
