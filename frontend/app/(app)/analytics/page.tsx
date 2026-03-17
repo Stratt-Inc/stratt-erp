@@ -9,6 +9,7 @@ import {
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { Highlight } from "@/components/Highlight";
 import {
   BarChart2, Users, FileText, Package, Briefcase,
   TrendingUp, Handshake, DollarSign, Download, Grid3x3,
@@ -140,8 +141,7 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {metrics.map((m) => <MetricCard key={m.label} {...m} />)}
-        <div className="lg:col-span-1 bg-card rounded-xl border border-border p-3 flex flex-col justify-between"
-          style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.08), rgba(36,221,184,0.06))" }}>
+        <div className="lg:col-span-1 bg-card rounded-xl border border-border p-3 flex flex-col justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
           <div className="flex items-end gap-1 mt-1">
             <span className="text-3xl font-extrabold font-display text-foreground">
@@ -553,14 +553,7 @@ export default function AnalyticsPage() {
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Analytics{" "}
-            <span style={{
-              background: "linear-gradient(135deg, #24DDB8 0%, #5C93FF 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>
-              & Reporting
-            </span>
+            <Highlight variant="underline" color="blue">& Reporting</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Vue consolidée · Classement ABC · Matrice Kraljic · Courbe de Pareto
