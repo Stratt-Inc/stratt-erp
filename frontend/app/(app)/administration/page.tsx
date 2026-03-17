@@ -119,7 +119,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               <Plus className="w-3.5 h-3.5" /> Ajouter
             </button>
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-xs font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               Ouvrir un ticket
             </button>
