@@ -248,7 +248,7 @@ export default function SirenePage() {
                 onClick={handleLookup}
                 disabled={lookupFetching}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 {lookupFetching ? (
                   <RefreshCw size={15} className="animate-spin" />
