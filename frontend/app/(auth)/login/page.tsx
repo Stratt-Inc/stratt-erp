@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { ApiError } from "@/lib/api";
-import { TTIconOutline } from "@/components/BrandLogo";
+import { TTIconFilled } from "@/components/BrandLogo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function LoginPage() {
           zIndex: 0,
         }}
       >
-        <TTIconOutline size={620} color="#000000" />
+        <TTIconFilled size={620} color="#000000" />
       </div>
       <div className="relative z-10">
         <h2 className="text-2xl font-bold text-foreground">Connexion</h2>
