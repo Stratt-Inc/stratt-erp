@@ -196,17 +196,17 @@ export default function PlanificationPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between pb-5" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module planification</span>
           </div>
-          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Passations de marchés</h1>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Passations de marchés</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">
             {stats?.total ?? 0} marchés · {budgetK} k€ prévisionnels · Exercice 2026
           </p>
@@ -222,7 +222,7 @@ export default function PlanificationPage() {
       </div>
 
       {/* KPIs — signal tiles */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
           { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
           { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "#06B6D4" },
@@ -240,12 +240,12 @@ export default function PlanificationPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="bg-card border border-border rounded-xl p-3">
+          <div className="flex items-center gap-2 mb-2">
             <Users className="w-4 h-4 text-muted-foreground" />
             <h2 className="text-[13px] font-semibold text-foreground">Charge prévisionnelle par mois (j/homme)</h2>
           </div>
-          <div className="h-40">
+          <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chargeData} barGap={1}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -257,18 +257,18 @@ export default function PlanificationPage() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-[11px] text-red-500 mt-2 flex items-center gap-1">
+          <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" />
             Surcharge détectée en mars et juin — risque de retard sur les passations
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="bg-card border border-border rounded-xl p-3">
+          <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-muted-foreground" />
             <h2 className="text-[13px] font-semibold text-foreground">Vision pluriannuelle 2024–2028</h2>
           </div>
-          <div className="h-40">
+          <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={pluriannuelData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -281,7 +281,7 @@ export default function PlanificationPage() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex gap-4 mt-2 justify-center">
+          <div className="flex gap-4 mt-1.5 justify-center">
             {[{ label: "Nb marchés", color: "#5C93FF" }, { label: "Montant (M€)", color: "#10B981" }].map((l) => (
               <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <div className="w-2 h-0.5 rounded" style={{ background: l.color }} />
@@ -331,16 +331,16 @@ export default function PlanificationPage() {
             {isLoading ? (
               <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-12 bg-muted rounded-xl animate-pulse" />)}</div>
             ) : (
-              <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-450px)]">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border">
+                  <thead className="data-table-head">
+                    <tr>
                       {["Réf.", "Objet du marché", "Service", "Montant", "Procédure", "Échéance", "Charge (j)", "Statut", ""].map((h) => (
-                        <th key={h} className="text-left px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{h}</th>
+                        <th key={h} className="data-th px-3">{h}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
+                  <tbody className="data-table-body">
                     {filtered.map((m) => {
                       const s = statutColors[m.statut] ?? statutColors.planifie;
                       const isSelected = selectedId === m.id;
@@ -348,23 +348,23 @@ export default function PlanificationPage() {
                         <tr
                           key={m.id}
                           onClick={() => setSelectedId(isSelected ? null : m.id)}
-                          className="cursor-pointer data-row transition-colors"
+                          className="cursor-pointer data-row"
                           style={isSelected ? { background: "rgba(92,147,255,0.06)" } : undefined}
                         >
-                          <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">{m.reference}</td>
-                          <td className="px-3 py-2.5 text-[13px] font-medium text-foreground max-w-[200px] truncate">{m.objet}</td>
-                          <td className="px-3 py-2.5 text-[11px] text-muted-foreground">{m.service}</td>
-                          <td className="px-3 py-2.5 num text-[15px] text-foreground">{m.montant.toLocaleString("fr-FR")} €</td>
-                          <td className="px-3 py-2.5 text-[11px] text-foreground">{m.procedure}</td>
-                          <td className="px-3 py-2.5 text-[11px] text-muted-foreground tabular-nums">{m.echeance}</td>
-                          <td className="px-3 py-2.5 text-[11px] tabular-nums text-foreground">{m.charge}</td>
-                          <td className="px-3 py-2.5">
+                          <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">{m.reference}</td>
+                          <td className="px-3 py-2 text-[13px] font-medium text-foreground max-w-[200px] truncate">{m.objet}</td>
+                          <td className="px-3 py-2 text-[11px] text-muted-foreground">{m.service}</td>
+                          <td className="px-3 py-2 num text-[15px] text-foreground">{m.montant.toLocaleString("fr-FR")} €</td>
+                          <td className="px-3 py-2 text-[11px] text-foreground">{m.procedure}</td>
+                          <td className="px-3 py-2 text-[11px] text-muted-foreground tabular-nums">{m.echeance}</td>
+                          <td className="px-3 py-2 text-[11px] tabular-nums text-foreground">{m.charge}</td>
+                          <td className="px-3 py-2">
                             <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border"
                               style={{ background: s.bg, color: s.text, borderColor: s.border }}>
                               {statutLabels[m.statut] ?? m.statut}
                             </span>
                           </td>
-                          <td className="px-3 py-2.5"><ChevronRight className="w-3 h-3 text-muted-foreground" /></td>
+                          <td className="px-3 py-2"><ChevronRight className="w-3 h-3 text-muted-foreground" /></td>
                         </tr>
                       );
                     })}
@@ -376,7 +376,7 @@ export default function PlanificationPage() {
 
           {/* Detail side panel */}
           {selected && (
-            <div className="w-72 flex-shrink-0 bg-card border border-border rounded-xl p-4 space-y-3">
+            <div className="w-72 flex-shrink-0 bg-card border border-border rounded-xl p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[11px] text-muted-foreground">{selected.reference}</span>
                 <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border"
@@ -385,7 +385,7 @@ export default function PlanificationPage() {
                 </span>
               </div>
               <h3 className="text-[13px] font-semibold leading-snug text-foreground">{selected.objet}</h3>
-              <div className="space-y-2 text-[12px]">
+              <div className="space-y-1.5 text-[12px]">
                 {[
                   ["Service", selected.service],
                   ["Montant", `${selected.montant.toLocaleString("fr-FR")} €`],
@@ -454,12 +454,12 @@ export default function PlanificationPage() {
 
       {/* ── CALENDAR VIEW ── */}
       {view === "calendrier" && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
             {/* Calendar grid */}
-            <div className="lg:col-span-2 bg-card border border-border rounded-xl p-4">
+            <div className="lg:col-span-2 bg-card border border-border rounded-xl p-3">
               {/* Month nav */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3">
                 <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
                   <ChevronLeft className="w-4 h-4 text-muted-foreground" />
                 </button>
@@ -481,14 +481,14 @@ export default function PlanificationPage() {
               {/* Days grid */}
               <div className="grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden">
                 {Array.from({ length: firstDay }).map((_, i) => (
-                  <div key={`empty-${i}`} className="bg-muted/30 min-h-[56px]" />
+                  <div key={`empty-${i}`} className="bg-muted/30 min-h-[44px]" />
                 ))}
                 {Array.from({ length: totalDays }).map((_, i) => {
                   const day = i + 1;
                   const events = getDayMarchesEvents(day);
                   const isToday = calYear === new Date().getFullYear() && calMonth === (new Date().getMonth() + 1) && day === new Date().getDate();
                   return (
-                    <div key={day} className="bg-card min-h-[56px] p-1 relative">
+                    <div key={day} className="bg-card min-h-[44px] p-1 relative">
                       <span className={`text-[11px] font-medium w-5 h-5 flex items-center justify-center rounded-full ${isToday ? "text-white" : "text-foreground"}`}
                         style={isToday ? { background: "#5C93FF" } : undefined}>
                         {day}
@@ -513,7 +513,7 @@ export default function PlanificationPage() {
 
               {/* Legend */}
               {calMarchesWithColor.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap gap-2">
                   {calMarchesWithColor.map((m) => (
                     <div key={m.id} className="flex items-center gap-1 text-[10px] text-muted-foreground">
                       <div className="w-2 h-2 rounded-full" style={{ background: m.color }} />
@@ -524,12 +524,12 @@ export default function PlanificationPage() {
               )}
 
               {calMarchesWithColor.length === 0 && (
-                <p className="text-center text-[12px] text-muted-foreground mt-4">Aucun marché avec dates pour ce mois.</p>
+                <p className="text-center text-[12px] text-muted-foreground mt-3">Aucun marché avec dates pour ce mois.</p>
               )}
             </div>
 
             {/* Alertes panel */}
-            <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+            <div className="bg-card border border-border rounded-xl p-3 space-y-2">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-amber-500" />
                 <h2 className="text-[13px] font-semibold text-foreground">Échéances à venir (30j)</h2>
@@ -538,7 +538,7 @@ export default function PlanificationPage() {
               {(alertesData?.marches ?? []).length === 0 ? (
                 <p className="text-[12px] text-muted-foreground">Aucune échéance dans les 30 prochains jours.</p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {(alertesData?.marches ?? []).map((m) => {
                     const s = statutColors[m.statut] ?? statutColors.planifie;
                     const nearestDate = m.date_attribution ?? m.date_fin;
@@ -546,7 +546,7 @@ export default function PlanificationPage() {
                       ? Math.ceil((new Date(nearestDate).getTime() - Date.now()) / 86400000)
                       : null;
                     return (
-                      <div key={m.id} className="p-2.5 rounded-lg border border-border bg-muted/20 space-y-1">
+                      <div key={m.id} className="p-2 rounded-lg border border-border bg-muted/20 space-y-1">
                         <div className="flex items-start justify-between gap-2">
                           <span className="text-[12px] font-medium text-foreground leading-snug line-clamp-2">{m.objet}</span>
                           <span className="text-[10px] font-mono text-muted-foreground shrink-0">{m.reference}</span>
@@ -584,12 +584,12 @@ export default function PlanificationPage() {
 
           {/* Gantt-style timeline */}
           {calMarchesWithColor.length > 0 && (
-            <div className="bg-card border border-border rounded-xl p-4">
-              <h2 className="text-[13px] font-semibold text-foreground mb-3 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-xl p-3">
+              <h2 className="text-[13px] font-semibold text-foreground mb-2 flex items-center gap-2">
                 <CalendarRange className="w-4 h-4 text-muted-foreground" />
                 Chronologie des passations — {MONTH_NAMES[calMonth - 1]} {calYear}
               </h2>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {calMarchesWithColor.map((m) => {
                   const launch = m.date_lancement ? new Date(m.date_lancement) : null;
                   const fin = m.date_fin ? new Date(m.date_fin) : null;
