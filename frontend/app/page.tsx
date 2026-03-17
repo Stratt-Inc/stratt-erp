@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Highlight } from "@/components/Highlight";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -425,13 +426,6 @@ export default function LandingPage() {
         .chip-2 { animation: chip-float 3.8s ease-in-out infinite 0.6s; }
         .chip-3 { animation: chip-float 2.9s ease-in-out infinite 1.2s; }
 
-        .text-gradient-hero {
-          background: linear-gradient(135deg, #5C93FF, #24DDB8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
         /* Hover glow for module cards */
         .module-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .module-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(92,147,255,0.1); }
@@ -447,24 +441,11 @@ export default function LandingPage() {
         .btn-primary { transition: filter 0.2s, transform 0.2s; }
         .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-        .hero-grid {
-          background-image:
-            linear-gradient(rgba(92,147,255,0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.08) 1px, transparent 1px);
-          background-size: 60px 60px;
-        }
-
         .nav-blur {
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
         }
 
-        .cta-grid {
-          background-image:
-            linear-gradient(rgba(92,147,255,0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.07) 1px, transparent 1px);
-          background-size: 60px 60px;
-        }
       `}</style>
 
       {/* ══════════════════════════════════════
@@ -478,10 +459,7 @@ export default function LandingPage() {
         <Link href="/" className="select-none">
           <span
             style={{
-              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
+              color: "#5C93FF",
               fontWeight: 800,
               fontSize: "20px",
               fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -534,32 +512,6 @@ export default function LandingPage() {
         className="relative hero-grid flex flex-col items-center justify-center text-center overflow-hidden pt-32 pb-0"
         style={{ minHeight: "100vh", background: "#F7F9FF" }}
       >
-        {/* Orb blue — top-left */}
-        <div
-          className="orb-a absolute pointer-events-none"
-          style={{
-            top: "-10%",
-            left: "-8%",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(92,147,255,0.18) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-        {/* Orb green — bottom-right */}
-        <div
-          className="orb-b absolute pointer-events-none"
-          style={{
-            bottom: "5%",
-            right: "-5%",
-            width: "500px",
-            height: "500px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(36,221,184,0.14) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
 
         {/* TTIconOutline watermark — centered absolute */}
         <div
@@ -603,7 +555,7 @@ export default function LandingPage() {
             }}
           >
             La plateforme{" "}
-            <span className="text-gradient-hero">intelligente</span>
+            <Highlight variant="underline" color="blue">intelligente</Highlight>
             <br />
             pour l&apos;achat public.
           </h1>
@@ -697,7 +649,7 @@ export default function LandingPage() {
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(to bottom, transparent 0%, rgba(247,249,255,0.75) 100%)",
+              background: "rgba(247,249,255,0.4)",
               pointerEvents: "none",
               zIndex: 2,
             }}
@@ -786,10 +738,7 @@ export default function LandingPage() {
                   fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
                   fontWeight: 800,
                   letterSpacing: "-0.03em",
-                  background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  color: "#5C93FF",
                 }}
               >
                 {stat.value}
@@ -847,7 +796,7 @@ export default function LandingPage() {
               }}
             >
               Tout ce dont votre{" "}
-              <span className="text-gradient-hero">organisation a besoin</span>
+              <Highlight variant="underline" color="blue">organisation a besoin</Highlight>
             </h2>
             <p
               data-reveal
@@ -915,8 +864,8 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Gradient divider */}
-                <div style={{ height: 1, background: `linear-gradient(90deg, ${mod.color}30, transparent)` }} />
+                {/* Divider */}
+                <div style={{ height: 1, background: `${mod.color}30` }} />
 
                 {/* Content */}
                 <div className="px-5 py-4 flex flex-col gap-2 flex-1">
@@ -1034,7 +983,7 @@ export default function LandingPage() {
                 }}
               >
                 Conçu pour{" "}
-                <span className="text-gradient-hero">la performance</span>
+                <Highlight variant="underline" color="teal">la performance</Highlight>
               </h2>
               <p
                 data-reveal-left
@@ -1159,21 +1108,6 @@ export default function LandingPage() {
               border: "1px solid rgba(36,221,184,0.18)",
             }}
           >
-            {/* Green glow bottom-center */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-40%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "500px",
-                height: "300px",
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(36,221,184,0.12) 0%, transparent 70%)",
-                filter: "blur(40px)",
-                pointerEvents: "none",
-              }}
-            />
 
             {/* TTIconFilled in glowing container */}
             <div
@@ -1190,14 +1124,11 @@ export default function LandingPage() {
             {/* StrattWordmark */}
             <div className="relative z-10">
               <span style={{
-                background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                color: "#5C93FF",
                 fontWeight: 800,
                 fontSize: "36px",
                 fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-              letterSpacing: "-0.04em",
+                letterSpacing: "-0.04em",
               }}>stratt</span>
             </div>
 
@@ -1211,7 +1142,7 @@ export default function LandingPage() {
               }}
             >
               Prêt à transformer votre{" "}
-              <span className="text-gradient-hero">gestion&nbsp;?</span>
+              <Highlight variant="underline" color="teal">gestion&nbsp;?</Highlight>
             </h2>
 
             <p
@@ -1255,10 +1186,7 @@ export default function LandingPage() {
         {/* Logo */}
         <div className="flex items-center gap-2.5">
           <span style={{
-            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            color: "#5C93FF",
             fontWeight: 800,
             fontSize: "18px",
             letterSpacing: "-0.04em",
