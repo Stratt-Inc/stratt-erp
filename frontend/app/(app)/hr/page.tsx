@@ -83,7 +83,7 @@ export default function HRPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Nouvel employé
           </button>
         )}
@@ -152,7 +152,7 @@ export default function HRPage() {
                       <td className="px-4 py-2">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                            style={{ background: "linear-gradient(135deg,#EC4899,#24DDB8)" }}>
+                            style={{ background: "#EC4899" }}>
                             {e.first_name?.[0]?.toUpperCase()}
                           </div>
                           <div>
