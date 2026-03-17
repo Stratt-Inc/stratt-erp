@@ -65,7 +65,7 @@ export default function BillingPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Nouvelle facture
           </button>
         )}
