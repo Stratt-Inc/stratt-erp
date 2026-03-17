@@ -140,7 +140,7 @@ export default function HelpPage() {
           className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 hover:bg-muted/20 transition-colors text-left"
         >
           <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Zap size={16} className="text-white fill-white" />
           </div>
           <div>
@@ -205,7 +205,7 @@ export default function HelpPage() {
             }`}
             style={
               category === cat
-                ? { background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }
+                ? { background: "#5C93FF" }
                 : { background: "rgba(255,255,255,0.06)" }
             }
           >
