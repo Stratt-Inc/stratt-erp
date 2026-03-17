@@ -6,127 +6,107 @@ import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction } from "@/store/toast";
 import {
-  ResponsiveContainer, Treemap, Tooltip, PieChart, Pie, Cell,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip,
+  LabelList, PieChart, Pie,
 } from "recharts";
 import {
+  ChartContainer,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import {
   Upload, BarChart3, AlertTriangle, TrendingDown, TrendingUp,
-  Layers, FolderOpen, Scale, Target, CheckCircle2, ArrowUpRight, Map,
+  Layers, FolderOpen, Scale, Target, CheckCircle2, ArrowUpRight,
 } from "lucide-react";
 
-/* ── Static data (mirrors maquette) ── */
-const flatTreemap = [
-  { name: "Bâtiment", size: 15000000, category: "Travaux" },
-  { name: "Voirie", size: 8500000, category: "Travaux" },
-  { name: "Réseaux", size: 5000000, category: "Travaux" },
-  { name: "Informatique", size: 7200000, category: "Fournitures" },
-  { name: "Bureau", size: 4500000, category: "Fournitures" },
-  { name: "Mobilier", size: 3500000, category: "Fournitures" },
-  { name: "Scolaire", size: 3000000, category: "Fournitures" },
-  { name: "Conseil", size: 8000000, category: "Services" },
-  { name: "Nettoyage", size: 6000000, category: "Services" },
-  { name: "Formation", size: 4800000, category: "Services" },
-  { name: "Maintenance", size: 4000000, category: "Services" },
-  { name: "Logiciels", size: 8000000, category: "PI/TIC" },
-  { name: "Télécom", size: 4200000, category: "PI/TIC" },
-  { name: "Hébergement", size: 2500000, category: "PI/TIC" },
-];
+/* ── Données ── */
+const spendData = [
+  { name: "Bâtiment",    size: 15.0, category: "Travaux"      },
+  { name: "Conseil",     size: 8.0,  category: "Services"     },
+  { name: "Logiciels",   size: 8.0,  category: "PI/TIC"       },
+  { name: "Voirie",      size: 8.5,  category: "Travaux"      },
+  { name: "Informatique",size: 7.2,  category: "Fournitures"  },
+  { name: "Nettoyage",   size: 6.0,  category: "Services"     },
+  { name: "Réseaux",     size: 5.0,  category: "Travaux"      },
+  { name: "Formation",   size: 4.8,  category: "Services"     },
+  { name: "Télécom",     size: 4.2,  category: "PI/TIC"       },
+  { name: "Bureau",      size: 4.5,  category: "Fournitures"  },
+  { name: "Maintenance", size: 4.0,  category: "Services"     },
+  { name: "Mobilier",    size: 3.5,  category: "Fournitures"  },
+  { name: "Hébergement", size: 2.5,  category: "PI/TIC"       },
+  { name: "Scolaire",    size: 3.0,  category: "Fournitures"  },
+].sort((a, b) => b.size - a.size);
 
-/* Couleurs groupées par catégorie — palette cohérente avec le PieChart */
-const CAT_COLORS: Record<string, { base: string; shades: string[] }> = {
-  "Travaux":      { base: "#3b82f6", shades: ["#1e40af", "#2563eb", "#3b82f6"] },
-  "Fournitures":  { base: "#8b5cf6", shades: ["#4c1d95", "#7c3aed", "#8b5cf6", "#a78bfa"] },
-  "Services":     { base: "#10b981", shades: ["#065f46", "#059669", "#10b981", "#34d399"] },
-  "PI/TIC":       { base: "#f59e0b", shades: ["#92400e", "#d97706", "#f59e0b"] },
+const CAT_COLOR: Record<string, string> = {
+  "Travaux":     "#5C93FF",
+  "Fournitures": "#8B5CF6",
+  "Services":    "#24DDB8",
+  "PI/TIC":      "#F59E0B",
 };
 
-// Index counter per category to pick shades
-const catIdx: Record<string, number> = {};
-const CELL_COLORS: Record<string, string> = {};
-for (const item of flatTreemap) {
-  const cat = CAT_COLORS[item.category];
-  if (!cat) continue;
-  catIdx[item.category] = (catIdx[item.category] ?? 0);
-  CELL_COLORS[item.name] = cat.shades[catIdx[item.category] % cat.shades.length];
-  catIdx[item.category]++;
-}
+const spendChartConfig: ChartConfig = {
+  size: { label: "Dépense (M€)", color: "#5C93FF" },
+};
 
 const CATEGORY_META = [
-  { label: "Travaux",     color: "#2563eb", total: 28.5 },
-  { label: "Fournitures", color: "#7c3aed", total: 18.2 },
-  { label: "Services",    color: "#059669", total: 22.8 },
-  { label: "PI/TIC",      color: "#d97706", total: 14.7 },
+  { label: "Travaux",     color: "#5C93FF", total: 28.5 },
+  { label: "Fournitures", color: "#8B5CF6", total: 18.2 },
+  { label: "Services",    color: "#24DDB8", total: 22.8 },
+  { label: "PI/TIC",      color: "#F59E0B", total: 14.7 },
 ];
 
-/* PieChart directions — mêmes teintes */
 const directionData = [
-  { name: "Infrastructures", value: 28.5, color: "#1e40af" },
-  { name: "Éducation",       value: 18.2, color: "#7c3aed" },
-  { name: "Numérique",       value: 14.7, color: "#d97706" },
-  { name: "Services",        value: 12.3, color: "#059669" },
-  { name: "Autres",          value: 10.5, color: "#94a3b8" },
+  { name: "Infrastructures", value: 28.5, color: "#5C93FF" },
+  { name: "Éducation",       value: 18.2, color: "#8B5CF6" },
+  { name: "Numérique",       value: 14.7, color: "#F59E0B" },
+  { name: "Services",        value: 12.3, color: "#24DDB8" },
+  { name: "Autres",          value: 10.5, color: "#94A3B8" },
 ];
 
-const TOTAL_ALL = 84.2;
-
-const CustomTreemapContent = (props: {
-  x?: number; y?: number; width?: number; height?: number; name?: string; size?: number;
-}) => {
-  const { x = 0, y = 0, width = 0, height = 0, name = "", size = 0 } = props;
-  if (width < 18 || height < 14) return null;
-  const fill = CELL_COLORS[name] ?? "#64748b";
-  return (
-    <g>
-      <rect x={x + 1} y={y + 1} width={width - 2} height={height - 2} fill={fill} rx={3} />
-      {width > 48 && height > 22 && (
-        <text x={x + 7} y={y + 15} fill="white" fontSize={10} fontWeight={600}>{name}</text>
-      )}
-      {width > 48 && height > 36 && (
-        <text x={x + 7} y={y + 28} fill="rgba(255,255,255,0.7)" fontSize={9}>
-          {(size / 1_000_000).toFixed(1)} M€
-        </text>
-      )}
-    </g>
-  );
+const directionChartConfig: ChartConfig = {
+  value: { label: "Budget (M€)", color: "#5C93FF" },
 };
 
 const comparatif = [
-  { famille: "Travaux", n: 28.5, n1: 26.2, delta: "+8.8%", up: true },
-  { famille: "Fournitures", n: 18.2, n1: 19.8, delta: "-8.1%", up: false },
-  { famille: "Services", n: 22.8, n1: 21.1, delta: "+8.1%", up: true },
-  { famille: "PI / TIC", n: 14.7, n1: 12.4, delta: "+18.5%", up: true },
+  { famille: "Travaux",     n: 28.5, n1: 26.2, delta: "+8.8%",  up: true  },
+  { famille: "Fournitures", n: 18.2, n1: 19.8, delta: "-8.1%",  up: false },
+  { famille: "Services",    n: 22.8, n1: 21.1, delta: "+8.1%",  up: true  },
+  { famille: "PI / TIC",    n: 14.7, n1: 12.4, delta: "+18.5%", up: true  },
 ];
 
 const seuilsData = [
-  { code: "02.01 — Informatique", depense: 380, seuil: 90, ratio: 4.2, statut: "Fractionnement" },
-  { code: "03.02 — Nettoyage", depense: 245, seuil: 90, ratio: 2.7, statut: "Fractionnement" },
-  { code: "01.01 — Bâtiment neuf", depense: 1200, seuil: 215, ratio: 5.6, statut: "AO requis" },
-  { code: "04.01 — Logiciels", depense: 520, seuil: 215, ratio: 2.4, statut: "AO requis" },
-  { code: "02.04 — Scolaire", depense: 85, seuil: 90, ratio: 0.94, statut: "Conforme" },
+  { code: "02.01 — Informatique",  depense: 380,  seuil: 90,  ratio: 4.2,  statut: "Fractionnement" },
+  { code: "03.02 — Nettoyage",     depense: 245,  seuil: 90,  ratio: 2.7,  statut: "Fractionnement" },
+  { code: "01.01 — Bâtiment neuf", depense: 1200, seuil: 215, ratio: 5.6,  statut: "AO requis"      },
+  { code: "04.01 — Logiciels",     depense: 520,  seuil: 215, ratio: 2.4,  statut: "AO requis"      },
+  { code: "02.04 — Scolaire",      depense: 85,   seuil: 90,  ratio: 0.94, statut: "Conforme"       },
 ];
-
 
 const ecartsData = [
   { direction: "Infrastructures", prevu: 30.0, execute: 28.5 },
-  { direction: "Éducation", prevu: 17.0, execute: 18.2 },
-  { direction: "Numérique", prevu: 13.5, execute: 14.7 },
-  { direction: "Services", prevu: 12.0, execute: 12.3 },
-  { direction: "RH", prevu: 6.0, execute: 5.8 },
+  { direction: "Éducation",       prevu: 17.0, execute: 18.2 },
+  { direction: "Numérique",       prevu: 13.5, execute: 14.7 },
+  { direction: "Services",        prevu: 12.0, execute: 12.3 },
+  { direction: "RH",              prevu: 6.0,  execute: 5.8  },
 ];
+
+const ECARTS_MAX = Math.max(...ecartsData.map(r => Math.max(r.prevu, r.execute))) * 1.08;
 
 const anomalies = [
   { type: "Fractionnement", message: "02.01 Fournitures informatiques : 12 MAPA < 40k€ totalisent 380k€ — seuil de publicité dépassé", severity: "haute" },
-  { type: "Concentration", message: "85% du budget « Conseil » attribué à 2 fournisseurs — défaut de mise en concurrence", severity: "moyenne" },
+  { type: "Concentration",  message: "85% du budget « Conseil » attribué à 2 fournisseurs — défaut de mise en concurrence", severity: "moyenne" },
   { type: "Classification", message: "23 dépenses mandatées non rattachées à un code de nomenclature", severity: "basse" },
-  { type: "Seuil dépassé", message: "Code 04.01 Logiciels : 520k€ sans procédure formalisée — AO requis", severity: "haute" },
+  { type: "Seuil dépassé",  message: "Code 04.01 Logiciels : 520k€ sans procédure formalisée — AO requis", severity: "haute" },
 ];
 
-interface NomenclatureNode { id: string; code: string; label: string; type: string; montant: number; seuil: number; conforme: boolean; }
+interface NomenclatureNode {
+  id: string; code: string; label: string; type: string;
+  montant: number; seuil: number; conforme: boolean;
+}
 
 export default function CartographiePage() {
   const { accessToken, currentOrg } = useAuthStore();
   const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
-
   const demo = useDemoAction();
 
   const { data: nodes = [] } = useQuery<NomenclatureNode[]>({
@@ -140,25 +120,34 @@ export default function CartographiePage() {
   const tooltipStyle = {
     background: "hsl(var(--card))",
     border: "1px solid hsl(var(--border))",
-    borderRadius: "8px",
+    borderRadius: "10px",
     fontSize: "12px",
+    boxShadow: "0 4px 16px rgba(30,50,80,0.1)",
+    color: "hsl(var(--foreground))",
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
-      {/* Header */}
-      <div className="flex items-start justify-between">
+      {/* ── Header ── */}
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Module cartographie</p>
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
-              <Map className="w-3.5 h-3.5" style={{ color: "#06B6D4" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Cartographie stratégique des achats</h1>
-          </div>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
+            Module cartographie
+          </p>
+          <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
+            Cartographie{" "}
+            <span style={{
+              background: "linear-gradient(135deg, #06B6D4 0%, #24DDB8 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              des achats
+            </span>
+          </h1>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes
           </p>
         </div>
@@ -176,28 +165,32 @@ export default function CartographiePage() {
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      {/* ── KPIs ── */}
+      <div className="section-header">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#06B6D4", boxShadow: "0 0 6px #06B6D4" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Indicateurs de cartographie
+        </span>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Familles d'achats", value: "14", icon: Layers, alert: false },
-          { label: "Codes nomenclature", value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen, alert: false },
-          { label: "Dépenses classifiées", value: "96%", icon: CheckCircle2, alert: false },
-          { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`, icon: Scale, alert: true },
-          { label: "Écart budgétaire moyen", value: "4,2%", icon: Target, alert: false },
-        ].map(({ label, value, icon: Icon, alert }) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-4 hover:shadow-sm transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <Icon className="w-3.5 h-3.5" style={{ color: alert ? "#EF4444" : "#5C93FF" }} />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{label}</span>
-            </div>
-            <span className="text-xl font-bold font-display" style={{ color: alert ? "#EF4444" : "hsl(var(--foreground))" }}>{value}</span>
+          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "#06B6D4" },
+          { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "#5C93FF" },
+          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "#10B981" },
+          { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "#EF4444" },
+          { label: "Écart budgétaire moyen",   value: "4,2%",                                                 icon: Target,       color: "#F59E0B" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number-sm">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
 
-      {/* Import zone */}
-      <div className="rounded-xl border border-dashed border-border bg-card p-6 flex items-center gap-6">
-        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+      {/* ── Import zone ── */}
+      <div className="rounded-xl border border-dashed border-border bg-card p-3 flex items-center gap-4">
+        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
           <Upload className="w-4 h-4 text-muted-foreground" />
         </div>
         <div className="flex-1">
@@ -211,134 +204,231 @@ export default function CartographiePage() {
         </button>
       </div>
 
-      {/* Treemap + Direction */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-8 bg-card rounded-xl border border-border p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4" style={{ color: "#5C93FF" }} />
-              <h2 className="text-sm font-semibold text-foreground">Cartographie par famille d&apos;achats homogène</h2>
+      {/* ── Bar chart familles + Direction ── */}
+      <div className="section-header">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Répartition de la dépense
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+
+        {/* Bar chart horizontal — 14 familles */}
+        <div className="lg:col-span-8 rounded-[14px] overflow-hidden"
+          style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+          <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+            <div className="flex items-center gap-2.5">
+              <Layers className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
+              <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
+                Familles d&apos;achats homogènes
+              </span>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">84,2 M€ total</span>
+            {/* Légende catégories */}
+            <div className="flex items-center gap-3">
+              {CATEGORY_META.map(c => (
+                <div key={c.label} className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ background: c.color }} />
+                  <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.45)" }}>{c.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <Treemap data={flatTreemap} dataKey="size" aspectRatio={4 / 3} content={<CustomTreemapContent />}>
-                <Tooltip
-                  contentStyle={tooltipStyle}
-                  formatter={(v: number) => [`${(v / 1_000_000).toFixed(2)} M€`, "Montant"]}
+          <div className="px-4 py-3" style={{ height: 300 }}>
+            <ChartContainer config={spendChartConfig} className="h-full">
+              <BarChart
+                data={spendData}
+                layout="vertical"
+                barSize={12}
+                margin={{ top: 0, right: 52, bottom: 0, left: 8 }}
+              >
+                <CartesianGrid horizontal={false} stroke="hsl(var(--border))" strokeDasharray="3 3" />
+                <XAxis
+                  type="number"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: "rgba(30,50,80,0.38)", fontFamily: '"Barlow Condensed", sans-serif' }}
+                  tickFormatter={(v) => `${v}M€`}
                 />
-              </Treemap>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Category legend */}
-          <div className="flex items-center gap-5 mt-4 flex-wrap">
-            {CATEGORY_META.map((cat) => (
-              <div key={cat.label} className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: cat.color }} />
-                <span className="text-[11px] text-muted-foreground">{cat.label}</span>
-                <span className="text-[11px] font-semibold num text-foreground">{cat.total} M€</span>
-              </div>
-            ))}
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={76}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: "rgba(30,50,80,0.65)", fontFamily: '"Helvetica Neue", Helvetica, sans-serif' }}
+                />
+                <Tooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(v) => `${v} M€`}
+                      labelFormatter={(label) => {
+                        const item = spendData.find(d => d.name === label);
+                        return item ? `${label} · ${item.category}` : label;
+                      }}
+                      indicator="dot"
+                    />
+                  }
+                  cursor={{ fill: "rgba(92,147,255,0.04)" }}
+                />
+                <Bar dataKey="size" radius={[0, 6, 6, 0]}>
+                  <LabelList
+                    dataKey="size"
+                    position="right"
+                    formatter={(v: number) => `${v}M€`}
+                    style={{ fontSize: 10, fontFamily: '"Barlow Condensed", sans-serif', fill: "rgba(30,50,80,0.45)" }}
+                  />
+                  {spendData.map((entry, i) => (
+                    <Cell key={i} fill={CAT_COLOR[entry.category]} fillOpacity={0.82} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
           </div>
         </div>
 
-        <div className="lg:col-span-4 bg-card rounded-xl border border-border p-5">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Consolidation par direction</h2>
-          <div className="h-40">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={directionData} cx="50%" cy="50%" innerRadius={36} outerRadius={60} dataKey="value" stroke="white" strokeWidth={2}>
-                  {directionData.map((e, i) => <Cell key={i} fill={e.color} />)}
-                </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v} M€`} />
-              </PieChart>
-            </ResponsiveContainer>
+        {/* Donut — par direction */}
+        <div className="lg:col-span-4 rounded-[14px] overflow-hidden flex flex-col"
+          style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+          <div className="flex items-center px-5 py-3.5" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+            <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
+              Par direction
+            </span>
           </div>
-          <div className="space-y-1.5 mt-2">
-            {directionData.map((d) => (
-              <div key={d.name} className="flex items-center gap-2 text-xs">
-                <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
-                <span className="text-muted-foreground flex-1 truncate">{d.name}</span>
-                <span className="font-semibold num text-foreground">{d.value} M€</span>
-              </div>
-            ))}
+
+          {/* Donut centré avec total */}
+          <div className="relative px-4 pt-3" style={{ height: 170 }}>
+            <ChartContainer config={directionChartConfig} className="h-full">
+              <PieChart>
+                <Pie
+                  data={directionData}
+                  cx="50%" cy="50%"
+                  innerRadius={48} outerRadius={70}
+                  paddingAngle={3}
+                  dataKey="value"
+                  stroke="hsl(var(--card))"
+                  strokeWidth={2}
+                >
+                  {directionData.map((e, i) => (
+                    <Cell key={i} fill={e.color} fillOpacity={0.88} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(v) => `${v} M€`}
+                      indicator="dot"
+                    />
+                  }
+                />
+              </PieChart>
+            </ChartContainer>
+            {/* Total centré */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-[22px] font-bold num leading-none" style={{ color: "hsl(var(--foreground))" }}>84,2</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "rgba(30,50,80,0.35)" }}>M€ total</span>
+            </div>
+          </div>
+
+          {/* Liste directions */}
+          <div className="px-5 pb-3 pt-2 space-y-1.5 flex-1">
+            {directionData.map((d) => {
+              const pct = ((d.value / 84.2) * 100).toFixed(0);
+              return (
+                <div key={d.name} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
+                  <span className="text-[11px] flex-1 truncate" style={{ color: "rgba(30,50,80,0.55)" }}>{d.name}</span>
+                  <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.3)" }}>{pct}%</span>
+                  <span className="text-[11px] font-bold num" style={{ color: "rgba(30,50,80,0.75)" }}>{d.value}M€</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Computation des seuils */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
-        <div className="px-5 py-3 border-b border-border flex items-center gap-2">
-          <Scale className="w-4 h-4" style={{ color: "#F59E0B" }} />
-          <h2 className="text-sm font-semibold text-foreground">Computation des seuils de procédure</h2>
-          <span className="text-xs text-muted-foreground ml-1">Art. L2124-1 CCP</span>
-        </div>
+      {/* ── Computation des seuils ── */}
+      <div className="section-header mt-1">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#F59E0B", boxShadow: "0 0 6px #F59E0B" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Computation des seuils
+        </span>
+        <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.25)" }}>Art. L2124-1 CCP</span>
+      </div>
+
+      <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border">
-              <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Code nomenclature</th>
-              <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Dépense cumulée (k€)</th>
-              <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seuil applicable (k€)</th>
-              <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ratio</th>
-              <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut</th>
+            <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+              <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Code nomenclature</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Dépense (k€)</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Seuil (k€)</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Ratio</th>
+              <th className="px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Statut</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {seuilsData.map((s) => (
-              <tr key={s.code} className="hover:bg-muted/30 transition-colors">
-                <td className="px-5 py-3 text-sm font-medium text-foreground">{s.code}</td>
-                <td className="px-5 py-3 text-right text-sm font-semibold num text-foreground">{s.depense}</td>
-                <td className="px-5 py-3 text-right text-sm num text-muted-foreground">{s.seuil}</td>
-                <td className="px-5 py-3 text-right text-sm num">
-                  <span style={{ color: s.ratio > 1 ? "#EF4444" : "#10B981", fontWeight: s.ratio > 1 ? 700 : 400 }}>
-                    {s.ratio.toFixed(1)}x
-                  </span>
-                </td>
-                <td className="px-5 py-3">
-                  <span
-                    className="text-[10px] font-semibold uppercase tracking-wider"
-                    style={{
-                      color: s.statut === "Conforme" ? "#10B981" : s.statut === "Fractionnement" ? "#EF4444" : "#F59E0B",
-                    }}
-                  >
-                    {s.statut}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {seuilsData.map((s) => {
+              const statusColor = s.statut === "Conforme" ? "#10B981" : s.statut === "Fractionnement" ? "#EF4444" : "#F59E0B";
+              const statusBg   = s.statut === "Conforme" ? "rgba(16,185,129,0.08)" : s.statut === "Fractionnement" ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)";
+              return (
+                <tr key={s.code} className="data-row">
+                  <td className="px-5 py-2 text-sm font-medium" style={{ color: "hsl(var(--foreground))" }}>{s.code}</td>
+                  <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{s.depense}</td>
+                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.45)" }}>{s.seuil}</td>
+                  <td className="px-5 py-2 text-right">
+                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "#EF4444" : "#10B981" }}>
+                      {s.ratio.toFixed(1)}×
+                    </span>
+                  </td>
+                  <td className="px-5 py-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md"
+                      style={{ color: statusColor, background: statusBg }}>
+                      {s.statut}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* Comparatif N/N-1 + Écarts budgétaires */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
-          <div className="px-5 py-3 border-b border-border">
-            <h2 className="text-sm font-semibold text-foreground">Comparatif N / N-1 (M€)</h2>
+      {/* ── Comparatif + Écarts ── */}
+      <div className="section-header mt-1">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Analyse budgétaire
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+        {/* Comparatif N/N-1 */}
+        <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+          <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+            <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>Comparatif N / N-1</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(92,147,255,0.08)", color: "#5C93FF" }}>M€</span>
           </div>
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Famille</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">2026 (N)</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">2025 (N-1)</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Variation</th>
+              <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Famille</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>2026</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>2025</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Δ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {comparatif.map((c) => (
-                <tr key={c.famille} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-5 py-3 text-sm font-medium text-foreground">{c.famille}</td>
-                  <td className="px-5 py-3 text-right text-sm font-semibold num text-foreground">{c.n}</td>
-                  <td className="px-5 py-3 text-right text-sm num text-muted-foreground">{c.n1}</td>
-                  <td className="px-5 py-3 text-right">
-                    <span
-                      className="inline-flex items-center gap-0.5 text-xs font-semibold"
-                      style={{ color: c.up ? "#10B981" : "#EF4444" }}
-                    >
+                <tr key={c.famille} className="data-row">
+                  <td className="px-5 py-2 text-sm font-semibold" style={{ color: "hsl(var(--foreground))" }}>{c.famille}</td>
+                  <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{c.n}</td>
+                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.4)" }}>{c.n1}</td>
+                  <td className="px-5 py-2 text-right">
+                    <span className="inline-flex items-center gap-0.5 text-[11px] font-bold"
+                      style={{ color: c.up ? "#10B981" : "#EF4444" }}>
                       {c.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {c.delta}
                     </span>
@@ -349,51 +439,94 @@ export default function CartographiePage() {
           </table>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Écarts budgétaires par direction</h2>
-          <div className="h-44">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ecartsData} layout="vertical" barGap={2} barSize={10}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                <YAxis dataKey="direction" type="category" width={88} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v} M€`} />
-                <Bar dataKey="prevu" name="Prévu" fill="hsl(var(--muted))" radius={[0, 2, 2, 0]} />
-                <Bar dataKey="execute" name="Exécuté" fill="#5C93FF" radius={[0, 2, 2, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Écarts budgétaires — bullet bars */}
+        <div className="rounded-[14px] p-3.5" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
+              Écarts budgétaires par direction
+            </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(92,147,255,0.15)", border: "1.5px dashed rgba(92,147,255,0.4)" }} />
+                <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Prévu</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-2 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(16,185,129,0.5), rgba(16,185,129,0.85))" }} />
+                <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Exécuté</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {ecartsData.map((d) => {
+              const prevuPct   = (d.prevu   / ECARTS_MAX) * 100;
+              const executePct = (d.execute / ECARTS_MAX) * 100;
+              const delta      = ((d.execute - d.prevu) / d.prevu) * 100;
+              const isOver     = delta > 0;
+              const execColor  = isOver
+                ? "linear-gradient(90deg, rgba(239,68,68,0.45), rgba(239,68,68,0.8))"
+                : "linear-gradient(90deg, rgba(16,185,129,0.45), rgba(16,185,129,0.8))";
+              const deltaColor = isOver ? "#EF4444" : "#10B981";
+              const deltaBg    = isOver ? "rgba(239,68,68,0.07)" : "rgba(16,185,129,0.07)";
+              return (
+                <div key={d.direction}>
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="text-[11px] font-semibold" style={{ color: "rgba(30,50,80,0.75)" }}>{d.direction}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] num" style={{ color: "rgba(30,50,80,0.3)" }}>{d.prevu}M€ prévu</span>
+                      <span className="text-[10px] font-bold num px-1.5 py-0.5 rounded"
+                        style={{ color: deltaColor, background: deltaBg }}>
+                        {isOver ? "+" : ""}{delta.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative h-5 rounded-md overflow-hidden" style={{ background: "rgba(30,50,80,0.04)" }}>
+                    <div className="absolute left-0 top-0 bottom-0 rounded-md"
+                      style={{ width: `${prevuPct}%`, background: "rgba(92,147,255,0.1)", borderRight: "2px dashed rgba(92,147,255,0.35)" }} />
+                    <div className="absolute left-0 rounded"
+                      style={{ width: `${executePct}%`, top: "20%", bottom: "20%", background: execColor }} />
+                    <div className="absolute inset-y-0 flex items-center" style={{ left: `${Math.min(executePct, 88)}%`, paddingLeft: 5 }}>
+                      <span className="text-[9px] font-bold num" style={{ color: "rgba(30,50,80,0.45)" }}>{d.execute}M€</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Anomalies */}
-      <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-3">Anomalies détectées</p>
-        <div className="space-y-2">
-          {anomalies.map((a, i) => {
-            const isHaute = a.severity === "haute";
-            const isMoyenne = a.severity === "moyenne";
-            const borderColor = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "hsl(var(--muted-foreground))";
-            const bg = isHaute ? "rgba(239,68,68,0.04)" : isMoyenne ? "rgba(245,158,11,0.04)" : "hsl(var(--muted)/0.3)";
-            const textColor = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "hsl(var(--muted-foreground))";
-            return (
-              <div
-                key={i}
-                className="flex items-start gap-3 p-3 rounded-lg border"
-                style={{ borderLeftWidth: "3px", borderLeftColor: borderColor, background: bg }}
-              >
-                <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: textColor }} />
-                <div className="flex-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: textColor }}>{a.type}</span>
-                  <p className="text-sm text-foreground mt-0.5 leading-snug">{a.message}</p>
-                </div>
-                <button onClick={demo} className="text-xs font-semibold hover:underline flex items-center gap-0.5 flex-shrink-0" style={{ color: "#5C93FF" }}>
-                  Détails <ArrowUpRight className="w-3 h-3" />
-                </button>
+      {/* ── Anomalies ── */}
+      <div className="section-header mt-1">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "#EF4444", boxShadow: "0 0 6px #EF4444" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Anomalies détectées
+        </span>
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+          {anomalies.length}
+        </span>
+      </div>
+
+      <div className="space-y-1.5">
+        {anomalies.map((a, i) => {
+          const isHaute   = a.severity === "haute";
+          const isMoyenne = a.severity === "moyenne";
+          const color = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "#94A3B8";
+          const bg    = isHaute ? "rgba(239,68,68,0.03)" : isMoyenne ? "rgba(245,158,11,0.03)" : "rgba(148,163,184,0.04)";
+          return (
+            <div key={i} className="flex items-start gap-3 px-4 py-2.5 rounded-xl"
+              style={{ background: bg, border: "1px solid hsl(var(--border))", borderLeftWidth: 3, borderLeftColor: color }}>
+              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color }} />
+              <div className="flex-1 min-w-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{a.type}</span>
+                <p className="text-[12px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.7)" }}>{a.message}</p>
               </div>
-            );
-          })}
-        </div>
+              <button onClick={demo} className="text-[11px] font-semibold flex items-center gap-0.5 flex-shrink-0 hover:opacity-70 transition-opacity" style={{ color: "#5C93FF" }}>
+                Détails <ArrowUpRight className="w-3 h-3" />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
