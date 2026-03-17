@@ -129,8 +129,8 @@
   .section-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 8px;
   }
   .section-header::after {
     content: "";
@@ -143,8 +143,8 @@
   .stat-tile {
     position: relative;
     overflow: hidden;
-    border-radius: 14px;
-    padding: 20px 20px 18px 24px;
+    border-radius: 12px;
+    padding: 12px 14px 10px 16px;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow: 0 1px 3px rgba(30,50,80,0.06), 0 1px 2px rgba(30,50,80,0.04);
@@ -154,8 +154,8 @@
     content: "";
     position: absolute;
     left: 0;
-    top: 14px;
-    bottom: 14px;
+    top: 10px;
+    bottom: 10px;
     width: 3px;
     border-radius: 0 3px 3px 0;
     background: var(--tile-color, #5C93FF);
@@ -164,8 +164,8 @@
   }
   .stat-tile:hover::before {
     opacity: 1;
-    top: 8px;
-    bottom: 8px;
+    top: 6px;
+    bottom: 6px;
   }
   .stat-tile:hover {
     border-color: color-mix(in srgb, var(--tile-color, #5C93FF) 22%, transparent);
@@ -176,10 +176,10 @@
   /* Ghost icon in stat tile */
   .stat-tile-icon {
     position: absolute;
-    right: -4px;
-    bottom: -4px;
-    width: 56px;
-    height: 56px;
+    right: -3px;
+    bottom: -3px;
+    width: 42px;
+    height: 42px;
     opacity: 0.07;
     color: var(--tile-color, #5C93FF);
     transition: opacity 0.15s, transform 0.15s;
@@ -193,7 +193,7 @@
   .stat-number {
     font-family: "Barlow Condensed", sans-serif;
     font-weight: 600;
-    font-size: 46px;
+    font-size: 34px;
     line-height: 1;
     letter-spacing: -0.01em;
     color: hsl(var(--foreground));
@@ -202,7 +202,7 @@
   .stat-number-sm {
     font-family: "Barlow Condensed", sans-serif;
     font-weight: 600;
-    font-size: 32px;
+    font-size: 24px;
     line-height: 1;
     letter-spacing: -0.01em;
     color: hsl(var(--foreground));
@@ -211,22 +211,71 @@
 
   /* Label in stat tile */
   .stat-label {
-    font-size: 9.5px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-top: 6px;
+  }
+
+  /* ── Data table design system ── */
+
+  /* Container — top gradient accent bar */
+  .data-table-wrap {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+  .data-table-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #5C93FF 0%, #24DDB8 55%, transparent 100%);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Thead — frosted tint + subtle brand border */
+  .data-table-head {
+    background: linear-gradient(to bottom, rgba(92,147,255,0.035) 0%, rgba(92,147,255,0.01) 100%);
+    border-bottom: 1px solid rgba(92,147,255,0.09);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Th cells */
+  .data-th {
+    padding: 9px 16px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: hsl(var(--muted-foreground));
-    margin-top: 10px;
+    color: rgba(30,50,80,0.38);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .data-th-r { text-align: right; }
+
+  /* Tbody — lighter separator */
+  .data-table-body tr + tr {
+    border-top: 1px solid rgba(30,50,80,0.05);
   }
 
-  /* Table row hover — left accent instead of background */
+  /* Row hover — gradient sweep + left accent */
   .data-row {
-    transition: border-left-color 0.1s, background 0.1s;
+    transition: background 0.12s, border-left-color 0.12s;
     border-left: 2px solid transparent;
   }
   .data-row:hover {
-    border-left-color: rgba(92,147,255,0.35);
-    background: rgba(92,147,255,0.04);
+    border-left-color: rgba(92,147,255,0.45);
+    background: linear-gradient(to right, rgba(92,147,255,0.045) 0%, transparent 60%);
   }
 
   /* Numbers in tables — Barlow Condensed medium */
