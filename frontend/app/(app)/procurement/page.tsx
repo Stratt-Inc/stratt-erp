@@ -42,16 +42,16 @@ export default function ProcurementPage() {
   const pending = orders.filter(o => o.status === "sent").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-5" style={{ borderBottom: "1px solid rgba(6,182,212,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(6,182,212,0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#06B6D4", boxShadow: "0 0 6px #06B6D4" }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module achats</span>
           </div>
-          <h1 className="text-[26px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Bons de commande et gestion des fournisseurs</p>
         </div>
         {!isDemo && (
@@ -63,7 +63,7 @@ export default function ProcurementPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
           { label: "Total commandes", value: orders.length, color: "#8B5CF6", icon: ShoppingCart },
           { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#10B981", icon: ShoppingCart },
@@ -82,41 +82,41 @@ export default function ProcurementPage() {
       {isLoading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-muted rounded-xl animate-pulse" />)}</div>
       ) : orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-border">
-          <ShoppingCart className="w-10 h-10 text-muted-foreground/30 mb-3" />
+        <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-dashed border-border">
+          <ShoppingCart className="w-8 h-8 text-muted-foreground/30 mb-2" />
           <p className="font-semibold text-foreground">Aucune commande</p>
           <p className="text-sm text-muted-foreground mt-1">Créez votre première commande fournisseur.</p>
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
+        <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-280px)]">
           <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Numéro</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Date</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Livraison prévue</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total HT</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total TTC</th>
+            <thead className="data-table-head">
+              <tr>
+                <th className="data-th">Numéro</th>
+                <th className="data-th">Statut</th>
+                <th className="data-th hidden md:table-cell">Date</th>
+                <th className="data-th hidden lg:table-cell">Livraison prévue</th>
+                <th className="data-th data-th-r">Total HT</th>
+                <th className="data-th data-th-r">Total TTC</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="data-table-body">
               {orders.map((o) => {
                 const cfg = statusConfig[o.status] ?? statusConfig.draft;
                 return (
-                  <tr key={o.id} data-row>
-                    <td className="px-4 py-3 text-sm font-mono font-semibold text-foreground">{o.number}</td>
-                    <td className="px-4 py-3">
+                  <tr key={o.id} className="data-row">
+                    <td className="px-4 py-2 text-sm font-mono font-semibold text-foreground">{o.number}</td>
+                    <td className="px-4 py-2">
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
                         style={{ background: `${cfg.color}14`, color: cfg.color }}>
                         <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.color }} />
                         {cfg.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{o.order_date}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{o.delivery_date || "—"}</td>
-                    <td className="px-4 py-3 text-right text-sm num text-muted-foreground">{o.subtotal.toLocaleString("fr-FR")} €</td>
-                    <td className="px-4 py-3 text-right text-sm num font-bold text-foreground">{o.total.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">{o.order_date}</td>
+                    <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{o.delivery_date || "—"}</td>
+                    <td className="px-4 py-2 text-right text-sm num text-muted-foreground">{o.subtotal.toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-2 text-right text-sm num font-bold text-foreground">{o.total.toLocaleString("fr-FR")} €</td>
                   </tr>
                 );
               })}
