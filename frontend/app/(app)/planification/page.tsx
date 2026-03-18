@@ -86,7 +86,7 @@ const prioriteColors: Record<string, { bg: string; text: string }> = {
 };
 
 // Color palette for calendar event bars
-const EVENT_COLORS = ["#5C93FF", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4", "#F97316", "#EC4899"];
+const EVENT_COLORS = ["#5C93FF", "#24DDB8", "#F59E0B", "#EF4444", "#8B5CF6", "#24DDB8", "#F97316", "#5C93FF"];
 
 const MONTH_NAMES = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 const DAY_NAMES = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
@@ -225,7 +225,7 @@ export default function PlanificationPage() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
           { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
-          { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "#06B6D4" },
+          { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "#24DDB8" },
           { label: "Chevauchements", value: "3", icon: Layers, color: "#8B5CF6" },
           { label: "Budget impact", value: `${budgetK} k€`, icon: TrendingUp, color: "#24DDB8" },
           { label: "Alertes seuils", value: stats?.alertes ?? 0, icon: AlertTriangle, color: "#F59E0B" },
@@ -277,12 +277,12 @@ export default function PlanificationPage() {
                 <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} />
                 <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
                 <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="#5C93FF" strokeWidth={2} dot={{ r: 3 }} />
-                <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} />
+                <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="#24DDB8" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <div className="flex gap-4 mt-1.5 justify-center">
-            {[{ label: "Nb marchés", color: "#5C93FF" }, { label: "Montant (M€)", color: "#10B981" }].map((l) => (
+            {[{ label: "Nb marchés", color: "#5C93FF" }, { label: "Montant (M€)", color: "#24DDB8" }].map((l) => (
               <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <div className="w-2 h-0.5 rounded" style={{ background: l.color }} />
                 {l.label}

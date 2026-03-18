@@ -37,7 +37,7 @@ export default function InventoryPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(99,102,241,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
@@ -58,7 +58,7 @@ export default function InventoryPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
           { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: "#8B5CF6" },
-          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "#10B981" },
+          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "#24DDB8" },
           { label: "Stock faible", value: lowStock.length, icon: AlertTriangle, color: lowStock.length > 0 ? "#EF4444" : "#6B7280" },
           { label: "Catégories", value: new Set(products.map(p => p.category)).size, icon: Package, color: "#5C93FF" },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -120,7 +120,7 @@ export default function InventoryPage() {
                     <td className="px-4 py-2 text-sm font-mono text-muted-foreground hidden md:table-cell">{p.sku || "—"}</td>
                     <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{p.category || "—"}</td>
                     <td className="px-4 py-2 text-right">
-                      <span className="num text-[16px] font-semibold" style={{ color: isLow ? "#EF4444" : "#10B981" }}>
+                      <span className="num text-[16px] font-semibold" style={{ color: isLow ? "#EF4444" : "#24DDB8" }}>
                         {p.stock} {p.unit}
                       </span>
                       {isLow && <span className="ml-1 text-[10px] text-red-500">⚠</span>}
@@ -130,7 +130,7 @@ export default function InventoryPage() {
                     </td>
                     <td className="px-4 py-2">
                       <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: p.is_active ? "rgba(16,185,129,0.1)" : "rgba(107,114,128,0.1)", color: p.is_active ? "#10B981" : "#6B7280" }}>
+                        style={{ background: p.is_active ? "rgba(36,221,184,0.1)" : "rgba(107,114,128,0.1)", color: p.is_active ? "#24DDB8" : "#6B7280" }}>
                         {p.is_active ? "Actif" : "Inactif"}
                       </span>
                     </td>

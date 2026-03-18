@@ -360,7 +360,7 @@ export default function ChatbotPage() {
                 { step: "1", text: "Générez un lien public sécurisé", color: "#5C93FF" },
                 { step: "2", text: "Partagez-le aux agents ou directions", color: "#8B5CF6" },
                 { step: "3", text: "L'IA classe les achats selon votre nomenclature", color: "#24DDB8" },
-                { step: "4", text: "Suivez les usages dans les analytiques", color: "#10B981" },
+                { step: "4", text: "Suivez les usages dans les analytiques", color: "#24DDB8" },
               ].map(({ step, text, color }) => (
                 <div key={step} className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
@@ -377,7 +377,7 @@ export default function ChatbotPage() {
               {[
                 { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, color: "#5C93FF" },
                 { label: "Utilisations", value: (tokensData ?? []).reduce((s, t) => s + t.use_count, 0), color: "#8B5CF6" },
-                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#10B981" },
+                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#24DDB8" },
                 { label: "Questions fréquentes", value: analytics?.top_questions?.length ?? "—", color: "#F59E0B" },
               ].map(({ label, value, color }) => (
                 <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
@@ -476,7 +476,7 @@ export default function ChatbotPage() {
         <div className="space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {[
-              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#10B981" },
+              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#24DDB8" },
               { label: "Avis négatifs", value: feedbackNegative, icon: ThumbsDown, color: "#EF4444" },
               { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", icon: BarChart2, color: "#5C93FF" },
               { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, icon: Link2, color: "#8B5CF6" },

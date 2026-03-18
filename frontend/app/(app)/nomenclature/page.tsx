@@ -120,7 +120,7 @@ function TreeNodeItem({
         {node.montant && <span className="text-[11px] text-muted-foreground tabular-nums ml-1 flex-shrink-0">{node.montant}</span>}
         {node.conforme !== undefined && (
           node.conforme
-            ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" style={{ color: "#10B981" }} />
+            ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" style={{ color: "#24DDB8" }} />
             : <AlertCircle className="w-3 h-3 flex-shrink-0" style={{ color: "#F59E0B" }} />
         )}
       </div>
@@ -192,7 +192,7 @@ export default function NomenclaturePage() {
         {[
           { label: "Familles d'achats", value: familles, icon: Layers, color: "#24DDB8" },
           { label: "Codes actifs", value: codes, icon: FolderTree, color: "#5C93FF" },
-          { label: "Exhaustivité", value: "96%", icon: CheckCircle2, color: "#10B981" },
+          { label: "Exhaustivité", value: "96%", icon: CheckCircle2, color: "#24DDB8" },
           { label: "Exclusivité mutuelle", value: "98%", icon: Scale, color: "#8B5CF6" },
           { label: "Adhésion utilisateurs", value: "92%", icon: BookOpen, color: "#F59E0B" },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -207,11 +207,11 @@ export default function NomenclaturePage() {
       {/* Principes CartoAP */}
       <div
         className="rounded-xl border p-3 flex items-start gap-3 flex-shrink-0"
-        style={{ borderColor: "rgba(16,185,129,0.15)", background: "rgba(16,185,129,0.03)" }}
+        style={{ borderColor: "rgba(36,221,184,0.15)", background: "rgba(36,221,184,0.03)" }}
       >
-        <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#10B981" }} />
+        <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#24DDB8" }} />
         <div className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold" style={{ color: "#10B981" }}>Principes CartoAP</span>
+          <span className="font-semibold" style={{ color: "#24DDB8" }}>Principes CartoAP</span>
           {" "}— Codes <strong className="text-foreground">collectivement exhaustifs</strong> (toute prestation classable) et{" "}
           <strong className="text-foreground">mutuellement exclusifs</strong> (un seul code par prestation). Nomenclature sur-mesure issue d&apos;une étude empirique de la dépense mandatée.
         </div>
@@ -276,7 +276,7 @@ export default function NomenclaturePage() {
                   <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Conformité</label>
                   <div className="mt-1">
                     {selected.conforme ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(36,221,184,0.1)", color: "#24DDB8" }}>
                         <CheckCircle2 className="w-3 h-3" /> Conforme
                       </span>
                     ) : (
@@ -292,8 +292,8 @@ export default function NomenclaturePage() {
                   <div className="space-y-1.5 pt-1.5 border-t border-border">
                     <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Périmètre du code</label>
                     <div className="text-xs space-y-1">
-                      <div className="p-2 rounded-lg" style={{ background: "rgba(16,185,129,0.05)", border: "1px solid rgba(16,185,129,0.15)" }}>
-                        <span className="font-semibold text-[10px]" style={{ color: "#10B981" }}>INCLUT</span>
+                      <div className="p-2 rounded-lg" style={{ background: "rgba(36,221,184,0.05)", border: "1px solid rgba(36,221,184,0.15)" }}>
+                        <span className="font-semibold text-[10px]" style={{ color: "#24DDB8" }}>INCLUT</span>
                         <p className="text-muted-foreground mt-0.5">Prestations de {selected.label.toLowerCase()}</p>
                       </div>
                       <div className="p-2 rounded-lg" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>

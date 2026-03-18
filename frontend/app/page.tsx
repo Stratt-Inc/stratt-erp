@@ -8,10 +8,10 @@ import { Highlight } from "@/components/Highlight";
 
 const roadmapModules = [
   { name: "Veille BOAMP", description: "Surveillance des AAO & alertes CPV", color: "#8B5CF6", eta: "Q2 2026" },
-  { name: "DECP Export", description: "Publication données essentielles contrats", color: "#06B6D4", eta: "Q2 2026" },
+  { name: "DECP Export", description: "Publication données essentielles contrats", color: "#24DDB8", eta: "Q2 2026" },
   { name: "Signature électronique", description: "Dossiers dématérialisés intégrés", color: "#F59E0B", eta: "Q3 2026" },
-  { name: "BI & Reporting", description: "Tableaux de bord personnalisables", color: "#EC4899", eta: "Q3 2026" },
-  { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#10B981", eta: "Q4 2026" },
+  { name: "BI & Reporting", description: "Tableaux de bord personnalisables", color: "#5C93FF", eta: "Q3 2026" },
+  { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#24DDB8", eta: "Q4 2026" },
 ];
 
 const modules = [
@@ -30,7 +30,7 @@ const modules = [
     id: "accounting",
     name: "Comptabilité",
     description: "Comptes, transactions, rapports",
-    color: "#10B981",
+    color: "#24DDB8",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <rect x="4" y="2" width="16" height="20" rx="2" /><line x1="8" y1="6" x2="16" y2="6" /><line x1="8" y1="10" x2="16" y2="10" /><line x1="8" y1="14" x2="12" y2="14" />
@@ -52,7 +52,7 @@ const modules = [
     id: "inventory",
     name: "Inventaire",
     description: "Stocks, produits, mouvements",
-    color: "#6366F1",
+    color: "#5C93FF",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
@@ -63,7 +63,7 @@ const modules = [
     id: "hr",
     name: "RH",
     description: "Employés, congés, paie",
-    color: "#EC4899",
+    color: "#5C93FF",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
@@ -85,7 +85,7 @@ const modules = [
     id: "analytics",
     name: "Analytics",
     description: "Tableaux de bord temps réel",
-    color: "#06B6D4",
+    color: "#24DDB8",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
@@ -624,7 +624,7 @@ export default function LandingPage() {
             }}
           >
             <div className="flex items-center gap-1">
-              {["#5C93FF", "#24DDB8", "#EC4899", "#F59E0B"].map((c, i) => (
+              {["#5C93FF", "#24DDB8", "#5C93FF", "#F59E0B"].map((c, i) => (
                 <span
                   key={i}
                   style={{
@@ -1074,7 +1074,7 @@ export default function LandingPage() {
               { label: "Next.js 15", color: "#0F1F3D" },
               { label: "Go 1.24", color: "#5C93FF" },
               { label: "PostgreSQL 16", color: "#24DDB8" },
-              { label: "Redis", color: "#EC4899" },
+              { label: "Redis", color: "#5C93FF" },
               { label: "Claude AI", color: "#F59E0B" },
               { label: "Docker", color: "#5C93FF" },
             ].map((tech) => (

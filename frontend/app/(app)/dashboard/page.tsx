@@ -31,18 +31,18 @@ interface MarcheStats {
 
 const pilotageModules = [
   { label: "Planification", href: "/planification", icon: Calendar, color: "#5C93FF", description: "Marchés publics & calendrier des passations" },
-  { label: "Cartographie", href: "/cartographie", icon: Map, color: "#06B6D4", description: "Dépenses par famille achats" },
+  { label: "Cartographie", href: "/cartographie", icon: Map, color: "#24DDB8", description: "Dépenses par famille achats" },
   { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "#24DDB8", description: "Arborescence des codes achats" },
   { label: "Documents", href: "/exports", icon: Download, color: "#F59E0B", description: "Rapports & exports PDF/Excel" },
 ];
 
 const erpModules = [
   { label: "CRM", href: "/crm", icon: Users, color: "#5C93FF" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#10B981" },
+  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#24DDB8" },
   { label: "Facturation", href: "/billing", icon: FileText, color: "#F59E0B" },
   { label: "Inventaire", href: "/inventory", icon: Package, color: "#8B5CF6" },
-  { label: "RH", href: "/hr", icon: Briefcase, color: "#EC4899" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#06B6D4" },
+  { label: "RH", href: "/hr", icon: Briefcase, color: "#5C93FF" },
+  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#24DDB8" },
   { label: "Analytics", href: "/analytics", icon: BarChart2, color: "#24DDB8" },
 ];
 
@@ -231,8 +231,8 @@ export default function DashboardPage() {
 
         <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-2">
           {[
-            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#10B981" },
-            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#06B6D4" },
+            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#24DDB8" },
+            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#24DDB8" },
             { label: "Deals actifs", value: overview?.total_deals ?? 0, icon: Users, color: "#5C93FF" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>

@@ -61,7 +61,7 @@ const directionData = [
   { name: "Éducation",       value: 18.2, color: "#8B5CF6" },
   { name: "Numérique",       value: 14.7, color: "#F59E0B" },
   { name: "Services",        value: 12.3, color: "#24DDB8" },
-  { name: "Autres",          value: 10.5, color: "#94A3B8" },
+  { name: "Autres",          value: 10.5, color: "#8DA2B5" },
 ];
 
 const directionChartConfig: ChartConfig = {
@@ -161,16 +161,16 @@ export default function CartographiePage() {
 
       {/* ── KPIs ── */}
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#06B6D4", boxShadow: "0 0 6px #06B6D4" }} />
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
         <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
           Indicateurs de cartographie
         </span>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "#06B6D4" },
+          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "#24DDB8" },
           { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "#5C93FF" },
-          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "#10B981" },
+          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "#24DDB8" },
           { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "#EF4444" },
           { label: "Écart budgétaire moyen",   value: "4,2%",                                                 icon: Target,       color: "#F59E0B" },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -364,15 +364,15 @@ export default function CartographiePage() {
           </thead>
           <tbody className="divide-y divide-border">
             {seuilsData.map((s) => {
-              const statusColor = s.statut === "Conforme" ? "#10B981" : s.statut === "Fractionnement" ? "#EF4444" : "#F59E0B";
-              const statusBg   = s.statut === "Conforme" ? "rgba(16,185,129,0.08)" : s.statut === "Fractionnement" ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)";
+              const statusColor = s.statut === "Conforme" ? "#24DDB8" : s.statut === "Fractionnement" ? "#EF4444" : "#F59E0B";
+              const statusBg   = s.statut === "Conforme" ? "rgba(36,221,184,0.08)" : s.statut === "Fractionnement" ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)";
               return (
                 <tr key={s.code} className="data-row">
                   <td className="px-5 py-2 text-sm font-medium" style={{ color: "hsl(var(--foreground))" }}>{s.code}</td>
                   <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{s.depense}</td>
                   <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.45)" }}>{s.seuil}</td>
                   <td className="px-5 py-2 text-right">
-                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "#EF4444" : "#10B981" }}>
+                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "#EF4444" : "#24DDB8" }}>
                       {s.ratio.toFixed(1)}×
                     </span>
                   </td>
@@ -422,7 +422,7 @@ export default function CartographiePage() {
                   <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.4)" }}>{c.n1}</td>
                   <td className="px-5 py-2 text-right">
                     <span className="inline-flex items-center gap-0.5 text-[11px] font-bold"
-                      style={{ color: c.up ? "#10B981" : "#EF4444" }}>
+                      style={{ color: c.up ? "#24DDB8" : "#EF4444" }}>
                       {c.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {c.delta}
                     </span>
@@ -445,7 +445,7 @@ export default function CartographiePage() {
                 <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Prévu</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(16,185,129,0.85)" }} />
+                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(36,221,184,0.85)" }} />
                 <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Exécuté</span>
               </div>
             </div>
@@ -459,9 +459,9 @@ export default function CartographiePage() {
               const isOver     = delta > 0;
               const execColor  = isOver
                 ? "rgba(239,68,68,0.8)"
-                : "rgba(16,185,129,0.8)";
-              const deltaColor = isOver ? "#EF4444" : "#10B981";
-              const deltaBg    = isOver ? "rgba(239,68,68,0.07)" : "rgba(16,185,129,0.07)";
+                : "rgba(36,221,184,0.8)";
+              const deltaColor = isOver ? "#EF4444" : "#24DDB8";
+              const deltaBg    = isOver ? "rgba(239,68,68,0.07)" : "rgba(36,221,184,0.07)";
               return (
                 <div key={d.direction}>
                   <div className="flex items-baseline justify-between mb-1.5">
@@ -505,7 +505,7 @@ export default function CartographiePage() {
         {anomalies.map((a, i) => {
           const isHaute   = a.severity === "haute";
           const isMoyenne = a.severity === "moyenne";
-          const color = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "#94A3B8";
+          const color = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "#8DA2B5";
           const bg    = isHaute ? "rgba(239,68,68,0.03)" : isMoyenne ? "rgba(245,158,11,0.03)" : "rgba(148,163,184,0.04)";
           return (
             <div key={i} className="flex items-start gap-3 px-4 py-2.5 rounded-xl"

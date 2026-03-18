@@ -31,8 +31,8 @@ export default function SupportPage() {
 
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(16,185,129,0.1)" }}>
-            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "#10B981" }} />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
+            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "#24DDB8" }} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Support & Formation</h1>
         </div>
@@ -124,8 +124,8 @@ export default function SupportPage() {
 
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
-                <BookOpen className="w-4 h-4" style={{ color: "#06B6D4" }} />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
+                <BookOpen className="w-4 h-4" style={{ color: "#24DDB8" }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Documentation</h3>
