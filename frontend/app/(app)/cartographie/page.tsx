@@ -139,7 +139,7 @@ export default function CartographiePage() {
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Cartographie{" "}
-            <Highlight variant="underline" color="teal">des achats</Highlight>
+            <Highlight variant="mark" color="teal">des achats</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes

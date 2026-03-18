@@ -553,7 +553,7 @@ export default function AnalyticsPage() {
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Analytics{" "}
-            <Highlight variant="underline" color="blue">& Reporting</Highlight>
+            <Highlight variant="box" color="teal">& Reporting</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Vue consolidée · Classement ABC · Matrice Kraljic · Courbe de Pareto

@@ -87,7 +87,7 @@ export default function DashboardPage() {
           </p>
           <h1 className="text-[24px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Bonjour,{" "}
-            <Highlight variant="underline" color="blue">{firstName}</Highlight>
+            <Highlight variant="mark" color="blue">{firstName}</Highlight>
           </h1>
           <p className="text-[11px] mt-0.5 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             {currentOrg?.name ?? "Organisation"}

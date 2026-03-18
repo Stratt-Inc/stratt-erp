@@ -555,7 +555,7 @@ export default function LandingPage() {
             }}
           >
             La plateforme{" "}
-            <Highlight variant="underline" color="blue">intelligente</Highlight>
+            <Highlight variant="mark" color="blue">intelligente</Highlight>
             <br />
             pour l&apos;achat public.
           </h1>
@@ -796,7 +796,7 @@ export default function LandingPage() {
               }}
             >
               Tout ce dont votre{" "}
-              <Highlight variant="underline" color="blue">organisation a besoin</Highlight>
+              <Highlight variant="box" color="blue">organisation a besoin</Highlight>
             </h2>
             <p
               data-reveal
@@ -983,7 +983,7 @@ export default function LandingPage() {
                 }}
               >
                 Conçu pour{" "}
-                <Highlight variant="underline" color="teal">la performance</Highlight>
+                <Highlight variant="mark" color="teal">la performance</Highlight>
               </h2>
               <p
                 data-reveal-left

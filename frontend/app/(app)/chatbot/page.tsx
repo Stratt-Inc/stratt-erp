@@ -246,7 +246,7 @@ export default function ChatbotPage() {
           </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Assistant{" "}
-            <Highlight variant="underline" color="violet">nomenclature</Highlight>
+            <Highlight variant="box" color="violet">nomenclature</Highlight>
           </h1>
           <p className="text-[12px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Classification budgétaire intelligente · IA entraînée sur le CCP · Liens publics partageables
