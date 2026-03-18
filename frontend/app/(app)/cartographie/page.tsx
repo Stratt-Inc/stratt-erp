@@ -38,11 +38,12 @@ const spendData = [
   { name: "Scolaire",    size: 3.0,  category: "Fournitures"  },
 ].sort((a, b) => b.size - a.size);
 
+// Sequential blue→teal palette for spend charts
 const CAT_COLOR: Record<string, string> = {
-  "Travaux":     "#5C93FF",
-  "Fournitures": "#8B5CF6",
+  "Travaux":     "#3B6FE8",
+  "Fournitures": "#5C93FF",
   "Services":    "#24DDB8",
-  "PI/TIC":      "#F59E0B",
+  "PI/TIC":      "#1CC4A8",
 };
 
 const spendChartConfig: ChartConfig = {
@@ -50,18 +51,18 @@ const spendChartConfig: ChartConfig = {
 };
 
 const CATEGORY_META = [
-  { label: "Travaux",     color: "#5C93FF", total: 28.5 },
-  { label: "Fournitures", color: "#8B5CF6", total: 18.2 },
+  { label: "Travaux",     color: "#3B6FE8", total: 28.5 },
+  { label: "Fournitures", color: "#5C93FF", total: 18.2 },
   { label: "Services",    color: "#24DDB8", total: 22.8 },
-  { label: "PI/TIC",      color: "#F59E0B", total: 14.7 },
+  { label: "PI/TIC",      color: "#1CC4A8", total: 14.7 },
 ];
 
 const directionData = [
-  { name: "Infrastructures", value: 28.5, color: "#5C93FF" },
-  { name: "Éducation",       value: 18.2, color: "#8B5CF6" },
-  { name: "Numérique",       value: 14.7, color: "#F59E0B" },
+  { name: "Infrastructures", value: 28.5, color: "#3B6FE8" },
+  { name: "Éducation",       value: 18.2, color: "#5C93FF" },
+  { name: "Numérique",       value: 14.7, color: "#33B5D4" },
   { name: "Services",        value: 12.3, color: "#24DDB8" },
-  { name: "Autres",          value: 10.5, color: "#8DA2B5" },
+  { name: "Autres",          value: 10.5, color: "#A8C4E0" },
 ];
 
 const directionChartConfig: ChartConfig = {
