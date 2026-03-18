@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import type React from "react"
+// @ts-ignore
 import { useInView } from "motion/react"
 import { annotate } from "rough-notation"
 import { type RoughAnnotation } from "rough-notation/lib/model"
