@@ -39,10 +39,10 @@ interface Deal {
 interface PagedResponse<T> { items: T[]; total: number; }
 
 const statusColors: Record<string, string> = {
-  new: "#5B6BF5", contacted: "#06B6D4", qualified: "#10B981", lost: "#EF4444",
+  new: "#5C93FF", contacted: "#06B6D4", qualified: "#10B981", lost: "#EF4444",
 };
 const stageColors: Record<string, string> = {
-  prospecting: "#6B7280", proposal: "#5B6BF5", negotiation: "#F59E0B",
+  prospecting: "#6B7280", proposal: "#5C93FF", negotiation: "#F59E0B",
   closed_won: "#10B981", closed_lost: "#EF4444",
 };
 const stageLabels: Record<string, string> = {
@@ -92,7 +92,7 @@ export default function CRMPage() {
   });
 
   const stats = [
-    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5B6BF5" },
+    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5C93FF" },
     { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "#06B6D4" },
     { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "#10B981" },
     {
@@ -112,39 +112,34 @@ export default function CRMPage() {
   const isLoading = loadingC || loadingL || loadingD;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(91,107,245,0.1)" }}>
-              <Users className="w-3.5 h-3.5" style={{ color: "#5B6BF5" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">CRM</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module CRM</span>
           </div>
-          <p className="text-sm text-muted-foreground">Contacts, leads et opportunités commerciales</p>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Gestion commerciale</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Contacts, leads et opportunités</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats — signal tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${color}14` }}>
-                <Icon className="w-3.5 h-3.5" style={{ color }} />
-              </div>
-            </div>
-            <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -158,7 +153,7 @@ export default function CRMPage() {
             }`}>
             {t.label}
             <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold"
-              style={{ background: tab === t.id ? "rgba(91,107,245,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5B6BF5" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(30,50,80,0.07)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -199,35 +194,35 @@ export default function CRMPage() {
 function ContactsTable({ items }: { items: Contact[] }) {
   if (!items.length) return <EmptyState label="Aucun contact" />;
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-320px)]">
       <table className="w-full">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nom</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Société</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Email</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Téléphone</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</th>
+        <thead className="data-table-head">
+          <tr>
+            <th className="data-th">Nom</th>
+            <th className="data-th hidden md:table-cell">Société</th>
+            <th className="data-th hidden lg:table-cell">Email</th>
+            <th className="data-th hidden lg:table-cell">Téléphone</th>
+            <th className="data-th">Type</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">
+        <tbody className="data-table-body">
           {items.map((c) => (
-            <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-              <td className="px-4 py-3">
+            <tr key={c.id} className="data-row">
+              <td className="px-4 py-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)" }}>
+                    style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
                     {c.first_name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <span className="font-medium text-sm text-foreground">{c.first_name} {c.last_name}</span>
                 </div>
               </td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{c.company || "—"}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{c.email || "—"}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">{c.company || "—"}</td>
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{c.email || "—"}</td>
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
+              <td className="px-4 py-2">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: c.type === "company" ? "rgba(91,107,245,0.1)" : "rgba(6,182,212,0.1)", color: c.type === "company" ? "#5B6BF5" : "#06B6D4" }}>
+                  style={{ background: c.type === "company" ? "rgba(92,147,255,0.1)" : "rgba(6,182,212,0.1)", color: c.type === "company" ? "#5C93FF" : "#06B6D4" }}>
                   {c.type === "company" ? "Société" : "Personne"}
                 </span>
               </td>
@@ -242,29 +237,29 @@ function ContactsTable({ items }: { items: Contact[] }) {
 function LeadsTable({ items }: { items: Lead[] }) {
   if (!items.length) return <EmptyState label="Aucun lead" />;
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-320px)]">
       <table className="w-full">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lead</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Contact</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Source</th>
-            <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Valeur</th>
+        <thead className="data-table-head">
+          <tr>
+            <th className="data-th">Lead</th>
+            <th className="data-th hidden md:table-cell">Contact</th>
+            <th className="data-th">Statut</th>
+            <th className="data-th hidden lg:table-cell">Source</th>
+            <th className="data-th data-th-r">Valeur</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">
+        <tbody className="data-table-body">
           {items.map((l) => (
-            <tr key={l.id} className="hover:bg-muted/30 transition-colors">
-              <td className="px-4 py-3 text-sm font-medium text-foreground">{l.title}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">
+            <tr key={l.id} className="data-row">
+              <td className="px-4 py-2 text-sm font-medium text-foreground">{l.title}</td>
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">
                 {l.contact ? `${l.contact.first_name} ${l.contact.last_name}` : "—"}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-2">
                 <StatusBadge label={statusLabels[l.status] ?? l.status} color={statusColors[l.status] ?? "#6B7280"} />
               </td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{l.source || "—"}</td>
-              <td className="px-4 py-3 text-right text-sm font-mono font-semibold text-foreground">
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{l.source || "—"}</td>
+              <td className="px-4 py-2 text-right num text-[15px] font-semibold text-foreground">
                 {l.value ? `${l.value.toLocaleString("fr-FR")} €` : "—"}
               </td>
             </tr>
@@ -278,28 +273,28 @@ function LeadsTable({ items }: { items: Lead[] }) {
 function DealsTable({ items }: { items: Deal[] }) {
   if (!items.length) return <EmptyState label="Aucun deal" />;
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-320px)]">
       <table className="w-full">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Deal</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Contact</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Étape</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Probabilité</th>
-            <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Valeur</th>
+        <thead className="data-table-head">
+          <tr>
+            <th className="data-th">Deal</th>
+            <th className="data-th hidden md:table-cell">Contact</th>
+            <th className="data-th">Étape</th>
+            <th className="data-th hidden lg:table-cell">Probabilité</th>
+            <th className="data-th data-th-r">Valeur</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">
+        <tbody className="data-table-body">
           {items.map((d) => (
-            <tr key={d.id} className="hover:bg-muted/30 transition-colors">
-              <td className="px-4 py-3 text-sm font-medium text-foreground">{d.title}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">
+            <tr key={d.id} className="data-row">
+              <td className="px-4 py-2 text-sm font-medium text-foreground">{d.title}</td>
+              <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">
                 {d.contact ? `${d.contact.first_name} ${d.contact.last_name}` : "—"}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-2">
                 <StatusBadge label={stageLabels[d.stage] ?? d.stage} color={stageColors[d.stage] ?? "#6B7280"} />
               </td>
-              <td className="px-4 py-3 hidden lg:table-cell">
+              <td className="px-4 py-2 hidden lg:table-cell">
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${d.probability}%`, background: stageColors[d.stage] ?? "#6B7280" }} />
@@ -307,7 +302,7 @@ function DealsTable({ items }: { items: Deal[] }) {
                   <span className="text-xs font-mono text-muted-foreground w-8">{d.probability}%</span>
                 </div>
               </td>
-              <td className="px-4 py-3 text-right text-sm font-mono font-bold text-foreground">
+              <td className="px-4 py-2 text-right num text-[15px] font-semibold text-foreground">
                 {d.value.toLocaleString("fr-FR")} €
               </td>
             </tr>
@@ -320,8 +315,8 @@ function DealsTable({ items }: { items: Deal[] }) {
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-border">
-      <Users className="w-10 h-10 text-muted-foreground/30 mb-3" />
+    <div className="flex flex-col items-center justify-center py-10 text-center rounded-xl border border-dashed border-border">
+      <Users className="w-8 h-8 text-muted-foreground/30 mb-2" />
       <p className="font-semibold text-foreground">{label}</p>
       <p className="text-sm text-muted-foreground mt-1">Aucune donnée disponible pour le moment.</p>
     </div>

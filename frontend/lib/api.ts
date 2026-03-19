@@ -17,7 +17,19 @@ class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
+// Refresh lock — prevents concurrent refresh storms
+let refreshPromise: Promise<boolean> | null = null;
+
+async function tryRefresh(): Promise<boolean> {
+  if (refreshPromise) return refreshPromise;
+  // Lazy import to avoid circular dependency (store → api → store)
+  refreshPromise = import("@/store/auth").then(({ useAuthStore }) =>
+    useAuthStore.getState().refresh()
+  ).finally(() => { refreshPromise = null; });
+  return refreshPromise;
+}
+
+async function request<T>(path: string, opts: RequestOptions = {}, retry = true): Promise<T> {
   const { method = "GET", body, orgId, token } = opts;
 
   const headers: Record<string, string> = {
@@ -33,6 +45,19 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
     credentials: "include",
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  // Auto-refresh on 401 then retry once
+  if (res.status === 401 && retry) {
+    const { useAuthStore } = await import("@/store/auth");
+    const currentToken = useAuthStore.getState().accessToken;
+    if (currentToken) {
+      const ok = await tryRefresh();
+      if (ok) {
+        const newToken = useAuthStore.getState().accessToken;
+        return request<T>(path, { ...opts, token: newToken ?? undefined }, false);
+      }
+    }
+  }
 
   const json = await res.json().catch(() => ({}));
 

@@ -14,7 +14,7 @@ export default function NotFound() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2.5 mb-12 no-underline">
         <div
-          style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)", boxShadow: "0 4px 14px rgba(91,107,245,0.4)" }}
+          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 14px rgba(36,221,184,0.25)" }}
           className="w-8 h-8 rounded-lg flex items-center justify-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
@@ -29,7 +29,7 @@ export default function NotFound() {
         <p
           className="text-[9rem] font-extrabold leading-none tracking-tight select-none"
           style={{
-            background: "linear-gradient(135deg, #5B6BF5, #9B6FE8)",
+            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
@@ -39,7 +39,7 @@ export default function NotFound() {
         </p>
         <div
           className="absolute inset-0 blur-3xl opacity-20 rounded-full"
-          style={{ background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)" }}
+          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
         />
       </div>
 
@@ -52,13 +52,13 @@ export default function NotFound() {
         <Link
           href="/dashboard"
           className="px-5 py-2.5 rounded-xl text-sm font-bold text-white no-underline"
-          style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)", boxShadow: "0 4px 16px rgba(91,107,245,0.3)" }}
+          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 16px rgba(92,147,255,0.2)" }}
         >
           Retour au dashboard
         </Link>
         <Link
           href="/"
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#6B7280] border border-[#E8EAF0] bg-white no-underline hover:border-[#5B6BF5]/40 transition-colors"
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#6B7280] border border-[#E8EAF0] bg-white no-underline hover:border-[#5C93FF]/40 transition-colors"
         >
           Accueil
         </Link>

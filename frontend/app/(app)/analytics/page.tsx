@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import {
   BarChart2, Users, FileText, Package, Briefcase,
-  TrendingUp, Handshake, DollarSign, Download,
+  TrendingUp, Handshake, DollarSign, Download, Grid3x3,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -45,9 +45,9 @@ interface ABCResult {
 
 // ── Constants ─────────────────────────────────────────────────────────
 
-const CLASS_COLORS: Record<string, string> = { A: "#5B6BF5", B: "#10B981", C: "#F59E0B" };
+const CLASS_COLORS: Record<string, string> = { A: "#5C93FF", B: "#10B981", C: "#F59E0B" };
 const CLASS_BG: Record<string, string> = {
-  A: "rgba(91,107,245,0.12)", B: "rgba(16,185,129,0.12)", C: "rgba(245,158,11,0.12)",
+  A: "rgba(92,147,255,0.12)", B: "rgba(16,185,129,0.12)", C: "rgba(245,158,11,0.12)",
 };
 
 function formatEur(n: number) {
@@ -76,18 +76,14 @@ function MetricCard({ label, value, icon: Icon, color, sub }: {
   color: string; sub?: string;
 }) {
   return (
-    <div className="bg-card rounded-xl border border-border p-5 hover:shadow-sm transition-shadow">
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${color}14` }}>
-          <Icon className="w-4.5 h-4.5" style={{ color }} />
-        </div>
-        {sub && (
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>{sub}</span>
-        )}
-      </div>
-      <p className="text-3xl font-extrabold font-mono tabular-nums text-foreground">{value}</p>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{label}</p>
+    <div className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+      {sub && (
+        <span className="absolute top-4 right-6 text-[10px] font-semibold px-2 py-0.5 rounded-full z-10"
+          style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>{sub}</span>
+      )}
+      <p className="stat-number-sm">{value}</p>
+      <p className="stat-label">{label}</p>
+      <Icon className="stat-tile-icon" />
     </div>
   );
 }
@@ -95,12 +91,12 @@ function MetricCard({ label, value, icon: Icon, color, sub }: {
 function ProgressBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground font-medium">{label}</span>
-        <span className="font-mono font-bold text-foreground">{value.toLocaleString("fr-FR")}</span>
+        <span className="num font-bold text-foreground">{value.toLocaleString("fr-FR")}</span>
       </div>
-      <div className="h-2 bg-muted rounded-full overflow-hidden">
+      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
       </div>
     </div>
@@ -111,9 +107,9 @@ function ProgressBar({ label, value, max, color }: { label: string; value: numbe
 
 function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: boolean }) {
   const metrics = [
-    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5B6BF5" },
+    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5C93FF" },
     { label: "Leads", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#06B6D4" },
-    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "#9B6FE8" },
+    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "#24DDB8" },
     { label: "CA encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: DollarSign, color: "#10B981", sub: "Total payé" },
     { label: "Factures", value: overview?.total_invoices ?? 0, icon: FileText, color: "#F59E0B" },
     { label: "Employés", value: overview?.total_employees ?? 0, icon: Briefcase, color: "#EC4899" },
@@ -126,50 +122,56 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="h-32 bg-muted rounded-xl animate-pulse" />
+          <div key={i} className="h-24 bg-muted rounded-xl animate-pulse" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="space-y-3">
+      <div className="section-header">
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          Vue d&apos;ensemble ERP
+        </span>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {metrics.map((m) => <MetricCard key={m.label} {...m} />)}
-        <div className="lg:col-span-1 bg-card rounded-xl border border-border p-5 flex flex-col justify-between"
-          style={{ background: "linear-gradient(135deg, rgba(91,107,245,0.06), rgba(155,111,232,0.06))" }}>
+        <div className="lg:col-span-1 bg-card rounded-xl border border-border p-3 flex flex-col justify-between"
+          style={{ background: "linear-gradient(135deg, rgba(92,147,255,0.08), rgba(36,221,184,0.06))" }}>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Santé globale</p>
-          <div className="flex items-end gap-1 mt-2">
-            <span className="text-3xl font-extrabold font-mono text-foreground">
+          <div className="flex items-end gap-1 mt-1">
+            <span className="text-3xl font-extrabold font-display text-foreground">
               {overview && overview.total_contacts + overview.total_leads + overview.total_deals > 0 ? "✓" : "—"}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-1">
             {overview?.total_contacts ?? 0} contacts · {overview?.total_leads ?? 0} leads · {overview?.total_deals ?? 0} deals
           </p>
         </div>
       </div>
-      <div className="bg-card rounded-xl border border-border p-6">
-        <h2 className="text-sm font-bold text-foreground mb-5">Distribution des données</h2>
-        <div className="space-y-4">
-          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5B6BF5" />
+      <div className="bg-card rounded-xl border border-border p-3">
+        <h2 className="text-sm font-bold text-foreground mb-3">Distribution des données</h2>
+        <div className="space-y-2.5">
+          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5C93FF" />
           <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="#06B6D4" />
-          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#9B6FE8" />
+          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#24DDB8" />
           <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="#F59E0B" />
           <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="#EC4899" />
           <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="#6366F1" />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {[
-          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5B6BF5" },
+          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5C93FF" },
           { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "#F59E0B" },
           { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "#6366F1" },
         ].map((card) => (
-          <div key={card.title} className="rounded-xl border border-border bg-card p-5">
-            <div className="w-2 h-2 rounded-full mb-3" style={{ background: card.color }} />
+          <div key={card.title} className="rounded-xl border border-border bg-card p-3">
+            <div className="w-2 h-2 rounded-full mb-2" style={{ background: card.color }} />
             <h3 className="text-sm font-bold text-foreground mb-1">{card.title}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
           </div>
@@ -207,9 +209,9 @@ function ABCTab() {
   const countC = data?.rows.filter((r) => r.class === "C").length ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-border bg-card items-end">
+      <div className="flex flex-wrap gap-3 p-3 rounded-xl border border-border bg-card items-end">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Dimension</label>
           <div className="flex gap-2">
@@ -217,13 +219,13 @@ function ABCTab() {
               <button key={d} onClick={() => setDimension(d)}
                 className={["px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
                   dimension === d ? "text-white" : "text-muted-foreground bg-muted/30 hover:bg-muted/60"].join(" ")}
-                style={dimension === d ? { background: "#5B6BF5" } : undefined}>
+                style={dimension === d ? { background: "#5C93FF" } : undefined}>
                 {d === "supplier" ? "Fournisseurs" : "Familles d'achat"}
               </button>
             ))}
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           {[{ label: "Seuil A (%)", val: thresholdA, set: setThresholdA, min: 50, max: 90 },
             { label: "Seuil A+B (%)", val: thresholdB, set: setThresholdB, min: thresholdA + 1, max: 99 }
           ].map(({ label, val, set, min, max }) => (
@@ -245,23 +247,23 @@ function ABCTab() {
 
       {/* KPIs */}
       {data && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Dépense totale</p>
-            <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{formatEur(data.total_spend)}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="rounded-xl border border-border bg-card p-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Dépense totale</p>
+            <p className="text-2xl font-bold font-display text-foreground">{formatEur(data.total_spend)}</p>
           </div>
           {(["A", "B", "C"] as const).map((cls) => {
             const count = cls === "A" ? countA : cls === "B" ? countB : countC;
             const label = cls === "A" ? "Stratégiques" : cls === "B" ? "Intermédiaires" : "Secondaires";
             return (
-              <div key={cls} className="rounded-xl border border-border bg-card p-4"
+              <div key={cls} className="rounded-xl border border-border bg-card p-3"
                 style={{ borderLeftWidth: 3, borderLeftColor: CLASS_COLORS[cls] }}>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1">
                   <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Classe {cls} — {label}</p>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                     style={{ color: CLASS_COLORS[cls], background: CLASS_BG[cls] }}>{cls}</span>
                 </div>
-                <p className="text-2xl font-bold font-mono tabular-nums text-foreground">{count}</p>
+                <p className="text-2xl font-bold font-display text-foreground">{count}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {dimension === "supplier" ? "fournisseurs" : "familles"}
                 </p>
@@ -272,21 +274,21 @@ function ABCTab() {
       )}
 
       {/* Pareto chart */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h2 className="text-sm font-semibold text-foreground mb-5">
+      <div className="rounded-xl border border-border bg-card p-3">
+        <h2 className="text-sm font-semibold text-foreground mb-3">
           Courbe de Pareto — Top 30 {dimension === "supplier" ? "fournisseurs" : "familles"}
         </h2>
-        {isLoading && <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">Chargement…</div>}
-        {isError && <div className="h-64 flex items-center justify-center text-destructive text-sm">Erreur lors du chargement</div>}
+        {isLoading && <div className="h-56 flex items-center justify-center text-muted-foreground text-sm">Chargement…</div>}
+        {isError && <div className="h-56 flex items-center justify-center text-destructive text-sm">Erreur lors du chargement</div>}
         {!isLoading && !isError && chartData.length === 0 && (
-          <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
+          <div className="h-56 flex items-center justify-center text-muted-foreground text-sm">
             Aucune donnée — créez des commandes fournisseurs pour voir le classement ABC.
           </div>
         )}
         {!isLoading && chartData.length > 0 && (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={chartData} margin={{ top: 5, right: 20, bottom: 60, left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-40} textAnchor="end" interval={0} />
               <YAxis yAxisId="left" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k€`} />
               <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `${v}%`} />
@@ -298,7 +300,7 @@ function ABCTab() {
                 label={{ value: `A (${thresholdA}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.A }} />
               <ReferenceLine yAxisId="right" y={thresholdB} stroke={CLASS_COLORS.B} strokeDasharray="6 3"
                 label={{ value: `B (${thresholdB}%)`, position: "right", fontSize: 10, fill: CLASS_COLORS.B }} />
-              <Bar yAxisId="left" dataKey="montant" fill="#5B6BF5" opacity={0.85} radius={[3, 3, 0, 0]} />
+              <Bar yAxisId="left" dataKey="montant" fill="#5C93FF" opacity={0.85} radius={[3, 3, 0, 0]} />
               <Line yAxisId="right" type="monotone" dataKey="cumule" stroke="#F59E0B" strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
@@ -307,30 +309,30 @@ function ABCTab() {
 
       {/* Detail table */}
       {data && data.rows.length > 0 && (
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="px-5 py-4 border-b border-border">
+        <div className="data-table-wrap overflow-hidden">
+          <div className="px-5 py-3 border-b border-border">
             <h2 className="text-sm font-semibold text-foreground">
               Détail ({data.rows.length} {dimension === "supplier" ? "fournisseurs" : "familles"})
             </h2>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-600px)]">
             <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
+              <thead className="data-table-head">
+                <tr>
                   {["Rang", "Libellé", "Montant", "Part (%)", "Cumulé (%)", "Classe"].map((col) => (
-                    <th key={col} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-muted-foreground">{col}</th>
+                    <th key={col} className="data-th">{col}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="data-table-body">
                 {data.rows.map((row) => (
-                  <tr key={row.rank} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3 font-mono text-muted-foreground text-xs">#{row.rank}</td>
-                    <td className="px-4 py-3 font-medium text-foreground max-w-xs truncate">{row.label}</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-foreground">{formatEur(row.total)}</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.share.toFixed(1)}%</td>
-                    <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
-                    <td className="px-4 py-3">
+                  <tr key={row.rank} className="data-row">
+                    <td className="px-4 py-2 font-mono text-muted-foreground text-xs">#{row.rank}</td>
+                    <td className="px-4 py-2 font-medium text-foreground max-w-xs truncate">{row.label}</td>
+                    <td className="px-4 py-2 num text-foreground">{formatEur(row.total)}</td>
+                    <td className="px-4 py-2 num text-muted-foreground">{row.share.toFixed(1)}%</td>
+                    <td className="px-4 py-2 num text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
+                    <td className="px-4 py-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
                         style={{ color: CLASS_COLORS[row.class], background: CLASS_BG[row.class] }}>{row.class}</span>
                     </td>
@@ -345,11 +347,192 @@ function ABCTab() {
   );
 }
 
+// ── Kraljic Matrix Tab ─────────────────────────────────────────────────
+
+const KRALJIC_ITEMS = [
+  // Stratégique (high spend, high risk)
+  { name: "Maintenance informatique", spend: 187_400, risk: 82, segment: "strategic" as const, supplier: "Soc. Informatique du Nord", recommendation: "Partenariat long terme, contrat-cadre" },
+  { name: "Maintenance équipements", spend: 241_800, risk: 90, segment: "strategic" as const, supplier: "Maintenance Équipements SA", recommendation: "Sécuriser — dépendance critique" },
+  // Levier (high spend, low risk)
+  { name: "Fournitures de bureau", spend: 38_600, risk: 18, segment: "leverage" as const, supplier: "Bureau Technique SARL", recommendation: "Appels d'offres, négociation prix" },
+  { name: "Services de nettoyage", spend: 94_200, risk: 22, segment: "leverage" as const, supplier: "Nettoyage Pro Services", recommendation: "Mise en concurrence — optimiser coût" },
+  // Goulot (low spend, high risk)
+  { name: "Logiciels spécialisés", spend: 14_200, risk: 78, segment: "bottleneck" as const, supplier: "Éditeur unique", recommendation: "Prévoir un backup — risque rupture" },
+  { name: "Pièces techniques rares", spend: 8_900, risk: 71, segment: "bottleneck" as const, supplier: "Fournisseur exclusif", recommendation: "Stock de sécurité, double sourcing" },
+  // Routine (low spend, low risk)
+  { name: "Papeterie", spend: 6_200, risk: 9, segment: "routine" as const, supplier: "Multi-fournisseurs", recommendation: "Standardiser — automatiser la commande" },
+  { name: "Boissons & café", spend: 3_400, risk: 5, segment: "routine" as const, supplier: "GS Distribution", recommendation: "Catalogue — achat libre service" },
+  { name: "Services postaux", spend: 4_100, risk: 8, segment: "routine" as const, supplier: "La Poste", recommendation: "Contrat annuel simplifié" },
+  { name: "Formation continue", spend: 67_300, risk: 15, segment: "leverage" as const, supplier: "Formation Excellence", recommendation: "Grouper les sessions — réduire le coût/agent" },
+];
+
+const SEGMENT_CONFIG = {
+  strategic: { label: "Stratégique", color: "#EF4444", bg: "rgba(239,68,68,0.08)", desc: "Fort enjeu, forte dépendance", action: "Partenariat" },
+  leverage: { label: "Levier", color: "#10B981", bg: "rgba(16,185,129,0.08)", desc: "Fort enjeu, faible dépendance", action: "Négocier" },
+  bottleneck: { label: "Goulot", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", desc: "Faible enjeu, forte dépendance", action: "Sécuriser" },
+  routine: { label: "Routine", color: "#6B7280", bg: "rgba(107,114,128,0.08)", desc: "Faible enjeu, faible dépendance", action: "Standardiser" },
+};
+
+function KraljicTab() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const selectedItem = KRALJIC_ITEMS.find((i) => i.name === selected);
+
+  return (
+    <div className="space-y-3">
+      {/* Legend + stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {(Object.entries(SEGMENT_CONFIG) as [keyof typeof SEGMENT_CONFIG, typeof SEGMENT_CONFIG[keyof typeof SEGMENT_CONFIG]][]).map(([key, cfg]) => {
+          const items = KRALJIC_ITEMS.filter((i) => i.segment === key);
+          const totalSpend = items.reduce((s, i) => s + i.spend, 0);
+          return (
+            <div key={key} className="rounded-xl border bg-card p-3" style={{ borderLeftWidth: 3, borderLeftColor: cfg.color }}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: cfg.color }}>{cfg.label}</span>
+                <span className="text-[10px] text-muted-foreground">{items.length} familles</span>
+              </div>
+              <p className="text-lg font-extrabold text-foreground">{totalSpend.toLocaleString("fr-FR")} €</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{cfg.desc}</p>
+              <div className="mt-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit"
+                style={{ background: cfg.bg, color: cfg.color }}>
+                → {cfg.action}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        {/* Matrix */}
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-4">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Matrice de Kraljic — Portefeuille achats</h2>
+          <div className="relative" style={{ height: 340 }}>
+            {/* Axis labels */}
+            <div className="absolute left-0 top-0 bottom-8 flex flex-col items-center justify-between" style={{ width: 28 }}>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground" style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                Risque supply ↑
+              </span>
+            </div>
+            <div className="absolute bottom-0 left-8 right-0 flex justify-between items-center" style={{ height: 20 }}>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Enjeu financier →</span>
+            </div>
+
+            {/* Quadrants */}
+            <div className="absolute inset-0 left-8 bottom-6 grid grid-cols-2 grid-rows-2 gap-0.5">
+              {/* Top-left: Goulot */}
+              <div className="rounded-tl-lg flex items-start justify-start p-2" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#F59E0B" }}>Goulot</span>
+              </div>
+              {/* Top-right: Stratégique */}
+              <div className="rounded-tr-lg flex items-start justify-end p-2" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#EF4444" }}>Stratégique</span>
+              </div>
+              {/* Bottom-left: Routine */}
+              <div className="rounded-bl-lg flex items-end justify-start p-2" style={{ background: "rgba(107,114,128,0.06)", border: "1px solid rgba(107,114,128,0.12)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#6B7280" }}>Routine</span>
+              </div>
+              {/* Bottom-right: Levier */}
+              <div className="rounded-br-lg flex items-end justify-end p-2" style={{ background: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#10B981" }}>Levier</span>
+              </div>
+
+              {/* Dots */}
+              {KRALJIC_ITEMS.map((item) => {
+                const cfg = SEGMENT_CONFIG[item.segment];
+                // x: spend 0-300k → 0-100%, y: risk 0-100 → 100%-0% (inverted)
+                const x = Math.min((item.spend / 280_000) * 90 + 5, 93);
+                const y = Math.max(100 - (item.risk / 100) * 90 - 5, 5);
+                const size = Math.max(8, Math.min(20, Math.sqrt(item.spend / 1000) * 2));
+                const isSelected = selected === item.name;
+                return (
+                  <button
+                    key={item.name}
+                    title={item.name}
+                    onClick={() => setSelected(isSelected ? null : item.name)}
+                    className="absolute rounded-full flex items-center justify-center transition-all hover:scale-125 z-10"
+                    style={{
+                      left: `${item.segment === "bottleneck" || item.segment === "routine" ? x * 0.45 : x * 0.45 + 50}%`,
+                      top: `${item.segment === "strategic" || item.segment === "bottleneck" ? y * 0.45 : y * 0.45 + 50}%`,
+                      width: size, height: size,
+                      background: cfg.color,
+                      boxShadow: isSelected ? `0 0 0 3px ${cfg.color}40, 0 0 12px ${cfg.color}60` : `0 2px 4px ${cfg.color}40`,
+                      border: isSelected ? `2px solid ${cfg.color}` : "2px solid white",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center mt-1">Cliquez sur un point pour voir le détail · Taille = volume d&apos;achat</p>
+        </div>
+
+        {/* Side panel */}
+        <div className="space-y-2">
+          {selectedItem ? (
+            <div className="bg-card rounded-xl border border-border p-4 space-y-3"
+              style={{ borderLeftWidth: 3, borderLeftColor: SEGMENT_CONFIG[selectedItem.segment].color }}>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest"
+                  style={{ color: SEGMENT_CONFIG[selectedItem.segment].color }}>
+                  {SEGMENT_CONFIG[selectedItem.segment].label}
+                </span>
+                <h3 className="text-sm font-bold text-foreground mt-0.5">{selectedItem.name}</h3>
+                <p className="text-[11px] text-muted-foreground">{selectedItem.supplier}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg p-2.5" style={{ background: "rgba(92,147,255,0.06)" }}>
+                  <p className="text-[10px] text-muted-foreground">Dépense annuelle</p>
+                  <p className="text-sm font-bold text-foreground num">{selectedItem.spend.toLocaleString("fr-FR")} €</p>
+                </div>
+                <div className="rounded-lg p-2.5" style={{ background: "rgba(239,68,68,0.06)" }}>
+                  <p className="text-[10px] text-muted-foreground">Risque supply</p>
+                  <p className="text-sm font-bold text-foreground">{selectedItem.risk}/100</p>
+                </div>
+              </div>
+              <div className="rounded-lg p-2.5 space-y-1" style={{ background: SEGMENT_CONFIG[selectedItem.segment].bg }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: SEGMENT_CONFIG[selectedItem.segment].color }}>
+                  Recommandation
+                </p>
+                <p className="text-[12px] text-foreground leading-snug">{selectedItem.recommendation}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-card rounded-xl border border-dashed border-border p-6 flex flex-col items-center justify-center text-center">
+              <Grid3x3 className="w-8 h-8 text-muted-foreground/30 mb-2" />
+              <p className="text-sm font-semibold text-foreground">Sélectionnez un poste</p>
+              <p className="text-xs text-muted-foreground mt-1">Cliquez sur un point de la matrice pour voir les détails et la recommandation.</p>
+            </div>
+          )}
+
+          {/* All items list */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <div className="px-3 py-2 border-b border-border">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Tous les postes</p>
+            </div>
+            <div className="divide-y divide-border max-h-52 overflow-y-auto">
+              {KRALJIC_ITEMS.map((item) => {
+                const cfg = SEGMENT_CONFIG[item.segment];
+                return (
+                  <button key={item.name} onClick={() => setSelected(item.name === selected ? null : item.name)}
+                    className={`w-full data-row px-3 py-2 flex items-center gap-2 text-left ${selected === item.name ? "bg-muted/30" : ""}`}>
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: cfg.color }} />
+                    <p className="text-xs text-foreground truncate flex-1">{item.name}</p>
+                    <span className="text-[10px] num text-muted-foreground flex-shrink-0">{(item.spend / 1000).toFixed(0)}k€</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
   const { accessToken, currentOrg } = useAuthStore();
-  const [tab, setTab] = useState<"overview" | "abc">("overview");
+  const [tab, setTab] = useState<"overview" | "abc" | "kraljic">("overview");
   const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
 
   const { data: overview, isLoading } = useQuery<Overview>({
@@ -360,18 +543,31 @@ export default function AnalyticsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
-            <BarChart2 className="w-3.5 h-3.5" style={{ color: "#06B6D4" }} />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
-          <span className="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>Temps réel</span>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
+            Module analytics
+          </p>
+          <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
+            Analytics{" "}
+            <span style={{
+              background: "linear-gradient(135deg, #24DDB8 0%, #5C93FF 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              & Reporting
+            </span>
+          </h1>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+            Vue consolidée · Classement ABC · Matrice Kraljic · Courbe de Pareto
+          </p>
         </div>
+        <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
+          style={{ background: "rgba(16,185,129,0.1)", color: "#10B981" }}>Temps réel</span>
       </div>
 
       {/* Tabs */}
@@ -379,6 +575,7 @@ export default function AnalyticsPage() {
         {([
           { id: "overview", label: "Vue d'ensemble" },
           { id: "abc", label: "Classement ABC" },
+          { id: "kraljic", label: "Matrice Kraljic" },
         ] as const).map(({ id, label }) => (
           <button key={id} onClick={() => setTab(id)}
             className={["px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
@@ -390,6 +587,7 @@ export default function AnalyticsPage() {
 
       {tab === "overview" && <OverviewTab overview={overview} isLoading={isLoading} />}
       {tab === "abc" && <ABCTab />}
+      {tab === "kraljic" && <KraljicTab />}
     </div>
   );
 }
