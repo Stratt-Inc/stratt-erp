@@ -25,14 +25,14 @@ function Toggle({ enabled, onToggle, disabled }: { enabled: boolean; onToggle: (
       disabled={disabled}
       className="relative flex-shrink-0 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
       style={{
-        width: 44,
-        height: 24,
-        background: enabled ? "#5B6BF5" : "hsl(var(--muted))",
+        width: 40,
+        height: 22,
+        background: enabled ? "#5C93FF" : "hsl(var(--muted))",
       }}
     >
       <span
-        className="absolute top-[2px] w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
-        style={{ transform: enabled ? "translateX(22px)" : "translateX(2px)" }}
+        className="absolute top-[2px] w-[18px] h-[18px] bg-white rounded-full shadow-sm transition-transform duration-200"
+        style={{ transform: enabled ? "translateX(20px)" : "translateX(2px)" }}
       />
     </button>
   );
@@ -56,7 +56,6 @@ export default function SettingsPage() {
       const path = enabled ? "disable" : "enable";
       return api.post(`/api/v1/modules/${id}/${path}`, undefined, opts);
     },
-    // Optimistic update — flip the toggle instantly, revert on error
     onMutate: async ({ id, enabled }) => {
       await qc.cancelQueries({ queryKey: ["modules", currentOrg?.id] });
       const prev = qc.getQueryData<ModuleView[]>(["modules", currentOrg?.id]);
@@ -66,9 +65,7 @@ export default function SettingsPage() {
       return { prev };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.prev) {
-        qc.setQueryData(["modules", currentOrg?.id], ctx.prev);
-      }
+      if (ctx?.prev) qc.setQueryData(["modules", currentOrg?.id], ctx.prev);
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["modules", currentOrg?.id] });
@@ -76,39 +73,53 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Paramètres</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Configuration de{" "}
-          <span className="font-semibold text-foreground">{currentOrg?.name}</span>
-        </p>
-      </div>
-
-      {/* Modules */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Puzzle className="w-4 h-4 text-primary" />
-          <h2 className="font-semibold text-foreground">Modules ERP</h2>
+    <div className="space-y-3 max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="pb-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+        <div className="section-header" style={{ marginBottom: 4 }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Configuration</span>
+        </div>
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-[22px] font-extrabold text-foreground" style={{ letterSpacing: "-0.025em" }}>
+              Paramètres
+            </h1>
+            <p className="text-[12px] mt-0.5 text-muted-foreground">
+              {currentOrg?.name ?? "Chargement…"}
+            </p>
+          </div>
           {isDemo && (
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full ml-auto"
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
               style={{ background: "rgba(245,158,11,0.1)", color: "#D97706" }}>
-              Lecture seule en mode démo
+              Lecture seule
             </span>
           )}
         </div>
-        <div className="space-y-2">
+      </div>
+
+      {/* Modules ERP */}
+      <div className="space-y-2">
+        <div className="section-header">
+          <Puzzle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#5C93FF" }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Modules ERP</span>
+        </div>
+        <div className="bg-card rounded-xl border border-border overflow-hidden divide-y divide-border">
+          {modules.length === 0 && (
+            <div className="py-6 text-center text-xs text-muted-foreground">Chargement…</div>
+          )}
           {modules.map((m) => (
-            <div key={m.id}
-              className="flex items-center justify-between p-4 rounded-xl border border-border bg-card hover:shadow-sm transition-shadow">
+            <div key={m.id} className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{ background: `${m.color}15`, color: m.color }}>
-                  <Puzzle className="w-4 h-4" />
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${m.color}15`, color: m.color }}
+                >
+                  <Puzzle className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground text-sm">{m.name}</p>
-                  <p className="text-xs text-muted-foreground">{m.description}</p>
+                  <p className="text-sm font-medium text-foreground leading-none">{m.name}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{m.description}</p>
                 </div>
               </div>
               <Toggle
@@ -119,26 +130,26 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
       {/* Sections à venir */}
       {[
-        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions." },
-        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives." },
-      ].map(({ icon: Icon, label, desc }) => (
-        <section key={label} className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Icon className="w-4 h-4 text-primary" />
-            <h2 className="font-semibold text-foreground">{label}</h2>
+        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions.", color: "#06B6D4" },
+        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives.", color: "#10B981" },
+      ].map(({ icon: Icon, label, desc, color }) => (
+        <div key={label} className="space-y-2">
+          <div className="section-header">
+            <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>{label}</span>
           </div>
-          <div className="rounded-xl border border-dashed border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">{desc}</p>
-            <span className="inline-flex mt-3 text-xs font-semibold px-3 py-1 rounded-full"
-              style={{ background: "rgba(91,107,245,0.1)", color: "#5B6BF5" }}>
-              Bientôt disponible
+          <div className="rounded-xl border border-dashed border-border px-4 py-5 flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">{desc}</p>
+            <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ml-4"
+              style={{ background: "rgba(92,147,255,0.08)", color: "#5C93FF" }}>
+              Bientôt
             </span>
           </div>
-        </section>
+        </div>
       ))}
     </div>
   );

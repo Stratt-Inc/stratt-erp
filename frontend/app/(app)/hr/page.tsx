@@ -69,38 +69,38 @@ export default function HRPage() {
   const totalSalary = employees.filter(e => e.status === "active").reduce((s, e) => s + e.salary, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(236,72,153,0.08)" }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(236,72,153,0.1)" }}>
-              <Briefcase className="w-3.5 h-3.5" style={{ color: "#EC4899" }} />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Ressources Humaines</h1>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#EC4899", boxShadow: "0 0 6px #EC4899" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module RH</span>
           </div>
-          <p className="text-sm text-muted-foreground">Employés, congés et gestion de la paie</p>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Ressources Humaines</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Employés, congés et gestion de la paie</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}>
+            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
             <Plus className="w-4 h-4" /> Nouvel employé
           </button>
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats — signal tiles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
           { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: "#EC4899" },
-          { label: "Départements", value: departments.size, icon: Briefcase, color: "#5B6BF5" },
+          { label: "Départements", value: departments.size, icon: Briefcase, color: "#5C93FF" },
           { label: "Congés en attente", value: leaves.filter(l => l.status === "pending").length, icon: Clock, color: "#F59E0B" },
           { label: "Masse salariale", value: `${totalSalary.toLocaleString("fr-FR")} €`, icon: Briefcase, color: "#10B981" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
-            <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
+            <p className="stat-number">{value}</p>
+            <p className="stat-label">{label}</p>
+            <Icon className="stat-tile-icon" />
           </div>
         ))}
       </div>
@@ -117,7 +117,7 @@ export default function HRPage() {
             }`}>
             {t.label}
             <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full"
-              style={{ background: tab === t.id ? "rgba(91,107,245,0.1)" : "rgba(0,0,0,0.05)", color: tab === t.id ? "#5B6BF5" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(30,50,80,0.07)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -127,32 +127,32 @@ export default function HRPage() {
       {(loadingE || loadingL) ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-muted rounded-xl animate-pulse" />)}</div>
       ) : tab === "employees" ? (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
+        <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-320px)]">
           {employees.length === 0 ? (
-            <div className="py-16 text-center">
-              <Briefcase className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+            <div className="py-10 text-center">
+              <Briefcase className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
               <p className="font-semibold text-foreground">Aucun employé</p>
             </div>
           ) : (
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Employé</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Poste</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Département</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Salaire</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut</th>
+              <thead className="data-table-head">
+                <tr>
+                  <th className="data-th">Employé</th>
+                  <th className="data-th hidden md:table-cell">Poste</th>
+                  <th className="data-th hidden lg:table-cell">Département</th>
+                  <th className="data-th data-th-r hidden lg:table-cell">Salaire</th>
+                  <th className="data-th">Statut</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="data-table-body">
                 {employees.map((e) => {
                   const cfg = empStatusConfig[e.status] ?? { label: e.status, color: "#6B7280" };
                   return (
-                    <tr key={e.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3">
+                    <tr key={e.id} className="data-row">
+                      <td className="px-4 py-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold text-white flex-shrink-0"
-                            style={{ background: "linear-gradient(135deg,#EC4899,#9B6FE8)" }}>
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
+                            style={{ background: "linear-gradient(135deg,#EC4899,#24DDB8)" }}>
                             {e.first_name?.[0]?.toUpperCase()}
                           </div>
                           <div>
@@ -161,12 +161,12 @@ export default function HRPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{e.job_title || "—"}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{e.department || "—"}</td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-foreground hidden lg:table-cell">
+                      <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">{e.job_title || "—"}</td>
+                      <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{e.department || "—"}</td>
+                      <td className="px-4 py-2 text-right num text-[15px] text-foreground hidden lg:table-cell">
                         {e.salary ? `${e.salary.toLocaleString("fr-FR")} €` : "—"}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-2">
                         <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
                           style={{ background: `${cfg.color}14`, color: cfg.color }}>
                           {cfg.label}
@@ -180,35 +180,35 @@ export default function HRPage() {
           )}
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
+        <div className="data-table-wrap overflow-y-auto max-h-[calc(100vh-320px)]">
           {leaves.length === 0 ? (
-            <div className="py-16 text-center">
-              <Clock className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+            <div className="py-10 text-center">
+              <Clock className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
               <p className="font-semibold text-foreground">Aucune demande de congé</p>
             </div>
           ) : (
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Employé</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Période</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Jours</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut</th>
+              <thead className="data-table-head">
+                <tr>
+                  <th className="data-th">Employé</th>
+                  <th className="data-th">Type</th>
+                  <th className="data-th hidden md:table-cell">Période</th>
+                  <th className="data-th hidden lg:table-cell">Jours</th>
+                  <th className="data-th">Statut</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="data-table-body">
                 {leaves.map((l) => {
                   const cfg = leaveStatusConfig[l.status] ?? { label: l.status, color: "#6B7280" };
                   return (
-                    <tr key={l.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium text-foreground">
+                    <tr key={l.id} className="data-row">
+                      <td className="px-4 py-2 text-sm font-medium text-foreground">
                         {l.employee ? `${l.employee.first_name} ${l.employee.last_name}` : "—"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{leaveTypeLabels[l.type] ?? l.type}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{l.start_date} → {l.end_date}</td>
-                      <td className="px-4 py-3 text-sm font-mono text-foreground hidden lg:table-cell">{l.days}j</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-2 text-sm text-muted-foreground">{leaveTypeLabels[l.type] ?? l.type}</td>
+                      <td className="px-4 py-2 text-sm text-muted-foreground hidden md:table-cell">{l.start_date} → {l.end_date}</td>
+                      <td className="px-4 py-2 num text-[15px] text-foreground hidden lg:table-cell">{l.days}j</td>
+                      <td className="px-4 py-2">
                         <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
                           style={{ background: `${cfg.color}14`, color: cfg.color }}>
                           {cfg.label}

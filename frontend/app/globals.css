@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&family=Barlow+Condensed:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,74 +6,298 @@
 
 @layer base {
   :root {
-    --background: 228 50% 99%;
-    --foreground: 234 35% 12%;
+    /* ── Stratt Light System ── */
+
+    --background: 210 22% 97%;
+    --foreground: 217 54% 12%;
+
     --card: 0 0% 100%;
-    --card-foreground: 234 35% 12%;
+    --card-foreground: 217 54% 12%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 234 35% 12%;
-    --primary: 234 88% 66%;
+    --popover-foreground: 217 54% 12%;
+
+    /* Primary = bleu brand #5C93FF */
+    --primary: 220 90% 56%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 234 20% 95%;
-    --secondary-foreground: 234 35% 20%;
-    --muted: 234 20% 95%;
-    --muted-foreground: 234 15% 50%;
-    --accent: 234 20% 95%;
-    --accent-foreground: 234 35% 20%;
-    --destructive: 0 84% 60%;
+
+    /* Secondary = surfaces subtiles */
+    --secondary: 213 18% 93%;
+    --secondary-foreground: 217 28% 30%;
+
+    --muted: 212 16% 91%;
+    --muted-foreground: 215 16% 48%;
+
+    /* Accent = vert turquoise #24DDB8 */
+    --accent: 168 73% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 234 20% 90%;
-    --input: 234 20% 90%;
-    --ring: 234 88% 66%;
+
+    --border: 213 16% 87%;
+    --input: 213 16% 87%;
+    --ring: 220 90% 56%;
     --radius: 0.5rem;
-    --sidebar: 234 42% 7%;
-    --sidebar-foreground: 234 20% 80%;
-    --sidebar-primary: 234 88% 70%;
-    --sidebar-accent: 234 30% 15%;
-    --sidebar-border: 234 30% 14%;
+
+    /* Sidebar — légèrement distincte du fond */
+    --sidebar: 217 28% 95%;
+    --sidebar-foreground: 217 28% 28%;
+    --sidebar-primary: 220 90% 56%;
+    --sidebar-accent: 213 18% 90%;
+    --sidebar-border: 213 14% 88%;
   }
 
+  /* .dark alias — conservé pour compatibilité future */
   .dark {
-    --background: 234 35% 6%;
-    --foreground: 234 20% 92%;
-    --card: 234 28% 9%;
-    --card-foreground: 234 20% 92%;
-    --popover: 234 28% 9%;
-    --popover-foreground: 234 20% 92%;
-    --primary: 234 88% 66%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 234 25% 14%;
-    --secondary-foreground: 234 20% 80%;
-    --muted: 234 25% 14%;
-    --muted-foreground: 234 15% 50%;
-    --accent: 234 25% 14%;
-    --accent-foreground: 234 20% 80%;
-    --destructive: 0 62% 50%;
+    --background: 216 55% 5%;
+    --foreground: 215 28% 88%;
+    --card: 216 48% 8%;
+    --card-foreground: 215 28% 88%;
+    --popover: 216 46% 9%;
+    --popover-foreground: 215 28% 88%;
+    --primary: 220 100% 68%;
+    --primary-foreground: 217 54% 8%;
+    --secondary: 216 38% 12%;
+    --secondary-foreground: 215 18% 68%;
+    --muted: 216 38% 11%;
+    --muted-foreground: 215 14% 44%;
+    --accent: 168 73% 50%;
+    --accent-foreground: 217 54% 8%;
+    --destructive: 0 62% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 234 25% 16%;
-    --input: 234 25% 16%;
-    --ring: 234 88% 66%;
-    --sidebar: 234 42% 7%;
-    --sidebar-foreground: 234 20% 75%;
-    --sidebar-primary: 234 88% 70%;
-    --sidebar-accent: 234 30% 13%;
-    --sidebar-border: 234 30% 12%;
+    --border: 216 38% 13%;
+    --input: 216 38% 13%;
+    --ring: 220 100% 68%;
+    --sidebar: 217 60% 4%;
+    --sidebar-foreground: 215 18% 68%;
+    --sidebar-primary: 220 100% 68%;
+    --sidebar-accent: 217 45% 11%;
+    --sidebar-border: 216 45% 9%;
   }
 
   * {
     @apply border-border;
   }
 
+  html {
+    color-scheme: light;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(92,147,255,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 80%, rgba(36,221,184,0.04) 0%, transparent 50%);
+    background-attachment: fixed;
   }
 }
 
 @layer utilities {
+  /* Gradient texte brand : bleu → vert */
   .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(234 88% 66%), hsl(267 73% 67%));
+    background: linear-gradient(135deg, #5C93FF, #24DDB8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(92, 147, 255, 0.2), 0 0 40px rgba(92, 147, 255, 0.08);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(36, 221, 184, 0.2), 0 0 40px rgba(36, 221, 184, 0.08);
+  }
+
+  /* Card glass — adapté light */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(92, 147, 255, 0.1);
+  }
+
+  /* Badge inactive */
+  .badge-inactive {
+    background: rgba(30, 50, 80, 0.07);
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* ── Stat tile design system ── */
+
+  /* Section header avec dot coloré + ligne gradient */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .section-header::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(92,147,255,0.15), transparent);
+  }
+
+  /* Stat tile — accent bar gauche */
+  .stat-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    padding: 12px 14px 10px 16px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px rgba(30,50,80,0.06), 0 1px 2px rgba(30,50,80,0.04);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .stat-tile::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--tile-color, #5C93FF);
+    opacity: 0.7;
+    transition: opacity 0.15s, top 0.15s, bottom 0.15s;
+  }
+  .stat-tile:hover::before {
+    opacity: 1;
+    top: 6px;
+    bottom: 6px;
+  }
+  .stat-tile:hover {
+    border-color: color-mix(in srgb, var(--tile-color, #5C93FF) 22%, transparent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30,50,80,0.08), 0 2px 4px rgba(30,50,80,0.05);
+  }
+
+  /* Ghost icon in stat tile */
+  .stat-tile-icon {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 42px;
+    height: 42px;
+    opacity: 0.07;
+    color: var(--tile-color, #5C93FF);
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .stat-tile:hover .stat-tile-icon {
+    opacity: 0.13;
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  /* Number in stat tile */
+  .stat-number {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-number-sm {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Label in stat tile */
+  .stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-top: 6px;
+  }
+
+  /* ── Data table design system ── */
+
+  /* Container — top gradient accent bar */
+  .data-table-wrap {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+  .data-table-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #5C93FF 0%, #24DDB8 55%, transparent 100%);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Thead — frosted tint + subtle brand border */
+  .data-table-head {
+    background: linear-gradient(to bottom, rgba(92,147,255,0.035) 0%, rgba(92,147,255,0.01) 100%);
+    border-bottom: 1px solid rgba(92,147,255,0.09);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Th cells */
+  .data-th {
+    padding: 9px 16px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(30,50,80,0.38);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .data-th-r { text-align: right; }
+
+  /* Tbody — lighter separator */
+  .data-table-body tr + tr {
+    border-top: 1px solid rgba(30,50,80,0.05);
+  }
+
+  /* Row hover — gradient sweep + left accent */
+  .data-row {
+    transition: background 0.12s, border-left-color 0.12s;
+    border-left: 2px solid transparent;
+  }
+  .data-row:hover {
+    border-left-color: rgba(92,147,255,0.45);
+    background: linear-gradient(to right, rgba(92,147,255,0.045) 0%, transparent 60%);
+  }
+
+  /* Numbers in tables — Barlow Condensed medium */
+  .num {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  /* Scrollbar discrète */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30,50,80,0.12) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(30,50,80,0.12);
+    border-radius: 2px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(30,50,80,0.2);
   }
 }

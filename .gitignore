@@ -19,6 +19,7 @@ dist-ssr
 # Next.js
 frontend/.next/
 frontend/out/
+frontend/tsconfig.tsbuildinfo
 
 # Packages build
 packages/*/dist/
@@ -55,3 +56,4 @@ coverage/
 docs/references/
 
 maquette/
+
