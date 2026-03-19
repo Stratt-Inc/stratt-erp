@@ -24,12 +24,16 @@ import (
 	"github.com/stratt/backend/modules/accounting"
 	"github.com/stratt/backend/modules/analytics"
 	"github.com/stratt/backend/modules/billing"
+	"github.com/stratt/backend/modules/boamp"
+	"github.com/stratt/backend/modules/chatbot"
 	crmmod "github.com/stratt/backend/modules/crm"
+	"github.com/stratt/backend/modules/decp"
 	"github.com/stratt/backend/modules/hr"
 	"github.com/stratt/backend/modules/inventory"
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
+	"github.com/stratt/backend/modules/sirene"
 )
 
 func main() {
@@ -68,7 +72,7 @@ func main() {
 	_ = auditSvc
 
 	// ── Handlers ──────────────────────────────────────────
-	authHandler := auth.NewHandler(authSvc)
+	authHandler := auth.NewHandler(authSvc, cfg)
 	orgHandler := organization.NewHandler(orgSvc)
 	rbacHandler := rbac.NewHandler(rbacSvc)
 	moduleHandler := module.NewHandler(db)
@@ -80,8 +84,12 @@ func main() {
 	hrHandler := hr.NewHandler(db)
 	procurementHandler := procurement.NewHandler(db)
 	marchesHandler := marches.NewHandler(db)
+	decpHandler := decp.NewHandler(db)
+	boampHandler := boamp.NewHandler(db)
 	nomenclatureHandler := nomenclature.NewHandler(db)
 	analyticsHandler := analytics.NewHandler(db)
+	sireneHandler := sirene.NewHandler(db, cfg.InseeToken)
+	chatbotHandler := chatbot.NewHandler(db, cfg.AnthropicKey)
 
 	// ── Middleware factories ───────────────────────────────
 	requireAuth := middleware.RequireAuth(authSvc)
@@ -156,7 +164,15 @@ func main() {
 	procurement.RegisterRoutes(v1.Group("/procurement", requireAuth, requireOrg, requirePerm("procurement.read")), procurementHandler)
 	analytics.RegisterRoutes(v1.Group("/analytics", requireAuth, requireOrg, requirePerm("analytics.read")), analyticsHandler)
 	marches.RegisterRoutes(v1.Group("/marches", requireAuth, requireOrg, requirePerm("procurement.read")), marchesHandler)
+	decp.RegisterRoutes(v1.Group("/decp", requireAuth, requireOrg, requirePerm("procurement.read")), decpHandler)
+	boamp.RegisterRoutes(v1.Group("/boamp", requireAuth, requireOrg, requirePerm("procurement.read")), boampHandler)
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
+	sirene.RegisterRoutes(v1.Group("/sirene", requireAuth, requireOrg, requirePerm("procurement.read")), sireneHandler)
+	chatbot.RegisterRoutes(v1.Group("/chatbot", requireAuth, requireOrg, requirePerm("procurement.read")), chatbotHandler)
+
+	// ── Public routes (no auth) ────────────────────────────
+	public := r.Group("/api/public")
+	chatbot.RegisterPublicRoutes(public.Group("/chatbot"), chatbotHandler)
 
 	// ── Start ─────────────────────────────────────────────
 	srv := &http.Server{

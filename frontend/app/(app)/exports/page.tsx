@@ -68,17 +68,17 @@ export default function ExportsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <DemoBanner />
 
       {/* Header */}
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Module documents</p>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(245,158,11,0.1)" }}>
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "rgba(245,158,11,0.1)" }}>
             <FileText className="w-3.5 h-3.5" style={{ color: "#F59E0B" }} />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Génération documentaire & Exports</h1>
+          <h1 className="text-[20px] font-bold text-foreground">Génération documentaire & Exports</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           Document d&apos;implémentation informatique · Rendus formalisés · Exports réglementaires
@@ -87,7 +87,7 @@ export default function ExportsPage() {
 
       {/* Rendus formalisés info */}
       <div
-        className="rounded-xl border p-4 flex items-start gap-3"
+        className="rounded-xl border p-3 flex items-start gap-3"
         style={{ borderColor: "rgba(16,185,129,0.15)", background: "rgba(16,185,129,0.03)" }}
       >
         <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#10B981" }} />
@@ -97,28 +97,28 @@ export default function ExportsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Sections list */}
-        <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden">
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col max-h-[calc(100vh-250px)]">
+          <div className="px-4 py-2.5 border-b border-border flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <FileText className="w-4 h-4" style={{ color: "#5C93FF" }} />
               <h2 className="text-sm font-semibold text-foreground">Sections du document</h2>
             </div>
             <span className="text-xs text-muted-foreground">{selectedCount} sélectionnées · ~{totalPages} pages</span>
           </div>
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border overflow-y-auto flex-1 min-h-0">
             {sections.map((s) => (
               <div
                 key={s.id}
                 onClick={() => toggleSection(s.id)}
-                className={`flex items-start gap-3 px-5 py-3 cursor-pointer transition-colors ${
+                className={`flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
                   s.checked ? "bg-primary/[0.03]" : "hover:bg-muted/30"
                 }`}
-                style={s.checked ? { borderLeft: "2px solid rgba(91,107,245,0.4)" } : { borderLeft: "2px solid transparent" }}
+                style={s.checked ? { borderLeft: "2px solid rgba(36,221,184,0.25)" } : { borderLeft: "2px solid transparent" }}
               >
                 {s.checked
-                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#5B6BF5" }} />
+                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#5C93FF" }} />
                   : <Square className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-muted-foreground" />
                 }
                 <div className="flex-1 min-w-0">
@@ -134,13 +134,13 @@ export default function ExportsPage() {
         </div>
 
         {/* Actions panel */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Generate card */}
-          <div className="bg-card rounded-xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-foreground mb-4">Générer le document</h2>
+          <div className="bg-card rounded-xl border border-border p-3">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Générer le document</h2>
 
             {/* Document metadata */}
-            <div className="space-y-2 mb-4">
+            <div className="space-y-1.5 mb-3">
               {[
                 { label: "Collectivité", value: "Métropole de Lyon" },
                 { label: "Exercice", value: "2026" },
@@ -148,7 +148,7 @@ export default function ExportsPage() {
                 { label: "Sections", value: `${selectedCount} / ${sections.length}` },
                 { label: "Pages estimées", value: `~${totalPages}` },
               ].map(({ label, value }) => (
-                <div key={label} className="flex justify-between items-center px-3 py-2 rounded-lg bg-muted/40 text-xs">
+                <div key={label} className="flex justify-between items-center px-3 py-1.5 rounded-lg bg-muted/40 text-xs">
                   <span className="text-muted-foreground">{label}</span>
                   <span className="font-semibold text-foreground">{value}</span>
                 </div>
@@ -159,7 +159,7 @@ export default function ExportsPage() {
               onClick={handleGenerate}
               disabled={generating || selectedCount === 0}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Génération en cours…</>
@@ -169,7 +169,7 @@ export default function ExportsPage() {
             </button>
 
             {generated && (
-              <div className="mt-4 pt-4 border-t border-border space-y-2">
+              <div className="mt-3 pt-3 border-t border-border space-y-1.5">
                 <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "#10B981" }}>
                   <CheckSquare className="w-3.5 h-3.5" /> Document prêt — {totalPages} pages
                 </p>
@@ -206,12 +206,12 @@ export default function ExportsPage() {
 
           {/* Recent docs */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
-            <div className="px-4 py-3 border-b border-border">
+            <div className="px-4 py-2.5 border-b border-border">
               <h2 className="text-sm font-semibold text-foreground">Documents récents</h2>
             </div>
             <div className="divide-y divide-border">
               {recentDocs.map((doc) => (
-                <div key={doc.name} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors cursor-pointer">
+                <div key={doc.name} className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors cursor-pointer">
                   <File className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-foreground truncate">{doc.name}</p>

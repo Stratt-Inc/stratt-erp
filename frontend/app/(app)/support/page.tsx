@@ -50,7 +50,7 @@ export default function SupportPage() {
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full"
-                style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5B6BF5, #9B6FE8)" }}
+                style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5C93FF, #24DDB8)" }}
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function SupportPage() {
                   className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                     m.done ? "" : "border-2 border-border"
                   }`}
-                  style={m.done ? { background: "linear-gradient(135deg,#5B6BF5,#9B6FE8)" } : {}}
+                  style={m.done ? { background: "linear-gradient(135deg,#5C93FF,#24DDB8)" } : {}}
                 >
                   {m.done ? (
                     <Award className="w-3.5 h-3.5 text-white" />
@@ -78,7 +78,7 @@ export default function SupportPage() {
                 {m.done && (
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
-                    style={{ background: "rgba(91,107,245,0.1)", color: "#5B6BF5" }}
+                    style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}
                   >
                     Complété
                   </span>
@@ -95,8 +95,8 @@ export default function SupportPage() {
         <div className="space-y-4">
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(91,107,245,0.1)" }}>
-                <Mail className="w-4 h-4" style={{ color: "#5B6BF5" }} />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(92,147,255,0.1)" }}>
+                <Mail className="w-4 h-4" style={{ color: "#5C93FF" }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Assistance par email</h3>
@@ -116,7 +116,7 @@ export default function SupportPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-sm font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5B6BF5,#7B5BE8)" }}
+              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
             >
               Contacter le support
             </button>
@@ -151,7 +151,7 @@ export default function SupportPage() {
                     <span className="text-xs font-mono font-semibold text-foreground">{s.date}</span>
                     <span className="text-xs text-muted-foreground ml-2">{s.sujet}</span>
                   </div>
-                  <span className="text-xs font-medium flex-shrink-0 ml-2" style={{ color: "#5B6BF5" }}>
+                  <span className="text-xs font-medium flex-shrink-0 ml-2" style={{ color: "#5C93FF" }}>
                     {s.places}
                   </span>
                 </div>

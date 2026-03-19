@@ -9,9 +9,13 @@ import (
 	crmmod "github.com/stratt/backend/modules/crm"
 	hrmod "github.com/stratt/backend/modules/hr"
 	inventorymod "github.com/stratt/backend/modules/inventory"
+	decpmod "github.com/stratt/backend/modules/decp"
+	boampmod "github.com/stratt/backend/modules/boamp"
 	marchesmod "github.com/stratt/backend/modules/marches"
 	nomenclaturemod "github.com/stratt/backend/modules/nomenclature"
 	procurementmod "github.com/stratt/backend/modules/procurement"
+	chatbotmod "github.com/stratt/backend/modules/chatbot"
+	sirenemod "github.com/stratt/backend/modules/sirene"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -79,7 +83,17 @@ func AutoMigrate(db *gorm.DB) error {
 		&procurementmod.PurchaseOrderItem{},
 		// Marchés publics
 		&marchesmod.Marche{},
+		// DECP
+		&decpmod.DECPPublication{},
+		// BOAMP
+		&boampmod.BOAMPVeille{},
 		// Nomenclature
 		&nomenclaturemod.NomenclatureNode{},
+		// SIRENE
+		&sirenemod.SIRENEEnrichment{},
+		// Chatbot
+		&chatbotmod.ChatToken{},
+		&chatbotmod.ChatMessage{},
+		&chatbotmod.ChatFeedback{},
 	)
 }
