@@ -12,8 +12,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-stratt_dev}
       POSTGRES_USER: ${POSTGRES_USER:-stratt}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stratt_dev_password}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -28,8 +26,6 @@ services:
     image: redis:7-alpine
     container_name: stratt_redis
     restart: unless-stopped
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -67,8 +63,6 @@ services:
     environment:
       MEILI_ENV: ${APP_ENV:-development}
       MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:-stratt_meili_dev_key}
-    ports:
-      - "${MEILISEARCH_PORT:-7700}:7700"
     volumes:
       - meilisearch_data:/meili_data
     healthcheck:
@@ -99,8 +93,6 @@ services:
       S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-stratt_minio_secret}
       S3_BUCKET: ${S3_BUCKET:-stratt}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-    ports:
-      - "${API_PORT:-8080}:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -122,8 +114,6 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       api:
         condition: service_healthy

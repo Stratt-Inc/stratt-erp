@@ -212,7 +212,7 @@ export default function BOAMPPage() {
                 onClick={handleSearch}
                 disabled={loadingSearch}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 <Search className="w-3.5 h-3.5" />
                 {loadingSearch ? "Recherche…" : "Rechercher sur BOAMP"}
@@ -318,7 +318,7 @@ export default function BOAMPPage() {
             <button
               onClick={() => setShowNewVeille(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white transition-colors"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               <Plus className="w-3.5 h-3.5" /> Nouvelle veille
             </button>
@@ -351,7 +351,7 @@ export default function BOAMPPage() {
                   onClick={() => createVeilleMutation.mutate()}
                   disabled={!newVeille.nom || createVeilleMutation.isPending}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+                  style={{ background: "#5C93FF" }}
                 >
                   {createVeilleMutation.isPending ? "Enregistrement…" : "Enregistrer"}
                 </button>

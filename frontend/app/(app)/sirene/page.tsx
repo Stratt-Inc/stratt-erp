@@ -72,7 +72,7 @@ function EtatBadge({ etat }: { etat: string }) {
   if (etat === "A") {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-        style={{ background: "rgba(16,185,129,0.12)", color: "#10B981" }}>
+        style={{ background: "rgba(36,221,184,0.12)", color: "#24DDB8" }}>
         <CheckCircle size={12} />
         Actif
       </span>
@@ -248,7 +248,7 @@ export default function SirenePage() {
                 onClick={handleLookup}
                 disabled={lookupFetching}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 {lookupFetching ? (
                   <RefreshCw size={15} className="animate-spin" />
@@ -401,7 +401,7 @@ export default function SirenePage() {
 
           {!alertsFetching && (alertsResult?.count ?? 0) === 0 ? (
             <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <CheckCircle size={28} className="mx-auto mb-2" style={{ color: "#10B981" }} />
+              <CheckCircle size={28} className="mx-auto mb-2" style={{ color: "#24DDB8" }} />
               <p className="text-sm font-medium" style={{ color: "#6EE7B7" }}>
                 Aucune alerte — tous vos fournisseurs enrichis sont actifs.
               </p>

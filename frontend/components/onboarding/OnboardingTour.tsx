@@ -167,7 +167,7 @@ export function OnboardingTour() {
             <div className="flex items-center gap-2">
               <div
                 className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 <Zap size={14} className="text-white fill-white" />
               </div>
@@ -208,7 +208,7 @@ export function OnboardingTour() {
               <button
                 onClick={next}
                 className="flex items-center gap-1 px-3 py-1.5 text-xs text-white rounded-lg"
-                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 {step < TOUR_STEPS.length - 1 ? (
                   <>Suivant <ChevronRight size={13} /></>

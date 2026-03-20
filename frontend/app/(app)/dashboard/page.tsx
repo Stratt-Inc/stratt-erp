@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { Highlight } from "@/components/Highlight";
 import {
   Users, FileText, Package, Briefcase, TrendingUp, ShoppingCart,
   BarChart2, Calculator, Calendar, Map, BookOpen, Download,
@@ -30,18 +31,18 @@ interface MarcheStats {
 
 const pilotageModules = [
   { label: "Planification", href: "/planification", icon: Calendar, color: "#5C93FF", description: "Marchés publics & calendrier des passations" },
-  { label: "Cartographie", href: "/cartographie", icon: Map, color: "#06B6D4", description: "Dépenses par famille achats" },
+  { label: "Cartographie", href: "/cartographie", icon: Map, color: "#24DDB8", description: "Dépenses par famille achats" },
   { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "#24DDB8", description: "Arborescence des codes achats" },
   { label: "Documents", href: "/exports", icon: Download, color: "#F59E0B", description: "Rapports & exports PDF/Excel" },
 ];
 
 const erpModules = [
   { label: "CRM", href: "/crm", icon: Users, color: "#5C93FF" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#10B981" },
+  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#24DDB8" },
   { label: "Facturation", href: "/billing", icon: FileText, color: "#F59E0B" },
   { label: "Inventaire", href: "/inventory", icon: Package, color: "#8B5CF6" },
-  { label: "RH", href: "/hr", icon: Briefcase, color: "#EC4899" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#06B6D4" },
+  { label: "RH", href: "/hr", icon: Briefcase, color: "#5C93FF" },
+  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#24DDB8" },
   { label: "Analytics", href: "/analytics", icon: BarChart2, color: "#24DDB8" },
 ];
 
@@ -86,9 +87,7 @@ export default function DashboardPage() {
           </p>
           <h1 className="text-[24px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Bonjour,{" "}
-            <span style={{ background: "linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {firstName}
-            </span>
+            <Highlight variant="mark" color="blue">{firstName}</Highlight>
           </h1>
           <p className="text-[11px] mt-0.5 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             {currentOrg?.name ?? "Organisation"}
@@ -144,7 +143,7 @@ export default function DashboardPage() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "hsl(var(--border))"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}
               >
                 <Icon className="absolute -right-2 -top-2 w-16 h-16 transition-all duration-300 group-hover:scale-110" style={{ color, opacity: 0.05 }} />
-                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, ${color}50, transparent)` }} />
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `${color}50` }} />
                 <div>
                   <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
                   <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.4)" }}>{description}</p>
@@ -221,7 +220,7 @@ export default function DashboardPage() {
                     )}
                   </div>
                 </div>
-                <div style={{ height: 1, background: `linear-gradient(90deg, ${color}35, transparent)` }} />
+                <div style={{ height: 1, background: `${color}35` }} />
                 <div className="px-3 py-1.5">
                   <p className="text-[10px] font-bold text-foreground truncate">{label}</p>
                 </div>
@@ -232,8 +231,8 @@ export default function DashboardPage() {
 
         <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-2">
           {[
-            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#10B981" },
-            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#06B6D4" },
+            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#24DDB8" },
+            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#24DDB8" },
             { label: "Deals actifs", value: overview?.total_deals ?? 0, icon: Users, color: "#5C93FF" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>

@@ -134,8 +134,8 @@ export default function SettingsPage() {
 
       {/* Sections à venir */}
       {[
-        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions.", color: "#06B6D4" },
-        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives.", color: "#10B981" },
+        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions.", color: "#24DDB8" },
+        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives.", color: "#24DDB8" },
       ].map(({ icon: Icon, label, desc, color }) => (
         <div key={label} className="space-y-2">
           <div className="section-header">

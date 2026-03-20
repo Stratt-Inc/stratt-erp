@@ -39,11 +39,11 @@ interface Deal {
 interface PagedResponse<T> { items: T[]; total: number; }
 
 const statusColors: Record<string, string> = {
-  new: "#5C93FF", contacted: "#06B6D4", qualified: "#10B981", lost: "#EF4444",
+  new: "#5C93FF", contacted: "#24DDB8", qualified: "#24DDB8", lost: "#EF4444",
 };
 const stageColors: Record<string, string> = {
   prospecting: "#6B7280", proposal: "#5C93FF", negotiation: "#F59E0B",
-  closed_won: "#10B981", closed_lost: "#EF4444",
+  closed_won: "#24DDB8", closed_lost: "#EF4444",
 };
 const stageLabels: Record<string, string> = {
   prospecting: "Prospection", proposal: "Proposition", negotiation: "Négociation",
@@ -93,8 +93,8 @@ export default function CRMPage() {
 
   const stats = [
     { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5C93FF" },
-    { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "#06B6D4" },
-    { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "#10B981" },
+    { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "#24DDB8" },
+    { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "#24DDB8" },
     {
       label: "Pipeline",
       value: `${((deals?.items ?? []).reduce((s, d) => s + d.value, 0)).toLocaleString("fr-FR")} €`,
@@ -127,7 +127,7 @@ export default function CRMPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -211,7 +211,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+                    style={{ background: "#5C93FF" }}>
                     {c.first_name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <span className="font-medium text-sm text-foreground">{c.first_name} {c.last_name}</span>
@@ -222,7 +222,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
               <td className="px-4 py-2">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: c.type === "company" ? "rgba(92,147,255,0.1)" : "rgba(6,182,212,0.1)", color: c.type === "company" ? "#5C93FF" : "#06B6D4" }}>
+                  style={{ background: c.type === "company" ? "rgba(92,147,255,0.1)" : "rgba(36,221,184,0.1)", color: c.type === "company" ? "#5C93FF" : "#24DDB8" }}>
                   {c.type === "company" ? "Société" : "Personne"}
                 </span>
               </td>
