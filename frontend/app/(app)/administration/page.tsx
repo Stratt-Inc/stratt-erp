@@ -53,7 +53,7 @@ const tabs = [
   { id: "support", label: "Support", icon: BookOpen },
 ];
 
-interface Member { id: string; user: { name: string; email: string }; status: string; }
+interface Member { id: string; user: { name: string; email: string }; status: string; role?: { name: string } | null; }
 
 export default function AdministrationPage() {
   const [activeTab, setActiveTab] = useState("utilisateurs");
@@ -72,7 +72,7 @@ export default function AdministrationPage() {
     ? members.map((m) => ({
         nom: m.user?.name ?? "—",
         email: m.user?.email ?? "—",
-        role: "Service achats",
+        role: m.role?.name ?? "—",
         service: "—",
         connexion: "—",
       }))
