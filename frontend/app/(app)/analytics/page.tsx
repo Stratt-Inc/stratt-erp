@@ -550,11 +550,12 @@ export default function AnalyticsPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: `1px solid ${MODULE.analytics}1a` }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
-            Module analytics
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.analytics, boxShadow: `0 0 6px ${MODULE.analytics}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Analytics</span>
+          </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Analytics{" "}
             <Highlight variant="box" color="blue">& Reporting</Highlight>
