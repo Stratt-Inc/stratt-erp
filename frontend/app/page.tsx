@@ -14,6 +14,16 @@ const roadmapModules = [
   { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#24DDB8", eta: "Q4 2026" },
 ];
 
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const roadmapModules = [
+  { name: "Veille BOAMP", description: "Surveillance des AAO & alertes CPV", color: "#8B5CF6", eta: "Q2 2026" },
+  { name: "DECP Export", description: "Publication données essentielles contrats", color: "#06B6D4", eta: "Q2 2026" },
+  { name: "Signature électronique", description: "Dossiers dématérialisés intégrés", color: "#F59E0B", eta: "Q3 2026" },
+  { name: "BI & Reporting", description: "Tableaux de bord personnalisables", color: "#EC4899", eta: "Q3 2026" },
+  { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#10B981", eta: "Q4 2026" },
+];
+
 const modules = [
   {
     id: "crm",
