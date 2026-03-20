@@ -27,6 +27,7 @@ interface AuthState {
   currentOrg: Organization | null;
   organizations: Organization[];
   currentRole: string | null;
+  currentPermissions: string[];
   isLoading: boolean;
   _hasHydrated: boolean;
 
@@ -38,6 +39,7 @@ interface AuthState {
   setCurrentOrg: (org: Organization) => void;
   loadOrganizations: () => Promise<void>;
   loadCurrentRole: () => Promise<void>;
+  hasPermission: (permission: string) => boolean;
   clear: () => void;
   _setHasHydrated: (v: boolean) => void;
 }
@@ -51,6 +53,7 @@ export const useAuthStore = create<AuthState>()(
       currentOrg: null,
       organizations: [],
       currentRole: null,
+      currentPermissions: [],
       isLoading: false,
       _hasHydrated: false,
 
@@ -144,14 +147,24 @@ export const useAuthStore = create<AuthState>()(
         const { accessToken, currentOrg } = get();
         if (!accessToken || !currentOrg) return;
         try {
-          const data = await api.get<{ role: string }>(
+          const data = await api.get<{ role: string; permissions: string[] }>(
             `/api/v1/organizations/${currentOrg.id}/my-role`,
             { token: accessToken },
           );
-          set({ currentRole: data.role || null });
+          set({
+            currentRole: data.role || null,
+            currentPermissions: data.permissions ?? [],
+          });
         } catch {
-          set({ currentRole: null });
+          set({ currentRole: null, currentPermissions: [] });
         }
+      },
+
+      hasPermission: (permission) => {
+        const { currentRole, currentPermissions } = get();
+        // Admin role always has full access
+        if (currentRole === "Admin") return true;
+        return currentPermissions.includes(permission);
       },
 
       clear: () =>
@@ -162,6 +175,7 @@ export const useAuthStore = create<AuthState>()(
           currentOrg: null,
           organizations: [],
           currentRole: null,
+          currentPermissions: [],
         }),
 
       _setHasHydrated: (v) => set({ _hasHydrated: v }),

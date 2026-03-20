@@ -109,11 +109,18 @@ func (h *Handler) GetMyRole(c *gin.Context) {
 	}
 
 	roleName := ""
+	var permissions []string
 	if member.Role != nil {
 		roleName = member.Role.Name
+		for _, p := range member.Role.Permissions {
+			permissions = append(permissions, p.Name)
+		}
+	}
+	if permissions == nil {
+		permissions = []string{}
 	}
 
-	c.JSON(200, models.OK(gin.H{"role": roleName}))
+	c.JSON(200, models.OK(gin.H{"role": roleName, "permissions": permissions}))
 }
 
 // DELETE /api/v1/organizations/:id/members/:userId

@@ -112,8 +112,9 @@ export default function LoginPage() {
         <div className="flex flex-col gap-1">
           {[
             { label: "Admin", email: "admin@stratt.io", password: "admin1234" },
-            { label: "Member", email: "member@stratt.io", password: "demo1234" },
-            { label: "Viewer", email: "viewer@stratt.io", password: "demo1234" },
+            { label: "Commercial", email: "commercial@stratt.io", password: "demo1234" },
+            { label: "Comptable", email: "comptable@stratt.io", password: "demo1234" },
+            { label: "Logisticien", email: "logistique@stratt.io", password: "demo1234" },
           ].map(({ label, email, password }) => (
             <button
               key={email}

@@ -92,49 +92,60 @@ func main() {
 	db.Where("slug = ?", org.Slug).FirstOrCreate(&org)
 
 	// ── Roles ─────────────────────────────────────────────
+	// Admin — accès complet
 	adminRole := models.Role{OrganizationID: &org.ID, Name: "Admin", Description: "Accès complet à l'organisation", IsSystem: true}
 	db.Where("organization_id = ? AND name = ?", org.ID, adminRole.Name).FirstOrCreate(&adminRole)
 	var allPerms []models.Permission
 	db.Find(&allPerms)
 	db.Model(&adminRole).Association("Permissions").Replace(allPerms)
 
-	memberRole := models.Role{OrganizationID: &org.ID, Name: "Member", Description: "Accès standard aux modules ERP", IsSystem: true}
-	db.Where("organization_id = ? AND name = ?", org.ID, memberRole.Name).FirstOrCreate(&memberRole)
-	var memberPerms []models.Permission
-	db.Where("name IN ?", []string{"crm.read", "crm.write", "accounting.read", "billing.read", "inventory.read", "inventory.write", "procurement.read", "procurement.write"}).Find(&memberPerms)
-	db.Model(&memberRole).Association("Permissions").Replace(memberPerms)
+	// Responsable Commercial — CRM
+	commercialRole := models.Role{OrganizationID: &org.ID, Name: "Commercial", Description: "Accès CRM et facturation", IsSystem: false}
+	db.Where("organization_id = ? AND name = ?", org.ID, commercialRole.Name).FirstOrCreate(&commercialRole)
+	var commercialPerms []models.Permission
+	db.Where("name IN ?", []string{"crm.read", "crm.write", "billing.read"}).Find(&commercialPerms)
+	db.Model(&commercialRole).Association("Permissions").Replace(commercialPerms)
 
-	viewerRole := models.Role{OrganizationID: &org.ID, Name: "Viewer", Description: "Accès lecture seule au pilotage", IsSystem: true}
-	db.Where("organization_id = ? AND name = ?", org.ID, viewerRole.Name).FirstOrCreate(&viewerRole)
+	// Comptable — comptabilité + facturation
+	comptableRole := models.Role{OrganizationID: &org.ID, Name: "Comptable", Description: "Accès comptabilité et facturation", IsSystem: false}
+	db.Where("organization_id = ? AND name = ?", org.ID, comptableRole.Name).FirstOrCreate(&comptableRole)
+	var comptablePerms []models.Permission
+	db.Where("name IN ?", []string{"accounting.read", "accounting.write", "billing.read", "billing.write"}).Find(&comptablePerms)
+	db.Model(&comptableRole).Association("Permissions").Replace(comptablePerms)
+
+	// Logisticien — inventaire + achats
+	logistiqueRole := models.Role{OrganizationID: &org.ID, Name: "Logisticien", Description: "Accès inventaire et achats", IsSystem: false}
+	db.Where("organization_id = ? AND name = ?", org.ID, logistiqueRole.Name).FirstOrCreate(&logistiqueRole)
+	var logistiquePerms []models.Permission
+	db.Where("name IN ?", []string{"inventory.read", "inventory.write", "procurement.read", "procurement.write"}).Find(&logistiquePerms)
+	db.Model(&logistiqueRole).Association("Permissions").Replace(logistiquePerms)
 
 	// ── Admin member ──────────────────────────────────────
 	member := models.OrganizationMember{OrganizationID: org.ID, UserID: admin.ID, Status: "active"}
 	db.Where("organization_id = ? AND user_id = ?", org.ID, admin.ID).FirstOrCreate(&member)
 	db.Model(&member).Update("role_id", adminRole.ID)
+	db.Where(models.UserRole{UserID: admin.ID, OrganizationID: org.ID, RoleID: adminRole.ID}).FirstOrCreate(&models.UserRole{})
 
-	userRole := models.UserRole{UserID: admin.ID, OrganizationID: org.ID, RoleID: adminRole.ID}
-	db.Where(userRole).FirstOrCreate(&userRole)
-
-	// ── Demo users ────────────────────────────────────────
-	hashMember, _ := bcrypt.GenerateFromPassword([]byte("demo1234"), bcrypt.DefaultCost)
-	demoMember := models.User{Name: "Marie Dupont", Email: "member@stratt.io", PasswordHash: string(hashMember), EmailVerified: true}
-	db.Where("email = ?", demoMember.Email).FirstOrCreate(&demoMember)
-	db.Model(&demoMember).Updates(models.User{PasswordHash: string(hashMember)})
-	orgMember := models.OrganizationMember{OrganizationID: org.ID, UserID: demoMember.ID, Status: "active"}
-	db.Where("organization_id = ? AND user_id = ?", org.ID, demoMember.ID).FirstOrCreate(&orgMember)
-	db.Model(&orgMember).Update("role_id", memberRole.ID)
-	db.Where(models.UserRole{UserID: demoMember.ID, OrganizationID: org.ID, RoleID: memberRole.ID}).FirstOrCreate(&models.UserRole{})
-	fmt.Printf("✓ Demo member: %s / demo1234\n", demoMember.Email)
-
-	hashViewer, _ := bcrypt.GenerateFromPassword([]byte("demo1234"), bcrypt.DefaultCost)
-	demoViewer := models.User{Name: "Thomas Berger", Email: "viewer@stratt.io", PasswordHash: string(hashViewer), EmailVerified: true}
-	db.Where("email = ?", demoViewer.Email).FirstOrCreate(&demoViewer)
-	db.Model(&demoViewer).Updates(models.User{PasswordHash: string(hashViewer)})
-	orgViewer := models.OrganizationMember{OrganizationID: org.ID, UserID: demoViewer.ID, Status: "active"}
-	db.Where("organization_id = ? AND user_id = ?", org.ID, demoViewer.ID).FirstOrCreate(&orgViewer)
-	db.Model(&orgViewer).Update("role_id", viewerRole.ID)
-	db.Where(models.UserRole{UserID: demoViewer.ID, OrganizationID: org.ID, RoleID: viewerRole.ID}).FirstOrCreate(&models.UserRole{})
-	fmt.Printf("✓ Demo viewer: %s / demo1234\n", demoViewer.Email)
+	// ── Demo users (un par rôle métier) ──────────────────
+	demoUsers := []struct {
+		name, email string
+		role        *models.Role
+	}{
+		{"Sophie Martin", "commercial@stratt.io", &commercialRole},
+		{"Julie Henry", "comptable@stratt.io", &comptableRole},
+		{"Marc Leroy", "logistique@stratt.io", &logistiqueRole},
+	}
+	demoHash, _ := bcrypt.GenerateFromPassword([]byte("demo1234"), bcrypt.DefaultCost)
+	for _, u := range demoUsers {
+		demoUser := models.User{Name: u.name, Email: u.email, PasswordHash: string(demoHash), EmailVerified: true}
+		db.Where("email = ?", demoUser.Email).FirstOrCreate(&demoUser)
+		db.Model(&demoUser).Updates(models.User{PasswordHash: string(demoHash)})
+		orgM := models.OrganizationMember{OrganizationID: org.ID, UserID: demoUser.ID, Status: "active"}
+		db.Where("organization_id = ? AND user_id = ?", org.ID, demoUser.ID).FirstOrCreate(&orgM)
+		db.Model(&orgM).Update("role_id", u.role.ID)
+		db.Where(models.UserRole{UserID: demoUser.ID, OrganizationID: org.ID, RoleID: u.role.ID}).FirstOrCreate(&models.UserRole{})
+		fmt.Printf("✓ Demo %s: %s / demo1234\n", u.role.Name, u.email)
+	}
 
 	for _, m := range modules {
 		om := models.OrganizationModule{OrganizationID: org.ID, ModuleID: m.ID}

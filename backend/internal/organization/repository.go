@@ -56,6 +56,7 @@ func (r *Repository) FindMember(ctx context.Context, orgID, userID uuid.UUID) (*
 	err := r.db.WithContext(ctx).
 		Preload("User").
 		Preload("Role").
+		Preload("Role.Permissions").
 		Where("organization_id = ? AND user_id = ? AND status = 'active'", orgID, userID).
 		First(&m).Error
 	return &m, err
