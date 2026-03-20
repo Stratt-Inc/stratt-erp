@@ -203,7 +203,7 @@ export default function CartographiePage() {
 
       {/* ── Bar chart familles + Direction ── */}
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.cartographie, boxShadow: `0 0 6px ${MODULE.cartographie}` }} />
         <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Répartition de la dépense
         </span>

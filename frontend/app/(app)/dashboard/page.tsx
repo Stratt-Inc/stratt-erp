@@ -114,7 +114,7 @@ export default function DashboardPage() {
       {/* ── PILOTAGE ── */}
       <div>
         <div className="section-header">
-          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.dashboard, boxShadow: `0 0 6px ${MODULE.dashboard}` }} />
           <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Pilotage achats publics</span>
         </div>
 
@@ -188,7 +188,7 @@ export default function DashboardPage() {
       {/* ── ERP ── */}
       <div>
         <div className="section-header">
-          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.dashboard, boxShadow: `0 0 6px ${MODULE.dashboard}` }} />
           <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Modules ERP</span>
         </div>
 

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore, type Organization } from "@/store/auth";
 import { useIsDemo } from "@/components/DemoBanner";
 import { Building2, Plus, Users, Check, Lock, ChevronRight } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 export default function OrganizationsPage() {
   const { accessToken, currentOrg, setCurrentOrg } = useAuthStore();
@@ -39,7 +40,7 @@ export default function OrganizationsPage() {
       <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.organizations, boxShadow: `0 0 6px ${MODULE.organizations}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Espace de travail</span>
           </div>
           <h1 className="text-[22px] font-extrabold text-foreground" style={{ letterSpacing: "-0.025em" }}>
