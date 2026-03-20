@@ -152,6 +152,46 @@ make seed           # peuple la DB
 make dev            # API :8080 + Frontend :3000
 ```
 
+## Déploiement sur Coolify
+
+Coolify permet de déployer facilement des applications multi-services (API, frontend, base de données, cache, stockage objet).
+
+### Prérequis
+- Docker activé sur Coolify
+- Variables d'environnement configurées via l'interface Coolify (voir `.env.example`)
+- Volumes persistants pour PostgreSQL et MinIO
+
+### Instructions
+1. **Cloner le repo**
+   ```bash
+   git clone <repo> && cd stratt-erp
+   ```
+2. **Configurer les variables d'environnement**
+   - Copier `.env.example` en `.env` et compléter les valeurs sensibles
+   - Renseigner les variables dans Coolify (section Environment)
+3. **Déployer via Docker Compose**
+   - Utiliser le fichier `docker-compose.yml` pour lancer tous les services
+   - Adapter les ports si besoin (par défaut : frontend 3000, backend 8080)
+   - Vérifier les volumes pour la persistance des données
+4. **Accéder à l’application**
+   - Frontend : http://<coolify-host>:3000
+   - Backend : http://<coolify-host>:8080/health
+   - MinIO Console : http://<coolify-host>:9001
+
+### Exemple de configuration Coolify
+- Service API : port 8080
+- Service Frontend : port 3000
+- PostgreSQL : port 5432 (volume)
+- Redis : port 6379 (volume)
+- MinIO : port 9000 (volume)
+
+### Conseils
+- Utiliser l’interface Coolify pour gérer les secrets et variables d’environnement
+- Adapter les ports selon votre infrastructure
+- Vérifier la persistance des volumes pour la base de données et le stockage objet
+
+---
+
 ## Services exposés
 
 | Service | URL | Credentials                        |
