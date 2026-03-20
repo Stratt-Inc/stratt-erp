@@ -87,17 +87,17 @@ export function Sidebar() {
           style={
             active
               ? {
-                  color: "#1E3A5F",
-                  background: "linear-gradient(135deg, rgba(92,147,255,0.12), rgba(92,147,255,0.05))",
-                  boxShadow: "inset 0 0 0 1px rgba(92,147,255,0.18)",
+                  color: "#FFFFFF",
+                  background: "rgba(92,147,255,0.18)",
+                  boxShadow: "inset 0 0 0 1px rgba(92,147,255,0.30)",
                 }
-              : { color: "rgba(30,50,80,0.52)" }
+              : { color: "rgba(255,255,255,0.45)" }
           }
         >
           {active && (
             <span
               className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] rounded-r-full"
-              style={{ background: "linear-gradient(180deg, #5C93FF, #24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             />
           )}
           <Icon
@@ -106,7 +106,7 @@ export function Sidebar() {
             style={{ color: active ? "#5C93FF" : undefined }}
           />
           <span style={active ? {} : { transition: "color 0.15s" }}
-            className={active ? "" : "group-hover:!text-[rgba(30,50,80,0.85)]"}>
+            className={active ? "" : "group-hover:!text-white"}>
             {label}
           </span>
           {active && (
@@ -133,14 +133,14 @@ export function Sidebar() {
         style={{ borderBottom: "1px solid hsl(var(--sidebar-border))" }}
       >
         <p
-          className="text-gradient-primary font-extrabold text-[22px] leading-none tracking-[-0.04em]"
-          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+          className="font-extrabold text-[22px] leading-none tracking-[-0.04em]"
+          style={{ color: "#5C93FF", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
           stratt
         </p>
         <p
           className="text-[10px] mt-[5px] truncate font-medium"
-          style={{ color: "rgba(30,50,80,0.42)" }}
+          style={{ color: "rgba(255,255,255,0.30)" }}
         >
           {currentOrg?.name ?? "—"}
         </p>
@@ -152,7 +152,7 @@ export function Sidebar() {
         <div>
           <p
             className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(30,50,80,0.3)" }}
+            style={{ color: "rgba(255,255,255,0.22)" }}
           >
             Pilotage
           </p>
@@ -167,7 +167,7 @@ export function Sidebar() {
         <div>
           <p
             className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(30,50,80,0.3)" }}
+            style={{ color: "rgba(255,255,255,0.22)" }}
           >
             ERP
           </p>
@@ -182,7 +182,7 @@ export function Sidebar() {
         <div>
           <p
             className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(30,50,80,0.3)" }}
+            style={{ color: "rgba(255,255,255,0.22)" }}
           >
             Système
           </p>
@@ -196,13 +196,13 @@ export function Sidebar() {
         style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
       >
         <div
-          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg group cursor-default transition-all duration-150 hover:bg-black/[0.04]"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg group cursor-default transition-all duration-150 hover:bg-white/[0.06]"
         >
           {/* Avatar */}
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
             style={{
-              background: "linear-gradient(135deg, #5C93FF 0%, #24DDB8 100%)",
+              background: "#5C93FF",
               color: "#fff",
             }}
           >
@@ -212,13 +212,13 @@ export function Sidebar() {
           <div className="flex-1 min-w-0">
             <p
               className="text-[12px] font-semibold truncate leading-none"
-              style={{ color: "rgba(30,50,80,0.82)" }}
+              style={{ color: "rgba(255,255,255,0.82)" }}
             >
               {user?.name}
             </p>
             <p
               className="text-[10px] mt-[3px] truncate"
-              style={{ color: "rgba(30,50,80,0.38)" }}
+              style={{ color: "rgba(255,255,255,0.38)" }}
             >
               {user?.email}
             </p>
@@ -228,7 +228,7 @@ export function Sidebar() {
             onClick={handleLogout}
             title="Déconnexion"
             className="p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100"
-            style={{ color: "rgba(30,50,80,0.35)" }}
+            style={{ color: "rgba(255,255,255,0.45)" }}
           >
             <LogOut className="w-3.5 h-3.5" style={{ transition: "color 0.15s" }} />
           </button>

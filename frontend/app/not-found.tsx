@@ -14,7 +14,7 @@ export default function NotFound() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2.5 mb-12 no-underline">
         <div
-          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 14px rgba(36,221,184,0.25)" }}
+          style={{ background: "#5C93FF", boxShadow: "0 4px 14px rgba(92,147,255,0.25)" }}
           className="w-8 h-8 rounded-lg flex items-center justify-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
@@ -28,19 +28,10 @@ export default function NotFound() {
       <div className="float mb-8 relative">
         <p
           className="text-[9rem] font-extrabold leading-none tracking-tight select-none"
-          style={{
-            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
+          style={{ color: "#5C93FF" }}
         >
           404
         </p>
-        <div
-          className="absolute inset-0 blur-3xl opacity-20 rounded-full"
-          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
-        />
       </div>
 
       <h1 className="text-2xl font-bold text-[#0C1033] mb-3">Page introuvable</h1>
@@ -52,7 +43,7 @@ export default function NotFound() {
         <Link
           href="/dashboard"
           className="px-5 py-2.5 rounded-xl text-sm font-bold text-white no-underline"
-          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 16px rgba(92,147,255,0.2)" }}
+          style={{ background: "#5C93FF", boxShadow: "0 4px 16px rgba(92,147,255,0.2)" }}
         >
           Retour au dashboard
         </Link>

@@ -23,8 +23,8 @@ const demoUsers = [
 
 const roleConfig: Record<string, { bg: string; color: string; border: string }> = {
   "Administrateur": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF", border: "rgba(92,147,255,0.2)" },
-  "Direction": { bg: "rgba(16,185,129,0.08)", color: "#10B981", border: "rgba(16,185,129,0.2)" },
-  "Service achats": { bg: "rgba(6,182,212,0.08)", color: "#06B6D4", border: "rgba(6,182,212,0.2)" },
+  "Direction": { bg: "rgba(36,221,184,0.08)", color: "#24DDB8", border: "rgba(36,221,184,0.2)" },
+  "Service achats": { bg: "rgba(36,221,184,0.08)", color: "#24DDB8", border: "rgba(36,221,184,0.2)" },
   "Lecture seule": { bg: "rgba(107,114,128,0.08)", color: "#6B7280", border: "rgba(107,114,128,0.2)" },
 };
 
@@ -40,9 +40,9 @@ const journalEntries = [
 const actionColors: Record<string, { bg: string; color: string }> = {
   "Connexion": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF" },
   "Modification": { bg: "rgba(245,158,11,0.1)", color: "#F59E0B" },
-  "Export": { bg: "rgba(6,182,212,0.1)", color: "#06B6D4" },
-  "Création": { bg: "rgba(16,185,129,0.1)", color: "#10B981" },
-  "Validation": { bg: "rgba(99,102,241,0.1)", color: "#6366F1" },
+  "Export": { bg: "rgba(36,221,184,0.1)", color: "#24DDB8" },
+  "Création": { bg: "rgba(36,221,184,0.1)", color: "#24DDB8" },
+  "Validation": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF" },
 };
 
 const tabs = [
@@ -119,7 +119,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               <Plus className="w-3.5 h-3.5" /> Ajouter
             </button>
@@ -204,7 +204,7 @@ export default function AdministrationPage() {
                     <span
                       className="text-[11px] px-2 py-0.5 rounded-full font-semibold border"
                       style={y.active
-                        ? { background: "rgba(16,185,129,0.08)", color: "#10B981", borderColor: "rgba(16,185,129,0.2)" }
+                        ? { background: "rgba(36,221,184,0.08)", color: "#24DDB8", borderColor: "rgba(36,221,184,0.2)" }
                         : { background: "rgba(107,114,128,0.08)", color: "#6B7280", borderColor: "rgba(107,114,128,0.2)" }
                       }
                     >
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-xs font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               Ouvrir un ticket
             </button>

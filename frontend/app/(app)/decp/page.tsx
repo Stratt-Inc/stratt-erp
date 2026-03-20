@@ -58,7 +58,7 @@ interface ExportPayload {
 // ── Status helpers ─────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
-  success:                 { label: "Publié",          color: "#10B981", icon: CheckCircle },
+  success:                 { label: "Publié",          color: "#24DDB8", icon: CheckCircle },
   generated:               { label: "Généré",          color: "#5C93FF", icon: FileJson },
   published_with_warnings: { label: "Publié (alertes)", color: "#F59E0B", icon: AlertTriangle },
   failed:                  { label: "Échec",           color: "#EF4444", icon: XCircle },
@@ -122,7 +122,7 @@ export default function DECPPage() {
   }
 
   const rate = compliance?.conformity_rate ?? 0;
-  const rateColor = rate >= 90 ? "#10B981" : rate >= 60 ? "#F59E0B" : "#EF4444";
+  const rateColor = rate >= 90 ? "#24DDB8" : rate >= 60 ? "#F59E0B" : "#EF4444";
 
   const TABS = [
     { id: "compliance" as const, label: "Conformité DECP", icon: ShieldCheck },
@@ -309,7 +309,7 @@ export default function DECPPage() {
                 onClick={downloadJSON}
                 disabled={loadingExport || !exportData}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 <FileJson className="w-4 h-4" />
                 {loadingExport ? "Génération…" : "Télécharger DECP.json"}
@@ -348,7 +348,7 @@ export default function DECPPage() {
                 onClick={() => publishMutation.mutate()}
                 disabled={publishMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}
+                style={{ background: "#24DDB8" }}
               >
                 <Upload className="w-4 h-4" />
                 {publishMutation.isPending ? "Publication…" : "Publier sur data.gouv.fr"}
