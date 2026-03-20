@@ -88,11 +88,11 @@ export default function ExportsPage() {
       {/* Rendus formalisés info */}
       <div
         className="rounded-xl border p-3 flex items-start gap-3"
-        style={{ borderColor: "rgba(16,185,129,0.15)", background: "rgba(16,185,129,0.03)" }}
+        style={{ borderColor: "rgba(36,221,184,0.15)", background: "rgba(36,221,184,0.03)" }}
       >
-        <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#10B981" }} />
+        <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#24DDB8" }} />
         <div className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold" style={{ color: "#10B981" }}>Rendus formalisés</span>
+          <span className="font-semibold" style={{ color: "#24DDB8" }}>Rendus formalisés</span>
           {" "}— Le document est généré conformément aux recommandations CartoAP : un fichier PDF lisible et esthétique pour la diffusion, un fichier XLSX récapitulatif pour les filtres, et un format d&apos;import pour le progiciel financier.
         </div>
       </div>
@@ -159,7 +159,7 @@ export default function ExportsPage() {
               onClick={handleGenerate}
               disabled={generating || selectedCount === 0}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Génération en cours…</>
@@ -170,7 +170,7 @@ export default function ExportsPage() {
 
             {generated && (
               <div className="mt-3 pt-3 border-t border-border space-y-1.5">
-                <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "#10B981" }}>
+                <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "#24DDB8" }}>
                   <CheckSquare className="w-3.5 h-3.5" /> Document prêt — {totalPages} pages
                 </p>
                 {[

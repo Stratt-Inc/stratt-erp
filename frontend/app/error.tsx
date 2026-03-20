@@ -22,7 +22,7 @@ export default function GlobalError({
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2.5 mb-12 no-underline">
         <div
-          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 14px rgba(36,221,184,0.25)" }}
+          style={{ background: "#5C93FF", boxShadow: "0 4px 14px rgba(92,147,255,0.25)" }}
           className="w-8 h-8 rounded-lg flex items-center justify-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
@@ -57,7 +57,7 @@ export default function GlobalError({
         <button
           onClick={reset}
           className="px-5 py-2.5 rounded-xl text-sm font-bold text-white"
-          style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)", boxShadow: "0 4px 16px rgba(92,147,255,0.2)" }}
+          style={{ background: "#5C93FF", boxShadow: "0 4px 16px rgba(92,147,255,0.2)" }}
         >
           Réessayer
         </button>

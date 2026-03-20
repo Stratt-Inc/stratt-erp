@@ -31,8 +31,8 @@ export default function SupportPage() {
 
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(16,185,129,0.1)" }}>
-            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "#10B981" }} />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
+            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "#24DDB8" }} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Support & Formation</h1>
         </div>
@@ -50,7 +50,7 @@ export default function SupportPage() {
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full"
-                style={{ width: `${pct}%`, background: "linear-gradient(90deg, #5C93FF, #24DDB8)" }}
+                style={{ width: `${pct}%`, background: "#5C93FF" }}
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function SupportPage() {
                   className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                     m.done ? "" : "border-2 border-border"
                   }`}
-                  style={m.done ? { background: "linear-gradient(135deg,#5C93FF,#24DDB8)" } : {}}
+                  style={m.done ? { background: "#5C93FF" } : {}}
                 >
                   {m.done ? (
                     <Award className="w-3.5 h-3.5 text-white" />
@@ -116,7 +116,7 @@ export default function SupportPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-sm font-semibold text-white"
-              style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               Contacter le support
             </button>
@@ -124,8 +124,8 @@ export default function SupportPage() {
 
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
-                <BookOpen className="w-4 h-4" style={{ color: "#06B6D4" }} />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
+                <BookOpen className="w-4 h-4" style={{ color: "#24DDB8" }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Documentation</h3>

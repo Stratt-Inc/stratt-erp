@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Highlight } from "@/components/Highlight";
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const roadmapModules = [
+  { name: "Veille BOAMP", description: "Surveillance des AAO & alertes CPV", color: "#8B5CF6", eta: "Q2 2026" },
+  { name: "DECP Export", description: "Publication données essentielles contrats", color: "#24DDB8", eta: "Q2 2026" },
+  { name: "Signature électronique", description: "Dossiers dématérialisés intégrés", color: "#F59E0B", eta: "Q3 2026" },
+  { name: "BI & Reporting", description: "Tableaux de bord personnalisables", color: "#5C93FF", eta: "Q3 2026" },
+  { name: "API Publique", description: "Intégration systèmes tiers & webhooks", color: "#24DDB8", eta: "Q4 2026" },
+];
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -29,7 +40,7 @@ const modules = [
     id: "accounting",
     name: "Comptabilité",
     description: "Comptes, transactions, rapports",
-    color: "#10B981",
+    color: "#24DDB8",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <rect x="4" y="2" width="16" height="20" rx="2" /><line x1="8" y1="6" x2="16" y2="6" /><line x1="8" y1="10" x2="16" y2="10" /><line x1="8" y1="14" x2="12" y2="14" />
@@ -51,7 +62,7 @@ const modules = [
     id: "inventory",
     name: "Inventaire",
     description: "Stocks, produits, mouvements",
-    color: "#6366F1",
+    color: "#5C93FF",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
@@ -62,7 +73,7 @@ const modules = [
     id: "hr",
     name: "RH",
     description: "Employés, congés, paie",
-    color: "#EC4899",
+    color: "#5C93FF",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
@@ -84,7 +95,7 @@ const modules = [
     id: "analytics",
     name: "Analytics",
     description: "Tableaux de bord temps réel",
-    color: "#06B6D4",
+    color: "#24DDB8",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
         <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
@@ -425,13 +436,6 @@ export default function LandingPage() {
         .chip-2 { animation: chip-float 3.8s ease-in-out infinite 0.6s; }
         .chip-3 { animation: chip-float 2.9s ease-in-out infinite 1.2s; }
 
-        .text-gradient-hero {
-          background: linear-gradient(135deg, #5C93FF, #24DDB8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
         /* Hover glow for module cards */
         .module-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .module-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(92,147,255,0.1); }
@@ -447,24 +451,11 @@ export default function LandingPage() {
         .btn-primary { transition: filter 0.2s, transform 0.2s; }
         .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-        .hero-grid {
-          background-image:
-            linear-gradient(rgba(92,147,255,0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.08) 1px, transparent 1px);
-          background-size: 60px 60px;
-        }
-
         .nav-blur {
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
         }
 
-        .cta-grid {
-          background-image:
-            linear-gradient(rgba(92,147,255,0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(92,147,255,0.07) 1px, transparent 1px);
-          background-size: 60px 60px;
-        }
       `}</style>
 
       {/* ══════════════════════════════════════
@@ -478,10 +469,7 @@ export default function LandingPage() {
         <Link href="/" className="select-none">
           <span
             style={{
-              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
+              color: "#5C93FF",
               fontWeight: 800,
               fontSize: "20px",
               fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -534,32 +522,6 @@ export default function LandingPage() {
         className="relative hero-grid flex flex-col items-center justify-center text-center overflow-hidden pt-32 pb-0"
         style={{ minHeight: "100vh", background: "#F7F9FF" }}
       >
-        {/* Orb blue — top-left */}
-        <div
-          className="orb-a absolute pointer-events-none"
-          style={{
-            top: "-10%",
-            left: "-8%",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(92,147,255,0.18) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-        {/* Orb green — bottom-right */}
-        <div
-          className="orb-b absolute pointer-events-none"
-          style={{
-            bottom: "5%",
-            right: "-5%",
-            width: "500px",
-            height: "500px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(36,221,184,0.14) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
 
         {/* TTIconOutline watermark — centered absolute */}
         <div
@@ -603,7 +565,7 @@ export default function LandingPage() {
             }}
           >
             La plateforme{" "}
-            <span className="text-gradient-hero">intelligente</span>
+            <Highlight variant="mark" color="blue">intelligente</Highlight>
             <br />
             pour l&apos;achat public.
           </h1>
@@ -672,7 +634,7 @@ export default function LandingPage() {
             }}
           >
             <div className="flex items-center gap-1">
-              {["#5C93FF", "#24DDB8", "#EC4899", "#F59E0B"].map((c, i) => (
+              {["#5C93FF", "#24DDB8", "#5C93FF", "#F59E0B"].map((c, i) => (
                 <span
                   key={i}
                   style={{
@@ -697,7 +659,7 @@ export default function LandingPage() {
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(to bottom, transparent 0%, rgba(247,249,255,0.75) 100%)",
+              background: "rgba(247,249,255,0.4)",
               pointerEvents: "none",
               zIndex: 2,
             }}
@@ -786,10 +748,7 @@ export default function LandingPage() {
                   fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
                   fontWeight: 800,
                   letterSpacing: "-0.03em",
-                  background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  color: "#5C93FF",
                 }}
               >
                 {stat.value}
@@ -847,7 +806,7 @@ export default function LandingPage() {
               }}
             >
               Tout ce dont votre{" "}
-              <span className="text-gradient-hero">organisation a besoin</span>
+              <Highlight variant="box" color="blue">organisation a besoin</Highlight>
             </h2>
             <p
               data-reveal
@@ -915,8 +874,8 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Gradient divider */}
-                <div style={{ height: 1, background: `linear-gradient(90deg, ${mod.color}30, transparent)` }} />
+                {/* Divider */}
+                <div style={{ height: 1, background: `${mod.color}30` }} />
 
                 {/* Content */}
                 <div className="px-5 py-4 flex flex-col gap-2 flex-1">
@@ -1034,7 +993,7 @@ export default function LandingPage() {
                 }}
               >
                 Conçu pour{" "}
-                <span className="text-gradient-hero">la performance</span>
+                <Highlight variant="mark" color="teal">la performance</Highlight>
               </h2>
               <p
                 data-reveal-left
@@ -1125,7 +1084,7 @@ export default function LandingPage() {
               { label: "Next.js 15", color: "#0F1F3D" },
               { label: "Go 1.24", color: "#5C93FF" },
               { label: "PostgreSQL 16", color: "#24DDB8" },
-              { label: "Redis", color: "#EC4899" },
+              { label: "Redis", color: "#5C93FF" },
               { label: "Claude AI", color: "#F59E0B" },
               { label: "Docker", color: "#5C93FF" },
             ].map((tech) => (
@@ -1159,21 +1118,6 @@ export default function LandingPage() {
               border: "1px solid rgba(36,221,184,0.18)",
             }}
           >
-            {/* Green glow bottom-center */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-40%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "500px",
-                height: "300px",
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(36,221,184,0.12) 0%, transparent 70%)",
-                filter: "blur(40px)",
-                pointerEvents: "none",
-              }}
-            />
 
             {/* TTIconFilled in glowing container */}
             <div
@@ -1190,14 +1134,11 @@ export default function LandingPage() {
             {/* StrattWordmark */}
             <div className="relative z-10">
               <span style={{
-                background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                color: "#5C93FF",
                 fontWeight: 800,
                 fontSize: "36px",
                 fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-              letterSpacing: "-0.04em",
+                letterSpacing: "-0.04em",
               }}>stratt</span>
             </div>
 
@@ -1211,7 +1152,7 @@ export default function LandingPage() {
               }}
             >
               Prêt à transformer votre{" "}
-              <span className="text-gradient-hero">gestion&nbsp;?</span>
+              <Highlight variant="underline" color="teal">gestion&nbsp;?</Highlight>
             </h2>
 
             <p
@@ -1255,10 +1196,7 @@ export default function LandingPage() {
         {/* Logo */}
         <div className="flex items-center gap-2.5">
           <span style={{
-            background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            color: "#5C93FF",
             fontWeight: 800,
             fontSize: "18px",
             letterSpacing: "-0.04em",

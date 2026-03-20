@@ -23,14 +23,14 @@ interface PurchaseOrder {
 const statusConfig: Record<string, { label: string; color: string }> = {
   draft: { label: "Brouillon", color: "#6B7280" },
   sent: { label: "Envoyée", color: "#5C93FF" },
-  received: { label: "Reçue", color: "#10B981" },
+  received: { label: "Reçue", color: "#24DDB8" },
   cancelled: { label: "Annulée", color: "#EF4444" },
 };
 
 // ── CCP 2024 Thresholds ────────────────────────────────────────────────
 
 const CCP_THRESHOLDS = [
-  { max: 40_000, label: "Gré à gré", short: "GRÉ À GRÉ", color: "#10B981", bg: "rgba(16,185,129,0.08)", desc: "Commande directe sans mise en concurrence formelle obligatoire" },
+  { max: 40_000, label: "Gré à gré", short: "GRÉ À GRÉ", color: "#24DDB8", bg: "rgba(36,221,184,0.08)", desc: "Commande directe sans mise en concurrence formelle obligatoire" },
   { max: 90_000, label: "MAPA simplifié", short: "MAPA", color: "#5C93FF", bg: "rgba(92,147,255,0.08)", desc: "Mise en concurrence adaptée — au moins 3 devis recommandés" },
   { max: 215_000, label: "MAPA publié", short: "MAPA+", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", desc: "Publication obligatoire sur le profil d'acheteur (art. L2124-1 CCP)" },
   { max: 5_538_000, label: "Appel d'offres", short: "AO", color: "#EF4444", bg: "rgba(239,68,68,0.08)", desc: "Procédure formalisée — publication BOAMP obligatoire" },
@@ -83,7 +83,7 @@ const RISK_CONFIG = {
   critical: { label: "Critique", color: "#EF4444", bg: "rgba(239,68,68,0.08)", icon: ShieldAlert },
   high: { label: "Élevé", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", icon: AlertTriangle },
   medium: { label: "Modéré", color: "#5C93FF", bg: "rgba(92,147,255,0.08)", icon: Info },
-  low: { label: "Faible", color: "#10B981", bg: "rgba(16,185,129,0.08)", icon: ShieldCheck },
+  low: { label: "Faible", color: "#24DDB8", bg: "rgba(36,221,184,0.08)", icon: ShieldCheck },
 };
 
 // ── ComplianceTab ──────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ function ComplianceTab() {
           {DEMO_FRACTIONNEMENT.map((f) => (
             <div key={f.supplier} className="px-4 py-3 flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
-                style={{ background: f.score >= 70 ? "linear-gradient(135deg,#EF4444,#F59E0B)" : "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+                style={{ background: f.score >= 70 ? "#EF4444" : "#5C93FF" }}>
                 {f.score}
               </div>
               <div className="flex-1 min-w-0">
@@ -253,10 +253,10 @@ export default function ProcurementPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(6,182,212,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(36,221,184,0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#06B6D4", boxShadow: "0 0 6px #06B6D4" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module achats</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
@@ -264,7 +264,7 @@ export default function ProcurementPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Nouvelle commande
           </button>
         )}
@@ -274,7 +274,7 @@ export default function ProcurementPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
           { label: "Total commandes", value: orders.length, color: "#8B5CF6", icon: ShoppingCart },
-          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#10B981", icon: ShoppingCart },
+          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#24DDB8", icon: ShoppingCart },
           { label: "En attente", value: pending, color: "#5C93FF", icon: ShoppingCart },
           { label: "Alertes conformité", value: riskCount, color: "#EF4444", icon: ShieldAlert },
         ].map(({ label, value, color, icon: Icon }) => (

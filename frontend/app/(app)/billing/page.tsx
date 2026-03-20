@@ -22,7 +22,7 @@ interface Invoice {
 const statusConfig: Record<string, { label: string; color: string; icon: React.FC<{ className?: string; style?: React.CSSProperties }> }> = {
   draft: { label: "Brouillon", color: "#6B7280", icon: FileText },
   sent: { label: "Envoyée", color: "#5C93FF", icon: Clock },
-  paid: { label: "Payée", color: "#10B981", icon: CheckCircle2 },
+  paid: { label: "Payée", color: "#24DDB8", icon: CheckCircle2 },
   overdue: { label: "En retard", color: "#EF4444", icon: AlertCircle },
   cancelled: { label: "Annulée", color: "#9CA3AF", icon: FileText },
 };
@@ -45,7 +45,7 @@ export default function BillingPage() {
 
   const stats = [
     { label: "Total factures", value: invoices.length, color: "#5C93FF", icon: FileText },
-    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "#10B981", icon: FileText },
+    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "#24DDB8", icon: FileText },
     { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "#F59E0B", icon: FileText },
     { label: "En retard", value: overdue.length, color: "#EF4444", icon: FileText },
   ];
@@ -65,7 +65,7 @@ export default function BillingPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg,#5C93FF,#24DDB8)" }}>
+            style={{ background: "#5C93FF" }}>
             <Plus className="w-4 h-4" /> Nouvelle facture
           </button>
         )}

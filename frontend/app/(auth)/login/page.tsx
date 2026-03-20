@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { ApiError } from "@/lib/api";
-import { TTIconOutline } from "@/components/BrandLogo";
+import { StrattWordmark } from "@/components/BrandLogo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,18 +32,18 @@ export default function LoginPage() {
 
   return (
     <div className="relative space-y-8">
-      {/* TTIconOutline watermark */}
+      {/* StrattWordmark watermark */}
       <div
         className="absolute pointer-events-none select-none"
         style={{
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -52%)",
-          opacity: 0.04,
+          opacity: 0.035,
           zIndex: 0,
         }}
       >
-        <TTIconOutline size={620} color="#000000" />
+        <StrattWordmark width={480} color="#000000" />
       </div>
       <div className="relative z-10">
         <h2 className="text-2xl font-bold text-foreground">Connexion</h2>

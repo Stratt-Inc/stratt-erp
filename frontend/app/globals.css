@@ -40,12 +40,12 @@
     --ring: 220 90% 56%;
     --radius: 0.5rem;
 
-    /* Sidebar — légèrement distincte du fond */
-    --sidebar: 217 28% 95%;
-    --sidebar-foreground: 217 28% 28%;
-    --sidebar-primary: 220 90% 56%;
-    --sidebar-accent: 213 18% 90%;
-    --sidebar-border: 213 14% 88%;
+    /* Sidebar — dark navy (same as login left panel #09111E) */
+    --sidebar: 217 54% 8%;
+    --sidebar-foreground: 215 35% 72%;
+    --sidebar-primary: 220 90% 70%;
+    --sidebar-accent: 217 50% 14%;
+    --sidebar-border: 216 45% 13%;
   }
 
   /* .dark alias — conservé pour compatibilité future */
@@ -86,20 +86,208 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(92,147,255,0.05) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 90% 80%, rgba(36,221,184,0.04) 0%, transparent 50%);
     background-attachment: fixed;
   }
 }
 
 @layer utilities {
-  /* Gradient texte brand : bleu → vert */
-  .text-gradient-primary {
-    background: linear-gradient(135deg, #5C93FF, #24DDB8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(92, 147, 255, 0.2), 0 0 40px rgba(92, 147, 255, 0.08);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(36, 221, 184, 0.2), 0 0 40px rgba(36, 221, 184, 0.08);
+  }
+
+  /* Card glass — adapté light */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(92, 147, 255, 0.1);
+  }
+
+  /* Badge inactive */
+  .badge-inactive {
+    background: rgba(30, 50, 80, 0.07);
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* ── Stat tile design system ── */
+
+  /* Section header avec dot coloré + ligne gradient */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .section-header::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(92,147,255,0.15);
+  }
+
+  /* Stat tile — accent bar gauche */
+  .stat-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    padding: 12px 14px 10px 16px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px rgba(30,50,80,0.06), 0 1px 2px rgba(30,50,80,0.04);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .stat-tile::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--tile-color, #5C93FF);
+    opacity: 0.7;
+    transition: opacity 0.15s, top 0.15s, bottom 0.15s;
+  }
+  .stat-tile:hover::before {
+    opacity: 1;
+    top: 6px;
+    bottom: 6px;
+  }
+  .stat-tile:hover {
+    border-color: color-mix(in srgb, var(--tile-color, #5C93FF) 22%, transparent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30,50,80,0.08), 0 2px 4px rgba(30,50,80,0.05);
+  }
+
+  /* Ghost icon in stat tile */
+  .stat-tile-icon {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 42px;
+    height: 42px;
+    opacity: 0.07;
+    color: var(--tile-color, #5C93FF);
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .stat-tile:hover .stat-tile-icon {
+    opacity: 0.13;
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  /* Number in stat tile */
+  .stat-number {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-number-sm {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Label in stat tile */
+  .stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-top: 6px;
+  }
+
+  /* ── Data table design system ── */
+
+  /* Container — top gradient accent bar */
+  .data-table-wrap {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+  .data-table-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(92,147,255,0.35);
+    opacity: 1;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Thead — frosted tint + subtle brand border */
+  .data-table-head {
+    background: rgba(92,147,255,0.04);
+    border-bottom: 1px solid rgba(92,147,255,0.09);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Th cells */
+  .data-th {
+    padding: 9px 16px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(30,50,80,0.38);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .data-th-r { text-align: right; }
+
+  /* Tbody — lighter separator */
+  .data-table-body tr + tr {
+    border-top: 1px solid rgba(30,50,80,0.05);
+  }
+
+  /* Row hover — gradient sweep + left accent */
+  .data-row {
+    transition: background 0.12s, border-left-color 0.12s;
+    border-left: 2px solid transparent;
+  }
+  .data-row:hover {
+    border-left-color: rgba(92,147,255,0.45);
+    background: rgba(92,147,255,0.05);
+  }
+
+  /* Numbers in tables — Barlow Condensed medium */
+  .num {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  /* Scrollbar discrète */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30,50,80,0.12) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(30,50,80,0.12);
+    border-radius: 2px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(30,50,80,0.2);
   }
 
   /* Glow effects */
