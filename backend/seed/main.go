@@ -84,6 +84,7 @@ func main() {
 		EmailVerified: true,
 	}
 	db.Where("email = ?", admin.Email).FirstOrCreate(&admin)
+	db.Model(&admin).Updates(models.User{PasswordHash: string(hash), EmailVerified: true})
 	fmt.Printf("✓ Admin user: %s / admin1234\n", admin.Email)
 
 	// ── Demo organization ─────────────────────────────────
