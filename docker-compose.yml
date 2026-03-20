@@ -14,12 +14,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stratt_dev_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-stratt} -d ${POSTGRES_DB:-stratt_dev}"]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
   # ── Redis ───────────────────────────────────────────────
   redis:
