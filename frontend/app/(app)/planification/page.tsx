@@ -69,10 +69,10 @@ const pluriannuelData = [
 ];
 
 const statutColors: Record<string, { bg: string; text: string; border: string }> = {
-  planifie:  { bg: "rgba(107,114,128,0.08)", text: "rgba(30,50,80,0.48)",  border: "rgba(107,114,128,0.2)" },
-  en_cours:  { bg: "rgba(92,147,255,0.1)",  text: "#5C93FF",         border: "rgba(92,147,255,0.2)" },
-  alerte:    { bg: "rgba(239,68,68,0.08)",   text: "#EF4444",         border: "rgba(239,68,68,0.2)" },
-  termine:   { bg: "rgba(107,114,128,0.08)", text: "rgba(30,50,80,0.48)", border: "rgba(107,114,128,0.2)" },
+  planifie:  { bg: "rgba(107,114,128,0.08)", text: "hsl(var(--foreground) / 0.48)",  border: "rgba(107,114,128,0.2)" },
+  en_cours:  { bg: "hsl(var(--primary) / 0.1)",  text: "hsl(var(--primary))",         border: "hsl(var(--primary) / 0.2)" },
+  alerte:    { bg: "hsl(var(--destructive) / 0.08)",   text: "hsl(var(--destructive))",         border: "hsl(var(--destructive) / 0.2)" },
+  termine:   { bg: "rgba(107,114,128,0.08)", text: "hsl(var(--foreground) / 0.48)", border: "rgba(107,114,128,0.2)" },
 };
 
 const statutLabels: Record<string, string> = {
@@ -80,13 +80,13 @@ const statutLabels: Record<string, string> = {
 };
 
 const prioriteColors: Record<string, { bg: string; text: string }> = {
-  normale:   { bg: "rgba(107,114,128,0.1)", text: "rgba(30,50,80,0.48)" },
-  haute:     { bg: "rgba(245,158,11,0.1)",  text: "#F59E0B" },
-  critique:  { bg: "rgba(239,68,68,0.1)",   text: "#EF4444" },
+  normale:   { bg: "rgba(107,114,128,0.1)", text: "hsl(var(--foreground) / 0.48)" },
+  haute:     { bg: "hsl(var(--warning) / 0.1)",  text: "hsl(var(--warning))" },
+  critique:  { bg: "hsl(var(--destructive) / 0.1)",   text: "hsl(var(--destructive))" },
 };
 
 // Color palette for calendar event bars
-const EVENT_COLORS = ["#5C93FF", "#24DDB8", "#F59E0B", "#EF4444", "#8B5CF6", "#24DDB8", "#F97316", "#5C93FF"];
+const EVENT_COLORS = ["hsl(var(--primary))", "hsl(var(--accent))", "hsl(var(--warning))", "hsl(var(--destructive))", "hsl(var(--violet))", "hsl(var(--accent))", "#F97316", "hsl(var(--primary))"];
 
 const MONTH_NAMES = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 const DAY_NAMES = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
@@ -200,11 +200,11 @@ export default function PlanificationPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module planification</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module planification</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Passations de marchés</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">
@@ -215,7 +215,7 @@ export default function PlanificationPage() {
           <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border border-border text-foreground hover:bg-muted/50 transition-colors">
             <Filter className="w-3.5 h-3.5" /> Filtres avancés
           </button>
-          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "#5C93FF" }}>
+          <button onClick={demo} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white" style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-3.5 h-3.5" /> Nouveau marché
           </button>
         </div>
@@ -224,11 +224,11 @@ export default function PlanificationPage() {
       {/* KPIs — signal tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
-          { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "#24DDB8" },
-          { label: "Chevauchements", value: "3", icon: Layers, color: "#8B5CF6" },
-          { label: "Budget impact", value: `${budgetK} k€`, icon: TrendingUp, color: "#24DDB8" },
-          { label: "Alertes seuils", value: stats?.alertes ?? 0, icon: AlertTriangle, color: "#F59E0B" },
+          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "hsl(var(--primary))" },
+          { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "hsl(var(--accent))" },
+          { label: "Chevauchements", value: "3", icon: Layers, color: "hsl(var(--violet))" },
+          { label: "Budget impact", value: `${budgetK} k€`, icon: TrendingUp, color: "hsl(var(--accent))" },
+          { label: "Alertes seuils", value: stats?.alertes ?? 0, icon: AlertTriangle, color: "hsl(var(--warning))" },
         ].map((kpi) => (
           <div key={kpi.label} className="stat-tile" style={{ "--tile-color": kpi.color } as React.CSSProperties}>
             <p className="stat-number">{kpi.value}</p>
@@ -252,7 +252,7 @@ export default function PlanificationPage() {
                 <XAxis dataKey="mois" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} />
                 <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                <Bar dataKey="charge" name="Charge" fill="#5C93FF" radius={[2, 2, 0, 0]} maxBarSize={14} />
+                <Bar dataKey="charge" name="Charge" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} maxBarSize={14} />
                 <Bar dataKey="capacite" name="Capacité" fill="hsl(var(--muted))" radius={[2, 2, 0, 0]} maxBarSize={14} />
               </BarChart>
             </ResponsiveContainer>
@@ -276,13 +276,13 @@ export default function PlanificationPage() {
                 <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={30} />
                 <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} />
                 <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="#5C93FF" strokeWidth={2} dot={{ r: 3 }} />
-                <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="#24DDB8" strokeWidth={2} dot={{ r: 3 }} />
+                <Line yAxisId="left" dataKey="marches" name="Nb marchés" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
+                <Line yAxisId="right" dataKey="montant" name="Montant (M€)" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <div className="flex gap-4 mt-1.5 justify-center">
-            {[{ label: "Nb marchés", color: "#5C93FF" }, { label: "Montant (M€)", color: "#24DDB8" }].map((l) => (
+            {[{ label: "Nb marchés", color: "hsl(var(--primary))" }, { label: "Montant (M€)", color: "hsl(var(--accent))" }].map((l) => (
               <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <div className="w-2 h-0.5 rounded" style={{ background: l.color }} />
                 {l.label}
@@ -349,7 +349,7 @@ export default function PlanificationPage() {
                           key={m.id}
                           onClick={() => setSelectedId(isSelected ? null : m.id)}
                           className="cursor-pointer data-row"
-                          style={isSelected ? { background: "rgba(92,147,255,0.06)" } : undefined}
+                          style={isSelected ? { background: "hsl(var(--primary) / 0.06)" } : undefined}
                         >
                           <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">{m.reference}</td>
                           <td className="px-3 py-2 text-[13px] font-medium text-foreground max-w-[200px] truncate">{m.objet}</td>
@@ -439,7 +439,7 @@ export default function PlanificationPage() {
               </div>
               {selected.statut === "alerte" && (
                 <div className="p-2.5 rounded-lg border text-[11px] flex items-start gap-2"
-                  style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
+                  style={{ background: "hsl(var(--destructive) / 0.05)", borderColor: "hsl(var(--destructive) / 0.2)" }}>
                   <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0 mt-0.5" />
                   <span className="text-red-500 leading-snug">Montant dépasse le seuil MAPA 90k€. Procédure formalisée requise (art. L2124-1 CCP).</span>
                 </div>
@@ -490,7 +490,7 @@ export default function PlanificationPage() {
                   return (
                     <div key={day} className="bg-card min-h-[44px] p-1 relative">
                       <span className={`text-[11px] font-medium w-5 h-5 flex items-center justify-center rounded-full ${isToday ? "text-white" : "text-foreground"}`}
-                        style={isToday ? { background: "#5C93FF" } : undefined}>
+                        style={isToday ? { background: "hsl(var(--primary))" } : undefined}>
                         {day}
                       </span>
                       <div className="mt-0.5 space-y-0.5">
@@ -627,7 +627,7 @@ export default function PlanificationPage() {
                             return (
                               <div
                                 className="absolute top-0 bottom-0 w-0.5"
-                                style={{ left: `${attrPos}%`, background: "#F59E0B" }}
+                                style={{ left: `${attrPos}%`, background: "hsl(var(--warning))" }}
                                 title={`Attribution: ${new Date(m.date_attribution).toLocaleDateString("fr-FR")}`}
                               />
                             );

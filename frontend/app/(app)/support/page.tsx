@@ -31,8 +31,8 @@ export default function SupportPage() {
 
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
-            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "#24DDB8" }} />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--accent) / 0.1)" }}>
+            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "hsl(var(--accent))" }} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Support & Formation</h1>
         </div>
@@ -50,7 +50,7 @@ export default function SupportPage() {
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full"
-                style={{ width: `${pct}%`, background: "#5C93FF" }}
+                style={{ width: `${pct}%`, background: "hsl(var(--primary))" }}
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function SupportPage() {
                   className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                     m.done ? "" : "border-2 border-border"
                   }`}
-                  style={m.done ? { background: "#5C93FF" } : {}}
+                  style={m.done ? { background: "hsl(var(--primary))" } : {}}
                 >
                   {m.done ? (
                     <Award className="w-3.5 h-3.5 text-white" />
@@ -78,7 +78,7 @@ export default function SupportPage() {
                 {m.done && (
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
-                    style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}
+                    style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }}
                   >
                     Complété
                   </span>
@@ -95,8 +95,8 @@ export default function SupportPage() {
         <div className="space-y-4">
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(92,147,255,0.1)" }}>
-                <Mail className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--primary) / 0.1)" }}>
+                <Mail className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Assistance par email</h3>
@@ -116,7 +116,7 @@ export default function SupportPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-sm font-semibold text-white"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               Contacter le support
             </button>
@@ -124,8 +124,8 @@ export default function SupportPage() {
 
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(36,221,184,0.1)" }}>
-                <BookOpen className="w-4 h-4" style={{ color: "#24DDB8" }} />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--accent) / 0.1)" }}>
+                <BookOpen className="w-4 h-4" style={{ color: "hsl(var(--accent))" }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Documentation</h3>
@@ -151,7 +151,7 @@ export default function SupportPage() {
                     <span className="text-xs font-mono font-semibold text-foreground">{s.date}</span>
                     <span className="text-xs text-muted-foreground ml-2">{s.sujet}</span>
                   </div>
-                  <span className="text-xs font-medium flex-shrink-0 ml-2" style={{ color: "#5C93FF" }}>
+                  <span className="text-xs font-medium flex-shrink-0 ml-2" style={{ color: "hsl(var(--primary))" }}>
                     {s.places}
                   </span>
                 </div>

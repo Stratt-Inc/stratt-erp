@@ -164,7 +164,7 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           className="w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ background: "#24DDB8", color: "#09111E" }}
+          style={{ background: "hsl(var(--accent))", color: "hsl(var(--sidebar))" }}
         >
           {loading ? "Connexion…" : "Se connecter"}
         </button>

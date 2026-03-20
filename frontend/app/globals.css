@@ -41,6 +41,14 @@
     --ring: 220 100% 68%;           /* #5C93FF */
     --radius: 0.5rem;
 
+    /* Semantic status colors */
+    --warning: 38 92% 50%;          /* #F59E0B — amber */
+    --warning-foreground: 0 0% 100%;
+    --success: 160 84% 39%;         /* #10B981 — emerald */
+    --success-foreground: 0 0% 100%;
+    --violet: 258 90% 66%;          /* #8B5CF6 — violet */
+    --violet-foreground: 0 0% 100%;
+
     /* Sidebar — dark navy #09111E */
     --sidebar: 217 54% 8%;          /* #09111e */
     --sidebar-foreground: 215 35% 72%;

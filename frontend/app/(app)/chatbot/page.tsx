@@ -125,7 +125,7 @@ function TokenCard({
           )}
           {t.revoked && (
             <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+              style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
               <Shield className="w-2.5 h-2.5" /> Révoqué
             </span>
           )}
@@ -148,7 +148,7 @@ function TokenCard({
                     <User className="w-2.5 h-2.5 text-primary" />
                   </div>
                   <div className="px-3 py-1.5 rounded-xl rounded-tr-sm text-[11px] leading-relaxed text-foreground"
-                    style={{ background: "rgba(92,147,255,0.09)" }}>
+                    style={{ background: "hsl(var(--primary) / 0.09)" }}>
                     {msg.q}
                   </div>
                 </div>
@@ -156,7 +156,7 @@ function TokenCard({
               {/* Assistant */}
               <div className="flex items-start gap-1.5 max-w-[85%]">
                 <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "#8B5CF6" }}>
+                  style={{ background: "hsl(var(--violet))" }}>
                   <Bot className="w-2.5 h-2.5 text-white" />
                 </div>
                 <div className="px-3 py-1.5 rounded-xl rounded-tl-sm bg-muted/50 text-[11px] leading-relaxed text-foreground">
@@ -238,24 +238,24 @@ export default function ChatbotPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module IA</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--violet))", boxShadow: "0 0 6px hsl(var(--violet))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module IA</span>
           </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Assistant{" "}
             <Highlight variant="box" color="violet">nomenclature</Highlight>
           </h1>
-          <p className="text-[12px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <p className="text-[12px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Classification budgétaire intelligente · IA entraînée sur le CCP · Liens publics partageables
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl flex-shrink-0"
-          style={{ background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.15)" }}>
-          <Sparkles className="w-3.5 h-3.5" style={{ color: "#8B5CF6" }} />
-          <span className="text-[11px] font-semibold" style={{ color: "#8B5CF6" }}>Propulsé par Claude</span>
+          style={{ background: "hsl(var(--violet) / 0.08)", border: "1px solid hsl(var(--violet) / 0.15)" }}>
+          <Sparkles className="w-3.5 h-3.5" style={{ color: "hsl(var(--violet))" }} />
+          <span className="text-[11px] font-semibold" style={{ color: "hsl(var(--violet))" }}>Propulsé par Claude</span>
         </div>
       </div>
 
@@ -279,7 +279,7 @@ export default function ChatbotPage() {
             <div className="px-4 py-3 border-b border-border flex items-center gap-3"
 >
               <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: "#8B5CF6" }}>
+                style={{ background: "hsl(var(--violet))" }}>
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -302,7 +302,7 @@ export default function ChatbotPage() {
                       ? "bg-primary/10"
                       : ""
                   }`}
-                    style={msg.role === "assistant" ? { background: "#8B5CF6" } : undefined}>
+                    style={msg.role === "assistant" ? { background: "hsl(var(--violet))" } : undefined}>
                     {msg.role === "user"
                       ? <User className="w-3 h-3 text-primary" />
                       : <Bot className="w-3 h-3 text-white" />
@@ -316,7 +316,7 @@ export default function ChatbotPage() {
                         ? "bg-primary/8 text-foreground rounded-tr-sm"
                         : "bg-muted/50 text-foreground rounded-tl-sm"
                     }`}
-                      style={msg.role === "user" ? { background: "rgba(92,147,255,0.08)" } : undefined}>
+                      style={msg.role === "user" ? { background: "hsl(var(--primary) / 0.08)" } : undefined}>
                       {msg.text.split("**").map((part, j) =>
                         j % 2 === 1
                           ? <strong key={j} className="font-semibold">{part}</strong>
@@ -326,7 +326,7 @@ export default function ChatbotPage() {
                     {msg.badge && (
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: "rgba(139,92,246,0.1)", color: "#8B5CF6" }}>
+                          style={{ background: "hsl(var(--violet) / 0.1)", color: "hsl(var(--violet))" }}>
                           {msg.badge}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
@@ -353,14 +353,14 @@ export default function ChatbotPage() {
             {/* How it works */}
             <div className="bg-card rounded-xl border border-border p-3 space-y-2.5">
               <div className="section-header" style={{ marginBottom: 0 }}>
-                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#8B5CF6" }} />
-                <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Fonctionnement</span>
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--violet))" }} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Fonctionnement</span>
               </div>
               {[
-                { step: "1", text: "Générez un lien public sécurisé", color: "#5C93FF" },
-                { step: "2", text: "Partagez-le aux agents ou directions", color: "#8B5CF6" },
-                { step: "3", text: "L'IA classe les achats selon votre nomenclature", color: "#24DDB8" },
-                { step: "4", text: "Suivez les usages dans les analytiques", color: "#24DDB8" },
+                { step: "1", text: "Générez un lien public sécurisé", color: "hsl(var(--primary))" },
+                { step: "2", text: "Partagez-le aux agents ou directions", color: "hsl(var(--violet))" },
+                { step: "3", text: "L'IA classe les achats selon votre nomenclature", color: "hsl(var(--accent))" },
+                { step: "4", text: "Suivez les usages dans les analytiques", color: "hsl(var(--accent))" },
               ].map(({ step, text, color }) => (
                 <div key={step} className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
@@ -375,10 +375,10 @@ export default function ChatbotPage() {
             {/* Quick stats */}
             <div className="grid grid-cols-2 gap-2">
               {[
-                { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, color: "#5C93FF" },
-                { label: "Utilisations", value: (tokensData ?? []).reduce((s, t) => s + t.use_count, 0), color: "#8B5CF6" },
-                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#24DDB8" },
-                { label: "Questions fréquentes", value: analytics?.top_questions?.length ?? "—", color: "#F59E0B" },
+                { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, color: "hsl(var(--primary))" },
+                { label: "Utilisations", value: (tokensData ?? []).reduce((s, t) => s + t.use_count, 0), color: "hsl(var(--violet))" },
+                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "hsl(var(--accent))" },
+                { label: "Questions fréquentes", value: analytics?.top_questions?.length ?? "—", color: "hsl(var(--warning))" },
               ].map(({ label, value, color }) => (
                 <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
                   <p className="stat-number-sm">{value}</p>
@@ -392,7 +392,7 @@ export default function ChatbotPage() {
               <button
                 onClick={() => setTab("tokens")}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: "#8B5CF6" }}
+                style={{ background: "hsl(var(--violet))" }}
               >
                 <Plus className="w-3.5 h-3.5" /> Créer un lien public
               </button>
@@ -430,7 +430,7 @@ export default function ChatbotPage() {
               <div className="flex gap-2">
                 <button onClick={() => createToken.mutate()} disabled={createToken.isPending}
                   className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
-                  style={{ background: "#8B5CF6" }}>
+                  style={{ background: "hsl(var(--violet))" }}>
                   {createToken.isPending ? "Création…" : "Créer le lien"}
                 </button>
                 <button onClick={() => setShowCreate(false)}
@@ -476,10 +476,10 @@ export default function ChatbotPage() {
         <div className="space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {[
-              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#24DDB8" },
-              { label: "Avis négatifs", value: feedbackNegative, icon: ThumbsDown, color: "#EF4444" },
-              { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", icon: BarChart2, color: "#5C93FF" },
-              { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, icon: Link2, color: "#8B5CF6" },
+              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "hsl(var(--accent))" },
+              { label: "Avis négatifs", value: feedbackNegative, icon: ThumbsDown, color: "hsl(var(--destructive))" },
+              { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", icon: BarChart2, color: "hsl(var(--primary))" },
+              { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, icon: Link2, color: "hsl(var(--violet))" },
             ].map(({ label, value, icon: Icon, color }) => (
               <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
                 <p className="stat-number">{value}</p>
@@ -492,7 +492,7 @@ export default function ChatbotPage() {
           {analytics && (
             <div className="bg-card rounded-xl border border-border overflow-hidden">
               <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-                <MessageSquare className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+                <MessageSquare className="w-4 h-4" style={{ color: "hsl(var(--violet))" }} />
                 <h2 className="text-sm font-semibold text-foreground">Questions les plus fréquentes</h2>
               </div>
               {(analytics.top_questions ?? []).length === 0 ? (
@@ -503,7 +503,7 @@ export default function ChatbotPage() {
                     <div key={i} className="data-row px-4 py-2.5 flex items-center justify-between gap-4">
                       <p className="text-sm text-foreground truncate flex-1">{q.question}</p>
                       <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                        style={{ background: "rgba(139,92,246,0.1)", color: "#8B5CF6" }}>
+                        style={{ background: "hsl(var(--violet) / 0.1)", color: "hsl(var(--violet))" }}>
                         ×{q.count}
                       </span>
                     </div>

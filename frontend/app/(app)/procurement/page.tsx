@@ -22,19 +22,19 @@ interface PurchaseOrder {
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   draft: { label: "Brouillon", color: "#6B7280" },
-  sent: { label: "Envoyée", color: "#5C93FF" },
-  received: { label: "Reçue", color: "#24DDB8" },
-  cancelled: { label: "Annulée", color: "#EF4444" },
+  sent: { label: "Envoyée", color: "hsl(var(--primary))" },
+  received: { label: "Reçue", color: "hsl(var(--accent))" },
+  cancelled: { label: "Annulée", color: "hsl(var(--destructive))" },
 };
 
 // ── CCP 2024 Thresholds ────────────────────────────────────────────────
 
 const CCP_THRESHOLDS = [
-  { max: 40_000, label: "Gré à gré", short: "GRÉ À GRÉ", color: "#24DDB8", bg: "rgba(36,221,184,0.08)", desc: "Commande directe sans mise en concurrence formelle obligatoire" },
-  { max: 90_000, label: "MAPA simplifié", short: "MAPA", color: "#5C93FF", bg: "rgba(92,147,255,0.08)", desc: "Mise en concurrence adaptée — au moins 3 devis recommandés" },
-  { max: 215_000, label: "MAPA publié", short: "MAPA+", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", desc: "Publication obligatoire sur le profil d'acheteur (art. L2124-1 CCP)" },
-  { max: 5_538_000, label: "Appel d'offres", short: "AO", color: "#EF4444", bg: "rgba(239,68,68,0.08)", desc: "Procédure formalisée — publication BOAMP obligatoire" },
-  { max: Infinity, label: "AO européen", short: "JOUE", color: "#8B5CF6", bg: "rgba(139,92,246,0.08)", desc: "Publication JOUE (Journal Officiel de l'UE) obligatoire" },
+  { max: 40_000, label: "Gré à gré", short: "GRÉ À GRÉ", color: "hsl(var(--accent))", bg: "hsl(var(--accent) / 0.08)", desc: "Commande directe sans mise en concurrence formelle obligatoire" },
+  { max: 90_000, label: "MAPA simplifié", short: "MAPA", color: "hsl(var(--primary))", bg: "hsl(var(--primary) / 0.08)", desc: "Mise en concurrence adaptée — au moins 3 devis recommandés" },
+  { max: 215_000, label: "MAPA publié", short: "MAPA+", color: "hsl(var(--warning))", bg: "hsl(var(--warning) / 0.08)", desc: "Publication obligatoire sur le profil d'acheteur (art. L2124-1 CCP)" },
+  { max: 5_538_000, label: "Appel d'offres", short: "AO", color: "hsl(var(--destructive))", bg: "hsl(var(--destructive) / 0.08)", desc: "Procédure formalisée — publication BOAMP obligatoire" },
+  { max: Infinity, label: "AO européen", short: "JOUE", color: "hsl(var(--violet))", bg: "hsl(var(--violet) / 0.08)", desc: "Publication JOUE (Journal Officiel de l'UE) obligatoire" },
 ];
 
 function getThreshold(amount: number) {
@@ -80,10 +80,10 @@ const DEMO_FRACTIONNEMENT = [
 ];
 
 const RISK_CONFIG = {
-  critical: { label: "Critique", color: "#EF4444", bg: "rgba(239,68,68,0.08)", icon: ShieldAlert },
-  high: { label: "Élevé", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", icon: AlertTriangle },
-  medium: { label: "Modéré", color: "#5C93FF", bg: "rgba(92,147,255,0.08)", icon: Info },
-  low: { label: "Faible", color: "#24DDB8", bg: "rgba(36,221,184,0.08)", icon: ShieldCheck },
+  critical: { label: "Critique", color: "hsl(var(--destructive))", bg: "hsl(var(--destructive) / 0.08)", icon: ShieldAlert },
+  high: { label: "Élevé", color: "hsl(var(--warning))", bg: "hsl(var(--warning) / 0.08)", icon: AlertTriangle },
+  medium: { label: "Modéré", color: "hsl(var(--primary))", bg: "hsl(var(--primary) / 0.08)", icon: Info },
+  low: { label: "Faible", color: "hsl(var(--accent))", bg: "hsl(var(--accent) / 0.08)", icon: ShieldCheck },
 };
 
 // ── ComplianceTab ──────────────────────────────────────────────────────
@@ -96,8 +96,8 @@ function ComplianceTab() {
       {/* CCP 2024 Scale */}
       <div className="bg-card rounded-xl border border-border p-4 space-y-3">
         <div className="section-header" style={{ marginBottom: 0 }}>
-          <Scale className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <Scale className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary))" }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Seuils CCP 2024 — Fournitures & Services
           </span>
         </div>
@@ -130,10 +130,10 @@ function ComplianceTab() {
       {/* Supplier risk table */}
       <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4" style={{ color: "#EF4444" }} />
+          <ShieldAlert className="w-4 h-4" style={{ color: "hsl(var(--destructive))" }} />
           <h2 className="text-sm font-semibold text-foreground">Contrôle automatique des seuils — cumul 12 mois glissants</h2>
           <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+            style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
             {DEMO_SUPPLIERS.filter((s) => s.risk === "critical" || s.risk === "high").length} alertes
           </span>
         </div>
@@ -193,14 +193,14 @@ function ComplianceTab() {
       {/* Fractionnement */}
       <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4" style={{ color: "#F59E0B" }} />
+          <AlertTriangle className="w-4 h-4" style={{ color: "hsl(var(--warning))" }} />
           <h2 className="text-sm font-semibold text-foreground">Détection du fractionnement illicite</h2>
         </div>
         <div className="divide-y divide-border">
           {DEMO_FRACTIONNEMENT.map((f) => (
             <div key={f.supplier} className="px-4 py-3 flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
-                style={{ background: f.score >= 70 ? "#EF4444" : "#5C93FF" }}>
+                style={{ background: f.score >= 70 ? "hsl(var(--destructive))" : "hsl(var(--primary))" }}>
                 {f.score}
               </div>
               <div className="flex-1 min-w-0">
@@ -212,7 +212,7 @@ function ComplianceTab() {
                 <div className="flex flex-wrap gap-1.5">
                   {f.orders.map((o, i) => (
                     <span key={i} className="text-[10px] px-2 py-0.5 rounded-full font-mono"
-                      style={{ background: "rgba(92,147,255,0.07)", color: "#5C93FF" }}>
+                      style={{ background: "hsl(var(--primary) / 0.07)", color: "hsl(var(--primary))" }}>
                       {o}
                     </span>
                   ))}
@@ -220,7 +220,7 @@ function ComplianceTab() {
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-[10px] text-muted-foreground">Score risque</p>
-                <p className="text-lg font-extrabold" style={{ color: f.score >= 70 ? "#EF4444" : "#5C93FF" }}>{f.score}<span className="text-xs font-normal">/100</span></p>
+                <p className="text-lg font-extrabold" style={{ color: f.score >= 70 ? "hsl(var(--destructive))" : "hsl(var(--primary))" }}>{f.score}<span className="text-xs font-normal">/100</span></p>
               </div>
             </div>
           ))}
@@ -253,18 +253,18 @@ export default function ProcurementPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(36,221,184,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module achats</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module achats</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Bons de commande · Conformité CCP 2024 · Détection fractionnement</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-4 h-4" /> Nouvelle commande
           </button>
         )}
@@ -273,10 +273,10 @@ export default function ProcurementPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Total commandes", value: orders.length, color: "#8B5CF6", icon: ShoppingCart },
-          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "#24DDB8", icon: ShoppingCart },
-          { label: "En attente", value: pending, color: "#5C93FF", icon: ShoppingCart },
-          { label: "Alertes conformité", value: riskCount, color: "#EF4444", icon: ShieldAlert },
+          { label: "Total commandes", value: orders.length, color: "hsl(var(--violet))", icon: ShoppingCart },
+          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "hsl(var(--accent))", icon: ShoppingCart },
+          { label: "En attente", value: pending, color: "hsl(var(--primary))", icon: ShoppingCart },
+          { label: "Alertes conformité", value: riskCount, color: "hsl(var(--destructive))", icon: ShieldAlert },
         ].map(({ label, value, color, icon: Icon }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number">{value}</p>
@@ -298,7 +298,7 @@ export default function ProcurementPage() {
             {label}
             {id === "conformite" && riskCount > 0 && (
               <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-bold text-white"
-                style={{ background: "#EF4444" }}>{riskCount}</span>
+                style={{ background: "hsl(var(--destructive))" }}>{riskCount}</span>
             )}
           </button>
         ))}

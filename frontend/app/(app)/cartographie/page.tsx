@@ -124,7 +124,7 @@ export default function CartographiePage() {
     border: "1px solid hsl(var(--border))",
     borderRadius: "10px",
     fontSize: "12px",
-    boxShadow: "0 4px 16px rgba(30,50,80,0.1)",
+    boxShadow: "0 4px 16px hsl(var(--foreground) / 0.1)",
     color: "hsl(var(--foreground))",
   };
 
@@ -133,16 +133,16 @@ export default function CartographiePage() {
       <DemoBanner />
 
       {/* ── Header ── */}
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
             Module cartographie
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Cartographie{" "}
             <Highlight variant="mark" color="teal">des achats</Highlight>
           </h1>
-          <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes
           </p>
         </div>
@@ -153,7 +153,7 @@ export default function CartographiePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "#5C93FF" }}
+            style={{ background: "hsl(var(--primary))" }}
           >
             <BarChart3 className="w-3.5 h-3.5" /> Générer cartographie
           </button>
@@ -162,18 +162,18 @@ export default function CartographiePage() {
 
       {/* ── KPIs ── */}
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Indicateurs de cartographie
         </span>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "#24DDB8" },
-          { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "#5C93FF" },
-          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "#24DDB8" },
-          { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "#EF4444" },
-          { label: "Écart budgétaire moyen",   value: "4,2%",                                                 icon: Target,       color: "#F59E0B" },
+          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "hsl(var(--accent))" },
+          { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "hsl(var(--primary))" },
+          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "hsl(var(--accent))" },
+          { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "hsl(var(--destructive))" },
+          { label: "Écart budgétaire moyen",   value: "4,2%",                                                 icon: Target,       color: "hsl(var(--warning))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number-sm">{value}</p>
@@ -201,8 +201,8 @@ export default function CartographiePage() {
 
       {/* ── Bar chart familles + Direction ── */}
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Répartition de la dépense
         </span>
       </div>
@@ -214,7 +214,7 @@ export default function CartographiePage() {
           style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
             <div className="flex items-center gap-2.5">
-              <Layers className="w-3.5 h-3.5" style={{ color: "#5C93FF" }} />
+              <Layers className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary))" }} />
               <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
                 Familles d&apos;achats homogènes
               </span>
@@ -224,7 +224,7 @@ export default function CartographiePage() {
               {CATEGORY_META.map(c => (
                 <div key={c.label} className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full" style={{ background: c.color }} />
-                  <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.45)" }}>{c.label}</span>
+                  <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{c.label}</span>
                 </div>
               ))}
             </div>
@@ -243,7 +243,7 @@ export default function CartographiePage() {
                   type="number"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fill: "rgba(30,50,80,0.38)", fontFamily: '"Barlow Condensed", sans-serif' }}
+                  tick={{ fontSize: 10, fill: "hsl(var(--foreground) / 0.38)", fontFamily: '"Barlow Condensed", sans-serif' }}
                   tickFormatter={(v) => `${v}M€`}
                 />
                 <YAxis
@@ -252,7 +252,7 @@ export default function CartographiePage() {
                   width={76}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "rgba(30,50,80,0.65)", fontFamily: '"Helvetica Neue", Helvetica, sans-serif' }}
+                  tick={{ fontSize: 11, fill: "hsl(var(--foreground) / 0.65)", fontFamily: '"Helvetica Neue", Helvetica, sans-serif' }}
                 />
                 <Tooltip
                   content={
@@ -265,14 +265,14 @@ export default function CartographiePage() {
                       indicator="dot"
                     />
                   }
-                  cursor={{ fill: "rgba(92,147,255,0.04)" }}
+                  cursor={{ fill: "hsl(var(--primary) / 0.04)" }}
                 />
                 <Bar dataKey="size" radius={[0, 6, 6, 0]}>
                   <LabelList
                     dataKey="size"
                     position="right"
                     formatter={(v: number) => `${v}M€`}
-                    style={{ fontSize: 10, fontFamily: '"Barlow Condensed", sans-serif', fill: "rgba(30,50,80,0.45)" }}
+                    style={{ fontSize: 10, fontFamily: '"Barlow Condensed", sans-serif', fill: "hsl(var(--foreground) / 0.45)" }}
                   />
                   {spendData.map((entry, i) => (
                     <Cell key={i} fill={CAT_COLOR[entry.category]} fillOpacity={0.82} />
@@ -322,7 +322,7 @@ export default function CartographiePage() {
             {/* Total centré */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-[22px] font-bold num leading-none" style={{ color: "hsl(var(--foreground))" }}>84,2</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "rgba(30,50,80,0.35)" }}>M€ total</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "hsl(var(--foreground) / 0.35)" }}>M€ total</span>
             </div>
           </div>
 
@@ -333,9 +333,9 @@ export default function CartographiePage() {
               return (
                 <div key={d.name} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
-                  <span className="text-[11px] flex-1 truncate" style={{ color: "rgba(30,50,80,0.55)" }}>{d.name}</span>
-                  <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.3)" }}>{pct}%</span>
-                  <span className="text-[11px] font-bold num" style={{ color: "rgba(30,50,80,0.75)" }}>{d.value}M€</span>
+                  <span className="text-[11px] flex-1 truncate" style={{ color: "hsl(var(--foreground) / 0.55)" }}>{d.name}</span>
+                  <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{pct}%</span>
+                  <span className="text-[11px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.75)" }}>{d.value}M€</span>
                 </div>
               );
             })}
@@ -345,35 +345,35 @@ export default function CartographiePage() {
 
       {/* ── Computation des seuils ── */}
       <div className="section-header mt-1">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#F59E0B", boxShadow: "0 0 6px #F59E0B" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--warning))", boxShadow: "0 0 6px hsl(var(--warning))" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Computation des seuils
         </span>
-        <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.25)" }}>Art. L2124-1 CCP</span>
+        <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.25)" }}>Art. L2124-1 CCP</span>
       </div>
 
       <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
         <table className="w-full">
           <thead>
             <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-              <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Code nomenclature</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Dépense (k€)</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Seuil (k€)</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Ratio</th>
-              <th className="px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Statut</th>
+              <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Code nomenclature</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Dépense (k€)</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Seuil (k€)</th>
+              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Ratio</th>
+              <th className="px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Statut</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {seuilsData.map((s) => {
-              const statusColor = s.statut === "Conforme" ? "#24DDB8" : s.statut === "Fractionnement" ? "#EF4444" : "#F59E0B";
-              const statusBg   = s.statut === "Conforme" ? "rgba(36,221,184,0.08)" : s.statut === "Fractionnement" ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)";
+              const statusColor = s.statut === "Conforme" ? "hsl(var(--accent))" : s.statut === "Fractionnement" ? "hsl(var(--destructive))" : "hsl(var(--warning))";
+              const statusBg   = s.statut === "Conforme" ? "hsl(var(--accent) / 0.08)" : s.statut === "Fractionnement" ? "hsl(var(--destructive) / 0.08)" : "hsl(var(--warning) / 0.08)";
               return (
                 <tr key={s.code} className="data-row">
                   <td className="px-5 py-2 text-sm font-medium" style={{ color: "hsl(var(--foreground))" }}>{s.code}</td>
                   <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{s.depense}</td>
-                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.45)" }}>{s.seuil}</td>
+                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{s.seuil}</td>
                   <td className="px-5 py-2 text-right">
-                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "#EF4444" : "#24DDB8" }}>
+                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "hsl(var(--destructive))" : "hsl(var(--accent))" }}>
                       {s.ratio.toFixed(1)}×
                     </span>
                   </td>
@@ -392,8 +392,8 @@ export default function CartographiePage() {
 
       {/* ── Comparatif + Écarts ── */}
       <div className="section-header mt-1">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Analyse budgétaire
         </span>
       </div>
@@ -404,15 +404,15 @@ export default function CartographiePage() {
         <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
             <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>Comparatif N / N-1</span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(92,147,255,0.08)", color: "#5C93FF" }}>M€</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>M€</span>
           </div>
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-                <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Famille</th>
-                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>2026</th>
-                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>2025</th>
-                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(30,50,80,0.35)" }}>Δ</th>
+                <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Famille</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>2026</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>2025</th>
+                <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Δ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -420,10 +420,10 @@ export default function CartographiePage() {
                 <tr key={c.famille} className="data-row">
                   <td className="px-5 py-2 text-sm font-semibold" style={{ color: "hsl(var(--foreground))" }}>{c.famille}</td>
                   <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{c.n}</td>
-                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "rgba(30,50,80,0.4)" }}>{c.n1}</td>
+                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.4)" }}>{c.n1}</td>
                   <td className="px-5 py-2 text-right">
                     <span className="inline-flex items-center gap-0.5 text-[11px] font-bold"
-                      style={{ color: c.up ? "#24DDB8" : "#EF4444" }}>
+                      style={{ color: c.up ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}>
                       {c.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {c.delta}
                     </span>
@@ -442,12 +442,12 @@ export default function CartographiePage() {
             </span>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(92,147,255,0.15)", border: "1.5px dashed rgba(92,147,255,0.4)" }} />
-                <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Prévu</span>
+                <div className="w-5 h-2 rounded-sm" style={{ background: "hsl(var(--primary) / 0.15)", border: "1.5px dashed hsl(var(--primary) / 0.4)" }} />
+                <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Prévu</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-2 rounded-sm" style={{ background: "rgba(36,221,184,0.85)" }} />
-                <span className="text-[10px]" style={{ color: "rgba(30,50,80,0.4)" }}>Exécuté</span>
+                <div className="w-5 h-2 rounded-sm" style={{ background: "hsl(var(--accent) / 0.85)" }} />
+                <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Exécuté</span>
               </div>
             </div>
           </div>
@@ -459,29 +459,29 @@ export default function CartographiePage() {
               const delta      = ((d.execute - d.prevu) / d.prevu) * 100;
               const isOver     = delta > 0;
               const execColor  = isOver
-                ? "rgba(239,68,68,0.8)"
-                : "rgba(36,221,184,0.8)";
-              const deltaColor = isOver ? "#EF4444" : "#24DDB8";
-              const deltaBg    = isOver ? "rgba(239,68,68,0.07)" : "rgba(36,221,184,0.07)";
+                ? "hsl(var(--destructive) / 0.8)"
+                : "hsl(var(--accent) / 0.8)";
+              const deltaColor = isOver ? "hsl(var(--destructive))" : "hsl(var(--accent))";
+              const deltaBg    = isOver ? "hsl(var(--destructive) / 0.07)" : "hsl(var(--accent) / 0.07)";
               return (
                 <div key={d.direction}>
                   <div className="flex items-baseline justify-between mb-1.5">
-                    <span className="text-[11px] font-semibold" style={{ color: "rgba(30,50,80,0.75)" }}>{d.direction}</span>
+                    <span className="text-[11px] font-semibold" style={{ color: "hsl(var(--foreground) / 0.75)" }}>{d.direction}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] num" style={{ color: "rgba(30,50,80,0.3)" }}>{d.prevu}M€ prévu</span>
+                      <span className="text-[10px] num" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{d.prevu}M€ prévu</span>
                       <span className="text-[10px] font-bold num px-1.5 py-0.5 rounded"
                         style={{ color: deltaColor, background: deltaBg }}>
                         {isOver ? "+" : ""}{delta.toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <div className="relative h-5 rounded-md overflow-hidden" style={{ background: "rgba(30,50,80,0.04)" }}>
+                  <div className="relative h-5 rounded-md overflow-hidden" style={{ background: "hsl(var(--foreground) / 0.04)" }}>
                     <div className="absolute left-0 top-0 bottom-0 rounded-md"
-                      style={{ width: `${prevuPct}%`, background: "rgba(92,147,255,0.1)", borderRight: "2px dashed rgba(92,147,255,0.35)" }} />
+                      style={{ width: `${prevuPct}%`, background: "hsl(var(--primary) / 0.1)", borderRight: "2px dashed hsl(var(--primary) / 0.35)" }} />
                     <div className="absolute left-0 rounded"
                       style={{ width: `${executePct}%`, top: "20%", bottom: "20%", background: execColor }} />
                     <div className="absolute inset-y-0 flex items-center" style={{ left: `${Math.min(executePct, 88)}%`, paddingLeft: 5 }}>
-                      <span className="text-[9px] font-bold num" style={{ color: "rgba(30,50,80,0.45)" }}>{d.execute}M€</span>
+                      <span className="text-[9px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{d.execute}M€</span>
                     </div>
                   </div>
                 </div>
@@ -493,11 +493,11 @@ export default function CartographiePage() {
 
       {/* ── Anomalies ── */}
       <div className="section-header mt-1">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "#EF4444", boxShadow: "0 0 6px #EF4444" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "hsl(var(--destructive))", boxShadow: "0 0 6px hsl(var(--destructive))" }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Anomalies détectées
         </span>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
           {anomalies.length}
         </span>
       </div>
@@ -506,17 +506,17 @@ export default function CartographiePage() {
         {anomalies.map((a, i) => {
           const isHaute   = a.severity === "haute";
           const isMoyenne = a.severity === "moyenne";
-          const color = isHaute ? "#EF4444" : isMoyenne ? "#F59E0B" : "#8DA2B5";
-          const bg    = isHaute ? "rgba(239,68,68,0.03)" : isMoyenne ? "rgba(245,158,11,0.03)" : "rgba(148,163,184,0.04)";
+          const color = isHaute ? "hsl(var(--destructive))" : isMoyenne ? "hsl(var(--warning))" : "#8DA2B5";
+          const bg    = isHaute ? "hsl(var(--destructive) / 0.03)" : isMoyenne ? "hsl(var(--warning) / 0.03)" : "rgba(148,163,184,0.04)";
           return (
             <div key={i} className="flex items-start gap-3 px-4 py-2.5 rounded-xl"
               style={{ background: bg, border: "1px solid hsl(var(--border))", borderLeftWidth: 3, borderLeftColor: color }}>
               <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color }} />
               <div className="flex-1 min-w-0">
                 <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{a.type}</span>
-                <p className="text-[12px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.7)" }}>{a.message}</p>
+                <p className="text-[12px] mt-0.5 leading-snug" style={{ color: "hsl(var(--foreground) / 0.7)" }}>{a.message}</p>
               </div>
-              <button onClick={demo} className="text-[11px] font-semibold flex items-center gap-0.5 flex-shrink-0 hover:opacity-70 transition-opacity" style={{ color: "#5C93FF" }}>
+              <button onClick={demo} className="text-[11px] font-semibold flex items-center gap-0.5 flex-shrink-0 hover:opacity-70 transition-opacity" style={{ color: "hsl(var(--primary))" }}>
                 Détails <ArrowUpRight className="w-3 h-3" />
               </button>
             </div>

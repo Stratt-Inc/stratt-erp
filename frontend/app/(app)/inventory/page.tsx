@@ -37,18 +37,18 @@ export default function InventoryPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module Inventaire</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--violet))", boxShadow: "0 0 6px hsl(var(--violet))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Inventaire</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Stocks & Produits</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Produits, stocks et gestion des références</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-4 h-4" /> Nouveau produit
           </button>
         )}
@@ -57,10 +57,10 @@ export default function InventoryPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: "#8B5CF6" },
-          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "#24DDB8" },
-          { label: "Stock faible", value: lowStock.length, icon: AlertTriangle, color: lowStock.length > 0 ? "#EF4444" : "#6B7280" },
-          { label: "Catégories", value: new Set(products.map(p => p.category)).size, icon: Package, color: "#5C93FF" },
+          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: "hsl(var(--violet))" },
+          { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "hsl(var(--accent))" },
+          { label: "Stock faible", value: lowStock.length, icon: AlertTriangle, color: lowStock.length > 0 ? "hsl(var(--destructive))" : "#6B7280" },
+          { label: "Catégories", value: new Set(products.map(p => p.category)).size, icon: Package, color: "hsl(var(--primary))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number">{value}</p>
@@ -73,8 +73,8 @@ export default function InventoryPage() {
       {/* Low stock alert */}
       {lowStock.length > 0 && (
         <div className="flex items-start gap-3 p-3 rounded-xl"
-          style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)" }}>
-          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: "#EF4444" }} />
+          style={{ background: "hsl(var(--destructive) / 0.06)", border: "1px solid hsl(var(--destructive) / 0.2)" }}>
+          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: "hsl(var(--destructive))" }} />
           <div>
             <p className="text-sm font-semibold" style={{ color: "#FCA5A5" }}>
               {lowStock.length} produit{lowStock.length > 1 ? "s" : ""} en stock faible
@@ -120,7 +120,7 @@ export default function InventoryPage() {
                     <td className="px-4 py-2 text-sm font-mono text-muted-foreground hidden md:table-cell">{p.sku || "—"}</td>
                     <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{p.category || "—"}</td>
                     <td className="px-4 py-2 text-right">
-                      <span className="num text-[16px] font-semibold" style={{ color: isLow ? "#EF4444" : "#24DDB8" }}>
+                      <span className="num text-[16px] font-semibold" style={{ color: isLow ? "hsl(var(--destructive))" : "hsl(var(--accent))" }}>
                         {p.stock} {p.unit}
                       </span>
                       {isLow && <span className="ml-1 text-[10px] text-red-500">⚠</span>}
@@ -130,7 +130,7 @@ export default function InventoryPage() {
                     </td>
                     <td className="px-4 py-2">
                       <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: p.is_active ? "rgba(36,221,184,0.1)" : "rgba(107,114,128,0.1)", color: p.is_active ? "#24DDB8" : "#6B7280" }}>
+                        style={{ background: p.is_active ? "hsl(var(--accent) / 0.1)" : "rgba(107,114,128,0.1)", color: p.is_active ? "hsl(var(--accent))" : "#6B7280" }}>
                         {p.is_active ? "Actif" : "Inactif"}
                       </span>
                     </td>

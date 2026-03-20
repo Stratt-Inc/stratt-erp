@@ -22,9 +22,9 @@ const demoUsers = [
 ];
 
 const roleConfig: Record<string, { bg: string; color: string; border: string }> = {
-  "Administrateur": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF", border: "rgba(92,147,255,0.2)" },
-  "Direction": { bg: "rgba(36,221,184,0.08)", color: "#24DDB8", border: "rgba(36,221,184,0.2)" },
-  "Service achats": { bg: "rgba(36,221,184,0.08)", color: "#24DDB8", border: "rgba(36,221,184,0.2)" },
+  "Administrateur": { bg: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))", border: "hsl(var(--primary) / 0.2)" },
+  "Direction": { bg: "hsl(var(--accent) / 0.08)", color: "hsl(var(--accent))", border: "hsl(var(--accent) / 0.2)" },
+  "Service achats": { bg: "hsl(var(--accent) / 0.08)", color: "hsl(var(--accent))", border: "hsl(var(--accent) / 0.2)" },
   "Lecture seule": { bg: "rgba(107,114,128,0.08)", color: "#6B7280", border: "rgba(107,114,128,0.2)" },
 };
 
@@ -38,11 +38,11 @@ const journalEntries = [
 ];
 
 const actionColors: Record<string, { bg: string; color: string }> = {
-  "Connexion": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF" },
-  "Modification": { bg: "rgba(245,158,11,0.1)", color: "#F59E0B" },
-  "Export": { bg: "rgba(36,221,184,0.1)", color: "#24DDB8" },
-  "Création": { bg: "rgba(36,221,184,0.1)", color: "#24DDB8" },
-  "Validation": { bg: "rgba(92,147,255,0.1)", color: "#5C93FF" },
+  "Connexion": { bg: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" },
+  "Modification": { bg: "hsl(var(--warning) / 0.1)", color: "hsl(var(--warning))" },
+  "Export": { bg: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" },
+  "Création": { bg: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" },
+  "Validation": { bg: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" },
 };
 
 const tabs = [
@@ -85,8 +85,8 @@ export default function AdministrationPage() {
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Administration</p>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(139,92,246,0.1)" }}>
-            <Shield className="w-3.5 h-3.5" style={{ color: "#8B5CF6" }} />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--violet) / 0.1)" }}>
+            <Shield className="w-3.5 h-3.5" style={{ color: "hsl(var(--violet))" }} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Gestion de la plateforme</h1>
         </div>
@@ -119,7 +119,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               <Plus className="w-3.5 h-3.5" /> Ajouter
             </button>
@@ -169,7 +169,7 @@ export default function AdministrationPage() {
             {/* Organisation */}
             <div className="bg-card rounded-xl border border-border p-5">
               <div className="flex items-center gap-2 mb-4">
-                <Settings className="w-4 h-4" style={{ color: "#5C93FF" }} />
+                <Settings className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
                 <h2 className="text-sm font-semibold text-foreground">Organisation</h2>
               </div>
               <div className="space-y-2 text-xs">
@@ -190,7 +190,7 @@ export default function AdministrationPage() {
             {/* Exercices budgétaires */}
             <div className="bg-card rounded-xl border border-border p-5">
               <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-4 h-4" style={{ color: "#5C93FF" }} />
+                <Calendar className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
                 <h2 className="text-sm font-semibold text-foreground">Exercices budgétaires</h2>
               </div>
               <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function AdministrationPage() {
                     <span
                       className="text-[11px] px-2 py-0.5 rounded-full font-semibold border"
                       style={y.active
-                        ? { background: "rgba(36,221,184,0.08)", color: "#24DDB8", borderColor: "rgba(36,221,184,0.2)" }
+                        ? { background: "hsl(var(--accent) / 0.08)", color: "hsl(var(--accent))", borderColor: "hsl(var(--accent) / 0.2)" }
                         : { background: "rgba(107,114,128,0.08)", color: "#6B7280", borderColor: "rgba(107,114,128,0.2)" }
                       }
                     >
@@ -219,7 +219,7 @@ export default function AdministrationPage() {
           {/* Sécurité */}
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+              <Shield className="w-4 h-4" style={{ color: "hsl(var(--violet))" }} />
               <h2 className="text-sm font-semibold text-foreground">Sécurité & Conformité</h2>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -230,7 +230,7 @@ export default function AdministrationPage() {
                 { label: "Authentification", value: "SSO / 2FA", icon: Users },
               ].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="p-4 rounded-xl border border-border bg-card text-center hover:shadow-sm transition-shadow">
-                  <Icon className="w-4 h-4 mx-auto mb-2" style={{ color: "#5C93FF" }} />
+                  <Icon className="w-4 h-4 mx-auto mb-2" style={{ color: "hsl(var(--primary))" }} />
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">{label}</p>
                   <p className="text-xs font-semibold text-foreground">{value}</p>
                 </div>
@@ -284,7 +284,7 @@ export default function AdministrationPage() {
           {/* Formation incluse */}
           <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <BookOpen className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Formation incluse</h2>
             </div>
             <p className="text-xs text-muted-foreground mb-3">2 heures de formation incluses dans votre abonnement.</p>
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
             <button
               onClick={demo}
               className="w-full py-2 rounded-lg text-xs font-semibold text-white"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               Ouvrir un ticket
             </button>

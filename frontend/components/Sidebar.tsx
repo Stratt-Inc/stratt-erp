@@ -103,8 +103,8 @@ export function Sidebar() {
             active
               ? {
                   color: "#FFFFFF",
-                  background: "rgba(92,147,255,0.18)",
-                  boxShadow: "inset 0 0 0 1px rgba(92,147,255,0.30)",
+                  background: "hsl(var(--primary) / 0.18)",
+                  boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.30)",
                 }
               : { color: "rgba(255,255,255,0.45)" }
           }
@@ -112,13 +112,13 @@ export function Sidebar() {
           {active && (
             <span
               className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] rounded-r-full"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             />
           )}
           <Icon
             className="w-[15px] h-[15px] flex-shrink-0 transition-colors"
             strokeWidth={active ? 2.25 : 1.75}
-            style={{ color: active ? "#5C93FF" : undefined }}
+            style={{ color: active ? "hsl(var(--primary))" : undefined }}
           />
           <span style={active ? {} : { transition: "color 0.15s" }}
             className={active ? "" : "group-hover:!text-white"}>
@@ -127,7 +127,7 @@ export function Sidebar() {
           {active && (
             <ChevronRight
               className="w-3 h-3 ml-auto opacity-40"
-              style={{ color: "#5C93FF" }}
+              style={{ color: "hsl(var(--primary))" }}
             />
           )}
         </Link>
@@ -149,7 +149,7 @@ export function Sidebar() {
       >
         <p
           className="font-extrabold text-[22px] leading-none tracking-[-0.04em]"
-          style={{ color: "#5C93FF", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+          style={{ color: "hsl(var(--primary))", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
           stratt
         </p>
@@ -223,7 +223,7 @@ export function Sidebar() {
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
             style={{
-              background: "#5C93FF",
+              background: "hsl(var(--primary))",
               color: "#fff",
             }}
           >

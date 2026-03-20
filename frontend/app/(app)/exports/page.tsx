@@ -75,8 +75,8 @@ export default function ExportsPage() {
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Module documents</p>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "rgba(245,158,11,0.1)" }}>
-            <FileText className="w-3.5 h-3.5" style={{ color: "#F59E0B" }} />
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--warning) / 0.1)" }}>
+            <FileText className="w-3.5 h-3.5" style={{ color: "hsl(var(--warning))" }} />
           </div>
           <h1 className="text-[20px] font-bold text-foreground">Génération documentaire & Exports</h1>
         </div>
@@ -88,11 +88,11 @@ export default function ExportsPage() {
       {/* Rendus formalisés info */}
       <div
         className="rounded-xl border p-3 flex items-start gap-3"
-        style={{ borderColor: "rgba(36,221,184,0.15)", background: "rgba(36,221,184,0.03)" }}
+        style={{ borderColor: "hsl(var(--accent) / 0.15)", background: "hsl(var(--accent) / 0.03)" }}
       >
-        <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#24DDB8" }} />
+        <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "hsl(var(--accent))" }} />
         <div className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold" style={{ color: "#24DDB8" }}>Rendus formalisés</span>
+          <span className="font-semibold" style={{ color: "hsl(var(--accent))" }}>Rendus formalisés</span>
           {" "}— Le document est généré conformément aux recommandations CartoAP : un fichier PDF lisible et esthétique pour la diffusion, un fichier XLSX récapitulatif pour les filtres, et un format d&apos;import pour le progiciel financier.
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function ExportsPage() {
         <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col max-h-[calc(100vh-250px)]">
           <div className="px-4 py-2.5 border-b border-border flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <FileText className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Sections du document</h2>
             </div>
             <span className="text-xs text-muted-foreground">{selectedCount} sélectionnées · ~{totalPages} pages</span>
@@ -115,10 +115,10 @@ export default function ExportsPage() {
                 className={`flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
                   s.checked ? "bg-primary/[0.03]" : "hover:bg-muted/30"
                 }`}
-                style={s.checked ? { borderLeft: "2px solid rgba(36,221,184,0.25)" } : { borderLeft: "2px solid transparent" }}
+                style={s.checked ? { borderLeft: "2px solid hsl(var(--accent) / 0.25)" } : { borderLeft: "2px solid transparent" }}
               >
                 {s.checked
-                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#5C93FF" }} />
+                  ? <CheckSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "hsl(var(--primary))" }} />
                   : <Square className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-muted-foreground" />
                 }
                 <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ export default function ExportsPage() {
               onClick={handleGenerate}
               disabled={generating || selectedCount === 0}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               {generating ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Génération en cours…</>
@@ -170,7 +170,7 @@ export default function ExportsPage() {
 
             {generated && (
               <div className="mt-3 pt-3 border-t border-border space-y-1.5">
-                <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "#24DDB8" }}>
+                <p className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "hsl(var(--accent))" }}>
                   <CheckSquare className="w-3.5 h-3.5" /> Document prêt — {totalPages} pages
                 </p>
                 {[

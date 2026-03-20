@@ -120,8 +120,8 @@ function TreeNodeItem({
         {node.montant && <span className="text-[11px] text-muted-foreground tabular-nums ml-1 flex-shrink-0">{node.montant}</span>}
         {node.conforme !== undefined && (
           node.conforme
-            ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" style={{ color: "#24DDB8" }} />
-            : <AlertCircle className="w-3 h-3 flex-shrink-0" style={{ color: "#F59E0B" }} />
+            ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" style={{ color: "hsl(var(--accent))" }} />
+            : <AlertCircle className="w-3 h-3 flex-shrink-0" style={{ color: "hsl(var(--warning))" }} />
         )}
       </div>
       {expanded && hasChildren && node.children!.map((child) => (
@@ -157,16 +157,16 @@ export default function NomenclaturePage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-end justify-between gap-8 pb-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3 flex-shrink-0" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
             Module Nomenclature
           </p>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Nomenclature des{" "}
             <Highlight variant="underline" color="teal">achats</Highlight>
           </h1>
-          <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Structure en entonnoir · Familles → Types de dépense → Codes · Version 3.2
           </p>
         </div>
@@ -180,7 +180,7 @@ export default function NomenclaturePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "#5C93FF" }}
+            style={{ background: "hsl(var(--primary))" }}
           >
             <Plus className="w-3.5 h-3.5" /> Nouvelle entrée
           </button>
@@ -190,11 +190,11 @@ export default function NomenclaturePage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 flex-shrink-0">
         {[
-          { label: "Familles d'achats", value: familles, icon: Layers, color: "#24DDB8" },
-          { label: "Codes actifs", value: codes, icon: FolderTree, color: "#5C93FF" },
-          { label: "Exhaustivité", value: "96%", icon: CheckCircle2, color: "#24DDB8" },
-          { label: "Exclusivité mutuelle", value: "98%", icon: Scale, color: "#8B5CF6" },
-          { label: "Adhésion utilisateurs", value: "92%", icon: BookOpen, color: "#F59E0B" },
+          { label: "Familles d'achats", value: familles, icon: Layers, color: "hsl(var(--accent))" },
+          { label: "Codes actifs", value: codes, icon: FolderTree, color: "hsl(var(--primary))" },
+          { label: "Exhaustivité", value: "96%", icon: CheckCircle2, color: "hsl(var(--accent))" },
+          { label: "Exclusivité mutuelle", value: "98%", icon: Scale, color: "hsl(var(--violet))" },
+          { label: "Adhésion utilisateurs", value: "92%", icon: BookOpen, color: "hsl(var(--warning))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number-sm">{value}</p>
@@ -207,11 +207,11 @@ export default function NomenclaturePage() {
       {/* Principes CartoAP */}
       <div
         className="rounded-xl border p-3 flex items-start gap-3 flex-shrink-0"
-        style={{ borderColor: "rgba(36,221,184,0.15)", background: "rgba(36,221,184,0.03)" }}
+        style={{ borderColor: "hsl(var(--accent) / 0.15)", background: "hsl(var(--accent) / 0.03)" }}
       >
-        <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#24DDB8" }} />
+        <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "hsl(var(--accent))" }} />
         <div className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold" style={{ color: "#24DDB8" }}>Principes CartoAP</span>
+          <span className="font-semibold" style={{ color: "hsl(var(--accent))" }}>Principes CartoAP</span>
           {" "}— Codes <strong className="text-foreground">collectivement exhaustifs</strong> (toute prestation classable) et{" "}
           <strong className="text-foreground">mutuellement exclusifs</strong> (un seul code par prestation). Nomenclature sur-mesure issue d&apos;une étude empirique de la dépense mandatée.
         </div>
@@ -222,7 +222,7 @@ export default function NomenclaturePage() {
         {/* Tree */}
         <div className="flex-1 min-w-0 bg-card rounded-xl border border-border overflow-hidden flex flex-col">
           <div className="px-4 py-2.5 border-b border-border flex items-center gap-2 flex-shrink-0">
-            <FolderTree className="w-4 h-4" style={{ color: "#5C93FF" }} />
+            <FolderTree className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
             <h2 className="text-sm font-semibold text-foreground">Arborescence nomenclaturale</h2>
           </div>
           <div className="overflow-y-auto flex-1 min-h-0">
@@ -237,7 +237,7 @@ export default function NomenclaturePage() {
           {/* Edit panel */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-              <Edit3 className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <Edit3 className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Édition</h2>
             </div>
             {selected ? (
@@ -276,11 +276,11 @@ export default function NomenclaturePage() {
                   <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Conformité</label>
                   <div className="mt-1">
                     {selected.conforme ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(36,221,184,0.1)", color: "#24DDB8" }}>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" }}>
                         <CheckCircle2 className="w-3 h-3" /> Conforme
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
                         <AlertCircle className="w-3 h-3" /> Non conforme
                       </span>
                     )}
@@ -292,12 +292,12 @@ export default function NomenclaturePage() {
                   <div className="space-y-1.5 pt-1.5 border-t border-border">
                     <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Périmètre du code</label>
                     <div className="text-xs space-y-1">
-                      <div className="p-2 rounded-lg" style={{ background: "rgba(36,221,184,0.05)", border: "1px solid rgba(36,221,184,0.15)" }}>
-                        <span className="font-semibold text-[10px]" style={{ color: "#24DDB8" }}>INCLUT</span>
+                      <div className="p-2 rounded-lg" style={{ background: "hsl(var(--accent) / 0.05)", border: "1px solid hsl(var(--accent) / 0.15)" }}>
+                        <span className="font-semibold text-[10px]" style={{ color: "hsl(var(--accent))" }}>INCLUT</span>
                         <p className="text-muted-foreground mt-0.5">Prestations de {selected.label.toLowerCase()}</p>
                       </div>
-                      <div className="p-2 rounded-lg" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>
-                        <span className="font-semibold text-[10px]" style={{ color: "#EF4444" }}>EXCLUT</span>
+                      <div className="p-2 rounded-lg" style={{ background: "hsl(var(--destructive) / 0.05)", border: "1px solid hsl(var(--destructive) / 0.15)" }}>
+                        <span className="font-semibold text-[10px]" style={{ color: "hsl(var(--destructive))" }}>EXCLUT</span>
                         <p className="text-muted-foreground mt-0.5">Voir codes adjacents</p>
                       </div>
                     </div>
@@ -308,7 +308,7 @@ export default function NomenclaturePage() {
                   <button
                     onClick={() => showToast("Modification enregistrée avec succès.", "success")}
                     className="flex-1 py-1.5 text-[11px] font-semibold rounded-lg text-white"
-                    style={{ background: "#5C93FF" }}
+                    style={{ background: "hsl(var(--primary))" }}
                   >
                     Enregistrer
                   </button>
@@ -325,13 +325,13 @@ export default function NomenclaturePage() {
           {/* Versions */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-              <History className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <History className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Versions</h2>
             </div>
             <div className="p-3 space-y-1">
               {versions.map((v) => (
                 <div key={v.version} className="flex items-start gap-2 p-1.5 rounded hover:bg-muted/30 text-[11px]">
-                  <span className="font-mono font-semibold w-8 flex-shrink-0" style={{ color: "#5C93FF" }}>{v.version}</span>
+                  <span className="font-mono font-semibold w-8 flex-shrink-0" style={{ color: "hsl(var(--primary))" }}>{v.version}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-foreground leading-snug">{v.note}</p>
                     <p className="text-muted-foreground mt-0.5">{v.auteur} — {v.date}</p>
@@ -344,7 +344,7 @@ export default function NomenclaturePage() {
           {/* Journal */}
           <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
-              <BookOpen className="w-4 h-4" style={{ color: "#5C93FF" }} />
+              <BookOpen className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Journal des modifications</h2>
             </div>
             <div className="p-3 space-y-1">

@@ -33,17 +33,17 @@ interface LeaveRequest {
 }
 
 const empStatusConfig: Record<string, { label: string; color: string }> = {
-  active: { label: "Actif", color: "#24DDB8" },
-  on_leave: { label: "En congé", color: "#F59E0B" },
-  terminated: { label: "Terminé", color: "#EF4444" },
+  active: { label: "Actif", color: "hsl(var(--accent))" },
+  on_leave: { label: "En congé", color: "hsl(var(--warning))" },
+  terminated: { label: "Terminé", color: "hsl(var(--destructive))" },
 };
 const leaveTypeLabels: Record<string, string> = {
   annual: "Congé annuel", sick: "Maladie", unpaid: "Sans solde",
 };
 const leaveStatusConfig: Record<string, { label: string; color: string }> = {
-  pending: { label: "En attente", color: "#F59E0B" },
-  approved: { label: "Approuvé", color: "#24DDB8" },
-  rejected: { label: "Refusé", color: "#EF4444" },
+  pending: { label: "En attente", color: "hsl(var(--warning))" },
+  approved: { label: "Approuvé", color: "hsl(var(--accent))" },
+  rejected: { label: "Refusé", color: "hsl(var(--destructive))" },
 };
 
 type Tab = "employees" | "leaves";
@@ -72,18 +72,18 @@ export default function HRPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module RH</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module RH</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Ressources Humaines</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Employés, congés et gestion de la paie</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-4 h-4" /> Nouvel employé
           </button>
         )}
@@ -92,10 +92,10 @@ export default function HRPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: "#5C93FF" },
-          { label: "Départements", value: departments.size, icon: Briefcase, color: "#5C93FF" },
-          { label: "Congés en attente", value: leaves.filter(l => l.status === "pending").length, icon: Clock, color: "#F59E0B" },
-          { label: "Masse salariale", value: `${totalSalary.toLocaleString("fr-FR")} €`, icon: Briefcase, color: "#24DDB8" },
+          { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: "hsl(var(--primary))" },
+          { label: "Départements", value: departments.size, icon: Briefcase, color: "hsl(var(--primary))" },
+          { label: "Congés en attente", value: leaves.filter(l => l.status === "pending").length, icon: Clock, color: "hsl(var(--warning))" },
+          { label: "Masse salariale", value: `${totalSalary.toLocaleString("fr-FR")} €`, icon: Briefcase, color: "hsl(var(--accent))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number">{value}</p>
@@ -117,7 +117,7 @@ export default function HRPage() {
             }`}>
             {t.label}
             <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full"
-              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(30,50,80,0.07)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "hsl(var(--primary) / 0.1)" : "hsl(var(--foreground) / 0.07)", color: tab === t.id ? "hsl(var(--primary))" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -152,7 +152,7 @@ export default function HRPage() {
                       <td className="px-4 py-2">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                            style={{ background: "#5C93FF" }}>
+                            style={{ background: "hsl(var(--primary))" }}>
                             {e.first_name?.[0]?.toUpperCase()}
                           </div>
                           <div>
