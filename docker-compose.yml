@@ -75,6 +75,8 @@ services:
       dockerfile: ../infra/docker/Dockerfile.backend
     container_name: stratt_api
     restart: unless-stopped
+    expose:
+      - "8080"
     environment:
       PORT: 8080
       APP_ENV: ${APP_ENV:-development}
@@ -108,6 +110,8 @@ services:
       dockerfile: ../infra/docker/Dockerfile.frontend
     container_name: stratt_frontend
     restart: unless-stopped
+    expose:
+      - "3000"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
