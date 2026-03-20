@@ -15,6 +15,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     -o /app/bin/api \
     ./cmd/api
 
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags="-w -s" \
+    -o /app/bin/seed \
+    ./seed
+
 # ── Runtime stage ─────────────────────────────────────────
 FROM alpine:3.23
 
@@ -23,6 +28,7 @@ WORKDIR /app
 RUN apk add --no-cache ca-certificates tzdata curl
 
 COPY --from=builder /app/bin/api ./api
+COPY --from=builder /app/bin/seed ./seed
 
 RUN addgroup -S stratt && adduser -S stratt -G stratt
 USER stratt
