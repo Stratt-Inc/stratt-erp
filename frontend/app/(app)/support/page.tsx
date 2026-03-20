@@ -2,6 +2,7 @@
 
 import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction } from "@/store/toast";
+import { MODULE } from "@/lib/colors";
 import { LifeBuoy, BookOpen, Mail, Clock, PlayCircle, Award } from "lucide-react";
 
 const modules = [
@@ -29,14 +30,15 @@ export default function SupportPage() {
     <div className="space-y-6">
       <DemoBanner />
 
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--accent) / 0.1)" }}>
-            <LifeBuoy className="w-3.5 h-3.5" style={{ color: "hsl(var(--accent))" }} />
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--success) / 0.08)" }}>
+        <div>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.support, boxShadow: `0 0 6px ${MODULE.support}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Support</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Support & Formation</h1>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Support & Formation</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Ressources pédagogiques et assistance technique</p>
         </div>
-        <p className="text-sm text-muted-foreground">Ressources pédagogiques et assistance technique</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

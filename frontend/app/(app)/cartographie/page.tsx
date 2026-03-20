@@ -136,9 +136,10 @@ export default function CartographiePage() {
       {/* ── Header ── */}
       <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
-            Module cartographie
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.cartographie, boxShadow: `0 0 6px ${MODULE.cartographie}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Cartographie</span>
+          </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Cartographie{" "}
             <Highlight variant="mark" color="teal">des achats</Highlight>

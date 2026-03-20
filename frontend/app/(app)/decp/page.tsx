@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { MODULE } from "@/lib/colors";
 import {
   FileJson, ShieldCheck, Upload, Clock, AlertTriangle, CheckCircle,
   XCircle, Download, RefreshCw, ChevronRight, FileText, Info,
@@ -135,17 +136,14 @@ export default function DECPPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-1">
-            Conformité réglementaire
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">
-            Export DECP automatique
-          </h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            Données Essentielles de la Commande Publique · Décret n°2016-360 · Format JSON v2 data.gouv.fr
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.decp, boxShadow: `0 0 6px ${MODULE.decp}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Conformité réglementaire</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Export DECP automatique</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Données Essentielles de la Commande Publique · Décret n°2016-360 · Format JSON v2 data.gouv.fr</p>
         </div>
         <div className="flex items-center gap-2">
           <a

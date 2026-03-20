@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import { MODULE } from "@/lib/colors";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
 import {
@@ -238,10 +239,10 @@ export default function ChatbotPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--violet) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--violet))", boxShadow: "0 0 6px hsl(var(--violet))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.chatbot, boxShadow: `0 0 6px ${MODULE.chatbot}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module IA</span>
           </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>

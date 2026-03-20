@@ -83,15 +83,15 @@ export default function AdministrationPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Administration</p>
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${MODULE.administration.replace(")", " / 0.1)")}` }}>
-            <Shield className="w-3.5 h-3.5" style={{ color: MODULE.administration }} />
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--destructive) / 0.08)" }}>
+        <div>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.administration, boxShadow: `0 0 6px ${MODULE.administration}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Système</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Gestion de la plateforme</h1>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Gestion de la plateforme</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Utilisateurs, rôles, paramètres et sécurité</p>
         </div>
-        <p className="text-sm text-muted-foreground">Utilisateurs, rôles, paramètres et sécurité</p>
       </div>
 
       {/* Tabs */}

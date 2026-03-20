@@ -160,12 +160,13 @@ export default function NomenclaturePage() {
       {/* Header */}
       <div className="flex items-end justify-between gap-8 pb-3 flex-shrink-0" style={{ borderBottom: "1px solid hsl(var(--violet) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
-            Module Nomenclature
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.nomenclature, boxShadow: `0 0 6px ${MODULE.nomenclature}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Nomenclature</span>
+          </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Nomenclature des{" "}
-            <Highlight variant="underline" color="teal">achats</Highlight>
+            <Highlight variant="underline" color="violet">achats</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Structure en entonnoir · Familles → Types de dépense → Codes · Version 3.2

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction, useToastStore } from "@/store/toast";
+import { MODULE } from "@/lib/colors";
 import {
   FileText, Download, Eye, CheckSquare, Square, FileSpreadsheet,
   File, Loader2, Stamp, Building2, Printer,
@@ -72,17 +73,15 @@ export default function ExportsPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Module documents</p>
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--warning) / 0.1)" }}>
-            <FileText className="w-3.5 h-3.5" style={{ color: "hsl(var(--warning))" }} />
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+        <div>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.exports, boxShadow: `0 0 6px ${MODULE.exports}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Documents</span>
           </div>
-          <h1 className="text-[20px] font-bold text-foreground">Génération documentaire & Exports</h1>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Génération documentaire & Exports</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Document d&apos;implémentation informatique · Rendus formalisés · Exports réglementaires</p>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Document d&apos;implémentation informatique · Rendus formalisés · Exports réglementaires
-        </p>
       </div>
 
       {/* Rendus formalisés info */}

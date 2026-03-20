@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { MODULE } from "@/lib/colors";
 import {
   Search, Bell, Play, Trash2, Plus, ExternalLink, ChevronRight,
   AlertTriangle, Calendar, Building2, Tag, Filter, RefreshCw, X,
@@ -136,15 +137,14 @@ export default function BOAMPPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--warning) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-1">
-            Intégration réglementaire
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">BOAMP — Appels d&apos;offres</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            Bulletin Officiel des Annonces des Marchés Publics · Veille concurrentielle et publication
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.boamp, boxShadow: `0 0 6px ${MODULE.boamp}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Intégration réglementaire</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>BOAMP — Appels d&apos;offres</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Bulletin Officiel des Annonces des Marchés Publics · Veille concurrentielle et publication</p>
         </div>
         <a
           href="https://www.boamp.fr"

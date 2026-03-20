@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, BookOpen, HelpCircle, FileText, Zap, ChevronRight, ExternalLink } from "lucide-react";
 import { restartTour } from "@/components/onboarding/OnboardingTour";
+import { MODULE } from "@/lib/colors";
 
 interface HelpArticle {
   id: string;
@@ -123,14 +124,13 @@ export default function HelpPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "hsl(var(--primary) / 0.12)", border: "1px solid hsl(var(--primary) / 0.2)" }}>
-          <HelpCircle size={24} style={{ color: "hsl(var(--primary))" }} />
+      <div style={{ marginBottom: 16 }}>
+        <div className="section-header" style={{ marginBottom: 4 }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.help, boxShadow: `0 0 4px ${MODULE.help}` }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Documentation</span>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Centre d&apos;aide</h1>
-          <p className="text-sm text-muted-foreground">Documentation, glossaire et guides réglementaires</p>
-        </div>
+        <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Centre d&apos;aide</h1>
+        <p className="text-[12px] mt-0.5 text-muted-foreground">Documentation, glossaire et guides réglementaires</p>
       </div>
 
       {/* Quick actions */}

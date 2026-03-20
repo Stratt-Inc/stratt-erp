@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, BookOpen, ExternalLink, ChevronRight } from "lucide-react";
 import { GLOSSAIRE, CATEGORIES_GLOSSAIRE } from "@/lib/glossaire";
+import { MODULE } from "@/lib/colors";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -36,15 +37,14 @@ export default function GlossairePage() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "hsl(var(--primary) / 0.12)", border: "1px solid hsl(var(--primary) / 0.2)" }}>
-          <BookOpen size={20} style={{ color: "hsl(var(--primary))" }} />
-        </div>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
-          <h1 className="text-[20px] font-bold text-foreground">Glossaire</h1>
-          <p className="text-sm text-muted-foreground">
-            {GLOSSAIRE.length} termes de la commande publique — Code de la Commande Publique (CCP)
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.glossaire, boxShadow: `0 0 6px ${MODULE.glossaire}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Référentiel CCP</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Glossaire</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">{GLOSSAIRE.length} termes de la commande publique — Code de la Commande Publique (CCP)</p>
         </div>
       </div>
 

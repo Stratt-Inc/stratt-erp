@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import { MODULE } from "@/lib/colors";
 import {
   Building2,
   Search,
@@ -196,17 +197,14 @@ export default function SirenePage() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "hsl(var(--primary) / 0.12)", border: "1px solid hsl(var(--primary) / 0.2)" }}>
-          <Building2 size={20} style={{ color: "hsl(var(--primary))" }} />
-        </div>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
-          <h1 className="text-[20px] font-bold text-foreground">
-            Qualification SIRENE
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Enrichissement des fournisseurs via l&apos;API INSEE SIRENE
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.sirene, boxShadow: `0 0 6px ${MODULE.sirene}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Annuaire officiel</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Qualification SIRENE</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Enrichissement des fournisseurs via l&apos;API INSEE SIRENE</p>
         </div>
       </div>
 

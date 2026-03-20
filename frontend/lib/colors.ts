@@ -49,7 +49,7 @@ export const MODULE = {
   planification: CSS.warning,
   cartographie:  CSS.accent,
   nomenclature:  CSS.violet,
-  chatbot:       CSS.accent,
+  chatbot:       CSS.violet,   // IA = violet
   exports:       CSS.primary,
 
   // ERP modules
