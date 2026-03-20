@@ -6,24 +6,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 relative overflow-hidden"
         style={{ background: "#09111E" }}
       >
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: "linear-gradient(rgba(92,147,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(92,147,255,1) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        {/* Green glow bottom-left */}
-        <div
-          className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10 pointer-events-none"
-          style={{ background: "radial-gradient(circle, #24DDB8, transparent 70%)", transform: "translate(-40%, 40%)" }}
-        />
-        {/* Blue glow top-right */}
-        <div
-          className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-8 pointer-events-none"
-          style={{ background: "radial-gradient(circle, #5C93FF, transparent 70%)", transform: "translate(40%, -40%)" }}
-        />
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
@@ -44,12 +26,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative space-y-6">
           <h1 className="text-4xl font-bold leading-tight" style={{ color: "#F0F4FF" }}>
             L&apos;ERP pour la<br />
-            <span style={{
-              background: "linear-gradient(135deg, #5C93FF, #24DDB8)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>
+            <span style={{ color: "#5C93FF" }}>
               commande publique.
             </span>
           </h1>

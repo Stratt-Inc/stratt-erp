@@ -40,12 +40,12 @@
     --ring: 220 90% 56%;
     --radius: 0.5rem;
 
-    /* Sidebar — légèrement distincte du fond */
-    --sidebar: 217 28% 95%;
-    --sidebar-foreground: 217 28% 28%;
-    --sidebar-primary: 220 90% 56%;
-    --sidebar-accent: 213 18% 90%;
-    --sidebar-border: 213 14% 88%;
+    /* Sidebar — dark navy (same as login left panel #09111E) */
+    --sidebar: 217 54% 8%;
+    --sidebar-foreground: 215 35% 72%;
+    --sidebar-primary: 220 90% 70%;
+    --sidebar-accent: 217 50% 14%;
+    --sidebar-border: 216 45% 13%;
   }
 
   /* .dark alias — conservé pour compatibilité future */
@@ -86,22 +86,11 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(92,147,255,0.05) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 90% 80%, rgba(36,221,184,0.04) 0%, transparent 50%);
     background-attachment: fixed;
   }
 }
 
 @layer utilities {
-  /* Gradient texte brand : bleu → vert */
-  .text-gradient-primary {
-    background: linear-gradient(135deg, #5C93FF, #24DDB8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
   /* Glow effects */
   .glow-primary {
     box-shadow: 0 0 20px rgba(92, 147, 255, 0.2), 0 0 40px rgba(92, 147, 255, 0.08);
@@ -136,7 +125,7 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, rgba(92,147,255,0.15), transparent);
+    background: rgba(92,147,255,0.15);
   }
 
   /* Stat tile — accent bar gauche */
@@ -235,15 +224,15 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, #5C93FF 0%, #24DDB8 55%, transparent 100%);
-    opacity: 0.4;
+    background: rgba(92,147,255,0.35);
+    opacity: 1;
     pointer-events: none;
     z-index: 2;
   }
 
   /* Thead — frosted tint + subtle brand border */
   .data-table-head {
-    background: linear-gradient(to bottom, rgba(92,147,255,0.035) 0%, rgba(92,147,255,0.01) 100%);
+    background: rgba(92,147,255,0.04);
     border-bottom: 1px solid rgba(92,147,255,0.09);
     position: sticky;
     top: 0;
@@ -275,7 +264,7 @@
   }
   .data-row:hover {
     border-left-color: rgba(92,147,255,0.45);
-    background: linear-gradient(to right, rgba(92,147,255,0.045) 0%, transparent 60%);
+    background: rgba(92,147,255,0.05);
   }
 
   /* Numbers in tables — Barlow Condensed medium */

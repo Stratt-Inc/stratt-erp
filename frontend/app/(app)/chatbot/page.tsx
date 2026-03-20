@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
+import { Highlight } from "@/components/Highlight";
 import {
   MessageSquare, Plus, Trash2, Copy, Check,
   BarChart2, Link2, Clock, Shield, Bot, User, ThumbsUp, ThumbsDown, Sparkles, ChevronDown,
@@ -134,7 +135,7 @@ function TokenCard({
       {/* Mini conversation preview */}
       {open && !t.revoked && (
         <div className="border-t border-border px-4 py-3 space-y-2.5"
-          style={{ background: "linear-gradient(to bottom, rgba(92,147,255,0.02), transparent)" }}>
+          style={{ background: "transparent" }}>
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground/60 mb-1">
             Exemple de conversation
           </p>
@@ -155,7 +156,7 @@ function TokenCard({
               {/* Assistant */}
               <div className="flex items-start gap-1.5 max-w-[85%]">
                 <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                  style={{ background: "#8B5CF6" }}>
                   <Bot className="w-2.5 h-2.5 text-white" />
                 </div>
                 <div className="px-3 py-1.5 rounded-xl rounded-tl-sm bg-muted/50 text-[11px] leading-relaxed text-foreground">
@@ -245,14 +246,7 @@ export default function ChatbotPage() {
           </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Assistant{" "}
-            <span style={{
-              background: "linear-gradient(135deg, #8B5CF6 0%, #5C93FF 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>
-              nomenclature
-            </span>
+            <Highlight variant="box" color="violet">nomenclature</Highlight>
           </h1>
           <p className="text-[12px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
             Classification budgétaire intelligente · IA entraînée sur le CCP · Liens publics partageables
@@ -283,9 +277,9 @@ export default function ChatbotPage() {
           <div className="lg:col-span-3 bg-card rounded-xl border border-border overflow-hidden flex flex-col">
             {/* Chat header */}
             <div className="px-4 py-3 border-b border-border flex items-center gap-3"
-              style={{ background: "linear-gradient(to right, rgba(139,92,246,0.04), rgba(92,147,255,0.03))" }}>
+>
               <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                style={{ background: "#8B5CF6" }}>
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -308,7 +302,7 @@ export default function ChatbotPage() {
                       ? "bg-primary/10"
                       : ""
                   }`}
-                    style={msg.role === "assistant" ? { background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" } : undefined}>
+                    style={msg.role === "assistant" ? { background: "#8B5CF6" } : undefined}>
                     {msg.role === "user"
                       ? <User className="w-3 h-3 text-primary" />
                       : <Bot className="w-3 h-3 text-white" />
@@ -366,7 +360,7 @@ export default function ChatbotPage() {
                 { step: "1", text: "Générez un lien public sécurisé", color: "#5C93FF" },
                 { step: "2", text: "Partagez-le aux agents ou directions", color: "#8B5CF6" },
                 { step: "3", text: "L'IA classe les achats selon votre nomenclature", color: "#24DDB8" },
-                { step: "4", text: "Suivez les usages dans les analytiques", color: "#10B981" },
+                { step: "4", text: "Suivez les usages dans les analytiques", color: "#24DDB8" },
               ].map(({ step, text, color }) => (
                 <div key={step} className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
@@ -383,7 +377,7 @@ export default function ChatbotPage() {
               {[
                 { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, color: "#5C93FF" },
                 { label: "Utilisations", value: (tokensData ?? []).reduce((s, t) => s + t.use_count, 0), color: "#8B5CF6" },
-                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#10B981" },
+                { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", color: "#24DDB8" },
                 { label: "Questions fréquentes", value: analytics?.top_questions?.length ?? "—", color: "#F59E0B" },
               ].map(({ label, value, color }) => (
                 <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
@@ -398,7 +392,7 @@ export default function ChatbotPage() {
               <button
                 onClick={() => setTab("tokens")}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}
+                style={{ background: "#8B5CF6" }}
               >
                 <Plus className="w-3.5 h-3.5" /> Créer un lien public
               </button>
@@ -436,7 +430,7 @@ export default function ChatbotPage() {
               <div className="flex gap-2">
                 <button onClick={() => createToken.mutate()} disabled={createToken.isPending}
                   className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                  style={{ background: "#8B5CF6" }}>
                   {createToken.isPending ? "Création…" : "Créer le lien"}
                 </button>
                 <button onClick={() => setShowCreate(false)}
@@ -482,7 +476,7 @@ export default function ChatbotPage() {
         <div className="space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {[
-              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#10B981" },
+              { label: "Avis positifs", value: feedbackPositive, icon: ThumbsUp, color: "#24DDB8" },
               { label: "Avis négatifs", value: feedbackNegative, icon: ThumbsDown, color: "#EF4444" },
               { label: "Satisfaction", value: totalFeedback > 0 ? `${Math.round(feedbackPositive / totalFeedback * 100)}%` : "—", icon: BarChart2, color: "#5C93FF" },
               { label: "Liens actifs", value: (tokensData ?? []).filter(t => !t.revoked).length, icon: Link2, color: "#8B5CF6" },

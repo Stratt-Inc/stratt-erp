@@ -116,13 +116,11 @@ export default function PublicChatPage({
   const isEmpty = messages.length === 0 && !loading;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background" style={{
-      backgroundImage: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(92,147,255,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 90% 80%, rgba(36,221,184,0.04) 0%, transparent 50%)",
-    }}>
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className="flex items-center gap-3 px-5 py-3.5 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}>
+          style={{ background: "#5C93FF" }}>
           <Bot className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -157,7 +155,7 @@ export default function PublicChatPage({
           <div className="flex flex-col items-center text-center pt-12 pb-8 space-y-6">
             {/* Hero */}
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(92,147,255,0.12))", border: "1px solid rgba(92,147,255,0.15)" }}>
+              style={{ background: "rgba(92,147,255,0.1)", border: "1px solid rgba(92,147,255,0.15)" }}>
               <Bot className="w-8 h-8" style={{ color: "#5C93FF" }} />
             </div>
             <div className="space-y-1.5">
@@ -194,7 +192,7 @@ export default function PublicChatPage({
               {/* Avatar */}
               <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}
                 style={m.role === "assistant"
-                  ? { background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }
+                  ? { background: "#5C93FF" }
                   : { background: "rgba(92,147,255,0.1)" }}>
                 {m.role === "user"
                   ? <User className="w-3.5 h-3.5 text-primary" />
@@ -207,7 +205,7 @@ export default function PublicChatPage({
                 <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                   m.role === "user" ? "rounded-tr-sm text-white" : "rounded-tl-sm text-foreground bg-card border border-border"
                 }`}
-                  style={m.role === "user" ? { background: "linear-gradient(135deg, #5C93FF, #24DDB8)" } : undefined}>
+                  style={m.role === "user" ? { background: "#5C93FF" } : undefined}>
                   <p className="whitespace-pre-wrap">{renderContent(m.content)}</p>
                 </div>
 
@@ -231,7 +229,7 @@ export default function PublicChatPage({
           {loading && (
             <div className="flex gap-2.5">
               <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: "linear-gradient(135deg, #8B5CF6, #5C93FF)" }}>
+                style={{ background: "#5C93FF" }}>
                 <Bot className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-card border border-border flex items-center gap-2">
@@ -286,7 +284,7 @@ export default function PublicChatPage({
                 onClick={() => send()}
                 disabled={!input.trim() || loading}
                 className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30 hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                style={{ background: "#5C93FF" }}
               >
                 <Send className="w-4 h-4 text-white" />
               </button>

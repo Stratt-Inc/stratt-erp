@@ -16,5 +16,9 @@ BEGIN
 END
 $$;
 
-GRANT ALL PRIVILEGES ON DATABASE stratt_dev TO stratt;
+DO $$
+BEGIN
+  EXECUTE format('GRANT ALL PRIVILEGES ON DATABASE %I TO stratt', current_database());
+END
+$$;
 GRANT ALL ON SCHEMA public TO stratt;

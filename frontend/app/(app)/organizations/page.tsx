@@ -55,7 +55,7 @@ export default function OrganizationsPage() {
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+            style={{ background: "#5C93FF" }}
           >
             <Plus className="w-3.5 h-3.5" /> Nouvelle organisation
           </button>
@@ -105,7 +105,7 @@ export default function OrganizationsPage() {
               onClick={() => create.mutate({ name, slug })}
               disabled={!name || create.isPending}
               className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
-              style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+              style={{ background: "#5C93FF" }}
             >
               {create.isPending ? "Création…" : "Créer"}
             </button>
@@ -136,7 +136,7 @@ export default function OrganizationsPage() {
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                  style={{ background: "linear-gradient(135deg, #5C93FF, #24DDB8)" }}
+                  style={{ background: "#5C93FF" }}
                 >
                   {org.name.charAt(0).toUpperCase()}
                 </div>
