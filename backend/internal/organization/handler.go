@@ -92,6 +92,30 @@ func (h *Handler) ListMembers(c *gin.Context) {
 	c.JSON(200, models.OK(members))
 }
 
+// GET /api/v1/organizations/:id/my-role
+func (h *Handler) GetMyRole(c *gin.Context) {
+	orgID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(400, models.Err("invalid organization ID"))
+		return
+	}
+
+	userID, _ := ctxutil.GetUserID(c)
+
+	member, err := h.svc.GetMember(c.Request.Context(), orgID, userID)
+	if err != nil {
+		c.JSON(404, models.Err("membership not found"))
+		return
+	}
+
+	roleName := ""
+	if member.Role != nil {
+		roleName = member.Role.Name
+	}
+
+	c.JSON(200, models.OK(gin.H{"role": roleName}))
+}
+
 // DELETE /api/v1/organizations/:id/members/:userId
 func (h *Handler) RemoveMember(c *gin.Context) {
 	orgID, err := uuid.Parse(c.Param("id"))

@@ -26,6 +26,7 @@ interface AuthState {
   refreshToken: string | null;
   currentOrg: Organization | null;
   organizations: Organization[];
+  currentRole: string | null;
   isLoading: boolean;
   _hasHydrated: boolean;
 
@@ -36,6 +37,7 @@ interface AuthState {
   refresh: () => Promise<boolean>;
   setCurrentOrg: (org: Organization) => void;
   loadOrganizations: () => Promise<void>;
+  loadCurrentRole: () => Promise<void>;
   clear: () => void;
   _setHasHydrated: (v: boolean) => void;
 }
@@ -48,6 +50,7 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       currentOrg: null,
       organizations: [],
+      currentRole: null,
       isLoading: false,
       _hasHydrated: false,
 
@@ -66,6 +69,7 @@ export const useAuthStore = create<AuthState>()(
           });
           // Load organizations after login
           await get().loadOrganizations();
+          await get().loadCurrentRole();
         } catch (err) {
           set({ isLoading: false });
           throw err;
@@ -113,7 +117,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      setCurrentOrg: (org) => set({ currentOrg: org }),
+      setCurrentOrg: (org) => {
+        set({ currentOrg: org });
+        // Reload role when org changes
+        get().loadCurrentRole().catch(() => {});
+      },
 
       loadOrganizations: async () => {
         const { accessToken } = get();
@@ -132,6 +140,20 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      loadCurrentRole: async () => {
+        const { accessToken, currentOrg } = get();
+        if (!accessToken || !currentOrg) return;
+        try {
+          const data = await api.get<{ role: string }>(
+            `/api/v1/organizations/${currentOrg.id}/my-role`,
+            { token: accessToken },
+          );
+          set({ currentRole: data.role || null });
+        } catch {
+          set({ currentRole: null });
+        }
+      },
+
       clear: () =>
         set({
           user: null,
@@ -139,6 +161,7 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: null,
           currentOrg: null,
           organizations: [],
+          currentRole: null,
         }),
 
       _setHasHydrated: (v) => set({ _hasHydrated: v }),

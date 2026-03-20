@@ -91,18 +91,50 @@ func main() {
 	org := models.Organization{Name: "STRATT Demo", Slug: "stratt-demo", Plan: "pro"}
 	db.Where("slug = ?", org.Slug).FirstOrCreate(&org)
 
-	member := models.OrganizationMember{OrganizationID: org.ID, UserID: admin.ID, Status: "active"}
-	db.Where("organization_id = ? AND user_id = ?", org.ID, admin.ID).FirstOrCreate(&member)
-
-	adminRole := models.Role{OrganizationID: &org.ID, Name: "Admin", Description: "Full organization access", IsSystem: true}
+	// ── Roles ─────────────────────────────────────────────
+	adminRole := models.Role{OrganizationID: &org.ID, Name: "Admin", Description: "Accès complet à l'organisation", IsSystem: true}
 	db.Where("organization_id = ? AND name = ?", org.ID, adminRole.Name).FirstOrCreate(&adminRole)
-
 	var allPerms []models.Permission
 	db.Find(&allPerms)
 	db.Model(&adminRole).Association("Permissions").Replace(allPerms)
 
+	memberRole := models.Role{OrganizationID: &org.ID, Name: "Member", Description: "Accès standard aux modules ERP", IsSystem: true}
+	db.Where("organization_id = ? AND name = ?", org.ID, memberRole.Name).FirstOrCreate(&memberRole)
+	var memberPerms []models.Permission
+	db.Where("name IN ?", []string{"crm.read", "crm.write", "accounting.read", "billing.read", "inventory.read", "inventory.write", "procurement.read", "procurement.write"}).Find(&memberPerms)
+	db.Model(&memberRole).Association("Permissions").Replace(memberPerms)
+
+	viewerRole := models.Role{OrganizationID: &org.ID, Name: "Viewer", Description: "Accès lecture seule au pilotage", IsSystem: true}
+	db.Where("organization_id = ? AND name = ?", org.ID, viewerRole.Name).FirstOrCreate(&viewerRole)
+
+	// ── Admin member ──────────────────────────────────────
+	member := models.OrganizationMember{OrganizationID: org.ID, UserID: admin.ID, Status: "active"}
+	db.Where("organization_id = ? AND user_id = ?", org.ID, admin.ID).FirstOrCreate(&member)
+	db.Model(&member).Update("role_id", adminRole.ID)
+
 	userRole := models.UserRole{UserID: admin.ID, OrganizationID: org.ID, RoleID: adminRole.ID}
 	db.Where(userRole).FirstOrCreate(&userRole)
+
+	// ── Demo users ────────────────────────────────────────
+	hashMember, _ := bcrypt.GenerateFromPassword([]byte("demo1234"), bcrypt.DefaultCost)
+	demoMember := models.User{Name: "Marie Dupont", Email: "member@stratt.io", PasswordHash: string(hashMember), EmailVerified: true}
+	db.Where("email = ?", demoMember.Email).FirstOrCreate(&demoMember)
+	db.Model(&demoMember).Updates(models.User{PasswordHash: string(hashMember)})
+	orgMember := models.OrganizationMember{OrganizationID: org.ID, UserID: demoMember.ID, Status: "active"}
+	db.Where("organization_id = ? AND user_id = ?", org.ID, demoMember.ID).FirstOrCreate(&orgMember)
+	db.Model(&orgMember).Update("role_id", memberRole.ID)
+	db.Where(models.UserRole{UserID: demoMember.ID, OrganizationID: org.ID, RoleID: memberRole.ID}).FirstOrCreate(&models.UserRole{})
+	fmt.Printf("✓ Demo member: %s / demo1234\n", demoMember.Email)
+
+	hashViewer, _ := bcrypt.GenerateFromPassword([]byte("demo1234"), bcrypt.DefaultCost)
+	demoViewer := models.User{Name: "Thomas Berger", Email: "viewer@stratt.io", PasswordHash: string(hashViewer), EmailVerified: true}
+	db.Where("email = ?", demoViewer.Email).FirstOrCreate(&demoViewer)
+	db.Model(&demoViewer).Updates(models.User{PasswordHash: string(hashViewer)})
+	orgViewer := models.OrganizationMember{OrganizationID: org.ID, UserID: demoViewer.ID, Status: "active"}
+	db.Where("organization_id = ? AND user_id = ?", org.ID, demoViewer.ID).FirstOrCreate(&orgViewer)
+	db.Model(&orgViewer).Update("role_id", viewerRole.ID)
+	db.Where(models.UserRole{UserID: demoViewer.ID, OrganizationID: org.ID, RoleID: viewerRole.ID}).FirstOrCreate(&models.UserRole{})
+	fmt.Printf("✓ Demo viewer: %s / demo1234\n", demoViewer.Email)
 
 	for _, m := range modules {
 		om := models.OrganizationModule{OrganizationID: org.ID, ModuleID: m.ID}

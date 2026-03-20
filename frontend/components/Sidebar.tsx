@@ -27,38 +27,44 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
+// Role visibility: null/undefined means visible to all roles (fallback)
+// roles array lists which roles can see the item
+const ALL = ["Admin", "Member", "Viewer"];
+const MEMBER_PLUS = ["Admin", "Member"];
+const ADMIN_ONLY = ["Admin"];
+
 const pilotageNav = [
-  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard" },
-  { label: "Planification", href: "/planification", icon: Calendar },
-  { label: "Cartographie", href: "/cartographie", icon: Map },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen },
-  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare },
-  { label: "Documents", href: "/exports", icon: Download },
+  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard", roles: ALL },
+  { label: "Planification", href: "/planification", icon: Calendar, roles: ALL },
+  { label: "Cartographie", href: "/cartographie", icon: Map, roles: ALL },
+  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, roles: ALL },
+  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare, roles: ALL },
+  { label: "Documents", href: "/exports", icon: Download, roles: ALL },
 ];
 
 const erpNav = [
-  { label: "CRM", href: "/crm", icon: Users, tour: "crm" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator },
-  { label: "Facturation", href: "/billing", icon: FileText },
-  { label: "Inventaire", href: "/inventory", icon: Package },
-  { label: "RH", href: "/hr", icon: Briefcase },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart },
-  { label: "Analytics", href: "/analytics", icon: BarChart2 },
+  { label: "CRM", href: "/crm", icon: Users, tour: "crm", roles: MEMBER_PLUS },
+  { label: "Comptabilité", href: "/accounting", icon: Calculator, roles: MEMBER_PLUS },
+  { label: "Facturation", href: "/billing", icon: FileText, roles: MEMBER_PLUS },
+  { label: "Inventaire", href: "/inventory", icon: Package, roles: MEMBER_PLUS },
+  { label: "RH", href: "/hr", icon: Briefcase, roles: ADMIN_ONLY },
+  { label: "Achats", href: "/procurement", icon: ShoppingCart, roles: MEMBER_PLUS },
+  { label: "Analytics", href: "/analytics", icon: BarChart2, roles: ADMIN_ONLY },
 ];
 
 const systemeNav = [
-  { label: "Organisations", href: "/organizations", icon: Building2 },
-  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings" },
-  { label: "Administration", href: "/administration", icon: Shield },
-  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap },
-  { label: "Support", href: "/support", icon: LifeBuoy },
-  { label: "Aide", href: "/help", icon: HelpCircle },
+  { label: "Organisations", href: "/organizations", icon: Building2, roles: ADMIN_ONLY },
+  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings", roles: MEMBER_PLUS },
+  { label: "Administration", href: "/administration", icon: Shield, roles: ADMIN_ONLY },
+  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap, roles: ALL },
+  { label: "Support", href: "/support", icon: LifeBuoy, roles: ALL },
+  { label: "Aide", href: "/help", icon: HelpCircle, roles: ALL },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout, currentOrg } = useAuthStore();
+  const { user, logout, currentOrg, currentRole } = useAuthStore();
 
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
@@ -75,8 +81,11 @@ export function Sidebar() {
     .slice(0, 2)
     .toUpperCase() ?? "?";
 
+  const canView = (roles: string[]) =>
+    !currentRole || roles.includes(currentRole);
+
   const renderNav = (items: typeof pilotageNav) =>
-    items.map(({ label, href, icon: Icon, tour }) => {
+    items.filter(({ roles }) => canView(roles)).map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
         <Link
@@ -159,35 +168,41 @@ export function Sidebar() {
           <div className="space-y-[2px]">{renderNav(pilotageNav)}</div>
         </div>
 
-        <div
-          className="mx-2"
-          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-        />
+        {erpNav.some(({ roles }) => canView(roles)) && (
+          <>
+            <div
+              className="mx-2"
+              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+            />
+            <div>
+              <p
+                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+                style={{ color: "rgba(255,255,255,0.22)" }}
+              >
+                ERP
+              </p>
+              <div className="space-y-[2px]">{renderNav(erpNav)}</div>
+            </div>
+          </>
+        )}
 
-        <div>
-          <p
-            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(255,255,255,0.22)" }}
-          >
-            ERP
-          </p>
-          <div className="space-y-[2px]">{renderNav(erpNav)}</div>
-        </div>
-
-        <div
-          className="mx-2"
-          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-        />
-
-        <div>
-          <p
-            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(255,255,255,0.22)" }}
-          >
-            Système
-          </p>
-          <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
-        </div>
+        {systemeNav.some(({ roles }) => canView(roles)) && (
+          <>
+            <div
+              className="mx-2"
+              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+            />
+            <div>
+              <p
+                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+                style={{ color: "rgba(255,255,255,0.22)" }}
+              >
+                Système
+              </p>
+              <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* User footer */}
@@ -220,7 +235,7 @@ export function Sidebar() {
               className="text-[10px] mt-[3px] truncate"
               style={{ color: "rgba(255,255,255,0.38)" }}
             >
-              {user?.email}
+              {currentRole ?? user?.email}
             </p>
           </div>
 

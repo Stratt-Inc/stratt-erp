@@ -48,10 +48,7 @@ export default function LoginPage() {
       <div className="relative z-10">
         <h2 className="text-2xl font-bold text-foreground">Connexion</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Pas encore de compte ?{" "}
-          <Link href="/signup" className="text-primary hover:underline font-medium">
-            Créer un compte
-          </Link>
+          Bienvenue sur la démo STRATT ERP
         </p>
       </div>
 
@@ -110,17 +107,25 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="relative z-10 text-center">
-        <p className="text-xs text-muted-foreground">
-          Compte démo :{" "}
-          <button
-            type="button"
-            onClick={() => { setEmail("admin@stratt.io"); setPassword("admin1234"); }}
-            className="text-primary hover:underline font-medium"
-          >
-            admin@stratt.io / admin1234
-          </button>
-        </p>
+      <div className="relative z-10 space-y-1.5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Comptes démo</p>
+        <div className="flex flex-col gap-1">
+          {[
+            { label: "Admin", email: "admin@stratt.io", password: "admin1234" },
+            { label: "Member", email: "member@stratt.io", password: "demo1234" },
+            { label: "Viewer", email: "viewer@stratt.io", password: "demo1234" },
+          ].map(({ label, email, password }) => (
+            <button
+              key={email}
+              type="button"
+              onClick={() => { setEmail(email); setPassword(password); }}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors hover:bg-secondary"
+            >
+              <span className="font-semibold text-primary w-14">{label}</span>
+              <span className="text-muted-foreground font-mono">{email}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
