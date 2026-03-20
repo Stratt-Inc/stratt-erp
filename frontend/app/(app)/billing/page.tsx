@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { FileText, Plus, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Invoice {
   id: string;
@@ -44,7 +45,7 @@ export default function BillingPage() {
   const totalPending = pending.reduce((s, i) => s + i.total, 0);
 
   const stats = [
-    { label: "Total factures", value: invoices.length, color: "hsl(var(--primary))", icon: FileText },
+    { label: "Total factures", value: invoices.length, color: MODULE.billing, icon: FileText },
     { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "hsl(var(--accent))", icon: FileText },
     { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "hsl(var(--warning))", icon: FileText },
     { label: "En retard", value: overdue.length, color: "hsl(var(--destructive))", icon: FileText },
@@ -54,10 +55,10 @@ export default function BillingPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--warning) / 0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--success) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--warning))", boxShadow: "0 0 6px hsl(var(--warning))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.billing, boxShadow: `0 0 6px ${MODULE.billing}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module facturation</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Facturation</h1>

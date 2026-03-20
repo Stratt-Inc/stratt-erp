@@ -58,10 +58,10 @@ interface ExportPayload {
 // ── Status helpers ─────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
-  success:                 { label: "Publié",          color: "#24DDB8", icon: CheckCircle },
-  generated:               { label: "Généré",          color: "#5C93FF", icon: FileJson },
-  published_with_warnings: { label: "Publié (alertes)", color: "#F59E0B", icon: AlertTriangle },
-  failed:                  { label: "Échec",           color: "#EF4444", icon: XCircle },
+  success:                 { label: "Publié",          color: "hsl(var(--accent))", icon: CheckCircle },
+  generated:               { label: "Généré",          color: "hsl(var(--primary))", icon: FileJson },
+  published_with_warnings: { label: "Publié (alertes)", color: "hsl(var(--warning))", icon: AlertTriangle },
+  failed:                  { label: "Échec",           color: "hsl(var(--destructive))", icon: XCircle },
 };
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ export default function DECPPage() {
   }
 
   const rate = compliance?.conformity_rate ?? 0;
-  const rateColor = rate >= 90 ? "#24DDB8" : rate >= 60 ? "#F59E0B" : "#EF4444";
+  const rateColor = rate >= 90 ? "hsl(var(--accent))" : rate >= 60 ? "hsl(var(--warning))" : "hsl(var(--destructive))";
 
   const TABS = [
     { id: "compliance" as const, label: "Conformité DECP", icon: ShieldCheck },
@@ -195,7 +195,7 @@ export default function DECPPage() {
 
       {/* Regulatory notice */}
       <div className="flex items-start gap-3 p-3 rounded-xl border text-[12px]"
-        style={{ background: "rgba(92,147,255,0.06)", borderColor: "rgba(92,147,255,0.2)" }}>
+        style={{ background: "hsl(var(--primary) / 0.06)", borderColor: "hsl(var(--primary) / 0.2)" }}>
         <Info className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
         <div className="text-muted-foreground leading-relaxed">
           <span className="font-semibold text-foreground">Obligation légale</span> — La publication des DECP est obligatoire pour tous les acheteurs publics
@@ -309,7 +309,7 @@ export default function DECPPage() {
                 onClick={downloadJSON}
                 disabled={loadingExport || !exportData}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "#5C93FF" }}
+                style={{ background: "hsl(var(--primary))" }}
               >
                 <FileJson className="w-4 h-4" />
                 {loadingExport ? "Génération…" : "Télécharger DECP.json"}
@@ -348,7 +348,7 @@ export default function DECPPage() {
                 onClick={() => publishMutation.mutate()}
                 disabled={publishMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "#24DDB8" }}
+                style={{ background: "hsl(var(--accent))" }}
               >
                 <Upload className="w-4 h-4" />
                 {publishMutation.isPending ? "Publication…" : "Publier sur data.gouv.fr"}

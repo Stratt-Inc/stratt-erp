@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
 import { useDemoAction } from "@/store/toast";
+import { MODULE } from "@/lib/colors";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip,
   LabelList, PieChart, Pie,
@@ -133,7 +134,7 @@ export default function CartographiePage() {
       <DemoBanner />
 
       {/* ── Header ── */}
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
             Module cartographie
@@ -153,7 +154,7 @@ export default function CartographiePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "hsl(var(--primary))" }}
+            style={{ background: MODULE.cartographie }}
           >
             <BarChart3 className="w-3.5 h-3.5" /> Générer cartographie
           </button>
@@ -169,7 +170,7 @@ export default function CartographiePage() {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: "hsl(var(--accent))" },
+          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: MODULE.cartographie },
           { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "hsl(var(--primary))" },
           { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "hsl(var(--accent))" },
           { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "hsl(var(--destructive))" },

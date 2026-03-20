@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { MODULE } from "@/lib/colors";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction } from "@/store/toast";
@@ -85,8 +86,8 @@ export default function AdministrationPage() {
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">Administration</p>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--violet) / 0.1)" }}>
-            <Shield className="w-3.5 h-3.5" style={{ color: "hsl(var(--violet))" }} />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${MODULE.administration.replace(")", " / 0.1)")}` }}>
+            <Shield className="w-3.5 h-3.5" style={{ color: MODULE.administration }} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Gestion de la plateforme</h1>
         </div>

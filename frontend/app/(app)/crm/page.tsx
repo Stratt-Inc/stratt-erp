@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Users, TrendingUp, Handshake, Plus, Search } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Contact {
   id: string;
@@ -92,7 +93,7 @@ export default function CRMPage() {
   });
 
   const stats = [
-    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "hsl(var(--primary))" },
+    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: MODULE.crm },
     { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "hsl(var(--accent))" },
     { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "hsl(var(--accent))" },
     {
@@ -119,7 +120,7 @@ export default function CRMPage() {
       <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.crm, boxShadow: `0 0 6px ${MODULE.crm}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module CRM</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Gestion commerciale</h1>
@@ -127,7 +128,7 @@ export default function CRMPage() {
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "hsl(var(--primary))" }}>
+            style={{ background: MODULE.crm }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}

@@ -284,6 +284,54 @@
     letter-spacing: 0.01em;
   }
 
+  /* ── Sidebar navigation ── */
+
+  .sidebar-section-label {
+    padding: 0 8px 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: rgba(255,255,255,0.20);
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    padding-left: 8px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.46);
+    transition: background 0.1s, color 0.1s;
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.82);
+  }
+  .sidebar-item:hover .item-icon {
+    color: rgba(255,255,255,0.55);
+  }
+  .sidebar-item.active {
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.95);
+    border-left-color: var(--item-color);
+  }
+  .sidebar-item.active .item-icon {
+    color: var(--item-color);
+  }
+  .item-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    color: rgba(255,255,255,0.28);
+    transition: color 0.1s;
+  }
+
   /* Scrollbar discrète */
   .scrollbar-thin {
     scrollbar-width: thin;

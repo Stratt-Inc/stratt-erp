@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
 import { useDemoAction, useToastStore } from "@/store/toast";
+import { MODULE } from "@/lib/colors";
 import {
   FolderTree, Plus, ChevronRight, ChevronDown, Edit3, History,
   CheckCircle2, AlertCircle, Download, GripVertical, Shield,
@@ -157,7 +158,7 @@ export default function NomenclaturePage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-end justify-between gap-8 pb-3 flex-shrink-0" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3 flex-shrink-0" style={{ borderBottom: "1px solid hsl(var(--violet) / 0.08)" }}>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
             Module Nomenclature
@@ -180,7 +181,7 @@ export default function NomenclaturePage() {
           <button
             onClick={demo}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-            style={{ background: "hsl(var(--primary))" }}
+            style={{ background: MODULE.nomenclature }}
           >
             <Plus className="w-3.5 h-3.5" /> Nouvelle entrée
           </button>
@@ -190,7 +191,7 @@ export default function NomenclaturePage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 flex-shrink-0">
         {[
-          { label: "Familles d'achats", value: familles, icon: Layers, color: "hsl(var(--accent))" },
+          { label: "Familles d'achats", value: familles, icon: Layers, color: MODULE.nomenclature },
           { label: "Codes actifs", value: codes, icon: FolderTree, color: "hsl(var(--primary))" },
           { label: "Exhaustivité", value: "96%", icon: CheckCircle2, color: "hsl(var(--accent))" },
           { label: "Exclusivité mutuelle", value: "98%", icon: Scale, color: "hsl(var(--violet))" },

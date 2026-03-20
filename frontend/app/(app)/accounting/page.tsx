@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Calculator, Plus, TrendingUp, TrendingDown } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Account {
   id: string;
@@ -62,10 +63,10 @@ export default function AccountingPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--success) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.accounting, boxShadow: `0 0 6px ${MODULE.accounting}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module comptabilité</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Plan comptable</h1>
@@ -82,7 +83,7 @@ export default function AccountingPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, icon: Calculator, color: "hsl(var(--primary))" },
+          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, icon: Calculator, color: MODULE.accounting },
           { label: "Transactions", value: txns.length, icon: Calculator, color: "#6B7280" },
           { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "hsl(var(--accent))" },
           { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "hsl(var(--destructive))" },

@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Package, Plus, AlertTriangle } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Product {
   id: string;
@@ -37,10 +38,10 @@ export default function InventoryPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--violet) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--violet))", boxShadow: "0 0 6px hsl(var(--violet))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.inventory, boxShadow: `0 0 6px ${MODULE.inventory}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Inventaire</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Stocks & Produits</h1>
@@ -57,7 +58,7 @@ export default function InventoryPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: "hsl(var(--violet))" },
+          { label: "Produits actifs", value: products.filter((p) => p.is_active).length, icon: Package, color: MODULE.inventory },
           { label: "Valeur stock", value: `${totalValue.toLocaleString("fr-FR")} €`, icon: Package, color: "hsl(var(--accent))" },
           { label: "Stock faible", value: lowStock.length, icon: AlertTriangle, color: lowStock.length > 0 ? "hsl(var(--destructive))" : "#6B7280" },
           { label: "Catégories", value: new Set(products.map(p => p.category)).size, icon: Package, color: "hsl(var(--primary))" },

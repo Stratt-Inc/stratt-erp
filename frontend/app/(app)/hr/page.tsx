@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Briefcase, Plus, UserCheck, Clock } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Employee {
   id: string;
@@ -72,10 +73,10 @@ export default function HRPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--warning) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.hr, boxShadow: `0 0 6px ${MODULE.hr}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module RH</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Ressources Humaines</h1>
@@ -92,8 +93,8 @@ export default function HRPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: "hsl(var(--primary))" },
-          { label: "Départements", value: departments.size, icon: Briefcase, color: "hsl(var(--primary))" },
+          { label: "Employés actifs", value: employees.filter(e => e.status === "active").length, icon: UserCheck, color: MODULE.hr },
+          { label: "Départements", value: departments.size, icon: Briefcase, color: MODULE.hr },
           { label: "Congés en attente", value: leaves.filter(l => l.status === "pending").length, icon: Clock, color: "hsl(var(--warning))" },
           { label: "Masse salariale", value: `${totalSalary.toLocaleString("fr-FR")} €`, icon: Briefcase, color: "hsl(var(--accent))" },
         ].map(({ label, value, icon: Icon, color }) => (

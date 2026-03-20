@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
+import { MODULE } from "@/lib/colors";
 import {
   Users, FileText, Package, Briefcase, TrendingUp, ShoppingCart,
   BarChart2, Calculator, Calendar, Map, BookOpen, Download,
@@ -30,20 +31,20 @@ interface MarcheStats {
 }
 
 const pilotageModules = [
-  { label: "Planification", href: "/planification", icon: Calendar, color: "hsl(var(--primary))", description: "Marchés publics & calendrier des passations" },
-  { label: "Cartographie", href: "/cartographie", icon: Map, color: "hsl(var(--accent))", description: "Dépenses par famille achats" },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "hsl(var(--accent))", description: "Arborescence des codes achats" },
-  { label: "Documents", href: "/exports", icon: Download, color: "hsl(var(--warning))", description: "Rapports & exports PDF/Excel" },
+  { label: "Planification", href: "/planification", icon: Calendar,   color: MODULE.planification, description: "Marchés publics & calendrier des passations" },
+  { label: "Cartographie",  href: "/cartographie",  icon: Map,        color: MODULE.cartographie,  description: "Dépenses par famille achats" },
+  { label: "Nomenclature",  href: "/nomenclature",  icon: BookOpen,   color: MODULE.nomenclature,  description: "Arborescence des codes achats" },
+  { label: "Documents",     href: "/exports",       icon: Download,   color: MODULE.exports,       description: "Rapports & exports PDF/Excel" },
 ];
 
 const erpModules = [
-  { label: "CRM", href: "/crm", icon: Users, color: "hsl(var(--primary))" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "hsl(var(--accent))" },
-  { label: "Facturation", href: "/billing", icon: FileText, color: "hsl(var(--warning))" },
-  { label: "Inventaire", href: "/inventory", icon: Package, color: "hsl(var(--violet))" },
-  { label: "RH", href: "/hr", icon: Briefcase, color: "hsl(var(--primary))" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "hsl(var(--accent))" },
-  { label: "Analytics", href: "/analytics", icon: BarChart2, color: "hsl(var(--accent))" },
+  { label: "CRM",          href: "/crm",        icon: Users,        color: MODULE.crm },
+  { label: "Comptabilité", href: "/accounting",  icon: Calculator,   color: MODULE.accounting },
+  { label: "Facturation",  href: "/billing",     icon: FileText,     color: MODULE.billing },
+  { label: "Inventaire",   href: "/inventory",   icon: Package,      color: MODULE.inventory },
+  { label: "RH",           href: "/hr",          icon: Briefcase,    color: MODULE.hr },
+  { label: "Achats",       href: "/procurement", icon: ShoppingCart, color: MODULE.procurement },
+  { label: "Analytics",    href: "/analytics",   icon: BarChart2,    color: MODULE.analytics },
 ];
 
 const staticAlerts = [

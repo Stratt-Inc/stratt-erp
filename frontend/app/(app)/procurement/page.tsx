@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { ShoppingCart, Plus, ShieldAlert, ShieldCheck, AlertTriangle, Info, Scale } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface PurchaseOrder {
   id: string;
@@ -256,7 +257,7 @@ export default function ProcurementPage() {
       <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.procurement, boxShadow: `0 0 6px ${MODULE.procurement}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module achats</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Achats & Commandes</h1>
@@ -274,7 +275,7 @@ export default function ProcurementPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
           { label: "Total commandes", value: orders.length, color: "hsl(var(--violet))", icon: ShoppingCart },
-          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: "hsl(var(--accent))", icon: ShoppingCart },
+          { label: "Volume achats", value: `${totalOrdered.toLocaleString("fr-FR")} €`, color: MODULE.procurement, icon: ShoppingCart },
           { label: "En attente", value: pending, color: "hsl(var(--primary))", icon: ShoppingCart },
           { label: "Alertes conformité", value: riskCount, color: "hsl(var(--destructive))", icon: ShieldAlert },
         ].map(({ label, value, color, icon: Icon }) => (

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction } from "@/store/toast";
+import { MODULE } from "@/lib/colors";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip,
   CartesianGrid, LineChart, Line,
@@ -200,10 +201,10 @@ export default function PlanificationPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--warning) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", boxShadow: "0 0 6px hsl(var(--primary))" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.planification, boxShadow: `0 0 6px ${MODULE.planification}` }} />
             <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module planification</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Passations de marchés</h1>
@@ -224,7 +225,7 @@ export default function PlanificationPage() {
       {/* KPIs — signal tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: "hsl(var(--primary))" },
+          { label: "Marchés en cours", value: stats?.en_cours ?? 0, icon: CalendarRange, color: MODULE.planification },
           { label: "Charge prévi.", value: `${stats?.charge_total ?? 0} j/h`, icon: Users, color: "hsl(var(--accent))" },
           { label: "Chevauchements", value: "3", icon: Layers, color: "hsl(var(--violet))" },
           { label: "Budget impact", value: `${budgetK} k€`, icon: TrendingUp, color: "hsl(var(--accent))" },

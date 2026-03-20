@@ -7,6 +7,7 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { api } from "@/lib/api";
+import { MODULE } from "@/lib/colors";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
@@ -137,7 +138,7 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
   return (
     <div className="space-y-3">
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.analytics, boxShadow: `0 0 6px ${MODULE.analytics}` }} />
         <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Vue d&apos;ensemble ERP
         </span>

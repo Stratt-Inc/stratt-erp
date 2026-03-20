@@ -24,48 +24,46 @@ import {
   HelpCircle,
   GraduationCap,
   MessageSquare,
-  ChevronRight,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
+import { MODULE } from "@/lib/colors";
+
+const pilotageNav: NavItem[] = [
+  { label: "Tableau de bord", href: "/dashboard",     icon: LayoutDashboard, color: MODULE.dashboard,     permission: null,             tour: "dashboard" },
+  { label: "Planification",   href: "/planification", icon: Calendar,        color: MODULE.planification, permission: null },
+  { label: "Cartographie",    href: "/cartographie",  icon: Map,             color: MODULE.cartographie,  permission: null },
+  { label: "Nomenclature",    href: "/nomenclature",  icon: BookOpen,        color: MODULE.nomenclature,  permission: null },
+  { label: "Chatbot IA",      href: "/chatbot",       icon: MessageSquare,   color: MODULE.chatbot,       permission: null },
+  { label: "Documents",       href: "/exports",       icon: Download,        color: MODULE.exports,       permission: null },
+];
+
+const erpNav: NavItem[] = [
+  { label: "CRM",          href: "/crm",         icon: Users,        color: MODULE.crm,         permission: "crm.read",         tour: "crm" },
+  { label: "Comptabilité", href: "/accounting",   icon: Calculator,   color: MODULE.accounting,  permission: "accounting.read" },
+  { label: "Facturation",  href: "/billing",      icon: FileText,     color: MODULE.billing,     permission: "billing.read" },
+  { label: "Inventaire",   href: "/inventory",    icon: Package,      color: MODULE.inventory,   permission: "inventory.read" },
+  { label: "RH",           href: "/hr",           icon: Briefcase,    color: MODULE.hr,          permission: "hr.read" },
+  { label: "Achats",       href: "/procurement",  icon: ShoppingCart, color: MODULE.procurement, permission: "procurement.read" },
+  { label: "Analytics",    href: "/analytics",    icon: BarChart2,    color: MODULE.analytics,   permission: "analytics.read" },
+];
+
+const systemeNav: NavItem[] = [
+  { label: "Organisations",  href: "/organizations",  icon: Building2,    color: MODULE.organizations,  permission: "admin.manage" },
+  { label: "Paramètres",     href: "/settings",       icon: Settings,     color: MODULE.settings,       permission: null,             tour: "settings" },
+  { label: "Administration", href: "/administration", icon: Shield,       color: MODULE.administration, permission: "admin.manage" },
+  { label: "Glossaire CCP",  href: "/glossaire",      icon: GraduationCap,color: MODULE.glossaire,      permission: null },
+  { label: "Support",        href: "/support",        icon: LifeBuoy,     color: MODULE.support,        permission: null },
+  { label: "Aide",           href: "/help",           icon: HelpCircle,   color: MODULE.help,           permission: null },
+];
 
 type NavItem = {
   label: string;
   href: string;
-  icon: React.FC<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  color: string;
   permission: string | null;
   tour?: string;
 };
-
-// permission: null = visible par tous les utilisateurs authentifiés
-// permission: "perm.name" = visible uniquement si l'utilisateur a cette permission
-//             (les Admin ont toujours accès, même sans la permission explicite)
-const pilotageNav: NavItem[] = [
-  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard", permission: null },
-  { label: "Planification", href: "/planification", icon: Calendar, permission: null },
-  { label: "Cartographie", href: "/cartographie", icon: Map, permission: null },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, permission: null },
-  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare, permission: null },
-  { label: "Documents", href: "/exports", icon: Download, permission: null },
-];
-
-const erpNav: NavItem[] = [
-  { label: "CRM", href: "/crm", icon: Users, tour: "crm", permission: "crm.read" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator, permission: "accounting.read" },
-  { label: "Facturation", href: "/billing", icon: FileText, permission: "billing.read" },
-  { label: "Inventaire", href: "/inventory", icon: Package, permission: "inventory.read" },
-  { label: "RH", href: "/hr", icon: Briefcase, permission: "hr.read" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, permission: "procurement.read" },
-  { label: "Analytics", href: "/analytics", icon: BarChart2, permission: "analytics.read" },
-];
-
-const systemeNav: NavItem[] = [
-  { label: "Organisations", href: "/organizations", icon: Building2, permission: "admin.manage" },
-  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings", permission: null },
-  { label: "Administration", href: "/administration", icon: Shield, permission: "admin.manage" },
-  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap, permission: null },
-  { label: "Support", href: "/support", icon: LifeBuoy, permission: null },
-  { label: "Aide", href: "/help", icon: HelpCircle, permission: null },
-];
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -91,141 +89,80 @@ export function Sidebar() {
     !permission || !currentRole || hasPermission(permission);
 
   const renderNav = (items: NavItem[]) =>
-    items.filter(({ permission }) => canView(permission)).map(({ label, href, icon: Icon, tour }) => {
-      const active = isActive(href);
-      return (
-        <Link
-          key={href}
-          href={href}
-          {...(tour ? { "data-tour": tour } : {})}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 relative group"
-          style={
-            active
-              ? {
-                  color: "#FFFFFF",
-                  background: "hsl(var(--primary) / 0.18)",
-                  boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.30)",
-                }
-              : { color: "rgba(255,255,255,0.45)" }
-          }
-        >
-          {active && (
-            <span
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] rounded-r-full"
-              style={{ background: "hsl(var(--primary))" }}
-            />
-          )}
-          <Icon
-            className="w-[15px] h-[15px] flex-shrink-0 transition-colors"
-            strokeWidth={active ? 2.25 : 1.75}
-            style={{ color: active ? "hsl(var(--primary))" : undefined }}
-          />
-          <span style={active ? {} : { transition: "color 0.15s" }}
-            className={active ? "" : "group-hover:!text-white"}>
-            {label}
-          </span>
-          {active && (
-            <ChevronRight
-              className="w-3 h-3 ml-auto opacity-40"
-              style={{ color: "hsl(var(--primary))" }}
-            />
-          )}
-        </Link>
-      );
-    });
+    items
+      .filter(({ permission }) => canView(permission))
+      .map(({ label, href, icon: Icon, color, tour }) => {
+        const active = isActive(href);
+        return (
+          <Link
+            key={href}
+            href={href}
+            {...(tour ? { "data-tour": tour } : {})}
+            className={`sidebar-item${active ? " active" : ""}`}
+            style={{ "--item-color": color } as React.CSSProperties}
+          >
+            <Icon className="item-icon" strokeWidth={active ? 2 : 1.75} />
+            <span>{label}</span>
+          </Link>
+        );
+      });
 
   return (
     <aside
-      className="w-[228px] flex-shrink-0 flex flex-col h-full relative"
+      className="w-[220px] flex-shrink-0 flex flex-col h-full"
       style={{
         background: "hsl(var(--sidebar))",
         borderRight: "1px solid hsl(var(--sidebar-border))",
       }}
     >
       {/* Logo */}
-      <div
-        className="px-5 py-4 flex-shrink-0"
-        style={{ borderBottom: "1px solid hsl(var(--sidebar-border))" }}
-      >
+      <div className="px-5 pt-5 pb-4 flex-shrink-0">
         <p
-          className="font-extrabold text-[22px] leading-none tracking-[-0.04em]"
-          style={{ color: "hsl(var(--primary))", fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+          className="font-extrabold text-[20px] leading-none tracking-[-0.04em] text-white"
+          style={{ fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}
         >
           stratt
         </p>
         <p
-          className="text-[10px] mt-[5px] truncate font-medium"
-          style={{ color: "rgba(255,255,255,0.30)" }}
+          className="text-[10px] mt-1.5 truncate font-medium"
+          style={{ color: "rgba(255,255,255,0.28)" }}
         >
           {currentOrg?.name ?? "—"}
         </p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-2.5 py-2.5 overflow-y-auto scrollbar-thin space-y-4">
-
-        <div>
-          <p
-            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(255,255,255,0.22)" }}
-          >
-            Pilotage
-          </p>
-          <div className="space-y-[2px]">{renderNav(pilotageNav)}</div>
+      <nav className="flex-1 px-3 py-2 overflow-y-auto scrollbar-thin space-y-4">
+        <div className="space-y-0.5">
+          <p className="sidebar-section-label">Pilotage</p>
+          {renderNav(pilotageNav)}
         </div>
 
         {erpNav.some(({ permission }) => canView(permission)) && (
-          <>
-            <div
-              className="mx-2"
-              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-            />
-            <div>
-              <p
-                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-                style={{ color: "rgba(255,255,255,0.22)" }}
-              >
-                ERP
-              </p>
-              <div className="space-y-[2px]">{renderNav(erpNav)}</div>
-            </div>
-          </>
+          <div className="space-y-0.5">
+            <p className="sidebar-section-label">ERP</p>
+            {renderNav(erpNav)}
+          </div>
         )}
 
         {systemeNav.some(({ permission }) => canView(permission)) && (
-          <>
-            <div
-              className="mx-2"
-              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-            />
-            <div>
-              <p
-                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-                style={{ color: "rgba(255,255,255,0.22)" }}
-              >
-                Système
-              </p>
-              <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
-            </div>
-          </>
+          <div className="space-y-0.5">
+            <p className="sidebar-section-label">Système</p>
+            {renderNav(systemeNav)}
+          </div>
         )}
       </nav>
 
       {/* User footer */}
       <div
-        className="px-2.5 py-2.5 flex-shrink-0"
+        className="px-3 py-3 flex-shrink-0"
         style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
       >
-        <div
-          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg group cursor-default transition-all duration-150 hover:bg-white/[0.06]"
-        >
+        <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg group cursor-default transition-colors hover:bg-white/[0.05]">
           {/* Avatar */}
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-            style={{
-              background: "hsl(var(--primary))",
-              color: "#fff",
-            }}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 text-white flex-none"
+            style={{ background: "rgba(255,255,255,0.12)" }}
           >
             {initials}
           </div>
@@ -233,13 +170,13 @@ export function Sidebar() {
           <div className="flex-1 min-w-0">
             <p
               className="text-[12px] font-semibold truncate leading-none"
-              style={{ color: "rgba(255,255,255,0.82)" }}
+              style={{ color: "rgba(255,255,255,0.80)" }}
             >
               {user?.name}
             </p>
             <p
               className="text-[10px] mt-[3px] truncate"
-              style={{ color: "rgba(255,255,255,0.38)" }}
+              style={{ color: "rgba(255,255,255,0.32)" }}
             >
               {currentRole ?? user?.email}
             </p>
@@ -248,10 +185,10 @@ export function Sidebar() {
           <button
             onClick={handleLogout}
             title="Déconnexion"
-            className="p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100"
-            style={{ color: "rgba(255,255,255,0.45)" }}
+            className="p-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-all"
+            style={{ color: "rgba(255,255,255,0.40)" }}
           >
-            <LogOut className="w-3.5 h-3.5" style={{ transition: "color 0.15s" }} />
+            <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
