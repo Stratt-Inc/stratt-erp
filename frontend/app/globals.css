@@ -7,45 +7,46 @@
 @layer base {
   :root {
     /* ── Stratt Light System ── */
+    /* Palette source: blues=#5C93FF, navy=#09111e, teal=#24ddb8, slate Tailwind */
 
-    --background: 210 22% 97%;
-    --foreground: 217 54% 12%;
+    --background: 210 40% 98%;      /* #f8fafc — page bg */
+    --foreground: 217 33% 17%;      /* #1e293b — body text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 217 54% 12%;
+    --card: 0 0% 100%;              /* #ffffff — card surface */
+    --card-foreground: 217 33% 17%; /* #1e293b */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 217 54% 12%;
+    --popover-foreground: 217 33% 17%;
 
     /* Primary = bleu brand #5C93FF */
-    --primary: 220 90% 56%;
+    --primary: 220 100% 68%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary = surfaces subtiles */
-    --secondary: 213 18% 93%;
-    --secondary-foreground: 217 28% 30%;
+    /* Secondary = surface subtile #f1f5f9 */
+    --secondary: 210 40% 96%;       /* #f1f5f9 — card/module */
+    --secondary-foreground: 215 19% 35%; /* #475569 */
 
-    --muted: 212 16% 91%;
-    --muted-foreground: 215 16% 48%;
+    --muted: 210 40% 96%;           /* #f1f5f9 */
+    --muted-foreground: 215 16% 47%; /* #64748b */
 
     /* Accent = vert turquoise #24DDB8 */
-    --accent: 168 73% 42%;
+    --accent: 168 73% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;       /* #ef4444 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 213 16% 87%;
-    --input: 213 16% 87%;
-    --ring: 220 90% 56%;
+    --border: 214 32% 91%;          /* #e2e8f0 — séparateurs */
+    --input: 213 27% 84%;           /* #cbd5e1 — bordures inputs */
+    --ring: 220 100% 68%;           /* #5C93FF */
     --radius: 0.5rem;
 
-    /* Sidebar — dark navy (same as login left panel #09111E) */
-    --sidebar: 217 54% 8%;
+    /* Sidebar — dark navy #09111E */
+    --sidebar: 217 54% 8%;          /* #09111e */
     --sidebar-foreground: 215 35% 72%;
-    --sidebar-primary: 220 90% 70%;
-    --sidebar-accent: 217 50% 14%;
-    --sidebar-border: 216 45% 13%;
+    --sidebar-primary: 220 100% 70%; /* #5C93FF tint */
+    --sidebar-accent: 217 51% 18%;  /* #162844 — sous-menu actif */
+    --sidebar-border: 216 60% 13%;  /* #0d1c33 */
   }
 
   /* .dark alias — conservé pour compatibilité future */
