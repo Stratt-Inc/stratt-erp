@@ -46,6 +46,13 @@ services:
     networks:
       - default
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stratt-minio.rule=Host(`minio.stratt.fr`)"
+      - "traefik.http.routers.stratt-minio.entrypoints=https"
+      - "traefik.http.routers.stratt-minio.tls=true"
+      - "traefik.http.routers.stratt-minio.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-minio.loadbalancer.server.port=9000"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-stratt_minio}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-stratt_minio_secret}
@@ -68,6 +75,13 @@ services:
     networks:
       - default
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stratt-meilisearch.rule=Host(`searc.stratt.fr`)"
+      - "traefik.http.routers.stratt-meilisearch.entrypoints=https"
+      - "traefik.http.routers.stratt-meilisearch.tls=true"
+      - "traefik.http.routers.stratt-meilisearch.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-meilisearch.loadbalancer.server.port=7700"
     environment:
       MEILI_ENV: ${APP_ENV:-development}
       MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:-stratt_meili_dev_key}
@@ -91,6 +105,13 @@ services:
     networks:
       - default
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stratt-api.rule=Host(`api.stratt.fr`)"
+      - "traefik.http.routers.stratt-api.entrypoints=https"
+      - "traefik.http.routers.stratt-api.tls=true"
+      - "traefik.http.routers.stratt-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-api.loadbalancer.server.port=8080"
     environment:
       PORT: 8080
       APP_ENV: ${APP_ENV:-development}
@@ -105,7 +126,7 @@ services:
       S3_ACCESS_KEY: ${MINIO_ROOT_USER:-stratt_minio}
       S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-stratt_minio_secret}
       S3_BUCKET: ${S3_BUCKET:-stratt}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      FRONTEND_URL: ${FRONTEND_URL:-https://app.stratt.fr}
     depends_on:
       postgres:
         condition: service_healthy
@@ -129,9 +150,16 @@ services:
     networks:
       - default
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stratt-frontend.rule=Host(`app.stratt.fr`)"
+      - "traefik.http.routers.stratt-frontend.entrypoints=https"
+      - "traefik.http.routers.stratt-frontend.tls=true"
+      - "traefik.http.routers.stratt-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-frontend.loadbalancer.server.port=3000"
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.stratt.fr}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://app.stratt.fr}
     depends_on:
       api:
         condition: service_healthy
