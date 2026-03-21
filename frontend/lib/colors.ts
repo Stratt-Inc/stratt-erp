@@ -48,6 +48,7 @@ export const MODULE = {
   dashboard:     CSS.primary,
   planification: CSS.warning,
   cartographie:  CSS.accent,
+  alertes:       CSS.destructive,
   nomenclature:  CSS.violet,
   chatbot:       CSS.violet,   // IA = violet
   exports:       CSS.primary,

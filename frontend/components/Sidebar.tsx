@@ -24,6 +24,7 @@ import {
   HelpCircle,
   GraduationCap,
   MessageSquare,
+  BellRing,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { MODULE } from "@/lib/colors";
@@ -31,6 +32,7 @@ import { MODULE } from "@/lib/colors";
 const pilotageNav: NavItem[] = [
   { label: "Tableau de bord", href: "/dashboard",     icon: LayoutDashboard, color: MODULE.dashboard,     permission: null,             tour: "dashboard" },
   { label: "Planification",   href: "/planification", icon: Calendar,        color: MODULE.planification, permission: null },
+  { label: "Alertes délais",  href: "/alertes",       icon: BellRing,        color: MODULE.alertes,       permission: null },
   { label: "Cartographie",    href: "/cartographie",  icon: Map,             color: MODULE.cartographie,  permission: null },
   { label: "Nomenclature",    href: "/nomenclature",  icon: BookOpen,        color: MODULE.nomenclature,  permission: null },
   { label: "Chatbot IA",      href: "/chatbot",       icon: MessageSquare,   color: MODULE.chatbot,       permission: null },
