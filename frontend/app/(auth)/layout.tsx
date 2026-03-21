@@ -4,7 +4,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Left panel — branding navy */}
       <div
         className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: "#09111E" }}
+        style={{ background: "hsl(var(--sidebar))" }}
       >
 
         {/* Logo */}
@@ -14,10 +14,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             style={{
               background: "#141F2E",
               border: "1px solid #1A2535",
-              boxShadow: "0 0 0 1px rgba(36,221,184,0.15), 0 8px 20px rgba(0,0,0,0.5)",
+              boxShadow: "0 0 0 1px hsl(var(--accent) / 0.15), 0 8px 20px rgba(0,0,0,0.5)",
             }}
           >
-            <span className="text-[13px] font-bold tracking-tight" style={{ color: "#24DDB8" }}>tt</span>
+            <span className="text-[13px] font-bold tracking-tight" style={{ color: "hsl(var(--accent))" }}>tt</span>
           </div>
           <span className="text-white font-bold text-lg tracking-tight" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>stratt</span>
         </div>
@@ -26,7 +26,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative space-y-6">
           <h1 className="text-4xl font-bold leading-tight" style={{ color: "#F0F4FF" }}>
             L&apos;ERP pour la<br />
-            <span style={{ color: "#5C93FF" }}>
+            <span style={{ color: "hsl(var(--primary))" }}>
               commande publique.
             </span>
           </h1>
@@ -39,9 +39,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 key={m}
                 className="text-xs font-medium px-2.5 py-1 rounded-md"
                 style={{
-                  background: "rgba(92,147,255,0.1)",
-                  color: "#5C93FF",
-                  border: "1px solid rgba(92,147,255,0.2)",
+                  background: "hsl(var(--primary) / 0.1)",
+                  color: "hsl(var(--primary))",
+                  border: "1px solid hsl(var(--primary) / 0.2)",
                 }}
               >
                 {m}
@@ -62,9 +62,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center select-none"
-              style={{ background: "#09111E", border: "1px solid #1A2535" }}
+              style={{ background: "hsl(var(--sidebar))", border: "1px solid #1A2535" }}
             >
-              <span className="text-[11px] font-bold" style={{ color: "#24DDB8" }}>tt</span>
+              <span className="text-[11px] font-bold" style={{ color: "hsl(var(--accent))" }}>tt</span>
             </div>
             <span className="font-bold text-lg tracking-tight" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>stratt</span>
           </div>

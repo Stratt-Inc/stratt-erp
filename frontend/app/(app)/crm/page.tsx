@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Users, TrendingUp, Handshake, Plus, Search } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Contact {
   id: string;
@@ -39,11 +40,11 @@ interface Deal {
 interface PagedResponse<T> { items: T[]; total: number; }
 
 const statusColors: Record<string, string> = {
-  new: "#5C93FF", contacted: "#24DDB8", qualified: "#24DDB8", lost: "#EF4444",
+  new: "hsl(var(--primary))", contacted: "hsl(var(--accent))", qualified: "hsl(var(--accent))", lost: "hsl(var(--destructive))",
 };
 const stageColors: Record<string, string> = {
-  prospecting: "#6B7280", proposal: "#5C93FF", negotiation: "#F59E0B",
-  closed_won: "#24DDB8", closed_lost: "#EF4444",
+  prospecting: "#6B7280", proposal: "hsl(var(--primary))", negotiation: "hsl(var(--warning))",
+  closed_won: "hsl(var(--accent))", closed_lost: "hsl(var(--destructive))",
 };
 const stageLabels: Record<string, string> = {
   prospecting: "Prospection", proposal: "Proposition", negotiation: "Négociation",
@@ -92,14 +93,14 @@ export default function CRMPage() {
   });
 
   const stats = [
-    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: "#5C93FF" },
-    { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "#24DDB8" },
-    { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "#24DDB8" },
+    { label: "Contacts", value: contacts?.total ?? 0, icon: Users, color: MODULE.crm },
+    { label: "Leads", value: leads?.total ?? 0, icon: TrendingUp, color: "hsl(var(--accent))" },
+    { label: "Deals", value: deals?.total ?? 0, icon: Handshake, color: "hsl(var(--accent))" },
     {
       label: "Pipeline",
       value: `${((deals?.items ?? []).reduce((s, d) => s + d.value, 0)).toLocaleString("fr-FR")} €`,
       icon: TrendingUp,
-      color: "#F59E0B",
+      color: "hsl(var(--warning))",
     },
   ];
 
@@ -116,18 +117,18 @@ export default function CRMPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module CRM</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.crm, boxShadow: `0 0 6px ${MODULE.crm}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module CRM</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Gestion commerciale</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Contacts, leads et opportunités</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: MODULE.crm }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -153,7 +154,7 @@ export default function CRMPage() {
             }`}>
             {t.label}
             <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold"
-              style={{ background: tab === t.id ? "rgba(92,147,255,0.1)" : "rgba(30,50,80,0.07)", color: tab === t.id ? "#5C93FF" : "#9CA3AF" }}>
+              style={{ background: tab === t.id ? "hsl(var(--primary) / 0.1)" : "hsl(var(--foreground) / 0.07)", color: tab === t.id ? "hsl(var(--primary))" : "#9CA3AF" }}>
               {t.count}
             </span>
           </button>
@@ -211,7 +212,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: "#5C93FF" }}>
+                    style={{ background: "hsl(var(--primary))" }}>
                     {c.first_name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <span className="font-medium text-sm text-foreground">{c.first_name} {c.last_name}</span>
@@ -222,7 +223,7 @@ function ContactsTable({ items }: { items: Contact[] }) {
               <td className="px-4 py-2 text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
               <td className="px-4 py-2">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: c.type === "company" ? "rgba(92,147,255,0.1)" : "rgba(36,221,184,0.1)", color: c.type === "company" ? "#5C93FF" : "#24DDB8" }}>
+                  style={{ background: c.type === "company" ? "hsl(var(--primary) / 0.1)" : "hsl(var(--accent) / 0.1)", color: c.type === "company" ? "hsl(var(--primary))" : "hsl(var(--accent))" }}>
                   {c.type === "company" ? "Société" : "Personne"}
                 </span>
               </td>

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, BookOpen, HelpCircle, FileText, Zap, ChevronRight, ExternalLink } from "lucide-react";
 import { restartTour } from "@/components/onboarding/OnboardingTour";
+import { MODULE } from "@/lib/colors";
 
 interface HelpArticle {
   id: string;
@@ -123,14 +124,13 @@ export default function HelpPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "rgba(92,147,255,0.12)", border: "1px solid rgba(92,147,255,0.2)" }}>
-          <HelpCircle size={24} style={{ color: "#5C93FF" }} />
+      <div style={{ marginBottom: 16 }}>
+        <div className="section-header" style={{ marginBottom: 4 }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.help, boxShadow: `0 0 4px ${MODULE.help}` }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Documentation</span>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Centre d&apos;aide</h1>
-          <p className="text-sm text-muted-foreground">Documentation, glossaire et guides réglementaires</p>
-        </div>
+        <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Centre d&apos;aide</h1>
+        <p className="text-[12px] mt-0.5 text-muted-foreground">Documentation, glossaire et guides réglementaires</p>
       </div>
 
       {/* Quick actions */}
@@ -140,7 +140,7 @@ export default function HelpPage() {
           className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 hover:bg-muted/20 transition-colors text-left"
         >
           <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Zap size={16} className="text-white fill-white" />
           </div>
           <div>
@@ -156,8 +156,8 @@ export default function HelpPage() {
           className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 hover:bg-muted/20 transition-colors"
         >
           <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: "rgba(239,68,68,0.1)" }}>
-            <FileText size={16} style={{ color: "#EF4444" }} />
+            style={{ background: "hsl(var(--destructive) / 0.1)" }}>
+            <FileText size={16} style={{ color: "hsl(var(--destructive))" }} />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">Code Commande Publique</p>
@@ -172,8 +172,8 @@ export default function HelpPage() {
           className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 hover:bg-muted/20 transition-colors"
         >
           <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: "rgba(36,221,184,0.1)" }}>
-            <BookOpen size={16} style={{ color: "#24DDB8" }} />
+            style={{ background: "hsl(var(--accent) / 0.1)" }}>
+            <BookOpen size={16} style={{ color: "hsl(var(--accent))" }} />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">DECP data.gouv.fr</p>
@@ -205,7 +205,7 @@ export default function HelpPage() {
             }`}
             style={
               category === cat
-                ? { background: "#5C93FF" }
+                ? { background: "hsl(var(--primary))" }
                 : { background: "rgba(255,255,255,0.06)" }
             }
           >
@@ -234,7 +234,7 @@ export default function HelpPage() {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span className="px-2 py-0.5 text-xs font-medium rounded-full shrink-0"
-                  style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}>
+                  style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }}>
                   {article.category}
                 </span>
                 <p className="text-sm font-medium text-foreground truncate">{article.title}</p>
@@ -268,7 +268,7 @@ export default function HelpPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs hover:underline"
-                      style={{ color: "#5C93FF" }}
+                      style={{ color: "hsl(var(--primary))" }}
                     >
                       <ExternalLink size={11} />
                       Legifrance

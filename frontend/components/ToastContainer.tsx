@@ -4,15 +4,15 @@ import { useToastStore } from "@/store/toast";
 import { X, Info, CheckCircle, AlertTriangle } from "lucide-react";
 
 const icons = {
-  info: <Info className="w-4 h-4 flex-shrink-0" style={{ color: "#5C93FF" }} />,
-  success: <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: "#10B981" }} />,
-  warning: <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: "#F59E0B" }} />,
+  info: <Info className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--primary))" }} />,
+  success: <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--success))" }} />,
+  warning: <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--warning))" }} />,
 };
 
 const accents = {
-  info: "rgba(92,147,255,0.12)",
-  success: "rgba(16,185,129,0.12)",
-  warning: "rgba(245,158,11,0.12)",
+  info: "hsl(var(--primary) / 0.12)",
+  success: "hsl(var(--success) / 0.12)",
+  warning: "hsl(var(--warning) / 0.12)",
 };
 
 export function ToastContainer() {

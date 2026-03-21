@@ -13,11 +13,11 @@ interface HighlightProps {
 }
 
 const COLOR_MAP = {
-  blue:   { mark: "rgba(92,147,255,0.18)",  line: "#5C93FF",  text: "#1a3a7a" },
-  teal:   { mark: "rgba(36,221,184,0.18)",  line: "#24DDB8",  text: "#0a5245" },
-  violet: { mark: "rgba(139,92,246,0.15)",  line: "#8B5CF6",  text: "#4c1d95" },
-  amber:  { mark: "rgba(245,158,11,0.18)",  line: "#F59E0B",  text: "#78350f" },
-  green:  { mark: "rgba(16,185,129,0.16)",  line: "#10B981",  text: "#064e3b" },
+  blue:   { mark: "hsl(var(--primary) / 0.18)",  line: "hsl(var(--primary))",  text: "#1a3a7a" },
+  teal:   { mark: "hsl(var(--accent) / 0.18)",   line: "hsl(var(--accent))",   text: "#0a5245" },
+  violet: { mark: "hsl(var(--violet) / 0.15)",   line: "hsl(var(--violet))",   text: "#4c1d95" },
+  amber:  { mark: "hsl(var(--warning) / 0.18)",  line: "hsl(var(--warning))",  text: "#78350f" },
+  green:  { mark: "hsl(var(--success) / 0.16)",  line: "hsl(var(--success))",  text: "#064e3b" },
 };
 
 export function Highlight({

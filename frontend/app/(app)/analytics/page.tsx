@@ -7,6 +7,7 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { api } from "@/lib/api";
+import { MODULE } from "@/lib/colors";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
@@ -46,9 +47,12 @@ interface ABCResult {
 
 // ── Constants ─────────────────────────────────────────────────────────
 
+// CLASS_COLORS kept as hex for recharts props (fill/stroke on chart components)
 const CLASS_COLORS: Record<string, string> = { A: "#5C93FF", B: "#24DDB8", C: "#F59E0B" };
+// CLASS_CSS used for JSX inline styles (borderLeftColor, color, background)
+const CLASS_CSS: Record<string, string> = { A: "hsl(var(--primary))", B: "hsl(var(--accent))", C: "hsl(var(--warning))" };
 const CLASS_BG: Record<string, string> = {
-  A: "rgba(92,147,255,0.12)", B: "rgba(36,221,184,0.12)", C: "rgba(245,158,11,0.12)",
+  A: "hsl(var(--primary) / 0.12)", B: "hsl(var(--accent) / 0.12)", C: "hsl(var(--warning) / 0.12)",
 };
 
 function formatEur(n: number) {
@@ -80,7 +84,7 @@ function MetricCard({ label, value, icon: Icon, color, sub }: {
     <div className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
       {sub && (
         <span className="absolute top-4 right-6 text-[10px] font-semibold px-2 py-0.5 rounded-full z-10"
-          style={{ background: "rgba(36,221,184,0.1)", color: "#24DDB8" }}>{sub}</span>
+          style={{ background: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" }}>{sub}</span>
       )}
       <p className="stat-number-sm">{value}</p>
       <p className="stat-label">{label}</p>
@@ -108,13 +112,13 @@ function ProgressBar({ label, value, max, color }: { label: string; value: numbe
 
 function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: boolean }) {
   const metrics = [
-    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "#5C93FF" },
-    { label: "Leads", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#24DDB8" },
-    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "#24DDB8" },
-    { label: "CA encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: DollarSign, color: "#24DDB8", sub: "Total payé" },
-    { label: "Factures", value: overview?.total_invoices ?? 0, icon: FileText, color: "#F59E0B" },
-    { label: "Employés", value: overview?.total_employees ?? 0, icon: Briefcase, color: "#5C93FF" },
-    { label: "Produits", value: overview?.total_products ?? 0, icon: Package, color: "#5C93FF" },
+    { label: "Contacts CRM", value: overview?.total_contacts ?? 0, icon: Users, color: "hsl(var(--primary))" },
+    { label: "Leads", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "hsl(var(--accent))" },
+    { label: "Deals", value: overview?.total_deals ?? 0, icon: Handshake, color: "hsl(var(--accent))" },
+    { label: "CA encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: DollarSign, color: "hsl(var(--accent))", sub: "Total payé" },
+    { label: "Factures", value: overview?.total_invoices ?? 0, icon: FileText, color: "hsl(var(--warning))" },
+    { label: "Employés", value: overview?.total_employees ?? 0, icon: Briefcase, color: "hsl(var(--primary))" },
+    { label: "Produits", value: overview?.total_products ?? 0, icon: Package, color: "hsl(var(--primary))" },
   ];
   const maxValue = Math.max(
     overview?.total_contacts ?? 0, overview?.total_leads ?? 0, overview?.total_deals ?? 0,
@@ -134,8 +138,8 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
   return (
     <div className="space-y-3">
       <div className="section-header">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>
+        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.analytics, boxShadow: `0 0 6px ${MODULE.analytics}` }} />
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Vue d&apos;ensemble ERP
         </span>
       </div>
@@ -156,19 +160,19 @@ function OverviewTab({ overview, isLoading }: { overview?: Overview; isLoading: 
       <div className="bg-card rounded-xl border border-border p-3">
         <h2 className="text-sm font-bold text-foreground mb-3">Distribution des données</h2>
         <div className="space-y-2.5">
-          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="#5C93FF" />
-          <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="#24DDB8" />
-          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="#24DDB8" />
-          <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="#F59E0B" />
-          <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="#5C93FF" />
-          <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="#5C93FF" />
+          <ProgressBar label="Contacts" value={overview?.total_contacts ?? 0} max={maxValue} color="hsl(var(--primary))" />
+          <ProgressBar label="Leads" value={overview?.total_leads ?? 0} max={maxValue} color="hsl(var(--accent))" />
+          <ProgressBar label="Deals" value={overview?.total_deals ?? 0} max={maxValue} color="hsl(var(--accent))" />
+          <ProgressBar label="Factures" value={overview?.total_invoices ?? 0} max={maxValue} color="hsl(var(--warning))" />
+          <ProgressBar label="Employés" value={overview?.total_employees ?? 0} max={maxValue} color="hsl(var(--primary))" />
+          <ProgressBar label="Produits" value={overview?.total_products ?? 0} max={maxValue} color="hsl(var(--primary))" />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {[
-          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "#5C93FF" },
-          { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "#F59E0B" },
-          { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "#5C93FF" },
+          { title: "CRM Pipeline", desc: `${overview?.total_leads ?? 0} leads actifs en cours de qualification`, color: "hsl(var(--primary))" },
+          { title: "Facturation", desc: `${overview?.total_invoices ?? 0} factures — ${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} € encaissés`, color: "hsl(var(--warning))" },
+          { title: "Inventaire", desc: `${overview?.total_products ?? 0} références produits gérées`, color: "hsl(var(--primary))" },
         ].map((card) => (
           <div key={card.title} className="rounded-xl border border-border bg-card p-3">
             <div className="w-2 h-2 rounded-full mb-2" style={{ background: card.color }} />
@@ -219,7 +223,7 @@ function ABCTab() {
               <button key={d} onClick={() => setDimension(d)}
                 className={["px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
                   dimension === d ? "text-white" : "text-muted-foreground bg-muted/30 hover:bg-muted/60"].join(" ")}
-                style={dimension === d ? { background: "#5C93FF" } : undefined}>
+                style={dimension === d ? { background: "hsl(var(--primary))" } : undefined}>
                 {d === "supplier" ? "Fournisseurs" : "Familles d'achat"}
               </button>
             ))}
@@ -257,11 +261,11 @@ function ABCTab() {
             const label = cls === "A" ? "Stratégiques" : cls === "B" ? "Intermédiaires" : "Secondaires";
             return (
               <div key={cls} className="rounded-xl border border-border bg-card p-3"
-                style={{ borderLeftWidth: 3, borderLeftColor: CLASS_COLORS[cls] }}>
+                style={{ borderLeftWidth: 3, borderLeftColor: CLASS_CSS[cls] }}>
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Classe {cls} — {label}</p>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{ color: CLASS_COLORS[cls], background: CLASS_BG[cls] }}>{cls}</span>
+                    style={{ color: CLASS_CSS[cls], background: CLASS_BG[cls] }}>{cls}</span>
                 </div>
                 <p className="text-2xl font-bold font-display text-foreground">{count}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -334,7 +338,7 @@ function ABCTab() {
                     <td className="px-4 py-2 num text-muted-foreground">{row.cumulative.toFixed(1)}%</td>
                     <td className="px-4 py-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
-                        style={{ color: CLASS_COLORS[row.class], background: CLASS_BG[row.class] }}>{row.class}</span>
+                        style={{ color: CLASS_CSS[row.class], background: CLASS_BG[row.class] }}>{row.class}</span>
                     </td>
                   </tr>
                 ))}
@@ -367,9 +371,9 @@ const KRALJIC_ITEMS = [
 ];
 
 const SEGMENT_CONFIG = {
-  strategic: { label: "Stratégique", color: "#EF4444", bg: "rgba(239,68,68,0.08)", desc: "Fort enjeu, forte dépendance", action: "Partenariat" },
-  leverage: { label: "Levier", color: "#24DDB8", bg: "rgba(36,221,184,0.08)", desc: "Fort enjeu, faible dépendance", action: "Négocier" },
-  bottleneck: { label: "Goulot", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", desc: "Faible enjeu, forte dépendance", action: "Sécuriser" },
+  strategic: { label: "Stratégique", color: "hsl(var(--destructive))", bg: "hsl(var(--destructive) / 0.08)", desc: "Fort enjeu, forte dépendance", action: "Partenariat" },
+  leverage: { label: "Levier", color: "hsl(var(--accent))", bg: "hsl(var(--accent) / 0.08)", desc: "Fort enjeu, faible dépendance", action: "Négocier" },
+  bottleneck: { label: "Goulot", color: "hsl(var(--warning))", bg: "hsl(var(--warning) / 0.08)", desc: "Faible enjeu, forte dépendance", action: "Sécuriser" },
   routine: { label: "Routine", color: "#6B7280", bg: "rgba(107,114,128,0.08)", desc: "Faible enjeu, faible dépendance", action: "Standardiser" },
 };
 
@@ -419,20 +423,20 @@ function KraljicTab() {
             {/* Quadrants */}
             <div className="absolute inset-0 left-8 bottom-6 grid grid-cols-2 grid-rows-2 gap-0.5">
               {/* Top-left: Goulot */}
-              <div className="rounded-tl-lg flex items-start justify-start p-2" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.15)" }}>
-                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#F59E0B" }}>Goulot</span>
+              <div className="rounded-tl-lg flex items-start justify-start p-2" style={{ background: "hsl(var(--warning) / 0.06)", border: "1px solid hsl(var(--warning) / 0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "hsl(var(--warning))" }}>Goulot</span>
               </div>
               {/* Top-right: Stratégique */}
-              <div className="rounded-tr-lg flex items-start justify-end p-2" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
-                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#EF4444" }}>Stratégique</span>
+              <div className="rounded-tr-lg flex items-start justify-end p-2" style={{ background: "hsl(var(--destructive) / 0.06)", border: "1px solid hsl(var(--destructive) / 0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "hsl(var(--destructive))" }}>Stratégique</span>
               </div>
               {/* Bottom-left: Routine */}
               <div className="rounded-bl-lg flex items-end justify-start p-2" style={{ background: "rgba(107,114,128,0.06)", border: "1px solid rgba(107,114,128,0.12)" }}>
                 <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#6B7280" }}>Routine</span>
               </div>
               {/* Bottom-right: Levier */}
-              <div className="rounded-br-lg flex items-end justify-end p-2" style={{ background: "rgba(36,221,184,0.06)", border: "1px solid rgba(36,221,184,0.15)" }}>
-                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#24DDB8" }}>Levier</span>
+              <div className="rounded-br-lg flex items-end justify-end p-2" style={{ background: "hsl(var(--accent) / 0.06)", border: "1px solid hsl(var(--accent) / 0.15)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "hsl(var(--accent))" }}>Levier</span>
               </div>
 
               {/* Dots */}
@@ -479,11 +483,11 @@ function KraljicTab() {
                 <p className="text-[11px] text-muted-foreground">{selectedItem.supplier}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className="rounded-lg p-2.5" style={{ background: "rgba(92,147,255,0.06)" }}>
+                <div className="rounded-lg p-2.5" style={{ background: "hsl(var(--primary) / 0.06)" }}>
                   <p className="text-[10px] text-muted-foreground">Dépense annuelle</p>
                   <p className="text-sm font-bold text-foreground num">{selectedItem.spend.toLocaleString("fr-FR")} €</p>
                 </div>
-                <div className="rounded-lg p-2.5" style={{ background: "rgba(239,68,68,0.06)" }}>
+                <div className="rounded-lg p-2.5" style={{ background: "hsl(var(--destructive) / 0.06)" }}>
                   <p className="text-[10px] text-muted-foreground">Risque supply</p>
                   <p className="text-sm font-bold text-foreground">{selectedItem.risk}/100</p>
                 </div>
@@ -546,21 +550,22 @@ export default function AnalyticsPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-end justify-between gap-8 pb-3" style={{ borderBottom: `1px solid ${MODULE.analytics}1a` }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
-            Module analytics
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.analytics, boxShadow: `0 0 6px ${MODULE.analytics}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module Analytics</span>
+          </div>
           <h1 className="text-[22px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Analytics{" "}
-            <Highlight variant="box" color="teal">& Reporting</Highlight>
+            <Highlight variant="box" color="blue">& Reporting</Highlight>
           </h1>
-          <p className="text-[13px] mt-1 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             Vue consolidée · Classement ABC · Matrice Kraljic · Courbe de Pareto
           </p>
         </div>
         <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
-          style={{ background: "rgba(36,221,184,0.1)", color: "#24DDB8" }}>Temps réel</span>
+          style={{ background: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" }}>Temps réel</span>
       </div>
 
       {/* Tabs */}

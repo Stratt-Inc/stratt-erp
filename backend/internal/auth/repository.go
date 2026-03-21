@@ -43,6 +43,11 @@ func (r *Repository) UpdateUser(ctx context.Context, user *models.User) error {
 	return r.db.WithContext(ctx).Save(user).Error
 }
 
+func (r *Repository) UpdateLastLogin(ctx context.Context, userID uuid.UUID) error {
+	now := time.Now()
+	return r.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", userID).Update("last_login_at", now).Error
+}
+
 func (r *Repository) CreateSession(ctx context.Context, session *models.Session) error {
 	return r.db.WithContext(ctx).Create(session).Error
 }
