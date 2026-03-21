@@ -7,6 +7,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: stratt_postgres
+    hostname: db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-stratt_dev}
@@ -118,7 +119,7 @@ services:
     environment:
       PORT: 8080
       APP_ENV: ${APP_ENV:-development}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-stratt}:${POSTGRES_PASSWORD:-stratt_dev_password}@postgres:5432/${POSTGRES_DB:-stratt_dev}?sslmode=disable
+      DATABASE_URL: postgresql://${POSTGRES_USER:-stratt}:${POSTGRES_PASSWORD:-stratt_dev_password}@db:5432/${POSTGRES_DB:-stratt_dev}?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-change_me_in_production_min_32_chars}
       JWT_ACCESS_EXP_MINUTES: ${JWT_ACCESS_EXP_MINUTES:-15}
