@@ -20,6 +20,8 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 
 	// Export — implementation document for financial software editors
 	r.GET("/export", h.Export)
+	// Guide — pedagogical document for purchasing agents
+	r.GET("/export/guide", h.ExportGuide)
 
 	// Node ↔ Tag association
 	r.POST("/:id/tags/:tagId", h.AddTagToNode)

@@ -12,7 +12,7 @@ import {
   FolderTree, Plus, ChevronRight, ChevronDown, Edit3, History,
   CheckCircle2, AlertCircle, Download, GripVertical, Shield,
   BookOpen, Layers, Scale, Search, Loader2, Tag, X, Trash2,
-  GitMerge, RotateCcw, ArrowRight, Zap, Clock, FileSpreadsheet, FileText,
+  GitMerge, RotateCcw, ArrowRight, Zap, Clock, FileSpreadsheet, FileText, BookMarked,
 } from "lucide-react";
 
 /* ── API types ── */
@@ -399,6 +399,16 @@ export default function NomenclaturePage() {
     setExportOpen(false);
   }
 
+  function triggerGuide() {
+    const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+    const orgId = currentOrg?.id ?? "";
+    window.open(
+      `${base}/api/v1/nomenclature/export/guide?org_id=${orgId}&token=${accessToken}`,
+      "_blank"
+    );
+    setExportOpen(false);
+  }
+
   function fmtRelative(iso: string): string {
     const diff = Date.now() - new Date(iso).getTime();
     const h = Math.floor(diff / 3_600_000);
@@ -575,6 +585,20 @@ export default function NomenclaturePage() {
                     <div>
                       <p className="font-semibold text-foreground">Export PDF</p>
                       <p className="text-muted-foreground text-[10px]">Aperçu imprimable &amp; institutionnel</p>
+                    </div>
+                  </button>
+                  <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                    style={{ borderBottom: "1px solid hsl(var(--border))", borderTop: "1px solid hsl(var(--border))", marginTop: 4 }}>
+                    Guide pédagogique
+                  </div>
+                  <button
+                    onClick={() => triggerGuide()}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-xs font-medium hover:bg-muted/50 transition-colors text-left"
+                  >
+                    <BookMarked className="w-4 h-4 flex-shrink-0" style={{ color: "#7c3aed" }} />
+                    <div>
+                      <p className="font-semibold text-foreground">Guide agents saisisseurs</p>
+                      <p className="text-muted-foreground text-[10px]">Définitions, exemples, redirections — interactif &amp; imprimable</p>
                     </div>
                   </button>
                 </div>
