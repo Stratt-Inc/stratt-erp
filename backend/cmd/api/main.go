@@ -178,6 +178,9 @@ func main() {
 	// Share links (authenticated creation, public consumption)
 	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)
 
+	// Share links (authenticated creation, public consumption)
+	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)
+
 	// ── Public routes (no auth) ────────────────────────────
 	public := r.Group("/api/public")
 	chatbot.RegisterPublicRoutes(public.Group("/chatbot"), chatbotHandler)
