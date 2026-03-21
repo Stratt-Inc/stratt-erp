@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -27,10 +28,18 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
+type NavItem = {
+  label: string;
+  href: string;
+  icon: React.FC<{ className?: string }>;
+  permission: string | null;
+  tour?: string;
+};
+
 // permission: null = visible par tous les utilisateurs authentifiés
 // permission: "perm.name" = visible uniquement si l'utilisateur a cette permission
 //             (les Admin ont toujours accès, même sans la permission explicite)
-const pilotageNav = [
+const pilotageNav: NavItem[] = [
   { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard", permission: null },
   { label: "Planification", href: "/planification", icon: Calendar, permission: null },
   { label: "Cartographie", href: "/cartographie", icon: Map, permission: null },
@@ -39,7 +48,7 @@ const pilotageNav = [
   { label: "Documents", href: "/exports", icon: Download, permission: null },
 ];
 
-const erpNav = [
+const erpNav: NavItem[] = [
   { label: "CRM", href: "/crm", icon: Users, tour: "crm", permission: "crm.read" },
   { label: "Comptabilité", href: "/accounting", icon: Calculator, permission: "accounting.read" },
   { label: "Facturation", href: "/billing", icon: FileText, permission: "billing.read" },
@@ -49,7 +58,7 @@ const erpNav = [
   { label: "Analytics", href: "/analytics", icon: BarChart2, permission: "analytics.read" },
 ];
 
-const systemeNav = [
+const systemeNav: NavItem[] = [
   { label: "Organisations", href: "/organizations", icon: Building2, permission: "admin.manage" },
   { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings", permission: null },
   { label: "Administration", href: "/administration", icon: Shield, permission: "admin.manage" },
@@ -81,7 +90,7 @@ export function Sidebar() {
   const canView = (permission: string | null) =>
     !permission || !currentRole || hasPermission(permission);
 
-  const renderNav = (items: typeof pilotageNav) =>
+  const renderNav = (items: NavItem[]) =>
     items.filter(({ permission }) => canView(permission)).map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
