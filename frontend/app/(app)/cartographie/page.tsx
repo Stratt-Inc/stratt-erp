@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
-import { useDemoAction } from "@/store/toast";
+import { useDemoAction, useToastStore } from "@/store/toast";
 import { MODULE } from "@/lib/colors";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip,
@@ -20,7 +20,7 @@ import {
 import {
   Upload, BarChart3, AlertTriangle, TrendingDown, TrendingUp,
   Layers, FolderOpen, Scale, Target, CheckCircle2, ArrowUpRight,
-  X, SlidersHorizontal,
+  X, SlidersHorizontal, Share2, Copy, Loader2,
 } from "lucide-react";
 
 /* ── Types ── */
@@ -68,6 +68,15 @@ export default function CartographiePage() {
   const { accessToken, currentOrg } = useAuthStore();
   const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
   const demo = useDemoAction();
+  const showToast = useToastStore((s) => s.show);
+  const [shareModal, setShareModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+
+  const shareMutation = useMutation<{ url: string; expires_at: string }, Error, void>({
+    mutationFn: () => api.post("/api/v1/share", { ttl_days: 30, label: "Tableau de bord élu" }, opts),
+    onSuccess: (res) => { setShareUrl(res.url); },
+    onError: () => showToast("Impossible de générer le lien.", "warning"),
+  });
 
   /* ── Remote data ── */
   const { data: nodes = [] } = useQuery<NomenclatureNode[]>({
@@ -302,8 +311,72 @@ export default function CartographiePage() {
           >
             <BarChart3 className="w-3.5 h-3.5" /> Rapport complet
           </button>
+          <button
+            onClick={() => { setShareModal(true); setShareUrl(""); shareMutation.mutate(); }}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+          >
+            <Share2 className="w-3.5 h-3.5" /> Partager élus
+          </button>
         </div>
       </div>
+
+      {/* Share modal */}
+      {shareModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-md mx-4">
+            <div className="px-5 py-4 flex items-center justify-between border-b border-border">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-4 h-4" style={{ color: "#5C93FF" }} />
+                <h3 className="text-sm font-bold text-foreground">Partager avec les élus</h3>
+              </div>
+              <button onClick={() => setShareModal(false)}>
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Génère un lien sécurisé (valable 30 jours) vers un tableau de bord simplifié en lecture seule,
+                sans accès aux données opérationnelles.
+              </p>
+              {shareMutation.isPending && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Génération du lien…
+                </div>
+              )}
+              {shareUrl && (
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Lien à partager
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      readOnly
+                      value={shareUrl}
+                      className="flex-1 text-xs px-3 py-2 rounded-lg border border-border bg-muted/30 text-foreground font-mono"
+                    />
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(shareUrl); showToast("Lien copié !", "success"); }}
+                      className="px-3 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+                    >
+                      <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    ⏱ Expire dans 30 jours · Aucun compte requis
+                  </p>
+                  <button
+                    onClick={() => window.open(shareUrl, "_blank")}
+                    className="w-full py-2 text-xs font-semibold rounded-xl text-white"
+                    style={{ background: "#5C93FF" }}
+                  >
+                    Aperçu du tableau de bord élu ↗
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── KPIs ── */}
       <div className="section-header">
