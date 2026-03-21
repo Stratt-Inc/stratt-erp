@@ -31,7 +31,7 @@ import { useAuthStore } from "@/store/auth";
 type NavItem = {
   label: string;
   href: string;
-  icon: React.FC<{ className?: string }>;
+  icon: React.FC<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
   permission: string | null;
   tour?: string;
 };
