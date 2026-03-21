@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { MODULE } from "@/lib/colors";
 import { useAuthStore } from "@/store/auth";
@@ -10,7 +10,7 @@ import { useDemoAction } from "@/store/toast";
 import {
   Shield, Users, Settings, ClipboardList, BookOpen, Plus,
   ChevronRight, Lock, Server, Calendar, Download, ChevronLeft,
-  Filter,
+  Filter, Webhook, Trash2, Play, CheckCircle2, XCircle, Circle,
 } from "lucide-react";
 
 /* ── Audit types ── */
@@ -66,10 +66,28 @@ const actionColors: Record<string, { bg: string; color: string }> = {
 };
 
 const tabs = [
-  { id: "utilisateurs", label: "Utilisateurs", icon: Users },
-  { id: "parametres", label: "Paramètres", icon: Settings },
-  { id: "journal", label: "Journal", icon: ClipboardList },
-  { id: "support", label: "Support", icon: BookOpen },
+  { id: "utilisateurs", label: "Utilisateurs",  icon: Users },
+  { id: "parametres",   label: "Paramètres",    icon: Settings },
+  { id: "journal",      label: "Journal",        icon: ClipboardList },
+  { id: "webhooks",     label: "Webhooks",       icon: Webhook },
+  { id: "support",      label: "Support",        icon: BookOpen },
+];
+
+/* ── Webhook types ── */
+interface WebhookRow {
+  id: string;
+  url: string;
+  events: string[];
+  is_active: boolean;
+  last_status: string;
+  fail_count: number;
+  created_at: string;
+}
+
+const KNOWN_EVENTS = [
+  "marche.created", "marche.updated", "marche.deleted", "marche.seuil_depasse",
+  "import.completed", "alerte.echeance", "alerte.delai_paiement",
+  "user.joined", "user.removed",
 ];
 
 interface Member {
@@ -114,6 +132,42 @@ export default function AdministrationPage() {
   const auditLogs   = auditData?.logs  ?? [];
   const auditTotal  = auditData?.total ?? 0;
   const auditPages  = auditData?.pages ?? 1;
+
+  /* ── Webhook state ── */
+  const qc = useQueryClient();
+  const [whForm, setWhForm]     = useState(false);
+  const [whUrl, setWhUrl]       = useState("");
+  const [whSecret, setWhSecret] = useState("");
+  const [whEvents, setWhEvents] = useState<string[]>([]);
+  const [newHookSecret, setNewHookSecret] = useState("");
+
+  const { data: webhooksData = [] } = useQuery<WebhookRow[]>({
+    queryKey: ["webhooks", currentOrg?.id],
+    queryFn: () => api.get("/api/v1/webhooks", opts),
+    enabled: !!accessToken && !!currentOrg && activeTab === "webhooks",
+  });
+
+  const createWebhook = useMutation<{ secret: string }, Error, void>({
+    mutationFn: () => api.post("/api/v1/webhooks", { url: whUrl, events: whEvents, secret: whSecret || undefined }, opts) as Promise<{ secret: string }>,
+    onSuccess: (res) => {
+      setNewHookSecret(res.secret ?? "");
+      setWhForm(false);
+      setWhUrl(""); setWhSecret(""); setWhEvents([]);
+      qc.invalidateQueries({ queryKey: ["webhooks", currentOrg?.id] });
+    },
+  });
+
+  const deleteWebhook = useMutation({
+    mutationFn: (id: string) => api.delete(`/api/v1/webhooks/${id}`, opts),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["webhooks", currentOrg?.id] }),
+  });
+
+  const testWebhook = useMutation({
+    mutationFn: (id: string) => api.post(`/api/v1/webhooks/${id}/test`, {}, opts),
+  });
+
+  const toggleEvent = (ev: string) =>
+    setWhEvents(evs => evs.includes(ev) ? evs.filter(e => e !== ev) : [...evs, ev]);
 
   function exportAuditCSV() {
     const base = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -428,6 +482,162 @@ export default function AdministrationPage() {
                   </button>
                 </div>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Webhooks */}
+      {activeTab === "webhooks" && (
+        <div className="space-y-4">
+          {/* New secret revealed */}
+          {newHookSecret && (
+            <div className="rounded-xl border border-accent/30 bg-accent/5 p-4 space-y-2">
+              <p className="text-xs font-bold text-accent uppercase tracking-widest">Secret de signature (affiché une seule fois)</p>
+              <code className="block text-xs font-mono bg-background border border-border rounded-lg px-3 py-2 break-all">{newHookSecret}</code>
+              <button onClick={() => setNewHookSecret("")} className="text-xs text-muted-foreground underline">Fermer</button>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              Les webhooks envoient une requête HTTPS signée (HMAC-SHA256) à votre URL lors d&apos;un événement.
+              Retry automatique 3× (1 min, 5 min, 30 min).
+            </p>
+            <button
+              onClick={() => { setWhForm(true); setWhUrl(""); setWhSecret(""); setWhEvents([]); }}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-xl text-white flex-shrink-0"
+              style={{ background: MODULE.administration }}
+            >
+              <Plus className="w-3.5 h-3.5" /> Nouveau webhook
+            </button>
+          </div>
+
+          {/* Create form */}
+          {whForm && (
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-foreground">Configurer un endpoint</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">URL de destination *</label>
+                  <input
+                    type="url"
+                    value={whUrl}
+                    onChange={(e) => setWhUrl(e.target.value)}
+                    placeholder="https://votre-serveur.fr/webhook"
+                    className="w-full text-sm px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">Secret HMAC (optionnel — auto-généré si vide)</label>
+                  <input
+                    type="text"
+                    value={whSecret}
+                    onChange={(e) => setWhSecret(e.target.value)}
+                    placeholder="Laisser vide pour générer automatiquement"
+                    className="w-full text-sm px-3 py-2 rounded-lg border border-border bg-background text-foreground font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-2">Événements à écouter *</label>
+                  <div className="flex flex-wrap gap-2">
+                    {KNOWN_EVENTS.map((ev) => (
+                      <button
+                        key={ev}
+                        onClick={() => toggleEvent(ev)}
+                        className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border transition-colors ${
+                          whEvents.includes(ev)
+                            ? "border-transparent text-white"
+                            : "border-border text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={whEvents.includes(ev) ? { background: MODULE.administration } : {}}
+                      >
+                        {ev}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button onClick={() => setWhForm(false)} className="px-4 py-2 text-xs rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
+                  Annuler
+                </button>
+                <button
+                  onClick={() => createWebhook.mutate()}
+                  disabled={!whUrl || whEvents.length === 0 || createWebhook.isPending}
+                  className="px-4 py-2 text-xs font-semibold rounded-xl text-white disabled:opacity-50"
+                  style={{ background: MODULE.administration }}
+                >
+                  {createWebhook.isPending ? "Création…" : "Créer le webhook"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Webhook list */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            {webhooksData.length === 0 && !whForm && (
+              <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+                Aucun webhook configuré. Créez-en un pour connecter Axiora à vos outils.
+              </div>
+            )}
+            {webhooksData.length > 0 && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    {["Statut", "URL", "Événements", "Erreurs", "Créé le", "Actions"].map((h) => (
+                      <th key={h} className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {webhooksData.map((wh) => (
+                    <tr key={wh.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3">
+                        {wh.last_status === "success"
+                          ? <CheckCircle2 className="w-4 h-4 text-accent" />
+                          : wh.last_status === "failure"
+                          ? <XCircle className="w-4 h-4 text-destructive" />
+                          : <Circle className="w-4 h-4 text-muted-foreground" />}
+                      </td>
+                      <td className="px-4 py-3 text-xs font-mono text-foreground max-w-[220px] truncate">{wh.url}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {(wh.events ?? []).slice(0, 3).map((ev: string) => (
+                            <span key={ev} className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono">{ev}</span>
+                          ))}
+                          {(wh.events ?? []).length > 3 && (
+                            <span className="text-[10px] text-muted-foreground">+{(wh.events ?? []).length - 3}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{wh.fail_count || "—"}</td>
+                      <td className="px-4 py-3 text-[11px] text-muted-foreground font-mono">
+                        {new Date(wh.created_at).toLocaleDateString("fr-FR")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <button
+                            title="Tester"
+                            onClick={() => testWebhook.mutate(wh.id)}
+                            className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground hover:text-accent"
+                          >
+                            <Play className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            title="Supprimer"
+                            onClick={() => { if (confirm("Supprimer ce webhook ?")) deleteWebhook.mutate(wh.id); }}
+                            className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>

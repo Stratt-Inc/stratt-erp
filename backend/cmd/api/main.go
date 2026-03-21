@@ -36,6 +36,7 @@ import (
 	"github.com/stratt/backend/modules/auditlog"
 	"github.com/stratt/backend/modules/share"
 	"github.com/stratt/backend/modules/sirene"
+	"github.com/stratt/backend/modules/webhooks"
 )
 
 func main() {
@@ -174,6 +175,9 @@ func main() {
 	sirene.RegisterRoutes(v1.Group("/sirene", requireAuth, requireOrg, requirePerm("procurement.read")), sireneHandler)
 	chatbot.RegisterRoutes(v1.Group("/chatbot", requireAuth, requireOrg, requirePerm("procurement.read")), chatbotHandler)
 	auditlog.RegisterRoutes(v1.Group("/audit", requireAuth, requireOrg, requirePerm("admin.manage")), auditHandler)
+
+	webhooksHandler := webhooks.NewHandler(db)
+	webhooks.RegisterRoutes(v1.Group("/webhooks", requireAuth, requireOrg, requirePerm("admin.manage")), webhooksHandler)
 
 	// Share links (authenticated creation, public consumption)
 	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)

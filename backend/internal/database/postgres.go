@@ -16,6 +16,7 @@ import (
 	procurementmod "github.com/stratt/backend/modules/procurement"
 	chatbotmod "github.com/stratt/backend/modules/chatbot"
 	sirenemod "github.com/stratt/backend/modules/sirene"
+	webhooksmod "github.com/stratt/backend/modules/webhooks"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -96,5 +97,8 @@ func AutoMigrate(db *gorm.DB) error {
 		&chatbotmod.ChatToken{},
 		&chatbotmod.ChatMessage{},
 		&chatbotmod.ChatFeedback{},
+		// Webhooks
+		&webhooksmod.Webhook{},
+		&webhooksmod.WebhookDelivery{},
 	)
 }
