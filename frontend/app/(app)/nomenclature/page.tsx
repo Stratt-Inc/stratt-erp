@@ -255,9 +255,16 @@ export default function NomenclaturePage() {
   }, [tree, search]);
 
   const selected = selectedId ? findNode(tree, selectedId) : null;
-  const familles = apiNodes.filter((n) => n.type === "famille").length;
+  const familles = apiNodes.filter((n) => n.type === "famille" && n.montant > 0).length;
   const codes = apiNodes.filter((n) => n.type === "code").length;
   const conformes = apiNodes.filter((n) => n.conforme).length;
+  const totalDepense = apiNodes
+    .filter((n) => n.type === "grande-famille")
+    .reduce((acc, n) => acc + (n.montant ?? 0), 0);
+  function fmtEur(v: number) {
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(2)} M€`;
+    return `${Math.round(v / 1_000)} k€`;
+  }
   const exhaustivite = apiNodes.length > 0 ? Math.round((conformes / apiNodes.length) * 100) : 0;
 
   const systemTags = tags.filter((t) => t.is_system);
@@ -326,11 +333,11 @@ export default function NomenclaturePage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 flex-shrink-0">
         {[
-          { label: "Familles d'achats", value: isLoading ? "…" : familles, icon: Layers, color: MODULE.nomenclature },
-          { label: "Codes actifs", value: isLoading ? "…" : codes, icon: FolderTree, color: "hsl(var(--primary))" },
-          { label: "Exhaustivité", value: isLoading ? "…" : `${exhaustivite}%`, icon: CheckCircle2, color: "hsl(var(--accent))" },
-          { label: "Tags système", value: systemTags.length, icon: Tag, color: "hsl(var(--violet))" },
-          { label: "Tags custom", value: customTags.length, icon: Scale, color: "hsl(var(--warning))" },
+          { label: "Familles actives", value: isLoading ? "…" : familles, icon: Layers, color: MODULE.nomenclature },
+          { label: "Dépenses engagées", value: isLoading ? "…" : (totalDepense > 0 ? fmtEur(totalDepense) : "—"), icon: Scale, color: "hsl(var(--accent))" },
+          { label: "Codes nomenclature", value: isLoading ? "…" : codes, icon: FolderTree, color: "hsl(var(--primary))" },
+          { label: "Exhaustivité", value: isLoading ? "…" : `${exhaustivite}%`, icon: CheckCircle2, color: "hsl(var(--warning))" },
+          { label: "Tags custom", value: customTags.length, icon: Tag, color: "hsl(var(--violet))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number-sm">{value}</p>
@@ -494,7 +501,7 @@ export default function NomenclaturePage() {
                 )}
                 {(selected.montant ?? 0) > 0 && (
                   <div>
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Volume de référence (multi-années)</label>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Dépenses engagées</label>
                     <div className="mt-1 text-xs font-semibold num text-foreground">{selected.montant!.toLocaleString("fr-FR")} €</div>
                   </div>
                 )}

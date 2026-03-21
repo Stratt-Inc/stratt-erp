@@ -14,11 +14,17 @@ type Handler struct{ db *gorm.DB }
 
 func NewHandler(db *gorm.DB) *Handler { return &Handler{db: db} }
 
-// List returns all nomenclature nodes (with their tags) for the current org.
+// List returns all nomenclature nodes enriched with real spend from marchés.
+// Montant on each node is computed live from the marches table, not the stored
+// seed value: leaf "code" nodes get the sum of matching marchés, parent nodes
+// (famille, grande-famille) accumulate their children's montants bottom-up.
+// Conforme is recomputed from the live montant vs seuil.
 func (h *Handler) List(c *gin.Context) {
 	orgID, _ := middleware.GetOrgID(c)
+	ctx := c.Request.Context()
+
 	var nodes []NomenclatureNode
-	if err := h.db.WithContext(c.Request.Context()).
+	if err := h.db.WithContext(ctx).
 		Preload("Tags").
 		Where("tenant_id = ?", orgID).
 		Order("code").
@@ -26,6 +32,88 @@ func (h *Handler) List(c *gin.Context) {
 		c.JSON(500, models.Err("failed to fetch nomenclature"))
 		return
 	}
+
+	// ── 1. Aggregate real spend from marchés by famille_code + categorie ────
+	type spendRow struct {
+		FamilleCode string
+		Categorie   string
+		Total       float64
+	}
+	var spendRows []spendRow
+	h.db.WithContext(ctx).
+		Table("marches").
+		Select("famille_code, categorie, COALESCE(SUM(montant), 0) as total").
+		Where("tenant_id = ? AND deleted_at IS NULL AND famille_code != ''", orgID).
+		Group("famille_code, categorie").
+		Scan(&spendRows)
+
+	// Build a set of known nomenclature codes for prefix-normalisation.
+	codeSet := make(map[string]bool, len(nodes))
+	for _, n := range nodes {
+		codeSet[n.Code] = true
+	}
+
+	// Resolve a marché famille_code → nomenclature code, handling the F/S prefix
+	// that exists on fournitures/services nodes but not on the marché field.
+	normCode := func(fc, categorie string) string {
+		if codeSet[fc] {
+			return fc
+		}
+		switch categorie {
+		case "Fournitures":
+			if codeSet["F"+fc] {
+				return "F" + fc
+			}
+		case "Services":
+			if codeSet["S"+fc] {
+				return "S" + fc
+			}
+		}
+		return fc
+	}
+
+	spendByCode := make(map[string]float64, len(spendRows))
+	for _, r := range spendRows {
+		spendByCode[normCode(r.FamilleCode, r.Categorie)] += r.Total
+	}
+
+	// ── 2. Assign montant to leaf nodes, zero out all others first ───────────
+	nodeByID := make(map[uuid.UUID]*NomenclatureNode, len(nodes))
+	for i := range nodes {
+		nodeByID[nodes[i].ID] = &nodes[i]
+		nodes[i].Montant = 0
+	}
+	for i := range nodes {
+		if nodes[i].Type == "code" {
+			nodes[i].Montant = spendByCode[nodes[i].Code]
+		}
+	}
+
+	// ── 3. Aggregate bottom-up: famille ← sum(codes), grande-famille ← sum(familles)
+	for _, parentType := range []string{"famille", "grande-famille"} {
+		for i := range nodes {
+			if nodes[i].Type != parentType {
+				continue
+			}
+			var total float64
+			for j := range nodes {
+				if nodes[j].ParentID != nil && *nodes[j].ParentID == nodes[i].ID {
+					total += nodes[j].Montant
+				}
+			}
+			nodes[i].Montant = total
+		}
+	}
+
+	// ── 4. Recompute conformité from live montant ────────────────────────────
+	for i := range nodes {
+		seuil := nodes[i].Seuil
+		if seuil <= 0 {
+			seuil = nodes[i].SeuilMapa
+		}
+		nodes[i].Conforme = nodes[i].Montant == 0 || seuil <= 0 || nodes[i].Montant <= seuil
+	}
+
 	c.JSON(200, models.OK(nodes))
 }
 
