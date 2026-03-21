@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   transpilePackages: ["recharts"],
+  experimental: {
+    outputFileTracingExcludes: {
+      "*": [
+        "node_modules/@swc/**",
+        "node_modules/webpack/**",
+        "node_modules/terser/**",
+      ],
+    },
+  },
   images: {
     domains: ["localhost"],
   },
