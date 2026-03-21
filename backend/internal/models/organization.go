@@ -21,7 +21,8 @@ type OrganizationMember struct {
 	OrganizationID uuid.UUID  `gorm:"type:uuid;not null;index"                       json:"organization_id"`
 	UserID         uuid.UUID  `gorm:"type:uuid;not null;index"                       json:"user_id"`
 	RoleID         *uuid.UUID `gorm:"type:uuid;index"                                json:"role_id"`
-	Status         string     `gorm:"default:'active'"                               json:"status"` // active, suspended
+	Status         string     `gorm:"default:'active'"                               json:"status"`     // active, suspended
+	Department     string     `gorm:"default:''"                                     json:"department"` // e.g. "DGA Finances"
 
 	// Relations
 	Organization Organization `gorm:"foreignKey:OrganizationID" json:"-"`

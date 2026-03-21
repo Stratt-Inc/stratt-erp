@@ -53,7 +53,13 @@ const tabs = [
   { id: "support", label: "Support", icon: BookOpen },
 ];
 
-interface Member { id: string; user: { name: string; email: string }; status: string; role?: { name: string } | null; }
+interface Member {
+  id: string;
+  user: { name: string; email: string; last_login_at?: string | null };
+  status: string;
+  role?: { name: string } | null;
+  department?: string;
+}
 
 export default function AdministrationPage() {
   const [activeTab, setActiveTab] = useState("utilisateurs");
@@ -73,8 +79,10 @@ export default function AdministrationPage() {
         nom: m.user?.name ?? "—",
         email: m.user?.email ?? "—",
         role: m.role?.name ?? "—",
-        service: "—",
-        connexion: "—",
+        service: m.department || "—",
+        connexion: m.user?.last_login_at
+          ? new Date(m.user.last_login_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
+          : "—",
       }))
     : demoUsers;
 

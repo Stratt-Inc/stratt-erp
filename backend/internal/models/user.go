@@ -8,11 +8,12 @@ import (
 
 type User struct {
 	Base
-	Email         string `gorm:"uniqueIndex;not null" json:"email"`
-	Name          string `gorm:"not null"             json:"name"`
-	PasswordHash  string `gorm:"not null"             json:"-"`
-	AvatarURL     string `json:"avatar_url,omitempty"`
-	EmailVerified bool   `gorm:"default:false"        json:"email_verified"`
+	Email         string     `gorm:"uniqueIndex;not null" json:"email"`
+	Name          string     `gorm:"not null"             json:"name"`
+	PasswordHash  string     `gorm:"not null"             json:"-"`
+	AvatarURL     string     `json:"avatar_url,omitempty"`
+	EmailVerified bool       `gorm:"default:false"        json:"email_verified"`
+	LastLoginAt   *time.Time `json:"last_login_at,omitempty"`
 
 	// Relations
 	Sessions []Session              `gorm:"foreignKey:UserID" json:"-"`

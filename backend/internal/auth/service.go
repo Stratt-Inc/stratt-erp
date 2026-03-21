@@ -98,6 +98,9 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (*models.User, strin
 		return nil, "", "", err
 	}
 
+	// Best-effort — don't fail login if this update fails
+	_ = s.repo.UpdateLastLogin(ctx, user.ID)
+
 	return user, accessToken, refreshToken, nil
 }
 
