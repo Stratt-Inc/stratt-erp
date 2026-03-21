@@ -88,6 +88,7 @@ func AutoMigrate(db *gorm.DB) error {
 		// BOAMP
 		&boampmod.BOAMPVeille{},
 		// Nomenclature
+		&nomenclaturemod.NomenclatureTag{},
 		&nomenclaturemod.NomenclatureNode{},
 		// SIRENE
 		&sirenemod.SIRENEEnrichment{},

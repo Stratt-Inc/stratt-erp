@@ -17,6 +17,15 @@ type NomenclatureEntry struct {
 	Label       string
 	Description string
 	Tag         string // Fournitures | Services | Travaux
+	CPVCode     string
+}
+
+// TravauxEntry is a CPV-sourced Travaux entry (source: CPV_secteurs_VF.xlsx).
+type TravauxEntry struct {
+	FamilyCode  string // T-BAT, T-VRD, etc.
+	FamilyLabel string
+	CPVCode     string
+	Label       string
 }
 
 // NomenclatureNationale — ~175 leaf codes from nomenclature achats V1.
@@ -200,11 +209,103 @@ var NomenclatureNationale = []NomenclatureEntry{
 	{FamilyNum: 75, FamilyLabel: "Audit financier", Code: "75.03", Label: "Ingénierie financière", Description: "Ingénierie financière", Tag: "Services"},
 }
 
+// NomenclatureTravaux — CPV-sourced Travaux entries.
+// Source: CPV_secteurs_VF.xlsx — secteur "Travaux, matériaux, maintenance".
+// 8 familles × ~7 codes = ~56 leaf codes.
+var NomenclatureTravaux = []TravauxEntry{
+	// ── Bâtiment ──────────────────────────────────────────────
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45210000-2", Label: "Travaux de construction de bâtiments"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45211000-9", Label: "Travaux de construction d'immeubles collectifs et de maisons individuelles"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45212000-6", Label: "Travaux de construction d'équipements de loisirs, de sports, de culture et d'hébergement"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45213000-3", Label: "Travaux de construction de bâtiments commerciaux, d'entrepôts et industriels"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45214000-0", Label: "Travaux de construction d'établissements d'enseignement et de recherche"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45215000-7", Label: "Travaux de construction de bâtiments pour le secteur de la santé et de l'assistance sociale"},
+	{FamilyCode: "T-BAT", FamilyLabel: "Bâtiment", CPVCode: "45262000-1", Label: "Travaux de corps de métier spécialisés (couverture, électricité, plomberie, menuiserie)"},
+
+	// ── Voirie et réseaux ─────────────────────────────────────
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45220000-5", Label: "Ouvrages d'art et de génie civil"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45232000-2", Label: "Travaux annexes pour pipelines et câbles"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45233000-9", Label: "Travaux de construction, de fondation et de revêtement d'autoroutes et de routes"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45233100-0", Label: "Travaux de construction d'autoroutes et de routes"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45233200-1", Label: "Travaux de revêtement de routes et autres surfaces"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45316000-5", Label: "Installation d'éclairage et de signalisation routière"},
+	{FamilyCode: "T-VRD", FamilyLabel: "Voirie et réseaux divers", CPVCode: "45342000-6", Label: "Travaux d'installation de clôtures"},
+
+	// ── Démolition et terrassement ────────────────────────────
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45110000-1", Label: "Travaux de démolition de bâtiments et travaux de terrassement"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45111000-8", Label: "Travaux de démolition, préparation et dégagement de chantier"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45111100-9", Label: "Travaux de démolition"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45111300-1", Label: "Travaux de démantèlement"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45112000-5", Label: "Travaux de fouille et de terrassement"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45112500-0", Label: "Travaux de terrassement"},
+	{FamilyCode: "T-DEM", FamilyLabel: "Démolition et terrassement", CPVCode: "45113000-2", Label: "Travaux de chantier — installations et préparation générale"},
+
+	// ── Aménagement urbain et espaces verts ───────────────────
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45112700-2", Label: "Travaux d'aménagement paysager"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45112710-5", Label: "Travaux d'aménagement paysager d'espaces verts"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45112711-2", Label: "Travaux d'aménagement paysager de parcs"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45112712-9", Label: "Travaux d'aménagement paysager de jardins"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45236000-0", Label: "Travaux de nivelage pour équipements sportifs et récréatifs"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45240000-1", Label: "Travaux de construction d'ouvrages hydrauliques"},
+	{FamilyCode: "T-AME", FamilyLabel: "Aménagement urbain et espaces verts", CPVCode: "45262640-9", Label: "Travaux de dépollution"},
+
+	// ── Réseaux et infrastructures ────────────────────────────
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45230000-8", Label: "Travaux de construction de pipelines, lignes de communication, autoroutes et voies ferrées"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45231300-8", Label: "Travaux de construction de conduites d'eau et d'assainissement"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45231400-9", Label: "Travaux de construction de lignes électriques"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45231600-1", Label: "Travaux de construction de lignes de communications"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45232100-3", Label: "Travaux de construction de conduites d'eau principale"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45232400-6", Label: "Travaux de construction d'égouts"},
+	{FamilyCode: "T-INF", FamilyLabel: "Réseaux et infrastructures", CPVCode: "45314000-1", Label: "Installation de réseaux de télécommunications"},
+
+	// ── Matériaux de construction ─────────────────────────────
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44000000-0", Label: "Matériaux et structures de construction"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44100000-1", Label: "Matériaux de construction et articles connexes"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44110000-4", Label: "Matériaux de construction (briques, béton, ciment, céramique)"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44160000-9", Label: "Canalisations, tuyauteries, conduites, câblage et articles connexes"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44200000-2", Label: "Produits structuraux"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44500000-5", Label: "Outils, serrures, clés, charnières, fixations, chaînes et ressorts"},
+	{FamilyCode: "T-MAT", FamilyLabel: "Matériaux de construction", CPVCode: "44800000-8", Label: "Peintures, vernis et mastics"},
+
+	// ── Génie thermique, électrique et sanitaire ──────────────
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45300000-0", Label: "Travaux d'équipement du bâtiment"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45310000-3", Label: "Travaux d'installation électrique"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45320000-6", Label: "Travaux d'isolation"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45330000-9", Label: "Travaux de plomberie"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45331000-6", Label: "Travaux d'installation de matériel de chauffage, de ventilation et de climatisation"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45350000-5", Label: "Travaux d'installation mécanique"},
+	{FamilyCode: "T-GTE", FamilyLabel: "Génie thermique, électrique et sanitaire", CPVCode: "45400000-1", Label: "Travaux de parachèvement de bâtiment"},
+
+	// ── Maintenance et réhabilitation ─────────────────────────
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45453000-7", Label: "Travaux de remise en état et de remise à neuf"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45453100-8", Label: "Travaux de remise en état"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45262700-8", Label: "Travaux de transformation de bâtiments"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45261000-4", Label: "Travaux de charpente et de couverture et travaux connexes"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45410000-4", Label: "Travaux de plâtrerie"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45420000-7", Label: "Travaux de menuiserie et de charpenterie"},
+	{FamilyCode: "T-MNT", FamilyLabel: "Maintenance et réhabilitation", CPVCode: "45430000-0", Label: "Travaux de revêtement de sols et de murs"},
+}
+
+// SystemTags — predefined tags seeded for every tenant.
+var SystemTags = []struct {
+	Name  string
+	Color string
+}{
+	{Name: "Urgent", Color: "#ef4444"},
+	{Name: "Stratégique", Color: "#8b5cf6"},
+	{Name: "MAPA", Color: "#f59e0b"},
+	{Name: "Appel d'offres", Color: "#3b82f6"},
+	{Name: "Accord-cadre", Color: "#06b6d4"},
+	{Name: "Marché public", Color: "#10b981"},
+	{Name: "Non conforme", Color: "#f97316"},
+	{Name: "À réviser", Color: "#ec4899"},
+}
+
 // seedNomenclatureNationale populates the nomenclature table for a given org.
 // It creates:
-//   - 2 grande-famille nodes (Fournitures, Services)
-//   - 1 famille node per family number
-//   - 1 code node per leaf entry
+//   - 3 grande-famille nodes (Fournitures, Services, Travaux)
+//   - 1 famille node per family number (V1) + 8 CPV Travaux familles
+//   - 1 code node per leaf entry (175 F/S + ~56 Travaux)
 // All nodes are marked is_national=true and version="2024".
 func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 	// Regulatory thresholds — France 2024
@@ -233,9 +334,11 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 
 	// ── Grande familles ────────────────────────────────────────
 	gfFournitures := makeNode("GF-F", "Fournitures", "Fournitures, matériels et équipements", "grande-famille", "Fournitures", nil, seuilMapa, seuilAOfs)
-	gfServices    := makeNode("GF-S", "Services",    "Prestations de services", "grande-famille", "Services", nil, seuilMapa, seuilAOfs)
+	gfServices    := makeNode("GF-S", "Services",    "Prestations de services",               "grande-famille", "Services",    nil, seuilMapa, seuilAOfs)
+	gfTravaux     := makeNode("GF-T", "Travaux",     "Travaux de construction et maintenance", "grande-famille", "Travaux",     nil, seuilMapa, seuilAOt)
 	db.Create(&gfFournitures)
 	db.Create(&gfServices)
+	db.Create(&gfTravaux)
 
 	// ── Familles ───────────────────────────────────────────────
 	// family number -> NomenclatureNode
@@ -258,10 +361,7 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 	for _, f := range famDefs {
 		var parentID *uuid.UUID
 		var seuilAO float64
-		if strings.EqualFold(f.tag, "Travaux") {
-			parentID = nil
-			seuilAO = seuilAOt
-		} else if strings.EqualFold(f.tag, "Services") {
+		if strings.EqualFold(f.tag, "Services") {
 			parentID = &gfServices.ID
 			seuilAO = seuilAOfs
 		} else {
@@ -274,21 +374,45 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 		famNodes[f.num] = node
 	}
 
-	// ── Codes feuilles ─────────────────────────────────────────
+	// ── Codes feuilles F/S ─────────────────────────────────────
 	for _, e := range NomenclatureNationale {
 		famNode, ok := famNodes[e.FamilyNum]
 		if !ok {
 			continue
 		}
-		seuilAO := seuilAOfs
-		if strings.EqualFold(e.Tag, "Travaux") {
-			seuilAO = seuilAOt
-		}
-		node := makeNode(e.Code, e.Label, e.Description, "code", e.Tag, &famNode.ID, seuilMapa, seuilAO)
+		node := makeNode(e.Code, e.Label, e.Description, "code", e.Tag, &famNode.ID, seuilMapa, seuilAOfs)
+		node.CPVCode = e.CPVCode
 		db.Create(&node)
 	}
 
-	total := 2 + len(famDefs) + len(NomenclatureNationale)
-	fmt.Printf("✓ %d nomenclature nationale nodes seeded (%d familles, %d codes)\n",
-		total, len(famDefs), len(NomenclatureNationale))
+	// ── Travaux (CPV) ──────────────────────────────────────────
+	travFamNodes := map[string]nomenclaturemod.NomenclatureNode{}
+	for _, e := range NomenclatureTravaux {
+		if _, exists := travFamNodes[e.FamilyCode]; !exists {
+			node := makeNode(e.FamilyCode, e.FamilyLabel, "", "famille", "Travaux", &gfTravaux.ID, seuilMapa, seuilAOt)
+			db.Create(&node)
+			travFamNodes[e.FamilyCode] = node
+		}
+	}
+	for _, e := range NomenclatureTravaux {
+		famNode := travFamNodes[e.FamilyCode]
+		node := makeNode(e.CPVCode, e.Label, "", "code", "Travaux", &famNode.ID, seuilMapa, seuilAOt)
+		node.CPVCode = e.CPVCode
+		db.Create(&node)
+	}
+
+	// ── Tags système ───────────────────────────────────────────
+	for _, t := range SystemTags {
+		tag := nomenclaturemod.NomenclatureTag{
+			TenantID: orgID,
+			Name:     t.Name,
+			Color:    t.Color,
+			IsSystem: true,
+		}
+		db.Create(&tag)
+	}
+
+	total := 3 + len(famDefs) + len(travFamNodes) + len(NomenclatureNationale) + len(NomenclatureTravaux)
+	fmt.Printf("✓ %d nomenclature nationale nodes seeded (%d F/S familles, %d T familles, %d F/S codes, %d T codes, %d tags système)\n",
+		total, len(famDefs), len(travFamNodes), len(NomenclatureNationale), len(NomenclatureTravaux), len(SystemTags))
 }
