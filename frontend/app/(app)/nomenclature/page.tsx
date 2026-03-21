@@ -39,6 +39,7 @@ interface AuditEntry {
   };
 }
 
+
 interface ApiTag {
   id: string;
   name: string;
@@ -212,10 +213,13 @@ export default function NomenclaturePage() {
   const [draggingTag, setDraggingTag] = useState<ApiTag | null>(null);
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("#6366f1");
+<<<<<<< HEAD
   const [mergeModal, setMergeModal] = useState(false);
   const [mergeTargetId, setMergeTargetId] = useState("");
   const [mergeSearch, setMergeSearch] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
+=======
+>>>>>>> origin/develop
   const showToast = useToastStore((s) => s.show);
   const queryClient = useQueryClient();
 
@@ -231,6 +235,7 @@ export default function NomenclaturePage() {
     enabled: !!accessToken && !!currentOrg,
   });
 
+<<<<<<< HEAD
   const { data: impact } = useQuery<ImpactResult>({
     queryKey: ["nomenclature-impact", selectedId],
     queryFn: () => api.get(`/api/v1/nomenclature/${selectedId}/impact`, opts),
@@ -243,6 +248,8 @@ export default function NomenclaturePage() {
     enabled: !!accessToken && !!currentOrg,
   });
 
+=======
+>>>>>>> origin/develop
   const addTagMutation = useMutation({
     mutationFn: ({ nodeId, tagId }: { nodeId: string; tagId: string }) =>
       api.post(`/api/v1/nomenclature/${nodeId}/tags/${tagId}`, {}, opts),
@@ -281,6 +288,7 @@ export default function NomenclaturePage() {
     },
   });
 
+<<<<<<< HEAD
   const mergeMutation = useMutation<{ marches_updated: number; from_label: string; to_label: string }, Error, { sourceId: string; targetId: string }>({
     mutationFn: ({ sourceId, targetId }) =>
       api.post(`/api/v1/nomenclature/${sourceId}/merge`, { target_id: targetId }, opts),
@@ -307,6 +315,8 @@ export default function NomenclaturePage() {
     onError: () => showToast("Le rollback a échoué ou la fenêtre de 24h est dépassée.", "warning"),
   });
 
+=======
+>>>>>>> origin/develop
   const tree = useMemo(() => buildTree(apiNodes), [apiNodes]);
   const filteredTree = useMemo(() => {
     if (!search.trim()) return tree;
@@ -360,6 +370,7 @@ export default function NomenclaturePage() {
   }, [selected, tags]);
 
   const PRESET_COLORS = ["#ef4444", "#f97316", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4", "#6366f1"];
+<<<<<<< HEAD
 
   // Merge target candidates: nodes of the same type as selected, excluding itself
   const mergeCandidates = useMemo(() => {
@@ -380,6 +391,8 @@ export default function NomenclaturePage() {
     if (h < 24) return `Il y a ${h}h`;
     return `Il y a ${Math.floor(h / 24)}j`;
   }
+=======
+>>>>>>> origin/develop
 
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-42px)]">
@@ -761,6 +774,7 @@ export default function NomenclaturePage() {
                   <div className="flex items-center gap-1.5 p-2 rounded-lg text-[11px]" style={{ background: "hsl(var(--primary) / 0.05)", border: "1px solid hsl(var(--primary) / 0.1)" }}>
                     <Shield className="w-3 h-3 flex-shrink-0" style={{ color: "hsl(var(--primary))" }} />
                     <span style={{ color: "hsl(var(--primary))" }}>Nationale — version {selected.version}</span>
+<<<<<<< HEAD
                   </div>
                 )}
 
@@ -813,9 +827,10 @@ export default function NomenclaturePage() {
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
+=======
+>>>>>>> origin/develop
                   </div>
                 )}
-
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => showToast("Modification enregistrée avec succès.", "success")}
@@ -842,6 +857,7 @@ export default function NomenclaturePage() {
             <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
               <BookOpen className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
               <h2 className="text-sm font-semibold text-foreground">Journal des modifications</h2>
+<<<<<<< HEAD
               <button
                 onClick={() => setHistoryOpen(!historyOpen)}
                 className="ml-auto text-[10px] font-semibold transition-colors"
@@ -906,6 +922,22 @@ export default function NomenclaturePage() {
               {history.length === 0 && (
                 <p className="text-[11px] text-muted-foreground px-1">Aucune opération de propagation enregistrée.</p>
               )}
+=======
+            </div>
+            <div className="p-3 space-y-1">
+              {[
+                { date: "01/01/2024 00:00", action: "Import national", utilisateur: "Stratt", detail: "Nomenclature achats V1 — 175 codes internes, 256 codes CPV F/S, 56 codes CPV Travaux" },
+              ].map((j, i) => (
+                <div key={i} className="p-1.5 rounded text-[11px] hover:bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-foreground">{j.action}</span>
+                    <span className="text-muted-foreground">— {j.utilisateur}</span>
+                  </div>
+                  <p className="text-muted-foreground mt-0.5">{j.detail}</p>
+                  <p className="text-[10px] text-muted-foreground/70 font-mono">{j.date}</p>
+                </div>
+              ))}
+>>>>>>> origin/develop
             </div>
           </div>
 

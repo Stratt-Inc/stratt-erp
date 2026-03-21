@@ -18,6 +18,7 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	r.POST("/rollback/:auditId", h.RollbackOperation)
 	r.GET("/history", h.AuditHistory)
 
+
 	// Node ↔ Tag association
 	r.POST("/:id/tags/:tagId", h.AddTagToNode)
 	r.DELETE("/:id/tags/:tagId", h.RemoveTagFromNode)
