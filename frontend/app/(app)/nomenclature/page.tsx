@@ -12,7 +12,7 @@ import {
   FolderTree, Plus, ChevronRight, ChevronDown, Edit3, History,
   CheckCircle2, AlertCircle, Download, GripVertical, Shield,
   BookOpen, Layers, Scale, Search, Loader2, Tag, X, Trash2,
-  GitMerge, RotateCcw, ArrowRight, Zap, Clock,
+  GitMerge, RotateCcw, ArrowRight, Zap, Clock, FileSpreadsheet, FileText,
 } from "lucide-react";
 
 /* ── API types ── */
@@ -216,6 +216,7 @@ export default function NomenclaturePage() {
   const [mergeTargetId, setMergeTargetId] = useState("");
   const [mergeSearch, setMergeSearch] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const showToast = useToastStore((s) => s.show);
   const queryClient = useQueryClient();
 
@@ -373,6 +374,31 @@ export default function NomenclaturePage() {
 
   const mergeTarget = mergeTargetId ? apiNodes.find((n) => n.id === mergeTargetId) : null;
 
+  function triggerExport(format: "excel" | "pdf") {
+    const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+    const orgId = currentOrg?.id ?? "";
+    const url = `${base}/api/v1/nomenclature/export?format=${format}&org_id=${orgId}`;
+    if (format === "pdf") {
+      window.open(url + `&token=${accessToken}`, "_blank");
+    } else {
+      // trigger download
+      const a = document.createElement("a");
+      a.href = url;
+      // Pass token via header is not possible for <a> downloads;
+      // backend accepts org via header — use fetch + blob instead
+      fetch(url, { headers: { Authorization: `Bearer ${accessToken}`, "X-Org-ID": orgId } })
+        .then((r) => r.blob())
+        .then((blob) => {
+          const blobUrl = URL.createObjectURL(blob);
+          a.href = blobUrl;
+          a.download = `nomenclature-${new Date().toISOString().slice(0, 10)}.xlsx`;
+          a.click();
+          URL.revokeObjectURL(blobUrl);
+        });
+    }
+    setExportOpen(false);
+  }
+
   function fmtRelative(iso: string): string {
     const diff = Date.now() - new Date(iso).getTime();
     const h = Math.floor(diff / 3_600_000);
@@ -506,12 +532,55 @@ export default function NomenclaturePage() {
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
+          <button
+            onClick={() => setHistoryOpen(!historyOpen)}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+          >
             <History className="w-3.5 h-3.5" /> Historique
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
-            <Download className="w-3.5 h-3.5" /> Exporter
-          </button>
+
+          {/* Export dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setExportOpen(!exportOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" /> Exporter <ChevronDown className="w-3 h-3" />
+            </button>
+            {exportOpen && (
+              <>
+                <div className="fixed inset-0 z-30" onClick={() => setExportOpen(false)} />
+                <div className="absolute right-0 top-full mt-1 z-40 rounded-xl overflow-hidden shadow-lg min-w-[210px]"
+                  style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+                  <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                    style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                    Document d&apos;implémentation
+                  </div>
+                  <button
+                    onClick={() => triggerExport("excel")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-xs font-medium hover:bg-muted/50 transition-colors text-left"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 flex-shrink-0" style={{ color: "#059669" }} />
+                    <div>
+                      <p className="font-semibold text-foreground">Export Excel (.xlsx)</p>
+                      <p className="text-muted-foreground text-[10px]">Format éditeurs logiciels financiers</p>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => triggerExport("pdf")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-xs font-medium hover:bg-muted/50 transition-colors text-left"
+                    style={{ borderTop: "1px solid hsl(var(--border))" }}
+                  >
+                    <FileText className="w-4 h-4 flex-shrink-0" style={{ color: "#dc2626" }} />
+                    <div>
+                      <p className="font-semibold text-foreground">Export PDF</p>
+                      <p className="text-muted-foreground text-[10px]">Aperçu imprimable &amp; institutionnel</p>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
           <button
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
             style={{ background: MODULE.nomenclature }}
