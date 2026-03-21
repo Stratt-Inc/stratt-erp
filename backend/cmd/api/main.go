@@ -36,6 +36,7 @@ import (
 	"github.com/stratt/backend/modules/auditlog"
 	"github.com/stratt/backend/modules/share"
 	"github.com/stratt/backend/modules/sirene"
+	"github.com/stratt/backend/modules/quiz"
 	"github.com/stratt/backend/modules/webhooks"
 )
 
@@ -178,6 +179,9 @@ func main() {
 
 	webhooksHandler := webhooks.NewHandler(db)
 	webhooks.RegisterRoutes(v1.Group("/webhooks", requireAuth, requireOrg, requirePerm("admin.manage")), webhooksHandler)
+
+	quizHandler := quiz.NewHandler()
+	quiz.RegisterRoutes(v1.Group("/quiz", requireAuth), quizHandler)
 
 	// Share links (authenticated creation, public consumption)
 	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)

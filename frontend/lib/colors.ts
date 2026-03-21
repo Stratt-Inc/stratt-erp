@@ -49,6 +49,7 @@ export const MODULE = {
   planification: CSS.warning,
   cartographie:  CSS.accent,
   alertes:       CSS.destructive,
+  quiz:          CSS.violet,
   nomenclature:  CSS.violet,
   chatbot:       CSS.violet,   // IA = violet
   exports:       CSS.primary,
