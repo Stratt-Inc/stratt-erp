@@ -12,7 +12,7 @@ import {
   FolderTree, Plus, ChevronRight, ChevronDown, Edit3, History,
   CheckCircle2, AlertCircle, Download, GripVertical, Shield,
   BookOpen, Layers, Scale, Search, Loader2, Tag, X, Trash2,
-  GitMerge, RotateCcw, ArrowRight, Zap, Clock, FileSpreadsheet, FileText, BookMarked,
+  GitMerge, RotateCcw, ArrowRight, Zap, Clock, FileSpreadsheet, FileText,
 } from "lucide-react";
 
 /* ── API types ── */
@@ -217,6 +217,9 @@ export default function NomenclaturePage() {
   const [mergeSearch, setMergeSearch] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [orphanView, setOrphanView] = useState(false);
+  const [orphanSelected, setOrphanSelected] = useState<Set<string>>(new Set());
+  const [orphanYear, setOrphanYear] = useState(new Date().getFullYear());
   const showToast = useToastStore((s) => s.show);
   const queryClient = useQueryClient();
 
@@ -242,6 +245,14 @@ export default function NomenclaturePage() {
     queryKey: ["nomenclature-history", currentOrg?.id],
     queryFn: () => api.get("/api/v1/nomenclature/history", opts),
     enabled: !!accessToken && !!currentOrg,
+  });
+
+  interface OrphanNode extends ApiNode { last_used_year: number; }
+  interface OrphanData { nodes: OrphanNode[]; exercise: number; total: number; }
+  const { data: orphanData, isLoading: orphanLoading, refetch: refetchOrphans } = useQuery<OrphanData>({
+    queryKey: ["nomenclature-orphans", currentOrg?.id, orphanYear],
+    queryFn: () => api.get(`/api/v1/nomenclature/orphans?year=${orphanYear}`, opts),
+    enabled: !!accessToken && !!currentOrg && orphanView,
   });
 
   const addTagMutation = useMutation({
@@ -294,6 +305,28 @@ export default function NomenclaturePage() {
       showToast(`✓ Fusion effectuée — ${res.marches_updated} marchés re-mappés vers "${res.to_label}".`, "success");
     },
     onError: () => showToast("La fusion a échoué.", "warning"),
+  });
+
+  const orphanDeleteMutation = useMutation<{ affected: number }, Error, string[]>({
+    mutationFn: (ids) => api.post("/api/v1/nomenclature/orphans/delete", { ids }, opts),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["nomenclature", currentOrg?.id] });
+      queryClient.invalidateQueries({ queryKey: ["nomenclature-orphans", currentOrg?.id] });
+      setOrphanSelected(new Set());
+      showToast(`🗑 ${res.affected} code(s) supprimés.`, "success");
+    },
+    onError: () => showToast("La suppression a échoué.", "warning"),
+  });
+
+  const orphanArchiveMutation = useMutation<{ affected: number }, Error, string[]>({
+    mutationFn: (ids) => api.post("/api/v1/nomenclature/orphans/archive", { ids }, opts),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["nomenclature", currentOrg?.id] });
+      queryClient.invalidateQueries({ queryKey: ["nomenclature-orphans", currentOrg?.id] });
+      setOrphanSelected(new Set());
+      showToast(`📦 ${res.affected} code(s) archivés.`, "success");
+    },
+    onError: () => showToast("L'archivage a échoué.", "warning"),
   });
 
   const rollbackMutation = useMutation<{ marches_updated: number; reverted_to: string }, Error, string>({
@@ -396,16 +429,6 @@ export default function NomenclaturePage() {
           URL.revokeObjectURL(blobUrl);
         });
     }
-    setExportOpen(false);
-  }
-
-  function triggerGuide() {
-    const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
-    const orgId = currentOrg?.id ?? "";
-    window.open(
-      `${base}/api/v1/nomenclature/export/guide?org_id=${orgId}&token=${accessToken}`,
-      "_blank"
-    );
     setExportOpen(false);
   }
 
@@ -548,6 +571,22 @@ export default function NomenclaturePage() {
           >
             <History className="w-3.5 h-3.5" /> Historique
           </button>
+          <button
+            onClick={() => { setOrphanView(!orphanView); setOrphanSelected(new Set()); }}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors"
+            style={orphanView
+              ? { background: "#fef9c3", borderColor: "#fbbf24", color: "#92400e" }
+              : { borderColor: "hsl(var(--border))", color: "hsl(var(--foreground))" }
+            }
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Codes orphelins
+            {orphanData && orphanData.total > 0 && (
+              <span className="ml-1 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                {orphanData.total}
+              </span>
+            )}
+          </button>
 
           {/* Export dropdown */}
           <div className="relative">
@@ -587,20 +626,6 @@ export default function NomenclaturePage() {
                       <p className="text-muted-foreground text-[10px]">Aperçu imprimable &amp; institutionnel</p>
                     </div>
                   </button>
-                  <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
-                    style={{ borderBottom: "1px solid hsl(var(--border))", borderTop: "1px solid hsl(var(--border))", marginTop: 4 }}>
-                    Guide pédagogique
-                  </div>
-                  <button
-                    onClick={() => triggerGuide()}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-xs font-medium hover:bg-muted/50 transition-colors text-left"
-                  >
-                    <BookMarked className="w-4 h-4 flex-shrink-0" style={{ color: "#7c3aed" }} />
-                    <div>
-                      <p className="font-semibold text-foreground">Guide agents saisisseurs</p>
-                      <p className="text-muted-foreground text-[10px]">Définitions, exemples, redirections — interactif &amp; imprimable</p>
-                    </div>
-                  </button>
                 </div>
               </>
             )}
@@ -631,8 +656,188 @@ export default function NomenclaturePage() {
         ))}
       </div>
 
+      {/* ── Codes orphelins ── */}
+      {orphanView && (
+        <div className="flex-1 min-h-0 flex flex-col bg-card rounded-xl border overflow-hidden" style={{ borderColor: "#fbbf24" }}>
+          {/* Header */}
+          <div className="px-5 py-3 flex items-center gap-3 flex-shrink-0"
+            style={{ borderBottom: "1px solid #fde68a", background: "#fffbeb" }}>
+            <Trash2 className="w-4 h-4" style={{ color: "#b45309" }} />
+            <div>
+              <h2 className="text-sm font-bold" style={{ color: "#92400e" }}>
+                Codes orphelins — exercice {orphanYear}
+              </h2>
+              <p className="text-[11px]" style={{ color: "#b45309" }}>
+                Codes et familles sans mandat associé sur cet exercice. Supprimez ou archivez pour nettoyer la nomenclature.
+              </p>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              <select
+                value={orphanYear}
+                onChange={(e) => setOrphanYear(Number(e.target.value))}
+                className="text-xs border rounded-lg px-2 py-1 bg-white"
+                style={{ borderColor: "#fbbf24", color: "#92400e" }}
+              >
+                {[new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2].map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => refetchOrphans()}
+                className="text-xs px-3 py-1 rounded-lg border font-semibold"
+                style={{ borderColor: "#fbbf24", color: "#92400e", background: "#fef9c3" }}
+              >
+                Actualiser
+              </button>
+            </div>
+          </div>
+
+          {/* Actions bar */}
+          {orphanSelected.size > 0 && (
+            <div className="px-5 py-2 flex items-center gap-3 flex-shrink-0"
+              style={{ background: "#fffbeb", borderBottom: "1px solid #fde68a" }}>
+              <span className="text-xs font-semibold" style={{ color: "#92400e" }}>
+                {orphanSelected.size} sélectionné(s)
+              </span>
+              <button
+                onClick={() => orphanArchiveMutation.mutate([...orphanSelected])}
+                disabled={orphanArchiveMutation.isPending}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-semibold transition-colors"
+                style={{ borderColor: "#6366f1", color: "#4f46e5", background: "#eef2ff" }}
+              >
+                {orphanArchiveMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Shield className="w-3 h-3" />}
+                Archiver
+              </button>
+              <button
+                onClick={() => orphanDeleteMutation.mutate([...orphanSelected])}
+                disabled={orphanDeleteMutation.isPending}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-semibold transition-colors"
+                style={{ borderColor: "#ef4444", color: "#dc2626", background: "#fee2e2" }}
+              >
+                {orphanDeleteMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Supprimer
+              </button>
+              <button
+                onClick={() => setOrphanSelected(new Set())}
+                className="ml-auto text-xs text-muted-foreground hover:text-foreground"
+              >
+                Désélectionner
+              </button>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="overflow-y-auto flex-1 min-h-0">
+            {orphanLoading ? (
+              <div className="flex items-center justify-center h-32 gap-2 text-xs text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" /> Analyse en cours…
+              </div>
+            ) : !orphanData || orphanData.total === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 gap-3">
+                <CheckCircle2 className="w-10 h-10" style={{ color: "#10b981" }} />
+                <p className="text-sm font-semibold text-foreground">Aucun code orphelin</p>
+                <p className="text-xs text-muted-foreground">
+                  Tous les codes et familles sont référencés dans au moins un marché sur {orphanYear}.
+                </p>
+              </div>
+            ) : (
+              <table className="w-full text-xs">
+                <thead>
+                  <tr style={{ background: "#fffbeb", borderBottom: "1px solid #fde68a" }}>
+                    <th className="px-4 py-2 text-left w-8">
+                      <input type="checkbox"
+                        checked={orphanSelected.size === orphanData.nodes.length}
+                        onChange={(e) => {
+                          if (e.target.checked) setOrphanSelected(new Set(orphanData.nodes.map(n => n.id)));
+                          else setOrphanSelected(new Set());
+                        }}
+                      />
+                    </th>
+                    <th className="px-3 py-2 text-left font-semibold text-amber-800">Code</th>
+                    <th className="px-3 py-2 text-left font-semibold text-amber-800">Libellé</th>
+                    <th className="px-3 py-2 text-left font-semibold text-amber-800">Type</th>
+                    <th className="px-3 py-2 text-left font-semibold text-amber-800">Catégorie</th>
+                    <th className="px-3 py-2 text-right font-semibold text-amber-800">Dernière utilisation</th>
+                    <th className="px-3 py-2 text-center font-semibold text-amber-800">National</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orphanData.nodes.map((node) => (
+                    <tr key={node.id}
+                      className="border-b transition-colors cursor-pointer"
+                      style={{
+                        borderColor: "#fef3c7",
+                        background: orphanSelected.has(node.id) ? "#fef9c3" : undefined,
+                      }}
+                      onClick={() => setOrphanSelected(prev => {
+                        const next = new Set(prev);
+                        next.has(node.id) ? next.delete(node.id) : next.add(node.id);
+                        return next;
+                      })}
+                    >
+                      <td className="px-4 py-2" onClick={(e) => e.stopPropagation()}>
+                        <input type="checkbox"
+                          checked={orphanSelected.has(node.id)}
+                          onChange={(e) => {
+                            const next = new Set(orphanSelected);
+                            e.target.checked ? next.add(node.id) : next.delete(node.id);
+                            setOrphanSelected(next);
+                          }}
+                        />
+                      </td>
+                      <td className="px-3 py-2 font-mono text-amber-700 font-bold">{node.code}</td>
+                      <td className="px-3 py-2 text-foreground font-medium">{node.label}</td>
+                      <td className="px-3 py-2">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                          style={{
+                            background: node.type === "famille" ? "#dbeafe" : node.type === "code" ? "#f1f5f9" : "#ede9fe",
+                            color: node.type === "famille" ? "#1d4ed8" : node.type === "code" ? "#475569" : "#6d28d9",
+                          }}>
+                          {node.type}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-muted-foreground">{node.tag || "—"}</td>
+                      <td className="px-3 py-2 text-right text-muted-foreground">
+                        {node.last_used_year > 0 ? node.last_used_year : <span className="text-red-500 font-semibold">Jamais</span>}
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        {node.is_national
+                          ? <span title="National — non supprimable"><Shield className="w-3.5 h-3.5 mx-auto text-blue-400" /></span>
+                          : <span className="text-muted-foreground">—</span>
+                        }
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* Footer — rapport */}
+          {orphanData && orphanData.total > 0 && (
+            <div className="px-5 py-2.5 flex items-center gap-4 text-xs flex-shrink-0"
+              style={{ borderTop: "1px solid #fde68a", background: "#fffbeb" }}>
+              <span style={{ color: "#92400e" }}>
+                <strong>{orphanData.total}</strong> code(s) orphelins sur {apiNodes.length} total
+              </span>
+              <span style={{ color: "#92400e" }}>·</span>
+              <span style={{ color: "#92400e" }}>
+                Exercice <strong>{orphanData.exercise}</strong>
+              </span>
+              <button
+                onClick={() => { setOrphanSelected(new Set(orphanData.nodes.filter(n => !n.is_national).map(n => n.id))); }}
+                className="ml-auto text-xs font-semibold underline"
+                style={{ color: "#b45309" }}
+              >
+                Tout sélectionner (non-national)
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Main layout */}
-      <div className="flex gap-3 flex-1 min-h-0">
+      <div className="flex gap-3 flex-1 min-h-0" style={{ display: orphanView ? "none" : undefined }}>
         {/* Tree */}
         <div className="flex-1 min-w-0 bg-card rounded-xl border border-border overflow-hidden flex flex-col">
           <div className="px-4 py-2.5 border-b border-border flex items-center gap-2 flex-shrink-0">

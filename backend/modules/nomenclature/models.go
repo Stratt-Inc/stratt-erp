@@ -36,6 +36,7 @@ type NomenclatureNode struct {
 	Seuil       float64           `gorm:"default:0"                         json:"seuil"`
 	Conforme    bool              `gorm:"default:true"                      json:"conforme"`
 	IsNational  bool              `gorm:"default:false;index"               json:"is_national"`
+	IsArchived  bool              `gorm:"default:false;index"               json:"is_archived"`
 	Version     string            `gorm:"default:'2024'"                    json:"version"`
 	Tags        []NomenclatureTag `gorm:"many2many:nomenclature_node_tags;" json:"tags,omitempty"`
 }
