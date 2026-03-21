@@ -694,10 +694,15 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 			Scan(&codeNodes)
 
 		for _, n := range codeNodes {
-			hash := 0
-			for _, c := range n.Code {
-				hash = hash*31 + int(c)
+			// Mix code + ID bytes + salt to break correlation between similar codes.
+			h := uint64(14695981039346656037) // FNV-1a offset basis
+			fnvPrime := uint64(1099511628211)
+			seed := n.Code + "|" + n.ID.String()
+			for _, c := range seed {
+				h ^= uint64(c)
+				h *= fnvPrime
 			}
+			hash := int(h>>1) // strip sign bit
 			if hash < 0 {
 				hash = -hash
 			}
@@ -759,17 +764,28 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 	// ── Non-conformités simulées ──────────────────────────────
 	// Re-fetch code nodes with updated montants, then mark ~20-30% non-conforme.
 	// Bias: large-spend codes (>500k€) are more likely to have procedural issues.
+	// Non-conformité rules (simulated — no real marché data exists yet):
+	//   1. Montant > 214k€ (seuil appel d'offres) sans code CPV → procédure absente
+	//   2. FNV hash of (id+code) % 7 == 0 → anomalie aléatoire (~14%)
+	//   3. Travaux > 500k€ and hash%4 == 1 → dépassement seuil travaux non justifié
 	var codeNodesWithMontant []nomenclaturemod.NomenclatureNode
 	db.Where("tenant_id = ? AND type = ?", orgID, "code").Find(&codeNodesWithMontant)
 	for _, n := range codeNodesWithMontant {
-		hash := 0
-		for _, c := range n.Code {
-			hash = hash*31 + int(c)
+		h := uint64(14695981039346656037)
+		fnvPrime := uint64(1099511628211)
+		for _, c := range n.ID.String() + n.Code {
+			h ^= uint64(c)
+			h *= fnvPrime
 		}
+		hash := int(h>>1)
 		if hash < 0 {
 			hash = -hash
 		}
-		nonConforme := (hash%5 == 0) || (hash%3 == 0 && n.Montant > 500_000)
+		noCPV := !strings.HasPrefix(n.Code, "CPV")
+		seuilAO := n.Montant > 214_000
+		nonConforme := (noCPV && seuilAO && hash%3 == 0) ||
+			(hash%7 == 0) ||
+			(strings.ToLower(n.Tag) == "travaux" && n.Montant > 500_000 && hash%4 == 1)
 		if nonConforme {
 			db.Model(&nomenclaturemod.NomenclatureNode{}).
 				Where("id = ?", n.ID).
