@@ -80,11 +80,11 @@ export function OnboardingChecklist() {
   if (dismissed || allDone) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 w-80 rounded-2xl overflow-hidden" style={{ background: "hsl(216 48% 8%)", border: "1px solid rgba(92,147,255,0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+    <div className="fixed bottom-6 right-6 z-40 w-80 rounded-2xl overflow-hidden" style={{ background: "hsl(216 48% 8%)", border: "1px solid hsl(var(--primary) / 0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer"
-        style={{ background: "#5C93FF" }}
+        style={{ background: "hsl(var(--primary))" }}
         onClick={() => setCollapsed((v) => !v)}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -112,7 +112,7 @@ export function OnboardingChecklist() {
       <div className="h-1 bg-muted">
         <div
           className="h-1 transition-all duration-500"
-          style={{ width: `${pct}%`, background: "#5C93FF" }}
+          style={{ width: `${pct}%`, background: "hsl(var(--primary))" }}
         />
       </div>
 
@@ -126,7 +126,7 @@ export function OnboardingChecklist() {
                 className="mt-0.5 shrink-0 transition-colors"
               >
                 {items[item.id] ? (
-                  <CheckCircle size={18} style={{ color: "#10B981" }} />
+                  <CheckCircle size={18} style={{ color: "hsl(var(--success))" }} />
                 ) : (
                   <Circle size={18} className="text-muted-foreground/40" />
                 )}
@@ -142,13 +142,13 @@ export function OnboardingChecklist() {
                   <button
                     onClick={() => restartTour()}
                     className="text-xs mt-1 hover:underline"
-                    style={{ color: "#5C93FF" }}
+                    style={{ color: "hsl(var(--primary))" }}
                   >
                     Lancer le tour →
                   </button>
                 )}
                 {item.href && !items[item.id] && (
-                  <a href={item.href} className="text-xs mt-1 block hover:underline" style={{ color: "#5C93FF" }}>
+                  <a href={item.href} className="text-xs mt-1 block hover:underline" style={{ color: "hsl(var(--primary))" }}>
                     Aller → {item.href}
                   </a>
                 )}

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { MODULE } from "@/lib/colors";
 import {
   FileJson, ShieldCheck, Upload, Clock, AlertTriangle, CheckCircle,
   XCircle, Download, RefreshCw, ChevronRight, FileText, Info,
@@ -58,10 +59,10 @@ interface ExportPayload {
 // ── Status helpers ─────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
-  success:                 { label: "Publié",          color: "#24DDB8", icon: CheckCircle },
-  generated:               { label: "Généré",          color: "#5C93FF", icon: FileJson },
-  published_with_warnings: { label: "Publié (alertes)", color: "#F59E0B", icon: AlertTriangle },
-  failed:                  { label: "Échec",           color: "#EF4444", icon: XCircle },
+  success:                 { label: "Publié",          color: "hsl(var(--accent))", icon: CheckCircle },
+  generated:               { label: "Généré",          color: "hsl(var(--primary))", icon: FileJson },
+  published_with_warnings: { label: "Publié (alertes)", color: "hsl(var(--warning))", icon: AlertTriangle },
+  failed:                  { label: "Échec",           color: "hsl(var(--destructive))", icon: XCircle },
 };
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -122,7 +123,7 @@ export default function DECPPage() {
   }
 
   const rate = compliance?.conformity_rate ?? 0;
-  const rateColor = rate >= 90 ? "#24DDB8" : rate >= 60 ? "#F59E0B" : "#EF4444";
+  const rateColor = rate >= 90 ? "hsl(var(--accent))" : rate >= 60 ? "hsl(var(--warning))" : "hsl(var(--destructive))";
 
   const TABS = [
     { id: "compliance" as const, label: "Conformité DECP", icon: ShieldCheck },
@@ -135,17 +136,14 @@ export default function DECPPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-1">
-            Conformité réglementaire
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">
-            Export DECP automatique
-          </h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            Données Essentielles de la Commande Publique · Décret n°2016-360 · Format JSON v2 data.gouv.fr
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.decp, boxShadow: `0 0 6px ${MODULE.decp}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Conformité réglementaire</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Export DECP automatique</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Données Essentielles de la Commande Publique · Décret n°2016-360 · Format JSON v2 data.gouv.fr</p>
         </div>
         <div className="flex items-center gap-2">
           <a
@@ -195,7 +193,7 @@ export default function DECPPage() {
 
       {/* Regulatory notice */}
       <div className="flex items-start gap-3 p-3 rounded-xl border text-[12px]"
-        style={{ background: "rgba(92,147,255,0.06)", borderColor: "rgba(92,147,255,0.2)" }}>
+        style={{ background: "hsl(var(--primary) / 0.06)", borderColor: "hsl(var(--primary) / 0.2)" }}>
         <Info className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
         <div className="text-muted-foreground leading-relaxed">
           <span className="font-semibold text-foreground">Obligation légale</span> — La publication des DECP est obligatoire pour tous les acheteurs publics
@@ -309,7 +307,7 @@ export default function DECPPage() {
                 onClick={downloadJSON}
                 disabled={loadingExport || !exportData}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "#5C93FF" }}
+                style={{ background: "hsl(var(--primary))" }}
               >
                 <FileJson className="w-4 h-4" />
                 {loadingExport ? "Génération…" : "Télécharger DECP.json"}
@@ -348,7 +346,7 @@ export default function DECPPage() {
                 onClick={() => publishMutation.mutate()}
                 disabled={publishMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "#24DDB8" }}
+                style={{ background: "hsl(var(--accent))" }}
               >
                 <Upload className="w-4 h-4" />
                 {publishMutation.isPending ? "Publication…" : "Publier sur data.gouv.fr"}

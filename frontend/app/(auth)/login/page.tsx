@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { ApiError } from "@/lib/api";
 import { StrattWordmark } from "@/components/BrandLogo";
+import { Shield, Users, Calculator, Package, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +16,68 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<string | null>(null);
+
+  const demoAccounts = [
+    {
+      id: "admin",
+      label: "Admin",
+      desc: "Accès complet",
+      email: "admin@stratt.io",
+      password: "admin1234",
+      icon: Shield,
+      color: "#5C93FF",
+      bg: "rgba(92,147,255,0.08)",
+      border: "rgba(92,147,255,0.20)",
+    },
+    {
+      id: "commercial",
+      label: "Commercial",
+      desc: "CRM · Facturation",
+      email: "commercial@stratt.io",
+      password: "demo1234",
+      icon: Users,
+      color: "#F59E0B",
+      bg: "rgba(245,158,11,0.08)",
+      border: "rgba(245,158,11,0.20)",
+    },
+    {
+      id: "comptable",
+      label: "Comptable",
+      desc: "Comptabilité · Billing",
+      email: "comptable@stratt.io",
+      password: "demo1234",
+      icon: Calculator,
+      color: "#10B981",
+      bg: "rgba(16,185,129,0.08)",
+      border: "rgba(16,185,129,0.20)",
+    },
+    {
+      id: "logistique",
+      label: "Logisticien",
+      desc: "Inventaire · Achats",
+      email: "logistique@stratt.io",
+      password: "demo1234",
+      icon: Package,
+      color: "#8B5CF6",
+      bg: "rgba(139,92,246,0.08)",
+      border: "rgba(139,92,246,0.20)",
+    },
+  ];
+
+  async function handleDemoLogin(account: typeof demoAccounts[0]) {
+    if (demoLoading) return;
+    setDemoLoading(account.id);
+    setError("");
+    try {
+      await login(account.email, account.password);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Une erreur est survenue");
+    } finally {
+      setDemoLoading(null);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,10 +111,7 @@ export default function LoginPage() {
       <div className="relative z-10">
         <h2 className="text-2xl font-bold text-foreground">Connexion</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Pas encore de compte ?{" "}
-          <Link href="/signup" className="text-primary hover:underline font-medium">
-            Créer un compte
-          </Link>
+          Bienvenue sur la démo STRATT ERP
         </p>
       </div>
 
@@ -104,23 +164,76 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           className="w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ background: "#24DDB8", color: "#09111E" }}
+          style={{ background: "hsl(var(--accent))", color: "hsl(var(--sidebar))" }}
         >
           {loading ? "Connexion…" : "Se connecter"}
         </button>
       </form>
 
-      <div className="relative z-10 text-center">
-        <p className="text-xs text-muted-foreground">
-          Compte démo :{" "}
-          <button
-            type="button"
-            onClick={() => { setEmail("admin@stratt.io"); setPassword("admin1234"); }}
-            className="text-primary hover:underline font-medium"
-          >
-            admin@stratt.io / admin1234
-          </button>
-        </p>
+      <div className="relative z-10 space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Accès démo
+          </span>
+          <span
+            className="flex-1 h-px"
+            style={{ background: "rgba(92,147,255,0.12)" }}
+          />
+          <span className="text-[9px] text-muted-foreground/60 font-medium">
+            1 clic pour se connecter
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {demoAccounts.map((account) => {
+            const Icon = account.icon;
+            const isActive = demoLoading === account.id;
+            return (
+              <button
+                key={account.id}
+                type="button"
+                onClick={() => handleDemoLogin(account)}
+                disabled={!!demoLoading}
+                className="group relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{
+                  background: isActive ? account.bg : "transparent",
+                  border: `1px solid ${isActive ? account.color + "44" : account.border}`,
+                }}
+                onMouseEnter={(e) => {
+                  if (!demoLoading) {
+                    (e.currentTarget as HTMLButtonElement).style.background = account.bg;
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = account.color + "44";
+                    (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = account.border;
+                    (e.currentTarget as HTMLButtonElement).style.transform = "";
+                  }
+                }}
+              >
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: account.bg, color: account.color }}
+                >
+                  {isActive
+                    ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    : <Icon className="w-3.5 h-3.5" strokeWidth={2} />
+                  }
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[12px] font-semibold text-foreground leading-none">
+                    {account.label}
+                  </p>
+                  <p className="text-[10px] mt-0.5 truncate" style={{ color: account.color + "cc" }}>
+                    {account.desc}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Highlight } from "@/components/Highlight";
+import { MODULE } from "@/lib/colors";
 import {
   Users, FileText, Package, Briefcase, TrendingUp, ShoppingCart,
   BarChart2, Calculator, Calendar, Map, BookOpen, Download,
@@ -30,20 +31,20 @@ interface MarcheStats {
 }
 
 const pilotageModules = [
-  { label: "Planification", href: "/planification", icon: Calendar, color: "#5C93FF", description: "Marchés publics & calendrier des passations" },
-  { label: "Cartographie", href: "/cartographie", icon: Map, color: "#24DDB8", description: "Dépenses par famille achats" },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, color: "#24DDB8", description: "Arborescence des codes achats" },
-  { label: "Documents", href: "/exports", icon: Download, color: "#F59E0B", description: "Rapports & exports PDF/Excel" },
+  { label: "Planification", href: "/planification", icon: Calendar,   color: MODULE.planification, description: "Marchés publics & calendrier des passations" },
+  { label: "Cartographie",  href: "/cartographie",  icon: Map,        color: MODULE.cartographie,  description: "Dépenses par famille achats" },
+  { label: "Nomenclature",  href: "/nomenclature",  icon: BookOpen,   color: MODULE.nomenclature,  description: "Arborescence des codes achats" },
+  { label: "Documents",     href: "/exports",       icon: Download,   color: MODULE.exports,       description: "Rapports & exports PDF/Excel" },
 ];
 
 const erpModules = [
-  { label: "CRM", href: "/crm", icon: Users, color: "#5C93FF" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator, color: "#24DDB8" },
-  { label: "Facturation", href: "/billing", icon: FileText, color: "#F59E0B" },
-  { label: "Inventaire", href: "/inventory", icon: Package, color: "#8B5CF6" },
-  { label: "RH", href: "/hr", icon: Briefcase, color: "#5C93FF" },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart, color: "#24DDB8" },
-  { label: "Analytics", href: "/analytics", icon: BarChart2, color: "#24DDB8" },
+  { label: "CRM",          href: "/crm",        icon: Users,        color: MODULE.crm },
+  { label: "Comptabilité", href: "/accounting",  icon: Calculator,   color: MODULE.accounting },
+  { label: "Facturation",  href: "/billing",     icon: FileText,     color: MODULE.billing },
+  { label: "Inventaire",   href: "/inventory",   icon: Package,      color: MODULE.inventory },
+  { label: "RH",           href: "/hr",          icon: Briefcase,    color: MODULE.hr },
+  { label: "Achats",       href: "/procurement", icon: ShoppingCart, color: MODULE.procurement },
+  { label: "Analytics",    href: "/analytics",   icon: BarChart2,    color: MODULE.analytics },
 ];
 
 const staticAlerts = [
@@ -80,31 +81,31 @@ export default function DashboardPage() {
       <DemoBanner />
 
       {/* ── HEADER ── */}
-      <div className="flex items-center justify-between gap-8 pb-3" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="flex items-center justify-between gap-8 pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,50,80,0.22)" }}>
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: "hsl(var(--foreground) / 0.22)" }}>
             {dateLabel}
           </p>
           <h1 className="text-[24px] leading-none font-extrabold" style={{ color: "hsl(var(--foreground))", letterSpacing: "-0.025em" }}>
             Bonjour,{" "}
             <Highlight variant="mark" color="blue">{firstName}</Highlight>
           </h1>
-          <p className="text-[11px] mt-0.5 font-medium" style={{ color: "rgba(30,50,80,0.4)" }}>
+          <p className="text-[11px] mt-0.5 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
             {currentOrg?.name ?? "Organisation"}
           </p>
         </div>
         <div className="flex items-center gap-6 flex-shrink-0">
           {[
-            { value: marcheStats?.en_cours ?? 0, unit: "marchés", sublabel: "en cours", color: "#5C93FF" },
-            { value: `${budgetK}k`, unit: "€", sublabel: "budget prévi.", color: "#24DDB8" },
-            { value: marcheStats?.alertes ?? 0, unit: "alertes", sublabel: "actives", color: marcheStats?.alertes ? "#F59E0B" : "#6B7280" },
+            { value: marcheStats?.en_cours ?? 0, unit: "marchés", sublabel: "en cours", color: "hsl(var(--primary))" },
+            { value: `${budgetK}k`, unit: "€", sublabel: "budget prévi.", color: "hsl(var(--accent))" },
+            { value: marcheStats?.alertes ?? 0, unit: "alertes", sublabel: "actives", color: marcheStats?.alertes ? "hsl(var(--warning))" : "#6B7280" },
           ].map(({ value, unit, sublabel, color }) => (
             <div key={sublabel} className="text-right">
               <div className="flex items-baseline gap-0.5 justify-end">
                 <span className="font-display text-[28px] leading-none font-semibold" style={{ color: "hsl(var(--foreground))" }}>{value}</span>
                 <span className="font-display text-[13px] leading-none font-medium" style={{ color }}>{unit}</span>
               </div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.12em] mt-0.5" style={{ color: "rgba(30,50,80,0.25)" }}>{sublabel}</p>
+              <p className="text-[9px] font-bold uppercase tracking-[0.12em] mt-0.5" style={{ color: "hsl(var(--foreground) / 0.25)" }}>{sublabel}</p>
             </div>
           ))}
         </div>
@@ -113,16 +114,16 @@ export default function DashboardPage() {
       {/* ── PILOTAGE ── */}
       <div>
         <div className="section-header">
-          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#5C93FF", boxShadow: "0 0 6px #5C93FF" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Pilotage achats publics</span>
+          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.dashboard, boxShadow: `0 0 6px ${MODULE.dashboard}` }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Pilotage achats publics</span>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
           {[
-            { label: "Marchés en cours", value: marcheStats?.en_cours ?? 0, icon: CalendarRange, color: "#5C93FF" },
-            { label: "Budget prévisionnel", value: `${budgetK} k€`, icon: TrendingUp, color: "#24DDB8" },
-            { label: "Charge prévisionnelle", value: `${marcheStats?.charge_total ?? 0} j/h`, icon: Scale, color: "#F59E0B" },
-            { label: "Alertes actives", value: marcheStats?.alertes ?? 0, icon: AlertTriangle, color: marcheStats?.alertes ? "#EF4444" : "#6B7280" },
+            { label: "Marchés en cours", value: marcheStats?.en_cours ?? 0, icon: CalendarRange, color: "hsl(var(--primary))" },
+            { label: "Budget prévisionnel", value: `${budgetK} k€`, icon: TrendingUp, color: "hsl(var(--accent))" },
+            { label: "Charge prévisionnelle", value: `${marcheStats?.charge_total ?? 0} j/h`, icon: Scale, color: "hsl(var(--warning))" },
+            { label: "Alertes actives", value: marcheStats?.alertes ?? 0, icon: AlertTriangle, color: marcheStats?.alertes ? "hsl(var(--destructive))" : "#6B7280" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
               <p className="stat-number">{value}</p>
@@ -146,7 +147,7 @@ export default function DashboardPage() {
                 <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `${color}50` }} />
                 <div>
                   <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
-                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.4)" }}>{description}</p>
+                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "hsl(var(--foreground) / 0.4)" }}>{description}</p>
                 </div>
               </a>
             ))}
@@ -154,9 +155,9 @@ export default function DashboardPage() {
 
           <div className="rounded-xl overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
             <div className="px-3.5 py-2.5 flex items-center gap-2" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#EF4444", boxShadow: "0 0 6px #EF4444" }} />
+              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "hsl(var(--destructive))", boxShadow: "0 0 6px hsl(var(--destructive))" }} />
               <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">Alertes</span>
-              <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.12)", color: "#EF4444" }}>{staticAlerts.length}</span>
+              <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "hsl(var(--destructive) / 0.12)", color: "hsl(var(--destructive))" }}>{staticAlerts.length}</span>
             </div>
             <div className="relative">
               <div className="absolute left-[23px] top-0 bottom-0 w-px" style={{ background: "hsl(var(--border))" }} />
@@ -164,19 +165,19 @@ export default function DashboardPage() {
                 <a key={i} href={a.href} className="flex gap-3 px-3.5 py-2.5 hover:bg-black/[0.025] transition-colors group relative"
                   style={{ borderBottom: i < staticAlerts.length - 1 ? "1px solid hsl(var(--border))" : undefined }}>
                   <div className="flex-shrink-0 w-2.5 h-2.5 rounded-full mt-0.5 border-2 z-10"
-                    style={{ background: a.severity === "haute" ? "#EF4444" : "#F59E0B", borderColor: "hsl(var(--card))" }} />
+                    style={{ background: a.severity === "haute" ? "hsl(var(--destructive))" : "hsl(var(--warning))", borderColor: "hsl(var(--card))" }} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-[11px] font-semibold text-foreground leading-tight">{a.label}</p>
-                      <span className="text-[9px] font-medium flex-shrink-0" style={{ color: "rgba(30,50,80,0.3)" }}>{a.t}</span>
+                      <span className="text-[9px] font-medium flex-shrink-0" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{a.t}</span>
                     </div>
-                    <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "rgba(30,50,80,0.38)" }}>{a.detail}</p>
+                    <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "hsl(var(--foreground) / 0.38)" }}>{a.detail}</p>
                   </div>
                 </a>
               ))}
             </div>
             <div className="px-3.5 py-2" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-              <a href="/cartographie" className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 hover:gap-2 transition-all" style={{ color: "#5C93FF" }}>
+              <a href="/cartographie" className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 hover:gap-2 transition-all" style={{ color: "hsl(var(--primary))" }}>
                 Toutes les anomalies <ChevronRight className="w-3 h-3" />
               </a>
             </div>
@@ -187,8 +188,8 @@ export default function DashboardPage() {
       {/* ── ERP ── */}
       <div>
         <div className="section-header">
-          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Modules ERP</span>
+          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.dashboard, boxShadow: `0 0 6px ${MODULE.dashboard}` }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Modules ERP</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
@@ -231,9 +232,9 @@ export default function DashboardPage() {
 
         <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-2">
           {[
-            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "#24DDB8" },
-            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "#24DDB8" },
-            { label: "Deals actifs", value: overview?.total_deals ?? 0, icon: Users, color: "#5C93FF" },
+            { label: "Leads pipeline", value: overview?.total_leads ?? 0, icon: TrendingUp, color: "hsl(var(--accent))" },
+            { label: "Chiffre d'affaires encaissé", value: `${(overview?.total_revenue ?? 0).toLocaleString("fr-FR")} €`, icon: BarChart2, color: "hsl(var(--accent))" },
+            { label: "Deals actifs", value: overview?.total_deals ?? 0, icon: Users, color: "hsl(var(--primary))" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
               <p className="stat-number-sm">{value}</p>

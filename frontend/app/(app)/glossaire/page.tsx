@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, BookOpen, ExternalLink, ChevronRight } from "lucide-react";
 import { GLOSSAIRE, CATEGORIES_GLOSSAIRE } from "@/lib/glossaire";
+import { MODULE } from "@/lib/colors";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -36,15 +37,14 @@ export default function GlossairePage() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "rgba(92,147,255,0.12)", border: "1px solid rgba(92,147,255,0.2)" }}>
-          <BookOpen size={20} style={{ color: "#5C93FF" }} />
-        </div>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--accent) / 0.08)" }}>
         <div>
-          <h1 className="text-[20px] font-bold text-foreground">Glossaire</h1>
-          <p className="text-sm text-muted-foreground">
-            {GLOSSAIRE.length} termes de la commande publique — Code de la Commande Publique (CCP)
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.glossaire, boxShadow: `0 0 6px ${MODULE.glossaire}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Référentiel CCP</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Glossaire</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">{GLOSSAIRE.length} termes de la commande publique — Code de la Commande Publique (CCP)</p>
         </div>
       </div>
 
@@ -73,8 +73,8 @@ export default function GlossairePage() {
             }`}
             style={
               category === cat
-                ? { background: "#5C93FF" }
-                : { background: "rgba(30,50,80,0.07)" }
+                ? { background: "hsl(var(--primary))" }
+                : { background: "hsl(var(--foreground) / 0.07)" }
             }
           >
             {cat}
@@ -89,7 +89,7 @@ export default function GlossairePage() {
           className={`w-7 h-7 rounded text-xs font-medium transition-colors ${
             !letter ? "text-white" : "text-muted-foreground hover:bg-muted/50"
           }`}
-          style={!letter ? { background: "#5C93FF" } : {}}
+          style={!letter ? { background: "hsl(var(--primary))" } : {}}
         >
           Tous
         </button>
@@ -107,9 +107,9 @@ export default function GlossairePage() {
             }`}
             style={
               letter === l
-                ? { background: "#5C93FF" }
+                ? { background: "hsl(var(--primary))" }
                 : !activeLetter.has(l)
-                ? { color: "rgba(30,50,80,0.15)" }
+                ? { color: "hsl(var(--foreground) / 0.15)" }
                 : {}
             }
           >
@@ -144,7 +144,7 @@ export default function GlossairePage() {
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     {term.sigle && (
                       <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded font-mono"
-                        style={{ background: "rgba(92,147,255,0.12)", color: "#5C93FF" }}>
+                        style={{ background: "hsl(var(--primary) / 0.12)", color: "hsl(var(--primary))" }}>
                         {term.sigle}
                       </span>
                     )}
@@ -161,7 +161,7 @@ export default function GlossairePage() {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="px-2 py-0.5 text-[10px] rounded-full"
-                      style={{ background: "rgba(30,50,80,0.07)", color: "rgba(30,50,80,0.48)" }}>
+                      style={{ background: "hsl(var(--foreground) / 0.07)", color: "hsl(var(--foreground) / 0.48)" }}>
                       {term.categorie}
                     </span>
                     <ChevronRight
@@ -178,14 +178,14 @@ export default function GlossairePage() {
                     </p>
                     {term.exemple && (
                       <p className="text-sm text-muted-foreground italic border border-border rounded-lg px-3 py-2"
-                        style={{ background: "rgba(92,147,255,0.04)" }}>
+                        style={{ background: "hsl(var(--primary) / 0.04)" }}>
                         💡 {term.exemple}
                       </p>
                     )}
                     <div className="flex items-center gap-4 flex-wrap">
                       {term.ccp && (
                         <span className="text-xs font-mono border border-border px-2 py-0.5 rounded"
-                          style={{ color: "rgba(30,50,80,0.5)" }}>
+                          style={{ color: "hsl(var(--foreground) / 0.5)" }}>
                           {term.ccp}
                         </span>
                       )}
@@ -195,7 +195,7 @@ export default function GlossairePage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs hover:underline"
-                          style={{ color: "#5C93FF" }}
+                          style={{ color: "hsl(var(--primary))" }}
                         >
                           <ExternalLink size={11} />
                           Voir sur Legifrance

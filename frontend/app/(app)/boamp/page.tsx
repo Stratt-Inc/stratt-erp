@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner } from "@/components/DemoBanner";
+import { MODULE } from "@/lib/colors";
 import {
   Search, Bell, Play, Trash2, Plus, ExternalLink, ChevronRight,
   AlertTriangle, Calendar, Building2, Tag, Filter, RefreshCw, X,
@@ -136,15 +137,14 @@ export default function BOAMPPage() {
       <DemoBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--warning) / 0.08)" }}>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-1">
-            Intégration réglementaire
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">BOAMP — Appels d&apos;offres</h1>
-          <p className="text-[13px] text-muted-foreground mt-1">
-            Bulletin Officiel des Annonces des Marchés Publics · Veille concurrentielle et publication
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.boamp, boxShadow: `0 0 6px ${MODULE.boamp}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Intégration réglementaire</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>BOAMP — Appels d&apos;offres</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Bulletin Officiel des Annonces des Marchés Publics · Veille concurrentielle et publication</p>
         </div>
         <a
           href="https://www.boamp.fr"
@@ -212,7 +212,7 @@ export default function BOAMPPage() {
                 onClick={handleSearch}
                 disabled={loadingSearch}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ background: "#5C93FF" }}
+                style={{ background: "hsl(var(--primary))" }}
               >
                 <Search className="w-3.5 h-3.5" />
                 {loadingSearch ? "Recherche…" : "Rechercher sur BOAMP"}
@@ -237,7 +237,7 @@ export default function BOAMPPage() {
           {/* API warning */}
           {apiError && (
             <div className="flex items-start gap-2 p-3 rounded-xl border text-[12px]"
-              style={{ background: "rgba(245,158,11,0.05)", borderColor: "rgba(245,158,11,0.2)" }}>
+              style={{ background: "hsl(var(--warning) / 0.05)", borderColor: "hsl(var(--warning) / 0.2)" }}>
               <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
               <span className="text-amber-700 dark:text-amber-400">
                 API BOAMP inaccessible : {apiError}. Les résultats sont indisponibles temporairement.
@@ -263,7 +263,7 @@ export default function BOAMPPage() {
                     <tr key={a.reference} className="hover:bg-muted/20 transition-colors">
                       <td className="px-3 py-2.5">
                         <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold"
-                          style={{ background: "rgba(92,147,255,0.1)", color: "#5C93FF" }}>
+                          style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }}>
                           {a.type_avis || "AO"}
                         </span>
                       </td>
@@ -318,7 +318,7 @@ export default function BOAMPPage() {
             <button
               onClick={() => setShowNewVeille(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white transition-colors"
-              style={{ background: "#5C93FF" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               <Plus className="w-3.5 h-3.5" /> Nouvelle veille
             </button>
@@ -351,7 +351,7 @@ export default function BOAMPPage() {
                   onClick={() => createVeilleMutation.mutate()}
                   disabled={!newVeille.nom || createVeilleMutation.isPending}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white disabled:opacity-50"
-                  style={{ background: "#5C93FF" }}
+                  style={{ background: "hsl(var(--primary))" }}
                 >
                   {createVeilleMutation.isPending ? "Enregistrement…" : "Enregistrer"}
                 </button>

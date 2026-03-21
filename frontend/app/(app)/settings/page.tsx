@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { useIsDemo } from "@/components/DemoBanner";
 import { Shield, Puzzle, Users } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface ModuleView {
   id: string;
@@ -27,7 +28,7 @@ function Toggle({ enabled, onToggle, disabled }: { enabled: boolean; onToggle: (
       style={{
         width: 40,
         height: 22,
-        background: enabled ? "#5C93FF" : "hsl(var(--muted))",
+        background: enabled ? "hsl(var(--primary))" : "hsl(var(--muted))",
       }}
     >
       <span
@@ -75,10 +76,10 @@ export default function SettingsPage() {
   return (
     <div className="space-y-3 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="pb-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(92,147,255,0.08)" }}>
+      <div className="pb-3 flex-shrink-0" style={{ borderBottom: "1px solid hsl(var(--muted-foreground) / 0.08)" }}>
         <div className="section-header" style={{ marginBottom: 4 }}>
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B5CF6", boxShadow: "0 0 6px #8B5CF6" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Configuration</span>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.settings, boxShadow: `0 0 6px ${MODULE.settings}` }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Configuration</span>
         </div>
         <div className="flex items-end justify-between">
           <div>
@@ -91,7 +92,7 @@ export default function SettingsPage() {
           </div>
           {isDemo && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: "rgba(245,158,11,0.1)", color: "#D97706" }}>
+              style={{ background: "hsl(var(--warning) / 0.1)", color: "#D97706" }}>
               Lecture seule
             </span>
           )}
@@ -101,8 +102,8 @@ export default function SettingsPage() {
       {/* Modules ERP */}
       <div className="space-y-2">
         <div className="section-header">
-          <Puzzle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#5C93FF" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Modules ERP</span>
+          <Puzzle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "hsl(var(--primary))" }} />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Modules ERP</span>
         </div>
         <div className="bg-card rounded-xl border border-border overflow-hidden divide-y divide-border">
           {modules.length === 0 && (
@@ -134,18 +135,18 @@ export default function SettingsPage() {
 
       {/* Sections à venir */}
       {[
-        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions.", color: "#24DDB8" },
-        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives.", color: "#24DDB8" },
+        { icon: Users, label: "Membres & rôles", desc: "Gérez les membres de l'organisation et leurs permissions.", color: "hsl(var(--accent))" },
+        { icon: Shield, label: "Sécurité", desc: "Authentification à deux facteurs, sessions actives.", color: "hsl(var(--accent))" },
       ].map(({ icon: Icon, label, desc, color }) => (
         <div key={label} className="space-y-2">
           <div className="section-header">
             <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>{label}</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>{label}</span>
           </div>
           <div className="rounded-xl border border-dashed border-border px-4 py-5 flex items-center justify-between">
             <p className="text-xs text-muted-foreground">{desc}</p>
             <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ml-4"
-              style={{ background: "rgba(92,147,255,0.08)", color: "#5C93FF" }}>
+              style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>
               Bientôt
             </span>
           </div>

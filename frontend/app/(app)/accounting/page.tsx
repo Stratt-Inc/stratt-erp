@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { Calculator, Plus, TrendingUp, TrendingDown } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Account {
   id: string;
@@ -28,8 +29,8 @@ interface Transaction {
 }
 
 const typeColors: Record<string, string> = {
-  asset: "#5C93FF", liability: "#EF4444", equity: "#24DDB8",
-  revenue: "#24DDB8", expense: "#F59E0B",
+  asset: "hsl(var(--primary))", liability: "hsl(var(--destructive))", equity: "hsl(var(--accent))",
+  revenue: "hsl(var(--accent))", expense: "hsl(var(--warning))",
 };
 const typeLabels: Record<string, string> = {
   asset: "Actif", liability: "Passif", equity: "Capitaux propres",
@@ -62,18 +63,18 @@ export default function AccountingPage() {
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(36,221,184,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--success) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#24DDB8", boxShadow: "0 0 6px #24DDB8" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module comptabilité</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.accounting, boxShadow: `0 0 6px ${MODULE.accounting}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module comptabilité</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Plan comptable</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Comptes, transactions et rapports financiers</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
@@ -82,10 +83,10 @@ export default function AccountingPage() {
       {/* Stats — signal tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, icon: Calculator, color: "#5C93FF" },
+          { label: "Comptes actifs", value: accs.filter(a => a.is_active).length, icon: Calculator, color: MODULE.accounting },
           { label: "Transactions", value: txns.length, icon: Calculator, color: "#6B7280" },
-          { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "#24DDB8" },
-          { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "#EF4444" },
+          { label: "Total crédits", value: `${totalCredits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "hsl(var(--accent))" },
+          { label: "Total débits", value: `${totalDebits.toLocaleString("fr-FR")} €`, icon: Calculator, color: "hsl(var(--destructive))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number">{value}</p>
@@ -127,12 +128,12 @@ export default function AccountingPage() {
                   <td className="px-4 py-2 text-sm text-foreground">{a.name}</td>
                   <td className="px-4 py-2">
                     <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                      style={{ background: `${typeColors[a.type] ?? "#6B7280"}14`, color: typeColors[a.type] ?? "#6B7280" }}>
+                      style={{ background: typeColors[a.type] ? `color-mix(in srgb, ${typeColors[a.type]} 8%, transparent)` : "rgba(107,114,128,0.08)", color: typeColors[a.type] ?? "#6B7280" }}>
                       {typeLabels[a.type] ?? a.type}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-right text-sm num font-bold"
-                    style={{ color: a.balance >= 0 ? "#24DDB8" : "#EF4444" }}>
+                    style={{ color: a.balance >= 0 ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}>
                     {a.balance.toLocaleString("fr-FR")} €
                   </td>
                 </tr>
@@ -160,13 +161,13 @@ export default function AccountingPage() {
                   <td className="px-4 py-2 text-sm font-mono text-muted-foreground hidden md:table-cell">{t.reference || "—"}</td>
                   <td className="px-4 py-2">
                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                      style={{ background: t.type === "credit" ? "rgba(36,221,184,0.1)" : "rgba(239,68,68,0.1)", color: t.type === "credit" ? "#24DDB8" : "#EF4444" }}>
+                      style={{ background: t.type === "credit" ? "hsl(var(--accent) / 0.1)" : "hsl(var(--destructive) / 0.1)", color: t.type === "credit" ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}>
                       {t.type === "credit" ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {t.type === "credit" ? "Crédit" : "Débit"}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-right text-sm num font-bold"
-                    style={{ color: t.type === "credit" ? "#24DDB8" : "#EF4444" }}>
+                    style={{ color: t.type === "credit" ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}>
                     {t.type === "credit" ? "+" : "-"}{t.amount.toLocaleString("fr-FR")} €
                   </td>
                 </tr>

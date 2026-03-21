@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import { MODULE } from "@/lib/colors";
 import {
   Building2,
   Search,
@@ -72,7 +73,7 @@ function EtatBadge({ etat }: { etat: string }) {
   if (etat === "A") {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-        style={{ background: "rgba(36,221,184,0.12)", color: "#24DDB8" }}>
+        style={{ background: "hsl(var(--accent) / 0.12)", color: "hsl(var(--accent))" }}>
         <CheckCircle size={12} />
         Actif
       </span>
@@ -81,7 +82,7 @@ function EtatBadge({ etat }: { etat: string }) {
   if (etat === "C") {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-        style={{ background: "rgba(239,68,68,0.12)", color: "#EF4444" }}>
+        style={{ background: "hsl(var(--destructive) / 0.12)", color: "hsl(var(--destructive))" }}>
         <XCircle size={12} />
         Cessé
       </span>
@@ -89,7 +90,7 @@ function EtatBadge({ etat }: { etat: string }) {
   }
   return (
     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-      style={{ background: "rgba(30,50,80,0.07)", color: "rgba(30,50,80,0.5)" }}>
+      style={{ background: "hsl(var(--foreground) / 0.07)", color: "hsl(var(--foreground) / 0.5)" }}>
       {etat || "—"}
     </span>
   );
@@ -196,17 +197,14 @@ export default function SirenePage() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ background: "rgba(92,147,255,0.12)", border: "1px solid rgba(92,147,255,0.2)" }}>
-          <Building2 size={20} style={{ color: "#5C93FF" }} />
-        </div>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--primary) / 0.08)" }}>
         <div>
-          <h1 className="text-[20px] font-bold text-foreground">
-            Qualification SIRENE
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Enrichissement des fournisseurs via l&apos;API INSEE SIRENE
-          </p>
+          <div className="section-header" style={{ marginBottom: 4 }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.sirene, boxShadow: `0 0 6px ${MODULE.sirene}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Annuaire officiel</span>
+          </div>
+          <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Qualification SIRENE</h1>
+          <p className="text-[12px] mt-0.5 text-muted-foreground">Enrichissement des fournisseurs via l&apos;API INSEE SIRENE</p>
         </div>
       </div>
 
@@ -248,7 +246,7 @@ export default function SirenePage() {
                 onClick={handleLookup}
                 disabled={lookupFetching}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50 transition-colors"
-                style={{ background: "#5C93FF" }}
+                style={{ background: "hsl(var(--primary))" }}
               >
                 {lookupFetching ? (
                   <RefreshCw size={15} className="animate-spin" />
@@ -264,8 +262,8 @@ export default function SirenePage() {
             <>
               {lookupResult.error ? (
                 <div className="rounded-xl p-3 flex items-center gap-3"
-                  style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)" }}>
-                  <XCircle size={18} style={{ color: "#EF4444" }} className="shrink-0" />
+                  style={{ background: "hsl(var(--destructive) / 0.06)", border: "1px solid hsl(var(--destructive) / 0.2)" }}>
+                  <XCircle size={18} style={{ color: "hsl(var(--destructive))" }} className="shrink-0" />
                   <p className="text-sm" style={{ color: "#F87171" }}>{lookupResult.error}</p>
                 </div>
               ) : lookupResult.data ? (
@@ -301,7 +299,7 @@ export default function SirenePage() {
               <Building2 size={28} className="text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">
                 Aucun enrichissement pour le moment. Utilisez{" "}
-                <code className="text-xs px-1 py-0.5 rounded border border-border" style={{ color: "#5C93FF" }}>
+                <code className="text-xs px-1 py-0.5 rounded border border-border" style={{ color: "hsl(var(--primary))" }}>
                   POST /sirene/enrich/:contact_id
                 </code>{" "}
                 pour enrichir un contact.
@@ -389,8 +387,8 @@ export default function SirenePage() {
 
           {(alertsResult?.count ?? 0) > 0 && (
             <div className="rounded-xl p-3 flex items-start gap-3"
-              style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)" }}>
-              <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
+              style={{ background: "hsl(var(--warning) / 0.06)", border: "1px solid hsl(var(--warning) / 0.2)" }}>
+              <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: "hsl(var(--warning))" }} />
               <p className="text-sm" style={{ color: "#FCD34D" }}>
                 <strong>{alertsResult?.count} fournisseur(s)</strong> ont un
                 statut &laquo;&nbsp;Cessé&nbsp;&raquo; dans la base SIRENE.
@@ -401,7 +399,7 @@ export default function SirenePage() {
 
           {!alertsFetching && (alertsResult?.count ?? 0) === 0 ? (
             <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <CheckCircle size={28} className="mx-auto mb-2" style={{ color: "#24DDB8" }} />
+              <CheckCircle size={28} className="mx-auto mb-2" style={{ color: "hsl(var(--accent))" }} />
               <p className="text-sm font-medium" style={{ color: "#6EE7B7" }}>
                 Aucune alerte — tous vos fournisseurs enrichis sont actifs.
               </p>

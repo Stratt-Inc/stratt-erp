@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { DemoBanner, useIsDemo } from "@/components/DemoBanner";
 import { FileText, Plus, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { MODULE } from "@/lib/colors";
 
 interface Invoice {
   id: string;
@@ -19,12 +20,12 @@ interface Invoice {
   notes: string;
 }
 
-const statusConfig: Record<string, { label: string; color: string; icon: React.FC<{ className?: string; style?: React.CSSProperties }> }> = {
-  draft: { label: "Brouillon", color: "#6B7280", icon: FileText },
-  sent: { label: "Envoyée", color: "#5C93FF", icon: Clock },
-  paid: { label: "Payée", color: "#24DDB8", icon: CheckCircle2 },
-  overdue: { label: "En retard", color: "#EF4444", icon: AlertCircle },
-  cancelled: { label: "Annulée", color: "#9CA3AF", icon: FileText },
+const statusConfig: Record<string, { label: string; color: string; bg: string; icon: React.FC<{ className?: string; style?: React.CSSProperties }> }> = {
+  draft: { label: "Brouillon", color: "#6B7280", bg: "rgba(107,114,128,0.08)", icon: FileText },
+  sent: { label: "Envoyée", color: "hsl(var(--primary))", bg: "hsl(var(--primary) / 0.08)", icon: Clock },
+  paid: { label: "Payée", color: "hsl(var(--accent))", bg: "hsl(var(--accent) / 0.08)", icon: CheckCircle2 },
+  overdue: { label: "En retard", color: "hsl(var(--destructive))", bg: "hsl(var(--destructive) / 0.08)", icon: AlertCircle },
+  cancelled: { label: "Annulée", color: "#9CA3AF", bg: "rgba(156,163,175,0.08)", icon: FileText },
 };
 
 export default function BillingPage() {
@@ -44,28 +45,28 @@ export default function BillingPage() {
   const totalPending = pending.reduce((s, i) => s + i.total, 0);
 
   const stats = [
-    { label: "Total factures", value: invoices.length, color: "#5C93FF", icon: FileText },
-    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "#24DDB8", icon: FileText },
-    { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "#F59E0B", icon: FileText },
-    { label: "En retard", value: overdue.length, color: "#EF4444", icon: FileText },
+    { label: "Total factures", value: invoices.length, color: MODULE.billing, icon: FileText },
+    { label: "CA encaissé", value: `${totalRevenue.toLocaleString("fr-FR")} €`, color: "hsl(var(--accent))", icon: FileText },
+    { label: "En attente", value: `${totalPending.toLocaleString("fr-FR")} €`, color: "hsl(var(--warning))", icon: FileText },
+    { label: "En retard", value: overdue.length, color: "hsl(var(--destructive))", icon: FileText },
   ];
 
   return (
     <div className="space-y-3">
       <DemoBanner />
 
-      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(245,158,11,0.08)" }}>
+      <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid hsl(var(--success) / 0.08)" }}>
         <div>
           <div className="section-header" style={{ marginBottom: 4 }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#F59E0B", boxShadow: "0 0 6px #F59E0B" }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(30,50,80,0.4)" }}>Module facturation</span>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: MODULE.billing, boxShadow: `0 0 6px ${MODULE.billing}` }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>Module facturation</span>
           </div>
           <h1 className="text-[20px] font-extrabold text-foreground" style={{ letterSpacing: "-0.02em" }}>Facturation</h1>
           <p className="text-[12px] mt-0.5 text-muted-foreground">Devis, factures et suivi des paiements</p>
         </div>
         {!isDemo && (
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "#5C93FF" }}>
+            style={{ background: "hsl(var(--primary))" }}>
             <Plus className="w-4 h-4" /> Nouvelle facture
           </button>
         )}
@@ -109,7 +110,7 @@ export default function BillingPage() {
                     <td className="px-4 py-2 text-sm font-mono font-semibold text-foreground">{inv.number}</td>
                     <td className="px-4 py-2">
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
-                        style={{ background: `${cfg.color}14`, color: cfg.color }}>
+                        style={{ background: cfg.bg, color: cfg.color }}>
                         <Icon className="w-3 h-3" style={{ color: cfg.color }} />
                         {cfg.label}
                       </span>

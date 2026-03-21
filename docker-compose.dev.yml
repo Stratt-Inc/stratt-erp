@@ -1,0 +1,153 @@
+# STRATT — Docker Compose (développement local)
+# Lance l'infra + API + frontend sans Traefik
+#
+# Usage :
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml up -d postgres redis meilisearch  # infra only
+#   docker compose -f docker-compose.dev.yml run --rm seed                      # peupler la BDD
+#
+# Variables d'environnement : copier .env.dev.example → .env.dev
+#   cp .env.dev.example .env.dev
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: stratt_dev_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: stratt_dev
+      POSTGRES_USER: stratt
+      POSTGRES_PASSWORD: stratt_dev_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stratt -d stratt_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Redis ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: stratt_dev_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Meilisearch ─────────────────────────────────────────
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    container_name: stratt_dev_meilisearch
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: stratt_meili_dev_key
+    volumes:
+      - meilisearch_dev_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── MinIO ───────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: stratt_dev_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: stratt_minio
+      MINIO_ROOT_PASSWORD: stratt_minio_secret
+    volumes:
+      - minio_dev_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── API Go/Gin ──────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    container_name: stratt_dev_api
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      APP_ENV: development
+      DATABASE_URL: postgresql://stratt:stratt_dev_password@postgres:5432/stratt_dev?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_jwt_secret_min_32_chars_xxxxxxxx
+      JWT_ACCESS_EXP_MINUTES: "60"
+      JWT_REFRESH_EXP_DAYS: "30"
+      MEILISEARCH_URL: http://meilisearch:7700
+      MEILISEARCH_API_KEY: stratt_meili_dev_key
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: stratt_minio
+      S3_SECRET_KEY: stratt_minio_secret
+      S3_BUCKET: stratt
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Seed (one-shot) ─────────────────────────────────────
+  seed:
+    build:
+      context: ./backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    container_name: stratt_dev_seed
+    entrypoint: ["./seed"]
+    environment:
+      DATABASE_URL: postgresql://stratt:stratt_dev_password@postgres:5432/stratt_dev?sslmode=disable
+      JWT_SECRET: dev_jwt_secret_min_32_chars_xxxxxxxx
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - seed
+
+  # ── Frontend Next.js ────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../infra/docker/Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    container_name: stratt_dev_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  meilisearch_dev_data:
+  minio_dev_data:
