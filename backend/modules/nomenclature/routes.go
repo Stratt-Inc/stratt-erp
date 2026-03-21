@@ -21,6 +21,12 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	// Export — implementation document for financial software editors
 	r.GET("/export", h.Export)
 
+	// Orphans — unused code cleanup
+	r.GET("/orphans", h.ListOrphans)
+	r.POST("/orphans/delete", h.BulkDeleteOrphans)
+	r.POST("/orphans/archive", h.BulkArchiveOrphans)
+	r.POST("/orphans/restore", h.RestoreArchived)
+
 	// Node ↔ Tag association
 	r.POST("/:id/tags/:tagId", h.AddTagToNode)
 	r.DELETE("/:id/tags/:tagId", h.RemoveTagFromNode)
