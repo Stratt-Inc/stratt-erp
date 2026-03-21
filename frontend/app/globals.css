@@ -545,4 +545,6 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(30,50,80,0.2);
   }
+
+  /* Force build cache invalidation */
 }
