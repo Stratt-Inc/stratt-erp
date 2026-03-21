@@ -136,6 +136,7 @@ func main() {
 	orgGroup.POST("", orgHandler.Create)
 	orgGroup.GET("/:id", orgHandler.Get)
 	orgGroup.GET("/:id/members", orgHandler.ListMembers)
+	orgGroup.GET("/:id/my-role", orgHandler.GetMyRole)
 	orgGroup.DELETE("/:id/members/:userId", requireOrg, requirePerm("admin.manage"), orgHandler.RemoveMember)
 
 	// Roles & Permissions (org-scoped)

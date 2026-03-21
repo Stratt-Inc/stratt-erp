@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -27,38 +28,49 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 
-const pilotageNav = [
-  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard" },
-  { label: "Planification", href: "/planification", icon: Calendar },
-  { label: "Cartographie", href: "/cartographie", icon: Map },
-  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen },
-  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare },
-  { label: "Documents", href: "/exports", icon: Download },
+type NavItem = {
+  label: string;
+  href: string;
+  icon: React.FC<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
+  permission: string | null;
+  tour?: string;
+};
+
+// permission: null = visible par tous les utilisateurs authentifiés
+// permission: "perm.name" = visible uniquement si l'utilisateur a cette permission
+//             (les Admin ont toujours accès, même sans la permission explicite)
+const pilotageNav: NavItem[] = [
+  { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard, tour: "dashboard", permission: null },
+  { label: "Planification", href: "/planification", icon: Calendar, permission: null },
+  { label: "Cartographie", href: "/cartographie", icon: Map, permission: null },
+  { label: "Nomenclature", href: "/nomenclature", icon: BookOpen, permission: null },
+  { label: "Chatbot IA", href: "/chatbot", icon: MessageSquare, permission: null },
+  { label: "Documents", href: "/exports", icon: Download, permission: null },
 ];
 
-const erpNav = [
-  { label: "CRM", href: "/crm", icon: Users, tour: "crm" },
-  { label: "Comptabilité", href: "/accounting", icon: Calculator },
-  { label: "Facturation", href: "/billing", icon: FileText },
-  { label: "Inventaire", href: "/inventory", icon: Package },
-  { label: "RH", href: "/hr", icon: Briefcase },
-  { label: "Achats", href: "/procurement", icon: ShoppingCart },
-  { label: "Analytics", href: "/analytics", icon: BarChart2 },
+const erpNav: NavItem[] = [
+  { label: "CRM", href: "/crm", icon: Users, tour: "crm", permission: "crm.read" },
+  { label: "Comptabilité", href: "/accounting", icon: Calculator, permission: "accounting.read" },
+  { label: "Facturation", href: "/billing", icon: FileText, permission: "billing.read" },
+  { label: "Inventaire", href: "/inventory", icon: Package, permission: "inventory.read" },
+  { label: "RH", href: "/hr", icon: Briefcase, permission: "hr.read" },
+  { label: "Achats", href: "/procurement", icon: ShoppingCart, permission: "procurement.read" },
+  { label: "Analytics", href: "/analytics", icon: BarChart2, permission: "analytics.read" },
 ];
 
-const systemeNav = [
-  { label: "Organisations", href: "/organizations", icon: Building2 },
-  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings" },
-  { label: "Administration", href: "/administration", icon: Shield },
-  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap },
-  { label: "Support", href: "/support", icon: LifeBuoy },
-  { label: "Aide", href: "/help", icon: HelpCircle },
+const systemeNav: NavItem[] = [
+  { label: "Organisations", href: "/organizations", icon: Building2, permission: "admin.manage" },
+  { label: "Paramètres", href: "/settings", icon: Settings, tour: "settings", permission: null },
+  { label: "Administration", href: "/administration", icon: Shield, permission: "admin.manage" },
+  { label: "Glossaire CCP", href: "/glossaire", icon: GraduationCap, permission: null },
+  { label: "Support", href: "/support", icon: LifeBuoy, permission: null },
+  { label: "Aide", href: "/help", icon: HelpCircle, permission: null },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout, currentOrg } = useAuthStore();
+  const { user, logout, currentOrg, currentRole, hasPermission } = useAuthStore();
 
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
@@ -75,8 +87,11 @@ export function Sidebar() {
     .slice(0, 2)
     .toUpperCase() ?? "?";
 
-  const renderNav = (items: typeof pilotageNav) =>
-    items.map(({ label, href, icon: Icon, tour }) => {
+  const canView = (permission: string | null) =>
+    !permission || !currentRole || hasPermission(permission);
+
+  const renderNav = (items: NavItem[]) =>
+    items.filter(({ permission }) => canView(permission)).map(({ label, href, icon: Icon, tour }) => {
       const active = isActive(href);
       return (
         <Link
@@ -159,35 +174,41 @@ export function Sidebar() {
           <div className="space-y-[2px]">{renderNav(pilotageNav)}</div>
         </div>
 
-        <div
-          className="mx-2"
-          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-        />
+        {erpNav.some(({ permission }) => canView(permission)) && (
+          <>
+            <div
+              className="mx-2"
+              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+            />
+            <div>
+              <p
+                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+                style={{ color: "rgba(255,255,255,0.22)" }}
+              >
+                ERP
+              </p>
+              <div className="space-y-[2px]">{renderNav(erpNav)}</div>
+            </div>
+          </>
+        )}
 
-        <div>
-          <p
-            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(255,255,255,0.22)" }}
-          >
-            ERP
-          </p>
-          <div className="space-y-[2px]">{renderNav(erpNav)}</div>
-        </div>
-
-        <div
-          className="mx-2"
-          style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
-        />
-
-        <div>
-          <p
-            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
-            style={{ color: "rgba(255,255,255,0.22)" }}
-          >
-            Système
-          </p>
-          <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
-        </div>
+        {systemeNav.some(({ permission }) => canView(permission)) && (
+          <>
+            <div
+              className="mx-2"
+              style={{ borderTop: "1px solid hsl(var(--sidebar-border))" }}
+            />
+            <div>
+              <p
+                className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] mb-1"
+                style={{ color: "rgba(255,255,255,0.22)" }}
+              >
+                Système
+              </p>
+              <div className="space-y-[2px]">{renderNav(systemeNav)}</div>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* User footer */}
@@ -220,7 +241,7 @@ export function Sidebar() {
               className="text-[10px] mt-[3px] truncate"
               style={{ color: "rgba(255,255,255,0.38)" }}
             >
-              {user?.email}
+              {currentRole ?? user?.email}
             </p>
           </div>
 

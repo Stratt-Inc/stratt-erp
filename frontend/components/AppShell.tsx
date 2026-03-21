@@ -10,7 +10,7 @@ import { OnboardingChecklist } from "./onboarding/OnboardingChecklist";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, isLoading, _hasHydrated, currentOrg, accessToken, loadOrganizations } = useAuthStore();
+  const { user, isLoading, _hasHydrated, currentOrg, accessToken, loadOrganizations, loadCurrentRole } = useAuthStore();
 
   useEffect(() => {
     if (_hasHydrated && !isLoading && !user) {
@@ -18,10 +18,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, _hasHydrated, router]);
 
-  // Always reload orgs on mount to validate/refresh currentOrg
+  // Always reload orgs on mount to validate/refresh currentOrg and role
   useEffect(() => {
     if (_hasHydrated && user && accessToken) {
-      loadOrganizations();
+      loadOrganizations().then(() => loadCurrentRole());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_hasHydrated, user, accessToken]);
