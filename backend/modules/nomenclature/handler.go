@@ -77,32 +77,29 @@ func (h *Handler) List(c *gin.Context) {
 		spendByCode[normCode(r.FamilleCode, r.Categorie)] += r.Total
 	}
 
-	// ── 2. Assign montant to leaf nodes, zero out all others first ───────────
-	nodeByID := make(map[uuid.UUID]*NomenclatureNode, len(nodes))
+	// ── 2. Assign montant to famille nodes (marchés.famille_code matches famille.code)
+	//    Code-level nodes have no direct spend reference — they stay at 0.
 	for i := range nodes {
-		nodeByID[nodes[i].ID] = &nodes[i]
 		nodes[i].Montant = 0
 	}
 	for i := range nodes {
-		if nodes[i].Type == "code" {
+		if nodes[i].Type == "famille" {
 			nodes[i].Montant = spendByCode[nodes[i].Code]
 		}
 	}
 
-	// ── 3. Aggregate bottom-up: famille ← sum(codes), grande-famille ← sum(familles)
-	for _, parentType := range []string{"famille", "grande-famille"} {
-		for i := range nodes {
-			if nodes[i].Type != parentType {
-				continue
-			}
-			var total float64
-			for j := range nodes {
-				if nodes[j].ParentID != nil && *nodes[j].ParentID == nodes[i].ID {
-					total += nodes[j].Montant
-				}
-			}
-			nodes[i].Montant = total
+	// ── 3. Aggregate grande-famille ← sum(familles) ──────────────────────────
+	for i := range nodes {
+		if nodes[i].Type != "grande-famille" {
+			continue
 		}
+		var total float64
+		for j := range nodes {
+			if nodes[j].ParentID != nil && *nodes[j].ParentID == nodes[i].ID {
+				total += nodes[j].Montant
+			}
+		}
+		nodes[i].Montant = total
 	}
 
 	// ── 4. Recompute conformité from live montant ────────────────────────────
