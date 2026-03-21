@@ -33,6 +33,7 @@ import (
 	"github.com/stratt/backend/modules/marches"
 	"github.com/stratt/backend/modules/nomenclature"
 	"github.com/stratt/backend/modules/procurement"
+	"github.com/stratt/backend/modules/auditlog"
 	"github.com/stratt/backend/modules/share"
 	"github.com/stratt/backend/modules/sirene"
 )
@@ -70,7 +71,7 @@ func main() {
 	rbacSvc := rbac.NewService(rbacRepo)
 
 	auditSvc := audit.NewService(db)
-	_ = auditSvc
+	auditHandler := auditlog.NewHandler(auditSvc)
 
 	// ── Handlers ──────────────────────────────────────────
 	authHandler := auth.NewHandler(authSvc, cfg)
@@ -172,6 +173,10 @@ func main() {
 	nomenclature.RegisterRoutes(v1.Group("/nomenclature", requireAuth, requireOrg, requirePerm("procurement.read")), nomenclatureHandler)
 	sirene.RegisterRoutes(v1.Group("/sirene", requireAuth, requireOrg, requirePerm("procurement.read")), sireneHandler)
 	chatbot.RegisterRoutes(v1.Group("/chatbot", requireAuth, requireOrg, requirePerm("procurement.read")), chatbotHandler)
+	auditlog.RegisterRoutes(v1.Group("/audit", requireAuth, requireOrg, requirePerm("admin.manage")), auditHandler)
+
+	// Share links (authenticated creation, public consumption)
+	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)
 
 	// Share links (authenticated creation, public consumption)
 	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)
