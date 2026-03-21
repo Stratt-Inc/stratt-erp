@@ -155,6 +155,13 @@ function TreeNodeItem({
             )}
           </div>
         )}
+        {(node.montant ?? 0) > 0 && (
+          <span className="text-[11px] text-muted-foreground tabular-nums ml-1 flex-shrink-0">
+            {node.montant! >= 1_000_000
+              ? `${(node.montant! / 1_000_000).toFixed(1)} M€`
+              : `${Math.round(node.montant! / 1_000)} k€`}
+          </span>
+        )}
         <span className="text-[9px] text-muted-foreground uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded flex-shrink-0">{node.type}</span>
         {node.conforme
           ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" style={{ color: "hsl(var(--accent))" }} />

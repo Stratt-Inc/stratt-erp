@@ -756,6 +756,27 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 		}
 	}
 
+	// ── Non-conformités simulées ──────────────────────────────
+	// Re-fetch code nodes with updated montants, then mark ~20-30% non-conforme.
+	// Bias: large-spend codes (>500k€) are more likely to have procedural issues.
+	var codeNodesWithMontant []nomenclaturemod.NomenclatureNode
+	db.Where("tenant_id = ? AND type = ?", orgID, "code").Find(&codeNodesWithMontant)
+	for _, n := range codeNodesWithMontant {
+		hash := 0
+		for _, c := range n.Code {
+			hash = hash*31 + int(c)
+		}
+		if hash < 0 {
+			hash = -hash
+		}
+		nonConforme := (hash%5 == 0) || (hash%3 == 0 && n.Montant > 500_000)
+		if nonConforme {
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("id = ?", n.ID).
+				Update("conforme", false)
+		}
+	}
+
 	// ── Collect all created node IDs by category ──────────────
 	var allNodes []nomenclaturemod.NomenclatureNode
 	db.Where("tenant_id = ?", orgID).Find(&allNodes)
