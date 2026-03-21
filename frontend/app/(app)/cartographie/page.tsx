@@ -81,17 +81,25 @@ export default function CartographiePage() {
   // Label lookup: code → label from nomenclature
   const labelByCode = Object.fromEntries(nodes.map(n => [n.code, n.label]));
 
+  // Resolve a marché famille_code to its nomenclature code (add prefix if needed)
+  function resolveNomCode(code: string, categorie: string): string {
+    if (labelByCode[code]) return code; // exact match (e.g. Travaux "T-BAT")
+    const prefixed = categorie === "Fournitures" ? `F${code}` : categorie === "Services" ? `S${code}` : code;
+    return prefixed;
+  }
+
   // Spend by famille_code (from marchés)
-  const spendByFamille: Record<string, { total: number; categorie: string }> = {};
+  const spendByFamille: Record<string, { total: number; categorie: string; nomCode: string }> = {};
   for (const m of marches) {
     if (!m.famille_code) continue;
-    if (!spendByFamille[m.famille_code]) spendByFamille[m.famille_code] = { total: 0, categorie: m.categorie };
+    const nomCode = resolveNomCode(m.famille_code, m.categorie);
+    if (!spendByFamille[m.famille_code]) spendByFamille[m.famille_code] = { total: 0, categorie: m.categorie, nomCode };
     spendByFamille[m.famille_code].total += m.montant;
   }
 
   const spendData = Object.entries(spendByFamille)
-    .map(([code, { total, categorie }]) => ({
-      name: labelByCode[code] ?? code,
+    .map(([, { total, categorie, nomCode }]) => ({
+      name: labelByCode[nomCode] ?? nomCode,
       size: total,
       category: categorie,
     }))
