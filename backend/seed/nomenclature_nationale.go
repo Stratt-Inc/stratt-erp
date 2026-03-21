@@ -706,16 +706,45 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 			if hash < 0 {
 				hash = -hash
 			}
+			// Distribution calibrée commune ~20k hab. : 50% petits, 30% moyens, 18% significatifs, 2% importants
+			bucket := hash % 100
 			var minVal, maxVal float64
-			switch strings.ToLower(n.Tag) {
-			case "travaux":
-				minVal, maxVal = 100_000, 3_000_000
-			case "services":
-				minVal, maxVal = 15_000, 1_200_000
-			default: // Fournitures
-				minVal, maxVal = 5_000, 800_000
+			switch {
+			case bucket < 50: // 50% — codes peu ou pas utilisés
+				minVal, maxVal = 200, 4_000
+			case bucket < 80: // 30% — achats réguliers
+				switch strings.ToLower(n.Tag) {
+				case "travaux":
+					minVal, maxVal = 8_000, 70_000
+				case "services":
+					minVal, maxVal = 4_000, 40_000
+				default:
+					minVal, maxVal = 2_000, 30_000
+				}
+			case bucket < 98: // 18% — dépenses significatives
+				switch strings.ToLower(n.Tag) {
+				case "travaux":
+					minVal, maxVal = 60_000, 380_000
+				case "services":
+					minVal, maxVal = 30_000, 180_000
+				default:
+					minVal, maxVal = 15_000, 120_000
+				}
+			default: // 2% — lignes majeures
+				switch strings.ToLower(n.Tag) {
+				case "travaux":
+					minVal, maxVal = 250_000, 700_000
+				case "services":
+					minVal, maxVal = 120_000, 400_000
+				default:
+					minVal, maxVal = 60_000, 260_000
+				}
 			}
-			amount := minVal + float64(hash%int(maxVal-minVal))
+			rangeSize := int(maxVal - minVal)
+			if rangeSize < 1 {
+				rangeSize = 1
+			}
+			amount := minVal + float64(hash%rangeSize)
 			db.Model(&nomenclaturemod.NomenclatureNode{}).
 				Where("id = ?", n.ID).
 				Update("montant", amount)

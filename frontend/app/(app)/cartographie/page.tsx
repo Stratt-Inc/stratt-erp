@@ -208,7 +208,7 @@ export default function CartographiePage() {
             <Highlight variant="mark" color="teal">des achats</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
-            Photographie fine de la dépense publique · {fmtEur(totalBudget)} consolidés · {spendData.length} familles homogènes
+            Dépenses engagées 2026 · {fmtEur(totalBudget)} · {spendData.length} familles homogènes
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">

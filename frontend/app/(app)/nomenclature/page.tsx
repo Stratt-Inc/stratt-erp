@@ -494,7 +494,7 @@ export default function NomenclaturePage() {
                 )}
                 {(selected.montant ?? 0) > 0 && (
                   <div>
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Montant consolidé</label>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Volume de référence (multi-années)</label>
                     <div className="mt-1 text-xs font-semibold num text-foreground">{selected.montant!.toLocaleString("fr-FR")} €</div>
                   </div>
                 )}
