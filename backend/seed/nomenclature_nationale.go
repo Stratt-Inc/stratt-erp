@@ -456,14 +456,14 @@ var NomenclatureCPVExtra = []NomenclatureEntry{
 	{FamilyNum: 64, FamilyLabel: "", Code: "CPV-71222000-0", Label: "Services d'architecte pour la conception d'ouvrages extérieurs", Description: "", Tag: "Services", CPVCode: "71222000-0"},
 	{FamilyNum: 64, FamilyLabel: "", Code: "CPV-71222100-1", Label: "Services de cartographie des zones urbaines", Description: "", Tag: "Services", CPVCode: "71222100-1"},
 	{FamilyNum: 64, FamilyLabel: "", Code: "CPV-71222200-2", Label: "Services de cartographie des zones rurales", Description: "", Tag: "Services", CPVCode: "71222200-2"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66000000-0", Label: "Services financiers et d'assurance", Description: "", Tag: "Services", CPVCode: "66000000-0"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66100000-1", Label: "Services bancaires et  d'investissement", Description: "", Tag: "Services", CPVCode: "66100000-1"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66110000-4", Label: "Services bancaires", Description: "", Tag: "Services", CPVCode: "66110000-4"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66111000-1", Label: "Services de banques centrales", Description: "", Tag: "Services", CPVCode: "66111000-1"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66112000-8", Label: "Services de dépôts", Description: "", Tag: "Services", CPVCode: "66112000-8"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66113000-5", Label: "Services de concession de crédit", Description: "", Tag: "Services", CPVCode: "66113000-5"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66113100-6", Label: "Services de concession de micro-crédits", Description: "", Tag: "Services", CPVCode: "66113100-6"},
-	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66114000-2", Label: "Services de leasing financier", Description: "", Tag: "Services", CPVCode: "66114000-2"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66500000-5", Label: "Services d'assurance et de retraite", Description: "", Tag: "Services", CPVCode: "66500000-5"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66510000-8", Label: "Services d'assurance", Description: "", Tag: "Services", CPVCode: "66510000-8"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66512000-2", Label: "Services d'assurance contre les accidents et les maladies", Description: "", Tag: "Services", CPVCode: "66512000-2"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66513000-9", Label: "Services d'assurance de responsabilité civile", Description: "", Tag: "Services", CPVCode: "66513000-9"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66514000-6", Label: "Services d'assurance de transport de marchandises", Description: "", Tag: "Services", CPVCode: "66514000-6"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66515000-3", Label: "Services d'assurance contre les dommages et pertes de biens", Description: "", Tag: "Services", CPVCode: "66515000-3"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66516000-0", Label: "Services d'assurance de responsabilité civile générale", Description: "", Tag: "Services", CPVCode: "66516000-0"},
+	{FamilyNum: 65, FamilyLabel: "", Code: "CPV-66517000-7", Label: "Services d'assurance de protection juridique", Description: "", Tag: "Services", CPVCode: "66517000-7"},
 	{FamilyNum: 66, FamilyLabel: "", Code: "CPV-90900000-6", Label: "Services de nettoyage et d'hygiène", Description: "", Tag: "Services", CPVCode: "90900000-6"},
 	{FamilyNum: 66, FamilyLabel: "", Code: "CPV-90910000-9", Label: "Services de nettoyage", Description: "", Tag: "Services", CPVCode: "90910000-9"},
 	{FamilyNum: 66, FamilyLabel: "", Code: "CPV-90911000-6", Label: "Services de nettoyage de logements, de bâtiments et de vitres", Description: "", Tag: "Services", CPVCode: "90911000-6"},
@@ -520,30 +520,30 @@ var NomenclatureCPVExtra = []NomenclatureEntry{
 	{FamilyNum: 72, FamilyLabel: "", Code: "CPV-98910000-5", Label: "Services spécifiques aux organisations et aux organismes internationaux", Description: "", Tag: "Services", CPVCode: "98910000-5"},
 	{FamilyNum: 72, FamilyLabel: "", Code: "CPV-35111300-8", Label: "Appareils extincteurs", Description: "", Tag: "Services", CPVCode: "35111300-8"},
 	{FamilyNum: 72, FamilyLabel: "", Code: "CPV-35111310-1", Label: "Mousse pour extincteurs", Description: "", Tag: "Services", CPVCode: "35111310-1"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44000000-0", Label: "Matéraiux et structures de construction; produits auxiliaires pour la construction", Description: "", Tag: "Services", CPVCode: "44000000-0"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44100000-1", Label: "Matériaux de construction et articles connexes", Description: "", Tag: "Services", CPVCode: "44100000-1"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44110000-4", Label: "Matériaux de construction", Description: "", Tag: "Services", CPVCode: "44110000-4"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44111000-1", Label: "Matériaux de bâtiment", Description: "", Tag: "Services", CPVCode: "44111000-1"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44111100-2", Label: "Briques", Description: "", Tag: "Services", CPVCode: "44111100-2"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44111200-3", Label: "Ciment", Description: "", Tag: "Services", CPVCode: "44111200-3"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44111210-6", Label: "Ciment de forage", Description: "", Tag: "Services", CPVCode: "44111210-6"},
-	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-44111300-4", Label: "Céramique", Description: "", Tag: "Services", CPVCode: "44111300-4"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66000000-0", Label: "Services financiers et d'assurance", Description: "", Tag: "Services", CPVCode: "66000000-0"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66100000-1", Label: "Services bancaires et  d'investissement", Description: "", Tag: "Services", CPVCode: "66100000-1"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66110000-4", Label: "Services bancaires", Description: "", Tag: "Services", CPVCode: "66110000-4"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66111000-1", Label: "Services de banques centrales", Description: "", Tag: "Services", CPVCode: "66111000-1"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66112000-8", Label: "Services de dépôts", Description: "", Tag: "Services", CPVCode: "66112000-8"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66113000-5", Label: "Services de concession de crédit", Description: "", Tag: "Services", CPVCode: "66113000-5"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66113100-6", Label: "Services de concession de micro-crédits", Description: "", Tag: "Services", CPVCode: "66113100-6"},
-	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-66114000-2", Label: "Services de leasing financier", Description: "", Tag: "Services", CPVCode: "66114000-2"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66000000-0", Label: "Services financiers et d'assurance", Description: "", Tag: "Services", CPVCode: "66000000-0"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66100000-1", Label: "Services bancaires et  d'investissement", Description: "", Tag: "Services", CPVCode: "66100000-1"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66110000-4", Label: "Services bancaires", Description: "", Tag: "Services", CPVCode: "66110000-4"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66111000-1", Label: "Services de banques centrales", Description: "", Tag: "Services", CPVCode: "66111000-1"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66112000-8", Label: "Services de dépôts", Description: "", Tag: "Services", CPVCode: "66112000-8"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66113000-5", Label: "Services de concession de crédit", Description: "", Tag: "Services", CPVCode: "66113000-5"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66113100-6", Label: "Services de concession de micro-crédits", Description: "", Tag: "Services", CPVCode: "66113100-6"},
-	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-66114000-2", Label: "Services de leasing financier", Description: "", Tag: "Services", CPVCode: "66114000-2"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50000000-5", Label: "Services de réparation et d'entretien", Description: "", Tag: "Services", CPVCode: "50000000-5"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50100000-6", Label: "Services de réparation et d'entretien de véhicules et équipements", Description: "", Tag: "Services", CPVCode: "50100000-6"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50300000-8", Label: "Services de réparation et d'entretien de PC et de bureau", Description: "", Tag: "Services", CPVCode: "50300000-8"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50700000-2", Label: "Services de réparation et d'entretien d'installations de bâtiments", Description: "", Tag: "Services", CPVCode: "50700000-2"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50710000-5", Label: "Services de réparation et d'entretien d'équipements électriques et mécaniques", Description: "", Tag: "Services", CPVCode: "50710000-5"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50720000-8", Label: "Services de réparation et d'entretien de chauffage central", Description: "", Tag: "Services", CPVCode: "50720000-8"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50800000-3", Label: "Services divers de réparation et d'entretien", Description: "", Tag: "Services", CPVCode: "50800000-3"},
+	{FamilyNum: 73, FamilyLabel: "", Code: "CPV-50830000-2", Label: "Services d'entretien de vêtements et articles connexes", Description: "", Tag: "Services", CPVCode: "50830000-2"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79100000-5", Label: "Services juridiques", Description: "", Tag: "Services", CPVCode: "79100000-5"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79110000-8", Label: "Services de conseils et de représentation juridiques", Description: "", Tag: "Services", CPVCode: "79110000-8"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79111000-5", Label: "Services de conseils juridiques", Description: "", Tag: "Services", CPVCode: "79111000-5"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79112000-2", Label: "Services de représentation juridique", Description: "", Tag: "Services", CPVCode: "79112000-2"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79120000-1", Label: "Services de brevets et de droits d'auteur", Description: "", Tag: "Services", CPVCode: "79120000-1"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79130000-4", Label: "Services de documentation et de certification juridiques", Description: "", Tag: "Services", CPVCode: "79130000-4"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79140000-7", Label: "Services de conseil et d'information juridiques", Description: "", Tag: "Services", CPVCode: "79140000-7"},
+	{FamilyNum: 74, FamilyLabel: "", Code: "CPV-79150000-0", Label: "Services de notariat", Description: "", Tag: "Services", CPVCode: "79150000-0"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79200000-6", Label: "Services de comptabilité, d'audit et fiscaux", Description: "", Tag: "Services", CPVCode: "79200000-6"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79210000-9", Label: "Services de comptabilité et d'audit", Description: "", Tag: "Services", CPVCode: "79210000-9"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79211000-6", Label: "Services de comptabilité", Description: "", Tag: "Services", CPVCode: "79211000-6"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79212000-3", Label: "Services d'audit", Description: "", Tag: "Services", CPVCode: "79212000-3"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79212100-4", Label: "Services d'audit financier", Description: "", Tag: "Services", CPVCode: "79212100-4"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79220000-2", Label: "Services fiscaux", Description: "", Tag: "Services", CPVCode: "79220000-2"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79221000-9", Label: "Services de conseil fiscal", Description: "", Tag: "Services", CPVCode: "79221000-9"},
+	{FamilyNum: 75, FamilyLabel: "", Code: "CPV-79230000-5", Label: "Services de traitement et de préparation de données", Description: "", Tag: "Services", CPVCode: "79230000-5"},
 }
 
 // SystemTags — predefined tags seeded for every tenant.
@@ -678,6 +678,82 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 		node := makeNode(e.CPVCode, e.Label, "", "code", "Travaux", &famNode.ID, seuilMapa, seuilAOt)
 		node.CPVCode = e.CPVCode
 		db.Create(&node)
+	}
+
+	// ── Simulated amounts (deterministic pseudo-random) ────────
+	{
+		type codeNodeRow struct {
+			ID  uuid.UUID
+			Code string
+			Tag  string
+		}
+		var codeNodes []codeNodeRow
+		db.Model(&nomenclaturemod.NomenclatureNode{}).
+			Where("tenant_id = ? AND type = ?", orgID, "code").
+			Select("id, code, tag").
+			Scan(&codeNodes)
+
+		for _, n := range codeNodes {
+			hash := 0
+			for _, c := range n.Code {
+				hash = hash*31 + int(c)
+			}
+			if hash < 0 {
+				hash = -hash
+			}
+			var minVal, maxVal float64
+			switch strings.ToLower(n.Tag) {
+			case "travaux":
+				minVal, maxVal = 100_000, 3_000_000
+			case "services":
+				minVal, maxVal = 15_000, 1_200_000
+			default: // Fournitures
+				minVal, maxVal = 5_000, 800_000
+			}
+			amount := minVal + float64(hash%int(maxVal-minVal))
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("id = ?", n.ID).
+				Update("montant", amount)
+		}
+
+		// Famille montants = sum of children codes
+		type famRow struct {
+			ID uuid.UUID
+		}
+		var famNodes2 []famRow
+		db.Model(&nomenclaturemod.NomenclatureNode{}).
+			Where("tenant_id = ? AND type = ?", orgID, "famille").
+			Select("id").
+			Scan(&famNodes2)
+
+		for _, f := range famNodes2 {
+			var sum float64
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("tenant_id = ? AND type = ? AND parent_id = ?", orgID, "code", f.ID).
+				Select("COALESCE(SUM(montant), 0)").
+				Scan(&sum)
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("id = ?", f.ID).
+				Update("montant", sum)
+		}
+
+		// Grande-famille montants = sum of children familles
+		var gfNodes []famRow
+		db.Model(&nomenclaturemod.NomenclatureNode{}).
+			Where("tenant_id = ? AND type = ?", orgID, "grande-famille").
+			Select("id").
+			Scan(&gfNodes)
+
+		for _, gf := range gfNodes {
+			var sum float64
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("tenant_id = ? AND type = ? AND parent_id = ?", orgID, "famille", gf.ID).
+				Select("COALESCE(SUM(montant), 0)").
+				Scan(&sum)
+			db.Model(&nomenclaturemod.NomenclatureNode{}).
+				Where("id = ?", gf.ID).
+				Update("montant", sum)
+		}
 	}
 
 	// ── Collect all created node IDs by category ──────────────
