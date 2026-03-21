@@ -111,11 +111,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
-      - "traefik.http.routers.stratt-api.rule=Host(`api.stratt.fr`)"
-      - "traefik.http.routers.stratt-api.entrypoints=https"
-      - "traefik.http.routers.stratt-api.tls=true"
-      - "traefik.http.routers.stratt-api.tls.certresolver=letsencrypt"
-      - "traefik.http.services.stratt-api.loadbalancer.server.port=8080"
+      - "traefik.http.routers.stratt-staging-api.rule=Host(`${API_DOMAIN:-api.stratt.fr}`)"
+      - "traefik.http.routers.stratt-staging-api.entrypoints=https"
+      - "traefik.http.routers.stratt-staging-api.tls=true"
+      - "traefik.http.routers.stratt-staging-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-staging-api.loadbalancer.server.port=8080"
     environment:
       PORT: 8080
       APP_ENV: ${APP_ENV:-development}
@@ -157,11 +157,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
-      - "traefik.http.routers.stratt-frontend.rule=Host(`app.stratt.fr`)"
-      - "traefik.http.routers.stratt-frontend.entrypoints=https"
-      - "traefik.http.routers.stratt-frontend.tls=true"
-      - "traefik.http.routers.stratt-frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.stratt-frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.stratt-staging-frontend.rule=Host(`${FRONTEND_DOMAIN:-app.stratt.fr}`)"
+      - "traefik.http.routers.stratt-staging-frontend.entrypoints=https"
+      - "traefik.http.routers.stratt-staging-frontend.tls=true"
+      - "traefik.http.routers.stratt-staging-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stratt-staging-frontend.loadbalancer.server.port=3000"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.stratt.fr}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://app.stratt.fr}
