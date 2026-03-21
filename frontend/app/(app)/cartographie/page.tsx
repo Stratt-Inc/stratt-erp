@@ -20,8 +20,36 @@ import {
 import {
   Upload, BarChart3, AlertTriangle, TrendingDown, TrendingUp,
   Layers, FolderOpen, Scale, Target, CheckCircle2, ArrowUpRight,
-  X, SlidersHorizontal, Share2, Copy, Loader2,
+  X, SlidersHorizontal, Share2, Copy, Loader2, FileText, ChevronRight, Check,
 } from "lucide-react";
+
+/* ── Import types ── */
+interface ImportColumn { index: number; header: string; detected: string; }
+interface ImportPreview {
+  filename: string;
+  total_rows: number;
+  columns: ImportColumn[];
+  preview: Record<string, string>[];
+}
+interface ImportResult { imported: number; skipped: number; errors: string[]; }
+
+const MARCHE_FIELDS: { value: string; label: string }[] = [
+  { value: "",                label: "— Ignorer —" },
+  { value: "reference",      label: "Référence" },
+  { value: "objet",          label: "Objet / libellé" },
+  { value: "service",        label: "Service / direction" },
+  { value: "montant",        label: "Montant HT (€)" },
+  { value: "procedure",      label: "Procédure" },
+  { value: "statut",         label: "Statut" },
+  { value: "priorite",       label: "Priorité" },
+  { value: "categorie",      label: "Catégorie" },
+  { value: "famille_code",   label: "Code famille" },
+  { value: "echeance",       label: "Échéance" },
+  { value: "date_lancement", label: "Date lancement" },
+  { value: "date_attribution", label: "Date attribution" },
+  { value: "date_fin",       label: "Date fin" },
+  { value: "notes",          label: "Notes" },
+];
 
 /* ── Types ── */
 interface Marche {
@@ -76,6 +104,87 @@ export default function CartographiePage() {
     mutationFn: () => api.post("/api/v1/share", { ttl_days: 30, label: "Tableau de bord élu" }, opts),
     onSuccess: (res) => { setShareUrl(res.url); },
     onError: () => showToast("Impossible de générer le lien.", "warning"),
+  });
+
+  /* ── Import wizard state ── */
+  const [importModal,   setImportModal]   = useState(false);
+  const [importStep,    setImportStep]    = useState<1 | 2 | 3>(1);
+  const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
+  const [importMapping, setImportMapping] = useState<Record<number, string>>({}); // colIdx → field
+  const [importResult,  setImportResult]  = useState<ImportResult | null>(null);
+  const [importFile,    setImportFile]    = useState<File | null>(null);
+
+  function openImportModal() {
+    setImportModal(true);
+    setImportStep(1);
+    setImportPreview(null);
+    setImportMapping({});
+    setImportResult(null);
+    setImportFile(null);
+  }
+
+  const previewMutation = useMutation<ImportPreview, Error, File>({
+    mutationFn: async (file: File) => {
+      const fd = new FormData();
+      fd.append("file", file);
+      const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const res = await fetch(`${base}/api/v1/marches/import/preview`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Organization-Id": currentOrg?.id ?? "",
+        },
+        body: fd,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error ?? "Erreur serveur");
+      }
+      const json = await res.json();
+      return json.data as ImportPreview;
+    },
+    onSuccess: (preview, file) => {
+      setImportFile(file);
+      setImportPreview(preview);
+      const m: Record<number, string> = {};
+      for (const col of preview.columns) m[col.index] = col.detected ?? "";
+      setImportMapping(m);
+      setImportStep(2);
+    },
+    onError: (err) => showToast(`Aperçu impossible: ${err.message}`, "warning"),
+  });
+
+  const confirmMutation = useMutation<ImportResult, Error, void>({
+    mutationFn: async () => {
+      if (!importFile) throw new Error("Fichier manquant");
+      const mapping = Object.entries(importMapping)
+        .filter(([, field]) => field !== "")
+        .map(([idx, field]) => ({ index: parseInt(idx), field }));
+      const fd = new FormData();
+      fd.append("file", importFile);
+      fd.append("mapping", JSON.stringify(mapping));
+      const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const res = await fetch(`${base}/api/v1/marches/import/confirm`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Organization-Id": currentOrg?.id ?? "",
+        },
+        body: fd,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error ?? "Erreur serveur");
+      }
+      const json = await res.json();
+      return json.data as ImportResult;
+    },
+    onSuccess: (result) => {
+      setImportResult(result);
+      setImportStep(3);
+      showToast(`${result.imported} marché(s) importé(s) !`, "success");
+    },
+    onError: (err) => showToast(`Import échoué: ${err.message}`, "warning"),
   });
 
   /* ── Remote data ── */
@@ -287,7 +396,7 @@ export default function CartographiePage() {
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <button onClick={demo} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
+          <button onClick={openImportModal} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
             <Upload className="w-3.5 h-3.5" /> Importer base achats
           </button>
           <button
@@ -378,6 +487,184 @@ export default function CartographiePage() {
         </div>
       )}
 
+      {/* ── Import wizard modal ── */}
+      {importModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-2xl mx-4 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="px-5 py-4 flex items-center justify-between border-b border-border flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4" style={{ color: MODULE.cartographie }} />
+                <h3 className="text-sm font-bold text-foreground">Import de marchés</h3>
+                {/* Step indicator */}
+                <div className="flex items-center gap-1 ml-2">
+                  {([1, 2, 3] as const).map((s) => (
+                    <div key={s} className="flex items-center gap-1">
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                        style={{
+                          background: importStep >= s ? MODULE.cartographie : "hsl(var(--muted))",
+                          color: importStep >= s ? "#fff" : "hsl(var(--muted-foreground))",
+                        }}
+                      >
+                        {importStep > s ? <Check className="w-3 h-3" /> : s}
+                      </div>
+                      {s < 3 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button onClick={() => setImportModal(false)}>
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+
+            {/* Step 1 — Upload */}
+            {importStep === 1 && (
+              <div className="p-6 space-y-4">
+                <p className="text-xs text-muted-foreground">
+                  Sélectionnez un fichier <strong>.csv</strong> ou <strong>.xlsx</strong> contenant vos marchés.
+                  Les colonnes seront détectées automatiquement.
+                </p>
+                <label
+                  className="block rounded-xl border-2 border-dashed border-border bg-muted/20 hover:bg-muted/40 transition-colors cursor-pointer p-10 text-center"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file) previewMutation.mutate(file);
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept=".csv,.xlsx,.xls,.txt"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) previewMutation.mutate(file);
+                    }}
+                  />
+                  {previewMutation.isPending ? (
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Loader2 className="w-8 h-8 animate-spin" style={{ color: MODULE.cartographie }} />
+                      <span className="text-sm">Analyse en cours…</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Upload className="w-8 h-8" />
+                      <span className="text-sm font-medium">Glissez-déposez ou cliquez pour parcourir</span>
+                      <span className="text-xs">.csv, .xlsx, .xls — max 10 Mo</span>
+                    </div>
+                  )}
+                </label>
+                <p className="text-[11px] text-muted-foreground">
+                  Formats acceptés : exports progiciel financier (Hélios, Civil Finances, Berger-Levrault…), base achats Excel, ou export DECP.
+                </p>
+              </div>
+            )}
+
+            {/* Step 2 — Mapping */}
+            {importStep === 2 && importPreview && (
+              <div className="flex flex-col flex-1 min-h-0">
+                <div className="px-5 py-3 flex-shrink-0 border-b border-border">
+                  <p className="text-xs text-muted-foreground">
+                    <strong>{importPreview.total_rows}</strong> lignes détectées dans <strong>{importPreview.filename}</strong>.
+                    Vérifiez et ajustez le mapping des colonnes ci-dessous.
+                  </p>
+                </div>
+                <div className="overflow-y-auto flex-1 p-5">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-left text-muted-foreground">
+                        <th className="pb-2 font-semibold w-1/3">Colonne fichier</th>
+                        <th className="pb-2 font-semibold w-1/3">Champ Axiora</th>
+                        <th className="pb-2 font-semibold">Aperçu (1ère ligne)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {importPreview.columns.map((col) => (
+                        <tr key={col.index}>
+                          <td className="py-2 pr-3 font-medium text-foreground truncate max-w-[160px]">{col.header}</td>
+                          <td className="py-2 pr-3">
+                            <select
+                              value={importMapping[col.index] ?? ""}
+                              onChange={(e) => setImportMapping(m => ({ ...m, [col.index]: e.target.value }))}
+                              className="w-full text-xs rounded-md border border-border bg-background px-2 py-1 text-foreground"
+                            >
+                              {MARCHE_FIELDS.map(f => (
+                                <option key={f.value} value={f.value}>{f.label}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="py-2 text-muted-foreground truncate max-w-[180px]">
+                            {importPreview.preview[0]?.[String(col.index)] ?? "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-5 py-4 border-t border-border flex justify-between items-center flex-shrink-0">
+                  <button
+                    onClick={() => setImportStep(1)}
+                    className="text-xs text-muted-foreground hover:text-foreground underline"
+                  >
+                    ← Changer de fichier
+                  </button>
+                  <button
+                    onClick={() => confirmMutation.mutate()}
+                    disabled={confirmMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl text-white disabled:opacity-50"
+                    style={{ background: MODULE.cartographie }}
+                  >
+                    {confirmMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                    Importer {importPreview.total_rows} ligne{importPreview.total_rows > 1 ? "s" : ""}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3 — Result */}
+            {importStep === 3 && importResult && (
+              <div className="p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
+                    <Check className="w-5 h-5" style={{ color: "hsl(var(--accent))" }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Import terminé</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      <strong className="text-foreground">{importResult.imported}</strong> marché{importResult.imported > 1 ? "s" : ""} importé{importResult.imported > 1 ? "s" : ""} ·{" "}
+                      <span>{importResult.skipped} ignoré{importResult.skipped > 1 ? "s" : ""}</span>
+                    </p>
+                  </div>
+                </div>
+                {importResult.errors.length > 0 && (
+                  <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-1">
+                    <p className="text-[11px] font-bold text-destructive uppercase tracking-widest">
+                      {importResult.errors.length} erreur{importResult.errors.length > 1 ? "s" : ""}
+                    </p>
+                    {importResult.errors.slice(0, 5).map((e, i) => (
+                      <p key={i} className="text-[11px] text-muted-foreground font-mono">{e}</p>
+                    ))}
+                    {importResult.errors.length > 5 && (
+                      <p className="text-[11px] text-muted-foreground">…et {importResult.errors.length - 5} autres</p>
+                    )}
+                  </div>
+                )}
+                <button
+                  onClick={() => setImportModal(false)}
+                  className="w-full py-2 text-xs font-semibold rounded-xl text-white"
+                  style={{ background: MODULE.cartographie }}
+                >
+                  Fermer
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── KPIs ── */}
       <div className="section-header">
         <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent))", boxShadow: "0 0 6px hsl(var(--accent))" }} />
@@ -402,7 +689,16 @@ export default function CartographiePage() {
       </div>
 
       {/* ── Import zone ── */}
-      <div className="rounded-xl border border-dashed border-border bg-card p-3 flex items-center gap-4">
+      <div
+        className="rounded-xl border border-dashed border-border bg-card p-3 flex items-center gap-4 cursor-pointer hover:bg-muted/20 transition-colors"
+        onClick={openImportModal}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files[0];
+          if (file) { openImportModal(); previewMutation.mutate(file); }
+        }}
+      >
         <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
           <Upload className="w-4 h-4 text-muted-foreground" />
         </div>
@@ -412,9 +708,9 @@ export default function CartographiePage() {
             Glissez-déposez vos fichiers (.xlsx, .csv) — Dépenses mandatées, bases achats, exports progiciel financier
           </p>
         </div>
-        <button onClick={demo} className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors flex-shrink-0">
+        <span className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground flex-shrink-0">
           Parcourir
-        </button>
+        </span>
       </div>
 
       {/* ── Répartition section header ── */}

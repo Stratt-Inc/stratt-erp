@@ -7,6 +7,8 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	r.GET("/calendar", h.Calendar)
 	r.GET("/alertes", h.Alertes)
 	r.GET("/rapport", h.Rapport)
+	r.POST("/import/preview", h.ImportPreview)
+	r.POST("/import/confirm", h.ImportConfirm)
 	r.GET("", h.List)
 	r.POST("", h.Create)
 }
