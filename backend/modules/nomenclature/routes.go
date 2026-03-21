@@ -18,6 +18,8 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	r.POST("/rollback/:auditId", h.RollbackOperation)
 	r.GET("/history", h.AuditHistory)
 
+	// Export — implementation document for financial software editors
+	r.GET("/export", h.Export)
 
 	// Node ↔ Tag association
 	r.POST("/:id/tags/:tagId", h.AddTagToNode)
