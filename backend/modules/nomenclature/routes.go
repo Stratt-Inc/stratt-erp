@@ -10,6 +10,15 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	r.PUT("/:id", h.Update)
 	r.DELETE("/:id", h.Delete)
 
+	// Propagation — impact preview, merge, recode, delete+remap, rollback
+	r.GET("/:id/impact", h.GetImpact)
+	r.POST("/:id/merge", h.MergeCode)
+	r.POST("/:id/recode", h.RecodeNode)
+	r.DELETE("/:id/remap", h.DeleteWithRemap)
+	r.POST("/rollback/:auditId", h.RollbackOperation)
+	r.GET("/history", h.AuditHistory)
+
+
 	// Node ↔ Tag association
 	r.POST("/:id/tags/:tagId", h.AddTagToNode)
 	r.DELETE("/:id/tags/:tagId", h.RemoveTagFromNode)
