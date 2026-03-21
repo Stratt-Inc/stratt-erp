@@ -175,53 +175,11 @@ func main() {
 		fmt.Println("✓ Marchés already seeded — skipping")
 	}
 
-	// ── Nomenclature ──────────────────────────────────────
+	// ── Nomenclature nationale ────────────────────────────
 	var nomCount int64
 	db.Model(&nomenclaturemod.NomenclatureNode{}).Where("tenant_id = ?", org.ID).Count(&nomCount)
 	if nomCount == 0 {
-		// Familles (racines)
-		fam1 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "01", Label: "Fournitures et équipements", Type: "famille", Montant: 147500, Seuil: 0, Conforme: true}
-		fam2 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "02", Label: "Prestations intellectuelles", Type: "famille", Montant: 40000, Seuil: 0, Conforme: true}
-		fam3 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "03", Label: "Travaux", Type: "famille", Montant: 380000, Seuil: 0, Conforme: true}
-		fam4 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "04", Label: "Services courants", Type: "famille", Montant: 130000, Seuil: 0, Conforme: true}
-		db.Create(&fam1)
-		db.Create(&fam2)
-		db.Create(&fam3)
-		db.Create(&fam4)
-
-		// Sous-familles
-		sf1 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "01.01", Label: "Fournitures bureautiques", Type: "sous-famille", ParentID: &fam1.ID, Montant: 20500, Seuil: 0, Conforme: true}
-		sf2 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "01.02", Label: "Équipements informatiques", Type: "sous-famille", ParentID: &fam1.ID, Montant: 127000, Seuil: 0, Conforme: true}
-		sf3 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "02.01", Label: "Conseils et études", Type: "sous-famille", ParentID: &fam2.ID, Montant: 18000, Seuil: 0, Conforme: true}
-		sf4 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "02.02", Label: "Formations professionnelles", Type: "sous-famille", ParentID: &fam2.ID, Montant: 22000, Seuil: 0, Conforme: true}
-		sf5 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "03.01", Label: "Bâtiments et génie civil", Type: "sous-famille", ParentID: &fam3.ID, Montant: 0, Seuil: 0, Conforme: true}
-		sf6 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "03.02", Label: "Voirie et réseaux divers", Type: "sous-famille", ParentID: &fam3.ID, Montant: 380000, Seuil: 0, Conforme: true}
-		sf7 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "04.01", Label: "Nettoyage et entretien", Type: "sous-famille", ParentID: &fam4.ID, Montant: 45000, Seuil: 0, Conforme: true}
-		sf8 := nomenclaturemod.NomenclatureNode{TenantID: org.ID, Code: "04.02", Label: "Maintenance", Type: "sous-famille", ParentID: &fam4.ID, Montant: 85000, Seuil: 0, Conforme: true}
-		db.Create(&sf1)
-		db.Create(&sf2)
-		db.Create(&sf3)
-		db.Create(&sf4)
-		db.Create(&sf5)
-		db.Create(&sf6)
-		db.Create(&sf7)
-		db.Create(&sf8)
-
-		// Codes feuilles
-		codes := []nomenclaturemod.NomenclatureNode{
-			{TenantID: org.ID, Code: "01.01.01", Label: "Papier et consommables", Type: "code", ParentID: &sf1.ID, Montant: 8500, Seuil: 40000, Conforme: true},
-			{TenantID: org.ID, Code: "01.01.02", Label: "Mobilier de bureau", Type: "code", ParentID: &sf1.ID, Montant: 12000, Seuil: 40000, Conforme: true},
-			{TenantID: org.ID, Code: "01.02.01", Label: "Matériel informatique", Type: "code", ParentID: &sf2.ID, Montant: 85000, Seuil: 90000, Conforme: true},
-			{TenantID: org.ID, Code: "01.02.02", Label: "Logiciels et licences", Type: "code", ParentID: &sf2.ID, Montant: 42000, Seuil: 40000, Conforme: false},
-			{TenantID: org.ID, Code: "02.01.01", Label: "Études et conseils juridiques", Type: "code", ParentID: &sf3.ID, Montant: 18000, Seuil: 40000, Conforme: true},
-			{TenantID: org.ID, Code: "02.02.01", Label: "Formations professionnelles réglementées", Type: "code", ParentID: &sf4.ID, Montant: 22000, Seuil: 40000, Conforme: true},
-			{TenantID: org.ID, Code: "03.02.01", Label: "Travaux de voirie communale", Type: "code", ParentID: &sf6.ID, Montant: 380000, Seuil: 5382000, Conforme: true},
-			{TenantID: org.ID, Code: "04.02.01", Label: "Maintenance systèmes informatiques", Type: "code", ParentID: &sf8.ID, Montant: 85000, Seuil: 90000, Conforme: true},
-		}
-		for i := range codes {
-			db.Create(&codes[i])
-		}
-		fmt.Printf("✓ %d nomenclature nodes seeded\n", 4+8+len(codes))
+		seedNomenclatureNationale(db, org.ID)
 	} else {
 		fmt.Println("✓ Nomenclature already seeded — skipping")
 	}
