@@ -287,16 +287,24 @@ var NomenclatureTravaux = []TravauxEntry{
 }
 
 // SystemTags — predefined tags seeded for every tenant.
+// Category tags (Fournitures/Services/Travaux) are auto-assigned to nodes based on their tag field.
 var SystemTags = []struct {
-	Name  string
-	Color string
+	Name     string
+	Color    string
+	Category string // if set, auto-assign to all nodes with matching Tag field
 }{
-	{Name: "Urgent", Color: "#ef4444"},
-	{Name: "Stratégique", Color: "#8b5cf6"},
+	// Category tags — auto-assigned
+	{Name: "Fournitures", Color: "#22c55e", Category: "Fournitures"},
+	{Name: "Services", Color: "#60a5fa", Category: "Services"},
+	{Name: "Travaux", Color: "#fb923c", Category: "Travaux"},
+	// Regulatory tags — auto-assigned to all code-level nodes
+	{Name: "Marché public", Color: "#10b981", Category: "*"},
+	// Manual tags
 	{Name: "MAPA", Color: "#f59e0b"},
 	{Name: "Appel d'offres", Color: "#3b82f6"},
 	{Name: "Accord-cadre", Color: "#06b6d4"},
-	{Name: "Marché public", Color: "#10b981"},
+	{Name: "Urgent", Color: "#ef4444"},
+	{Name: "Stratégique", Color: "#8b5cf6"},
 	{Name: "Non conforme", Color: "#f97316"},
 	{Name: "À réviser", Color: "#ec4899"},
 }
@@ -401,7 +409,21 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 		db.Create(&node)
 	}
 
-	// ── Tags système ───────────────────────────────────────────
+	// ── Collect all created node IDs by category ──────────────
+	var allNodes []nomenclaturemod.NomenclatureNode
+	db.Where("tenant_id = ?", orgID).Find(&allNodes)
+	nodesByCategory := map[string][]uuid.UUID{}
+	for _, n := range allNodes {
+		nodesByCategory[n.Tag] = append(nodesByCategory[n.Tag], n.ID)
+		nodesByCategory["*"] = append(nodesByCategory["*"], n.ID)
+	}
+
+	// ── Tags système + auto-assignment ────────────────────────
+	type tagRef struct {
+		id       uuid.UUID
+		category string
+	}
+	var tagRefs []tagRef
 	for _, t := range SystemTags {
 		tag := nomenclaturemod.NomenclatureTag{
 			TenantID: orgID,
@@ -410,9 +432,34 @@ func seedNomenclatureNationale(db *gorm.DB, orgID uuid.UUID) {
 			IsSystem: true,
 		}
 		db.Create(&tag)
+		if t.Category != "" {
+			tagRefs = append(tagRefs, tagRef{id: tag.ID, category: t.Category})
+		}
+	}
+
+	// Bulk-assign category tags via raw SQL
+	type pair struct{ nodeID, tagID uuid.UUID }
+	var pairs []pair
+	for _, ref := range tagRefs {
+		for _, nodeID := range nodesByCategory[ref.category] {
+			pairs = append(pairs, pair{nodeID: nodeID, tagID: ref.id})
+		}
+	}
+	if len(pairs) > 0 {
+		// Build VALUES clause
+		vals := ""
+		args := make([]interface{}, 0, len(pairs)*2)
+		for i, p := range pairs {
+			if i > 0 {
+				vals += ","
+			}
+			vals += "(?,?)"
+			args = append(args, p.nodeID, p.tagID)
+		}
+		db.Exec("INSERT INTO nomenclature_node_tags (nomenclature_node_id, nomenclature_tag_id) VALUES "+vals+" ON CONFLICT DO NOTHING", args...)
 	}
 
 	total := 3 + len(famDefs) + len(travFamNodes) + len(NomenclatureNationale) + len(NomenclatureTravaux)
-	fmt.Printf("✓ %d nomenclature nationale nodes seeded (%d F/S familles, %d T familles, %d F/S codes, %d T codes, %d tags système)\n",
-		total, len(famDefs), len(travFamNodes), len(NomenclatureNationale), len(NomenclatureTravaux), len(SystemTags))
+	fmt.Printf("✓ %d nodes seeded (%d F/S familles, %d T familles, %d F/S codes, %d T codes) | %d tags | %d auto-assignments\n",
+		total, len(famDefs), len(travFamNodes), len(NomenclatureNationale), len(NomenclatureTravaux), len(SystemTags), len(pairs))
 }

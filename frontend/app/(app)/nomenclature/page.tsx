@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
@@ -254,6 +254,29 @@ export default function NomenclaturePage() {
   const systemTags = tags.filter((t) => t.is_system);
   const customTags = tags.filter((t) => !t.is_system);
 
+  // Contextual tag suggestions based on selected node's category
+  const suggestedTags = useMemo(() => {
+    if (!selected) return systemTags.slice(0, 6);
+    const cat = selected.tag; // Fournitures | Services | Travaux
+    const assignedIds = new Set((selected.tags ?? []).map((t) => t.id));
+    const all = tags.filter((t) => !assignedIds.has(t.id));
+    // Category-specific priorities
+    const priorities: Record<string, string[]> = {
+      Fournitures: ["Fournitures", "MAPA", "Marché public", "Accord-cadre", "Stratégique", "Urgent"],
+      Services:    ["Services",    "MAPA", "Accord-cadre", "Marché public", "Stratégique", "À réviser"],
+      Travaux:     ["Travaux",     "Appel d'offres", "Marché public", "Urgent", "MAPA", "Stratégique"],
+    };
+    const order = priorities[cat] ?? priorities["Fournitures"];
+    return [...all].sort((a, b) => {
+      const ia = order.indexOf(a.name);
+      const ib = order.indexOf(b.name);
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    }).slice(0, 8);
+  }, [selected, tags]);
+
   const PRESET_COLORS = ["#ef4444", "#f97316", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4", "#6366f1"];
 
   return (
@@ -364,20 +387,20 @@ export default function NomenclaturePage() {
               <span className="ml-auto text-[10px] text-muted-foreground">Glissez sur un nœud</span>
             </div>
             <div className="p-3 space-y-3">
-              {/* System tags */}
-              {systemTags.length > 0 && (
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground mb-1.5">Prédéfinis</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {systemTags.map((tag) => (
-                      <DraggableTag key={tag.id} tag={tag} onDragStart={setDraggingTag} />
-                    ))}
-                  </div>
+              {/* Suggestions contextuelles */}
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground mb-1.5">
+                  {selected ? `Suggestions — ${selected.tag || selected.type}` : "Tous les tags"}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {suggestedTags.map((tag) => (
+                    <DraggableTag key={tag.id} tag={tag} onDragStart={setDraggingTag} />
+                  ))}
                 </div>
-              )}
+              </div>
               {/* Custom tags */}
               {customTags.length > 0 && (
-                <div>
+                <div className="pt-2 border-t border-border">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground mb-1.5">Personnalisés</p>
                   <div className="flex flex-wrap gap-1.5">
                     {customTags.map((tag) => (
@@ -463,9 +486,11 @@ export default function NomenclaturePage() {
                   </div>
                 </div>
                 {/* Assigned tags */}
-                {selected.tags && selected.tags.length > 0 && (
-                  <div>
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Tags assignés</label>
+                <div>
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                    Tags assignés
+                  </label>
+                  {selected.tags && selected.tags.length > 0 ? (
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {selected.tags.map((t) => (
                         <TagChip
@@ -475,8 +500,28 @@ export default function NomenclaturePage() {
                         />
                       ))}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <p className="mt-1 text-[11px] text-muted-foreground">Aucun tag — glissez-en un depuis la palette</p>
+                  )}
+                  {/* Quick-add suggestions */}
+                  {suggestedTags.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-[10px] text-muted-foreground mb-1">Ajouter rapidement :</p>
+                      <div className="flex flex-wrap gap-1">
+                        {suggestedTags.slice(0, 5).map((t) => (
+                          <button
+                            key={t.id}
+                            onClick={() => addTagMutation.mutate({ nodeId: selected.id, tagId: t.id })}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-dashed transition-opacity hover:opacity-80"
+                            style={{ borderColor: t.color + "60", color: t.color }}
+                          >
+                            <Plus className="w-2.5 h-2.5" />{t.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div>
                   <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Conformité</label>
                   <div className="mt-1">
