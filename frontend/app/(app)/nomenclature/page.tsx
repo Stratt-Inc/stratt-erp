@@ -31,6 +31,8 @@ interface ApiNode {
   parent_id: string | null;
   seuil_mapa: number;
   seuil_ao: number;
+  montant: number;
+  seuil: number;
   conforme: boolean;
   is_national: boolean;
   version: string;
@@ -208,7 +210,7 @@ export default function NomenclaturePage() {
       queryClient.invalidateQueries({ queryKey: ["nomenclature", currentOrg?.id] });
       showToast("Tag ajouté.", "success");
     },
-    onError: () => showToast("Impossible d'ajouter le tag.", "error"),
+    onError: () => showToast("Impossible d'ajouter le tag.", "warning"),
   });
 
   const removeTagMutation = useMutation({
@@ -217,7 +219,7 @@ export default function NomenclaturePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["nomenclature", currentOrg?.id] });
     },
-    onError: () => showToast("Impossible de retirer le tag.", "error"),
+    onError: () => showToast("Impossible de retirer le tag.", "warning"),
   });
 
   const createTagMutation = useMutation({
@@ -228,7 +230,7 @@ export default function NomenclaturePage() {
       setNewTagName("");
       showToast("Tag créé.", "success");
     },
-    onError: () => showToast("Impossible de créer le tag.", "error"),
+    onError: () => showToast("Impossible de créer le tag.", "warning"),
   });
 
   const deleteTagMutation = useMutation({

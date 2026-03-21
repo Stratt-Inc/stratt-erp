@@ -42,43 +42,24 @@ function getThreshold(amount: number) {
   return CCP_THRESHOLDS.find((t) => amount < t.max) ?? CCP_THRESHOLDS[CCP_THRESHOLDS.length - 1];
 }
 
-// ── Demo compliance data ───────────────────────────────────────────────
+interface ComplianceSupplier {
+  supplier_id: string | null;
+  name: string;
+  order_count: number;
+  cumul: number;
+  risk: "critical" | "high" | "medium" | "low";
+  alerts: string[];
+}
 
-const DEMO_SUPPLIERS = [
-  {
-    name: "Maintenance Équipements SA", family: "03.04 – Maintenance", cumul: 241_800, orders: 5,
-    risk: "critical" as const, alerts: ["Seuil AO dépassé (+26 800 €)", "Publication BOAMP requise"],
-  },
-  {
-    name: "Société Informatique du Nord", family: "02.01 – Fournitures informatiques", cumul: 187_400, orders: 4,
-    risk: "high" as const, alerts: ["Seuil MAPA+ dépassé — AO requis", "Fractionnement potentiel détecté"],
-  },
-  {
-    name: "Nettoyage Pro Services", family: "03.01 – Services de nettoyage", cumul: 94_200, orders: 3,
-    risk: "medium" as const, alerts: ["Proche du seuil MAPA+ (215 000 €)"],
-  },
-  {
-    name: "Formation Excellence", family: "04.02 – Services de formation", cumul: 67_300, orders: 2,
-    risk: "low" as const, alerts: [],
-  },
-  {
-    name: "Bureau Technique SARL", family: "01.02 – Fournitures de bureau", cumul: 38_600, orders: 6,
-    risk: "low" as const, alerts: [],
-  },
-];
-
-const DEMO_FRACTIONNEMENT = [
-  {
-    supplier: "Société Informatique du Nord", family: "02.01", score: 87,
-    orders: ["BC-2026-0042 (48 500 €)", "BC-2026-0051 (43 200 €)", "BC-2026-0063 (47 800 €)"],
-    period: "Jan – Mars 2026",
-  },
-  {
-    supplier: "Bureau Technique SARL", family: "01.02", score: 34,
-    orders: ["BC-2026-0011 (6 200 €)", "BC-2026-0018 (7 400 €)"],
-    period: "Jan – Fév 2026",
-  },
-];
+function fractionnementScore(s: ComplianceSupplier): number {
+  if (s.order_count < 2) return 0;
+  const avg = s.cumul / s.order_count;
+  // Multiple small orders totaling above a threshold = high fractionnement risk
+  if (s.risk === "critical" && avg < 215_000) return Math.min(95, 60 + s.order_count * 8);
+  if (s.risk === "high" && avg < 90_000) return Math.min(80, 45 + s.order_count * 7);
+  if (s.order_count >= 3 && avg < 40_000) return Math.min(60, 30 + s.order_count * 6);
+  return 0;
+}
 
 const RISK_CONFIG = {
   critical: { label: "Critique", color: "hsl(var(--destructive))", bg: "hsl(var(--destructive) / 0.08)", icon: ShieldAlert },
@@ -89,8 +70,9 @@ const RISK_CONFIG = {
 
 // ── ComplianceTab ──────────────────────────────────────────────────────
 
-function ComplianceTab() {
+function ComplianceTab({ suppliers }: { suppliers: ComplianceSupplier[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const suspects = suppliers.filter(s => fractionnementScore(s) > 0).sort((a, b) => fractionnementScore(b) - fractionnementScore(a));
 
   return (
     <div className="space-y-3">
@@ -135,11 +117,11 @@ function ComplianceTab() {
           <h2 className="text-sm font-semibold text-foreground">Contrôle automatique des seuils — cumul 12 mois glissants</h2>
           <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
             style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
-            {DEMO_SUPPLIERS.filter((s) => s.risk === "critical" || s.risk === "high").length} alertes
+            {suppliers.filter((s) => s.risk === "critical" || s.risk === "high").length} alertes
           </span>
         </div>
         <div className="divide-y divide-border">
-          {DEMO_SUPPLIERS.map((s) => {
+          {suppliers.map((s) => {
             const th = getThreshold(s.cumul);
             const rc = RISK_CONFIG[s.risk];
             const RiskIcon = rc.icon;
@@ -160,7 +142,7 @@ function ComplianceTab() {
                         {rc.label}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">{s.family} · {s.orders} commandes</p>
+                    <p className="text-[11px] text-muted-foreground">{s.order_count} commandes · cumul 12 mois</p>
                     <div className="mt-1.5 flex items-center gap-2">
                       <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div className="h-full rounded-full transition-all" style={{ width: `${pctMax}%`, background: rc.color }} />
@@ -196,36 +178,49 @@ function ComplianceTab() {
         <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" style={{ color: "hsl(var(--warning))" }} />
           <h2 className="text-sm font-semibold text-foreground">Détection du fractionnement illicite</h2>
+          <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            style={{ background: "hsl(var(--warning) / 0.1)", color: "hsl(var(--warning))" }}>
+            {suspects.length} suspect{suspects.length > 1 ? "s" : ""}
+          </span>
         </div>
-        <div className="divide-y divide-border">
-          {DEMO_FRACTIONNEMENT.map((f) => (
-            <div key={f.supplier} className="px-4 py-3 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
-                style={{ background: f.score >= 70 ? "hsl(var(--destructive))" : "hsl(var(--primary))" }}>
-                {f.score}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-foreground">{f.supplier}</p>
-                  <span className="text-[10px] text-muted-foreground">code {f.family}</span>
+        {suspects.length === 0 ? (
+          <div className="px-4 py-6 text-center text-sm text-muted-foreground">Aucun fractionnement détecté</div>
+        ) : (
+          <div className="divide-y divide-border">
+            {suspects.map((s) => {
+              const score = fractionnementScore(s);
+              const scoreColor = score >= 70 ? "hsl(var(--destructive))" : "hsl(var(--warning))";
+              return (
+                <div key={s.name} className="px-4 py-3 flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
+                    style={{ background: scoreColor }}>
+                    {score}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">{s.name}</p>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mb-1">
+                      {s.order_count} commandes · {s.cumul.toLocaleString("fr-FR")} € cumulés — Jan–Mars 2026
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {s.alerts.map((a, i) => (
+                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-full font-mono"
+                          style={{ background: "hsl(var(--warning) / 0.07)", color: "hsl(var(--warning))" }}>
+                          {a}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-[10px] text-muted-foreground">Score risque</p>
+                    <p className="text-lg font-extrabold" style={{ color: scoreColor }}>{score}<span className="text-xs font-normal">/100</span></p>
+                  </div>
                 </div>
-                <p className="text-[11px] text-muted-foreground mb-1">{f.period}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {f.orders.map((o, i) => (
-                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full font-mono"
-                      style={{ background: "hsl(var(--primary) / 0.07)", color: "hsl(var(--primary))" }}>
-                      {o}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <p className="text-[10px] text-muted-foreground">Score risque</p>
-                <p className="text-lg font-extrabold" style={{ color: f.score >= 70 ? "hsl(var(--destructive))" : "hsl(var(--primary))" }}>{f.score}<span className="text-xs font-normal">/100</span></p>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -245,10 +240,16 @@ export default function ProcurementPage() {
     enabled: !!accessToken && !!currentOrg,
   });
 
+  const { data: suppliers = [] } = useQuery<ComplianceSupplier[]>({
+    queryKey: ["procurement", "compliance", currentOrg?.id],
+    queryFn: () => api.get("/api/v1/procurement/compliance", opts),
+    enabled: !!accessToken && !!currentOrg,
+  });
+
   const totalOrdered = orders.filter(o => o.status !== "cancelled").reduce((s, o) => s + o.total, 0);
   const received = orders.filter(o => o.status === "received").length;
   const pending = orders.filter(o => o.status === "sent").length;
-  const riskCount = DEMO_SUPPLIERS.filter((s) => s.risk === "critical" || s.risk === "high").length;
+  const riskCount = suppliers.filter((s) => s.risk === "critical" || s.risk === "high").length;
 
   return (
     <div className="space-y-3">
@@ -305,7 +306,7 @@ export default function ProcurementPage() {
         ))}
       </div>
 
-      {tab === "conformite" && <ComplianceTab />}
+      {tab === "conformite" && <ComplianceTab suppliers={suppliers} />}
 
       {tab === "commandes" && (
         isLoading ? (

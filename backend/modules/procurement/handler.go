@@ -1,6 +1,8 @@
 package procurement
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/stratt/backend/internal/models"
@@ -63,4 +65,66 @@ func (h *Handler) GetOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(200, models.OK(order))
+}
+
+// Compliance returns supplier-level spend aggregation with CCP risk assessment.
+// GET /api/v1/procurement/compliance
+func (h *Handler) Compliance(c *gin.Context) {
+	orgID, _ := middleware.GetOrgID(c)
+	ctx := c.Request.Context()
+
+	type rawRow struct {
+		SupplierID   *uuid.UUID
+		SupplierName string
+		OrderCount   int
+		Cumul        float64
+	}
+	var rows []rawRow
+	h.db.WithContext(ctx).
+		Table("purchase_orders po").
+		Select(`po.supplier_id,
+			COALESCE(NULLIF(c.company, ''), c.first_name || ' ' || c.last_name, 'Fournisseur inconnu') AS supplier_name,
+			COUNT(po.id) AS order_count,
+			SUM(po.total) AS cumul`).
+		Joins("LEFT JOIN contacts c ON c.id = po.supplier_id AND c.deleted_at IS NULL").
+		Where("po.tenant_id = ? AND po.deleted_at IS NULL AND po.supplier_id IS NOT NULL", orgID).
+		Group("po.supplier_id, c.company, c.first_name, c.last_name").
+		Order("cumul DESC").
+		Scan(&rows)
+
+	type Result struct {
+		SupplierID *uuid.UUID `json:"supplier_id"`
+		Name       string     `json:"name"`
+		OrderCount int        `json:"order_count"`
+		Cumul      float64    `json:"cumul"`
+		Risk       string     `json:"risk"` // critical | high | medium | low
+		Alerts     []string   `json:"alerts"`
+	}
+
+	results := make([]Result, 0, len(rows))
+	for _, r := range rows {
+		risk := "low"
+		alerts := []string{}
+		pct := r.Cumul / 215_000 * 100
+		switch {
+		case r.Cumul >= 215_000:
+			risk = "critical"
+			alerts = append(alerts, fmt.Sprintf("Seuil AO dépassé (%.0f k€) — publication BOAMP requise", r.Cumul/1000))
+		case r.Cumul >= 90_000:
+			risk = "high"
+			alerts = append(alerts, fmt.Sprintf("Seuil MAPA+ dépassé (%.0f k€) — AO requis si même objet", r.Cumul/1000))
+		case r.Cumul >= 60_000:
+			risk = "medium"
+			alerts = append(alerts, fmt.Sprintf("Proche du seuil MAPA+ — %.0f %% du seuil de 215 k€ atteint", pct))
+		}
+		results = append(results, Result{
+			SupplierID: r.SupplierID,
+			Name:       r.SupplierName,
+			OrderCount: r.OrderCount,
+			Cumul:      r.Cumul,
+			Risk:       risk,
+			Alerts:     alerts,
+		})
+	}
+	c.JSON(200, models.OK(results))
 }
