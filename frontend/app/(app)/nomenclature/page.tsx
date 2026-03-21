@@ -463,16 +463,30 @@ export default function NomenclaturePage() {
               <div className="p-3 space-y-2">
                 <div>
                   <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Code</label>
-                  <div className="mt-1 font-mono text-xs bg-muted px-2 py-1.5 rounded-lg text-foreground">{selected.code}</div>
+                  <input
+                    key={selected.id + "-code"}
+                    defaultValue={selected.code}
+                    className="mt-1 w-full px-2 py-1.5 text-xs font-mono rounded-lg border border-border bg-muted/30 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
                 </div>
                 <div>
                   <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Libellé</label>
-                  <p className="mt-1 text-xs text-foreground font-medium leading-snug">{selected.label}</p>
+                  <input
+                    key={selected.id + "-label"}
+                    defaultValue={selected.label}
+                    className="mt-1 w-full px-2 py-1.5 text-xs rounded-lg border border-border bg-muted/30 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
                 </div>
                 {selected.description && (
                   <div>
                     <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Périmètre</label>
                     <p className="mt-1 text-xs text-muted-foreground leading-relaxed line-clamp-5">{selected.description}</p>
+                  </div>
+                )}
+                {(selected.montant ?? 0) > 0 && (
+                  <div>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Montant consolidé</label>
+                    <div className="mt-1 text-xs font-semibold num text-foreground">{selected.montant!.toLocaleString("fr-FR")} €</div>
                   </div>
                 )}
                 <div className="flex gap-2">
@@ -542,6 +556,18 @@ export default function NomenclaturePage() {
                     <span style={{ color: "hsl(var(--primary))" }}>Nationale — version {selected.version}</span>
                   </div>
                 )}
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => showToast("Modification enregistrée avec succès.", "success")}
+                    className="flex-1 py-1.5 text-[11px] font-semibold rounded-lg text-white"
+                    style={{ background: "hsl(var(--primary))" }}
+                  >
+                    Enregistrer
+                  </button>
+                  <button className="px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors">
+                    Annuler
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="py-8 text-center text-xs text-muted-foreground">
@@ -549,6 +575,28 @@ export default function NomenclaturePage() {
                 Sélectionnez un nœud
               </div>
             )}
+          </div>
+
+          {/* Journal des modifications */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-border flex items-center gap-2">
+              <BookOpen className="w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
+              <h2 className="text-sm font-semibold text-foreground">Journal des modifications</h2>
+            </div>
+            <div className="p-3 space-y-1">
+              {[
+                { date: "01/01/2024 00:00", action: "Import national", utilisateur: "Stratt", detail: "Nomenclature achats V1 — 175 codes internes, 256 codes CPV F/S, 56 codes CPV Travaux" },
+              ].map((j, i) => (
+                <div key={i} className="p-1.5 rounded text-[11px] hover:bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-foreground">{j.action}</span>
+                    <span className="text-muted-foreground">— {j.utilisateur}</span>
+                  </div>
+                  <p className="text-muted-foreground mt-0.5">{j.detail}</p>
+                  <p className="text-[10px] text-muted-foreground/70 font-mono">{j.date}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Versions */}
