@@ -10,6 +10,7 @@ func RegisterRoutes(r *gin.RouterGroup, h *Handler) {
 	r.GET("/rapport", h.Rapport)
 	r.POST("/import/preview", h.ImportPreview)
 	r.POST("/import/confirm", h.ImportConfirm)
+	r.GET("/:id/export", h.ExportDossier)
 	r.GET("", h.List)
 	r.POST("", h.Create)
 }

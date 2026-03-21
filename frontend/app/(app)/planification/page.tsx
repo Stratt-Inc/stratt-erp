@@ -14,7 +14,7 @@ import {
 import {
   CalendarRange, Plus, Filter, Search, ChevronRight, AlertTriangle,
   Clock, FileText, LayoutList, Calendar, TrendingUp, Users, Layers, Scale, Zap,
-  ChevronLeft, Bell,
+  ChevronLeft, Bell, Archive,
 } from "lucide-react";
 
 interface Marche {
@@ -427,6 +427,16 @@ export default function PlanificationPage() {
               </div>
               <div className="border-t border-border" />
               <div className="space-y-1.5">
+                <button
+                  onClick={() => {
+                    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+                    window.open(`${base}/api/v1/marches/${selected.id}/export?token=${accessToken}&org_id=${currentOrg?.id}`, "_blank");
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-semibold border text-white transition-colors h-7"
+                  style={{ background: MODULE.planification, borderColor: "transparent" }}
+                >
+                  <Archive className="w-3 h-3" /> Exporter dossier ZIP
+                </button>
                 {[
                   { icon: FileText, label: "Créer un scénario" },
                   { icon: Clock, label: "Simuler les délais" },
