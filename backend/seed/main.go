@@ -154,18 +154,40 @@ func main() {
 	fmt.Printf("✓ Demo org: %s (all modules enabled)\n", org.Name)
 
 	// ── Marchés publics ───────────────────────────────────
+	// 25 marchés couvrant toutes les familles nomenclature (~5.6M€ total)
 	var marcheCount int64
 	db.Model(&marchesmod.Marche{}).Where("tenant_id = ?", org.ID).Count(&marcheCount)
 	if marcheCount == 0 {
 		marches := []marchesmod.Marche{
-			{TenantID: org.ID, Reference: "M2026-001", Objet: "Fournitures de bureau et consommables", Service: "DRH", Montant: 15000, Procedure: "MAPA", Echeance: "2026-04-15", Statut: "planifie", Priorite: "normale", Charge: 5, Notes: "Renouvellement annuel fournitures"},
-			{TenantID: org.ID, Reference: "M2026-012", Objet: "Maintenance du réseau informatique", Service: "DSI", Montant: 85000, Procedure: "AO ouvert", Echeance: "2026-03-31", Statut: "en_cours", Priorite: "haute", Charge: 15, Notes: "Contrat pluriannuel 3 ans"},
-			{TenantID: org.ID, Reference: "M2026-023", Objet: "Acquisition de véhicules de service", Service: "DGS", Montant: 120000, Procedure: "AO restreint", Echeance: "2026-03-20", Statut: "alerte", Priorite: "critique", Charge: 20, Notes: "Dossier incomplet — relance fournisseur"},
-			{TenantID: org.ID, Reference: "M2026-034", Objet: "Nettoyage et entretien des locaux", Service: "DPAT", Montant: 45000, Procedure: "Accord-cadre", Echeance: "2026-05-01", Statut: "en_cours", Priorite: "normale", Charge: 8, Notes: "Accord-cadre mono-attributaire 2 ans"},
-			{TenantID: org.ID, Reference: "M2026-045", Objet: "Logiciels métiers et licences", Service: "DSI", Montant: 250000, Procedure: "AO ouvert", Echeance: "2026-06-30", Statut: "planifie", Priorite: "haute", Charge: 25, Notes: "Digitalisation des services — projet stratégique"},
-			{TenantID: org.ID, Reference: "M2026-056", Objet: "Formation des agents — plan 2026", Service: "DRH", Montant: 22000, Procedure: "MAPA", Echeance: "2026-04-30", Statut: "en_cours", Priorite: "normale", Charge: 6, Notes: "Formation obligatoire + développement compétences"},
-			{TenantID: org.ID, Reference: "M2026-061", Objet: "Travaux de voirie — secteur Nord", Service: "DT", Montant: 380000, Procedure: "AO ouvert", Echeance: "2026-03-25", Statut: "alerte", Priorite: "critique", Charge: 30, Notes: "Délai serré — lancement travaux prévu mai 2026"},
-			{TenantID: org.ID, Reference: "M2026-072", Objet: "Fournitures médicales et matériel de soins", Service: "DS", Montant: 18000, Procedure: "MAPA", Echeance: "2026-02-28", Statut: "termine", Priorite: "normale", Charge: 5, Notes: "Marché exécuté — clôture administrative"},
+			// ── Fournitures ──────────────────────────────────────────────────────────
+			{TenantID: org.ID, Reference: "M2026-F10", Objet: "Denrées alimentaires — restaurants scolaires", Service: "DS", Montant: 85000, Procedure: "MAPA", Echeance: "2026-09-01", Statut: "en_cours", Priorite: "haute", Charge: 8, Categorie: "Fournitures", FamilleCode: "10", Notes: "Accord-cadre annuel — 4 lots (fruits/légumes, produits laitiers, viandes, épicerie)"},
+			{TenantID: org.ID, Reference: "M2026-F11", Objet: "Fournitures administratives et de bureau", Service: "DRH", Montant: 28000, Procedure: "MAPA", Echeance: "2026-04-15", Statut: "planifie", Priorite: "normale", Charge: 4, Categorie: "Fournitures", FamilleCode: "11", Notes: "Renouvellement annuel — papier, cartouches, consommables"},
+			{TenantID: org.ID, Reference: "M2026-F12", Objet: "Fournitures scolaires — rentrée 2026", Service: "DE", Montant: 45000, Procedure: "MAPA", Echeance: "2026-06-30", Statut: "planifie", Priorite: "normale", Charge: 6, Categorie: "Fournitures", FamilleCode: "12", Notes: "Livraison avant rentrée scolaire — 8 établissements"},
+			{TenantID: org.ID, Reference: "M2026-F13", Objet: "Produits d'entretien et d'hygiène", Service: "DPAT", Montant: 62000, Procedure: "MAPA", Echeance: "2026-05-01", Statut: "en_cours", Priorite: "normale", Charge: 5, Categorie: "Fournitures", FamilleCode: "13", Notes: "Accord-cadre 2 ans — produits ménagers et EPI hygiène"},
+			{TenantID: org.ID, Reference: "M2026-F14", Objet: "Équipements de protection individuelle", Service: "DPAT", Montant: 38000, Procedure: "MAPA", Echeance: "2026-06-15", Statut: "planifie", Priorite: "normale", Charge: 4, Categorie: "Fournitures", FamilleCode: "14", Notes: "EPI agents terrain — chaussures sécurité, gants, casques"},
+			{TenantID: org.ID, Reference: "M2026-F15", Objet: "Fournitures techniques et de maintenance", Service: "DPAT", Montant: 95000, Procedure: "MAPA", Echeance: "2026-04-30", Statut: "en_cours", Priorite: "normale", Charge: 8, Categorie: "Fournitures", FamilleCode: "15", Notes: "Pièces détachées, outillage, quincaillerie — stock permanent"},
+			{TenantID: org.ID, Reference: "M2026-F16", Objet: "Matériel informatique — renouvellement parc", Service: "DSI", Montant: 285000, Procedure: "AO ouvert", Echeance: "2026-06-30", Statut: "en_cours", Priorite: "haute", Charge: 22, Categorie: "Fournitures", FamilleCode: "16", Notes: "Plan triennal — 80 postes, serveurs, équipements réseau"},
+			{TenantID: org.ID, Reference: "M2026-F17", Objet: "Mobilier et équipements de bureaux", Service: "DPAT", Montant: 120000, Procedure: "AO restreint", Echeance: "2026-05-15", Statut: "planifie", Priorite: "normale", Charge: 10, Categorie: "Fournitures", FamilleCode: "17", Notes: "Réaménagement 3 étages bâtiment principal"},
+			{TenantID: org.ID, Reference: "M2026-F18", Objet: "Acquisition de véhicules de service", Service: "DGS", Montant: 420000, Procedure: "AO ouvert", Echeance: "2026-03-20", Statut: "alerte", Priorite: "critique", Charge: 25, Categorie: "Fournitures", FamilleCode: "18", Notes: "14 véhicules légers + 3 utilitaires — dossier incomplet"},
+			{TenantID: org.ID, Reference: "M2026-F19", Objet: "Matériel espaces verts et horticulture", Service: "DEV", Montant: 45000, Procedure: "MAPA", Echeance: "2026-03-31", Statut: "en_cours", Priorite: "normale", Charge: 5, Categorie: "Fournitures", FamilleCode: "19", Notes: "Tondeuses, tronçonneuses, plants — renouvellement annuel"},
+			{TenantID: org.ID, Reference: "M2026-F20", Objet: "Matériel sportif et équipements gymnases", Service: "DS", Montant: 55000, Procedure: "MAPA", Echeance: "2026-07-01", Statut: "planifie", Priorite: "normale", Charge: 6, Categorie: "Fournitures", FamilleCode: "20", Notes: "Équipements pour 4 gymnases municipaux"},
+			// ── Services ─────────────────────────────────────────────────────────────
+			{TenantID: org.ID, Reference: "M2026-S60", Objet: "Transport scolaire — réseau communal", Service: "DE", Montant: 185000, Procedure: "AO ouvert", Echeance: "2026-08-31", Statut: "en_cours", Priorite: "haute", Charge: 18, Categorie: "Services", FamilleCode: "60", Notes: "Délégation de service — 12 circuits, rentrée 2026"},
+			{TenantID: org.ID, Reference: "M2026-S61", Objet: "Maintenance et entretien des bâtiments", Service: "DPAT", Montant: 210000, Procedure: "Accord-cadre", Echeance: "2026-05-31", Statut: "en_cours", Priorite: "haute", Charge: 20, Categorie: "Services", FamilleCode: "61", Notes: "Accord-cadre 3 ans — 6 lots (plomberie, élec, CVC, menuiserie, peinture, serrurerie)"},
+			{TenantID: org.ID, Reference: "M2026-S62", Objet: "Maintenance informatique et télécoms", Service: "DSI", Montant: 95000, Procedure: "MAPA", Echeance: "2026-03-31", Statut: "en_cours", Priorite: "haute", Charge: 12, Categorie: "Services", FamilleCode: "62", Notes: "TMA applicatifs + infogérance réseau + support niveau 2"},
+			{TenantID: org.ID, Reference: "M2026-S63", Objet: "Gardiennage et sécurité des bâtiments", Service: "DGS", Montant: 210000, Procedure: "AO ouvert", Echeance: "2026-04-30", Statut: "planifie", Priorite: "haute", Charge: 15, Categorie: "Services", FamilleCode: "63", Notes: "Surveillance 24h/24 — hôtel de ville, gymnases, médiathèque"},
+			{TenantID: org.ID, Reference: "M2026-S64", Objet: "Restauration collective — self municipal", Service: "DS", Montant: 380000, Procedure: "AO ouvert", Echeance: "2026-07-31", Statut: "en_cours", Priorite: "critique", Charge: 30, Categorie: "Services", FamilleCode: "64", Notes: "DSP restauration — 1 200 repas/jour — commission spéciale"},
+			{TenantID: org.ID, Reference: "M2026-S65", Objet: "Assurances des biens et de la flotte", Service: "DGS", Montant: 125000, Procedure: "Accord-cadre", Echeance: "2026-12-31", Statut: "termine", Priorite: "normale", Charge: 6, Categorie: "Services", FamilleCode: "65", Notes: "Contrat pluriannuel renouvelé — 4 lots: biens, flotte, RC, agents"},
+			{TenantID: org.ID, Reference: "M2026-S66", Objet: "Formation professionnelle des agents", Service: "DRH", Montant: 48000, Procedure: "MAPA", Echeance: "2026-04-30", Statut: "en_cours", Priorite: "normale", Charge: 8, Categorie: "Services", FamilleCode: "66", Notes: "Plan de formation 2026 — habilitations, management, numérique"},
+			{TenantID: org.ID, Reference: "M2026-S68", Objet: "Études et conseil en organisation", Service: "DGS", Montant: 155000, Procedure: "AO restreint", Echeance: "2026-06-30", Statut: "planifie", Priorite: "haute", Charge: 14, Categorie: "Services", FamilleCode: "68", Notes: "Schéma directeur numérique + audit organisationnel"},
+			// ── Travaux ───────────────────────────────────────────────────────────────
+			{TenantID: org.ID, Reference: "M2026-T01", Objet: "Réhabilitation école primaire Jean Moulin", Service: "DT", Montant: 850000, Procedure: "AO ouvert", Echeance: "2026-04-15", Statut: "alerte", Priorite: "critique", Charge: 45, Categorie: "Travaux", FamilleCode: "T-BAT", Notes: "Mise aux normes ERP + isolation thermique + accessibilité PMR"},
+			{TenantID: org.ID, Reference: "M2026-T02", Objet: "Travaux de voirie — secteur Nord-Est", Service: "DT", Montant: 520000, Procedure: "AO ouvert", Echeance: "2026-03-25", Statut: "alerte", Priorite: "critique", Charge: 35, Categorie: "Travaux", FamilleCode: "T-VRD", Notes: "Réfection chaussée + trottoirs + réseaux — 3 rues"},
+			{TenantID: org.ID, Reference: "M2026-T03", Objet: "Démolition bâtiment vétuste — site Lacroix", Service: "DT", Montant: 185000, Procedure: "MAPA", Echeance: "2026-06-30", Statut: "planifie", Priorite: "normale", Charge: 12, Categorie: "Travaux", FamilleCode: "T-DEM", Notes: "Déconstruction + désamiantage + remise en état du terrain"},
+			{TenantID: org.ID, Reference: "M2026-T04", Objet: "Extension parking et aménagement paysager", Service: "DT", Montant: 220000, Procedure: "AO restreint", Echeance: "2026-07-31", Statut: "planifie", Priorite: "normale", Charge: 18, Categorie: "Travaux", FamilleCode: "T-AME", Notes: "200 places supplémentaires + espaces verts — Z.A. Les Pins"},
+			{TenantID: org.ID, Reference: "M2026-T05", Objet: "Réseaux eau potable — renouvellement", Service: "DT", Montant: 380000, Procedure: "AO ouvert", Echeance: "2026-05-31", Statut: "en_cours", Priorite: "haute", Charge: 28, Categorie: "Travaux", FamilleCode: "T-INF", Notes: "Remplacement 2,4 km de canalisations vétustes — quartier Sud"},
+			{TenantID: org.ID, Reference: "M2026-T06", Objet: "Maintenance préventive équipements sportifs", Service: "DS", Montant: 95000, Procedure: "Accord-cadre", Echeance: "2026-12-31", Statut: "en_cours", Priorite: "normale", Charge: 10, Categorie: "Travaux", FamilleCode: "T-MNT", Notes: "Accord-cadre 2 ans — terrains synthétiques, gradins, tribunes"},
+			{TenantID: org.ID, Reference: "M2026-T07", Objet: "Gros travaux d'entretien patrimoine bâti", Service: "DT", Montant: 145000, Procedure: "MAPA", Echeance: "2026-09-30", Statut: "planifie", Priorite: "normale", Charge: 12, Categorie: "Travaux", FamilleCode: "T-GTE", Notes: "Toitures, ravalement, menuiseries — programme pluriannuel"},
 		}
 		for i := range marches {
 			db.Create(&marches[i])
@@ -357,13 +379,43 @@ func main() {
 	fmt.Printf("✓ %d leave requests seeded\n", len(leaveRequests))
 
 	// ── Procurement: Purchase Orders ──────────────────────
+	// 18 commandes couvrant les familles nomenclature — descriptions = noms familles
+	// pour que l'ABC Pareto par catégorie soit cohérent avec la nomenclature
 	purchaseOrders := []procurementmod.PurchaseOrder{
-		{TenantID: org.ID, Number: "BC-2026-001", Status: "received", OrderDate: "2026-01-10", DeliveryDate: "2026-01-20", Currency: "EUR", Subtotal: 15625, TaxAmount: 3125, Total: 18750, Notes: "15 laptops Dell Latitude 5540", CreatedBy: admin.ID},
-		{TenantID: org.ID, Number: "BC-2026-002", Status: "received", OrderDate: "2026-01-25", DeliveryDate: "2026-02-05", Currency: "EUR", Subtotal: 4500, TaxAmount: 900, Total: 5400, Notes: "Licences Adobe Suite — 10 postes", CreatedBy: admin.ID},
-		{TenantID: org.ID, Number: "BC-2026-003", Status: "sent", OrderDate: "2026-02-20", DeliveryDate: "2026-03-15", Currency: "EUR", Subtotal: 3500, TaxAmount: 700, Total: 4200, Notes: "Hébergement cloud OVH — Q2 2026", CreatedBy: admin.ID},
-		{TenantID: org.ID, Number: "BC-2026-004", Status: "draft", OrderDate: "2026-03-05", DeliveryDate: "2026-04-05", Currency: "EUR", Subtotal: 7083.33, TaxAmount: 1416.67, Total: 8500, Notes: "Serveur Dell PowerEdge R750 — Datacenter", CreatedBy: admin.ID},
-		{TenantID: org.ID, Number: "BC-2026-005", Status: "sent", OrderDate: "2026-03-08", DeliveryDate: "2026-03-22", Currency: "EUR", Subtotal: 1000, TaxAmount: 200, Total: 1200, Notes: "NAS Synology DS923+ — Backup local", CreatedBy: admin.ID},
-		{TenantID: org.ID, Number: "BC-2025-048", Status: "received", OrderDate: "2025-11-15", DeliveryDate: "2025-12-01", Currency: "EUR", Subtotal: 8333.33, TaxAmount: 1666.67, Total: 10000, Notes: "Mobilier bureaux — 8 postes de travail", CreatedBy: admin.ID},
+		// Matériel informatique (F16)
+		{TenantID: org.ID, Number: "BC-2026-001", Status: "received", OrderDate: "2026-01-10", DeliveryDate: "2026-01-20", Currency: "EUR", Subtotal: 56250, TaxAmount: 11250, Total: 67500, Notes: "Lot 1 renouvellement parc informatique — 45 postes", CreatedBy: admin.ID},
+		{TenantID: org.ID, Number: "BC-2026-002", Status: "received", OrderDate: "2026-01-28", DeliveryDate: "2026-02-15", Currency: "EUR", Subtotal: 35833, TaxAmount: 7167, Total: 43000, Notes: "Lot 2 — serveurs et équipements réseau DSI", CreatedBy: admin.ID},
+		// Logiciels et licences (F16 / S62)
+		{TenantID: org.ID, Number: "BC-2026-003", Status: "received", OrderDate: "2026-01-25", DeliveryDate: "2026-02-05", Currency: "EUR", Subtotal: 89167, TaxAmount: 17833, Total: 107000, Notes: "Licences logiciels métiers — suite bureautique + ERP + BI", CreatedBy: admin.ID},
+		// Services informatiques (S62)
+		{TenantID: org.ID, Number: "BC-2026-004", Status: "sent", OrderDate: "2026-02-01", DeliveryDate: "2026-03-31", Currency: "EUR", Subtotal: 62500, TaxAmount: 12500, Total: 75000, Notes: "TMA et infogérance réseau — Q1/Q2 2026", CreatedBy: admin.ID},
+		// Maintenance bâtiments (S61)
+		{TenantID: org.ID, Number: "BC-2026-005", Status: "received", OrderDate: "2026-01-05", DeliveryDate: "2026-01-31", Currency: "EUR", Subtotal: 29167, TaxAmount: 5833, Total: 35000, Notes: "Maintenance préventive — lot plomberie/CVC hiver 2026", CreatedBy: admin.ID},
+		{TenantID: org.ID, Number: "BC-2026-006", Status: "received", OrderDate: "2026-02-10", DeliveryDate: "2026-02-28", Currency: "EUR", Subtotal: 20833, TaxAmount: 4167, Total: 25000, Notes: "Maintenance électricité bâtiments communaux — T1 2026", CreatedBy: admin.ID},
+		// Denrées alimentaires (F10)
+		{TenantID: org.ID, Number: "BC-2026-007", Status: "received", OrderDate: "2026-01-02", DeliveryDate: "2026-01-08", Currency: "EUR", Subtotal: 14167, TaxAmount: 2833, Total: 17000, Notes: "Lot fruits et légumes frais — janvier/février 2026", CreatedBy: admin.ID},
+		{TenantID: org.ID, Number: "BC-2026-008", Status: "received", OrderDate: "2026-02-03", DeliveryDate: "2026-02-10", Currency: "EUR", Subtotal: 11667, TaxAmount: 2333, Total: 14000, Notes: "Produits laitiers et viandes — restauration scolaire", CreatedBy: admin.ID},
+		// Fournitures administratives (F11)
+		{TenantID: org.ID, Number: "BC-2026-009", Status: "received", OrderDate: "2026-01-15", DeliveryDate: "2026-01-22", Currency: "EUR", Subtotal: 7083, TaxAmount: 1417, Total: 8500, Notes: "Fournitures de bureau T1 — papier, cartouches, enveloppes", CreatedBy: admin.ID},
+		// Produits entretien (F13)
+		{TenantID: org.ID, Number: "BC-2026-010", Status: "received", OrderDate: "2026-02-15", DeliveryDate: "2026-02-25", Currency: "EUR", Subtotal: 12500, TaxAmount: 2500, Total: 15000, Notes: "Produits ménagers et d'entretien — stock trimestriel", CreatedBy: admin.ID},
+		// Véhicules (F18)
+		{TenantID: org.ID, Number: "BC-2026-011", Status: "draft", OrderDate: "2026-03-01", DeliveryDate: "2026-06-30", Currency: "EUR", Subtotal: 145833, TaxAmount: 29167, Total: 175000, Notes: "Lot 1 véhicules légers — 7 Renault Kangoo E-Tech", CreatedBy: admin.ID},
+		{TenantID: org.ID, Number: "BC-2026-012", Status: "draft", OrderDate: "2026-03-01", DeliveryDate: "2026-07-15", Currency: "EUR", Subtotal: 103333, TaxAmount: 20667, Total: 124000, Notes: "Lot 2 utilitaires — 3 Renault Master + équipements", CreatedBy: admin.ID},
+		// Gardiennage / Sécurité (S63)
+		{TenantID: org.ID, Number: "BC-2026-013", Status: "received", OrderDate: "2026-01-02", DeliveryDate: "2026-01-31", Currency: "EUR", Subtotal: 13750, TaxAmount: 2750, Total: 16500, Notes: "Surveillance bâtiments municipaux — janvier 2026", CreatedBy: admin.ID},
+		// Formation (S66)
+		{TenantID: org.ID, Number: "BC-2026-014", Status: "received", OrderDate: "2026-02-05", DeliveryDate: "2026-03-28", Currency: "EUR", Subtotal: 10000, TaxAmount: 2000, Total: 12000, Notes: "Formations habilitations électriques + secourisme — 40 agents", CreatedBy: admin.ID},
+		// Mobilier (F17)
+		{TenantID: org.ID, Number: "BC-2025-048", Status: "received", OrderDate: "2025-11-15", DeliveryDate: "2025-12-15", Currency: "EUR", Subtotal: 25000, TaxAmount: 5000, Total: 30000, Notes: "Mobilier bureaux — réaménagement 2e étage", CreatedBy: admin.ID},
+		// Espaces verts (F19)
+		{TenantID: org.ID, Number: "BC-2026-015", Status: "received", OrderDate: "2026-02-20", DeliveryDate: "2026-03-10", Currency: "EUR", Subtotal: 10833, TaxAmount: 2167, Total: 13000, Notes: "Tondeuses tractées + équipements taille-haie — printemps 2026", CreatedBy: admin.ID},
+		// Fournitures techniques (F15)
+		{TenantID: org.ID, Number: "BC-2026-016", Status: "received", OrderDate: "2026-01-20", DeliveryDate: "2026-02-05", Currency: "EUR", Subtotal: 16667, TaxAmount: 3333, Total: 20000, Notes: "Pièces détachées et outillage — ateliers municipaux T1", CreatedBy: admin.ID},
+		// EPI / Sécurité (F14)
+		{TenantID: org.ID, Number: "BC-2026-017", Status: "sent", OrderDate: "2026-03-05", DeliveryDate: "2026-04-15", Currency: "EUR", Subtotal: 14167, TaxAmount: 2833, Total: 17000, Notes: "EPI agents voirie — chaussures, gilets, gants — renouvellement", CreatedBy: admin.ID},
+		// Études et conseil (S68)
+		{TenantID: org.ID, Number: "BC-2026-018", Status: "sent", OrderDate: "2026-03-10", DeliveryDate: "2026-06-30", Currency: "EUR", Subtotal: 37500, TaxAmount: 7500, Total: 45000, Notes: "Mission AMO schéma directeur numérique — phase 1/3", CreatedBy: admin.ID},
 	}
 	for i := range purchaseOrders {
 		db.Create(&purchaseOrders[i])
@@ -387,14 +439,50 @@ func main() {
 	}
 	fmt.Printf("✓ %d invoice items seeded\n", len(invoiceItems))
 
-	// ── Purchase Order items ──────────────────────────────
+	// ── Purchase Order items ─────────────────────────────
+	// Descriptions = noms des familles nomenclature → ABC Pareto cohérent
 	poItems := []procurementmod.PurchaseOrderItem{
-		{OrderID: purchaseOrders[0].ID, Description: "Dell Latitude 5540 i7/16GB/512GB", Quantity: 15, UnitPrice: 980, Total: 14700},
-		{OrderID: purchaseOrders[0].ID, Description: "Souris et claviers sans fil", Quantity: 15, UnitPrice: 62, Total: 930},
-		{OrderID: purchaseOrders[1].ID, Description: "Adobe Creative Cloud Business — 1 an", Quantity: 10, UnitPrice: 540, Total: 5400},
-		{OrderID: purchaseOrders[2].ID, Description: "OVH Hosted Private Cloud — 6 mois", Quantity: 1, UnitPrice: 3500, Total: 3500},
-		{OrderID: purchaseOrders[3].ID, Description: "Dell PowerEdge R750 — 64GB/4TB NVMe", Quantity: 1, UnitPrice: 6200, Total: 6200},
-		{OrderID: purchaseOrders[3].ID, Description: "Garantie étendue 3 ans on-site", Quantity: 1, UnitPrice: 883.33, Total: 883.33},
+		// BC-2026-001 Matériel informatique
+		{OrderID: purchaseOrders[0].ID, Description: "Matériel informatique", Quantity: 45, UnitPrice: 1150, Total: 51750},
+		{OrderID: purchaseOrders[0].ID, Description: "Matériel informatique", Quantity: 1, UnitPrice: 4500, Total: 4500},
+		// BC-2026-002 Matériel informatique (serveurs)
+		{OrderID: purchaseOrders[1].ID, Description: "Matériel informatique", Quantity: 2, UnitPrice: 8500, Total: 17000},
+		{OrderID: purchaseOrders[1].ID, Description: "Matériel informatique", Quantity: 1, UnitPrice: 18833, Total: 18833},
+		// BC-2026-003 Logiciels métiers et licences
+		{OrderID: purchaseOrders[2].ID, Description: "Logiciels métiers et licences", Quantity: 80, UnitPrice: 890, Total: 71200},
+		{OrderID: purchaseOrders[2].ID, Description: "Logiciels métiers et licences", Quantity: 1, UnitPrice: 17967, Total: 17967},
+		// BC-2026-004 Maintenance informatique
+		{OrderID: purchaseOrders[3].ID, Description: "Maintenance informatique", Quantity: 6, UnitPrice: 10417, Total: 62500},
+		// BC-2026-005 Maintenance bâtiments
+		{OrderID: purchaseOrders[4].ID, Description: "Maintenance bâtiments", Quantity: 1, UnitPrice: 29167, Total: 29167},
+		// BC-2026-006 Maintenance bâtiments
+		{OrderID: purchaseOrders[5].ID, Description: "Maintenance bâtiments", Quantity: 1, UnitPrice: 20833, Total: 20833},
+		// BC-2026-007 Denrées alimentaires
+		{OrderID: purchaseOrders[6].ID, Description: "Denrées alimentaires", Quantity: 4, UnitPrice: 3542, Total: 14167},
+		// BC-2026-008 Denrées alimentaires
+		{OrderID: purchaseOrders[7].ID, Description: "Denrées alimentaires", Quantity: 4, UnitPrice: 2917, Total: 11667},
+		// BC-2026-009 Fournitures administratives
+		{OrderID: purchaseOrders[8].ID, Description: "Fournitures administratives et de bureau", Quantity: 1, UnitPrice: 7083, Total: 7083},
+		// BC-2026-010 Produits entretien
+		{OrderID: purchaseOrders[9].ID, Description: "Produits d'entretien et d'hygiène", Quantity: 1, UnitPrice: 12500, Total: 12500},
+		// BC-2026-011 Véhicules
+		{OrderID: purchaseOrders[10].ID, Description: "Véhicules et mobilité", Quantity: 7, UnitPrice: 20833, Total: 145833},
+		// BC-2026-012 Véhicules
+		{OrderID: purchaseOrders[11].ID, Description: "Véhicules et mobilité", Quantity: 3, UnitPrice: 34444, Total: 103333},
+		// BC-2026-013 Gardiennage
+		{OrderID: purchaseOrders[12].ID, Description: "Gardiennage et sécurité des bâtiments", Quantity: 1, UnitPrice: 13750, Total: 13750},
+		// BC-2026-014 Formation
+		{OrderID: purchaseOrders[13].ID, Description: "Formation professionnelle des agents", Quantity: 5, UnitPrice: 2000, Total: 10000},
+		// BC-2025-048 Mobilier
+		{OrderID: purchaseOrders[14].ID, Description: "Mobilier et équipements de bureaux", Quantity: 8, UnitPrice: 3125, Total: 25000},
+		// BC-2026-015 Espaces verts
+		{OrderID: purchaseOrders[15].ID, Description: "Matériel espaces verts et horticulture", Quantity: 4, UnitPrice: 2708, Total: 10833},
+		// BC-2026-016 Fournitures techniques
+		{OrderID: purchaseOrders[16].ID, Description: "Fournitures techniques maintenance", Quantity: 1, UnitPrice: 16667, Total: 16667},
+		// BC-2026-017 EPI
+		{OrderID: purchaseOrders[17].ID, Description: "Équipements de protection individuelle", Quantity: 50, UnitPrice: 283, Total: 14167},
+		// BC-2026-018 Études et conseil
+		{OrderID: purchaseOrders[18-1].ID, Description: "Études et conseil en organisation", Quantity: 25, UnitPrice: 1500, Total: 37500},
 	}
 	for i := range poItems {
 		db.Create(&poItems[i])

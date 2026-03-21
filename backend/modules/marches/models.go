@@ -20,6 +20,8 @@ type Marche struct {
 	Priorite        string     `gorm:"default:'normale'"        json:"priorite"`
 	Charge          int        `gorm:"default:0"                json:"charge"`
 	Notes           string     `json:"notes"`
+	Categorie       string     `gorm:"default:''"               json:"categorie"`    // Fournitures | Services | Travaux
+	FamilleCode     string     `gorm:"default:''"               json:"famille_code"` // e.g. "16", "T-BAT"
 	DateLancement   *time.Time `json:"date_lancement"`
 	DateAttribution *time.Time `json:"date_attribution"`
 	DateFin         *time.Time `json:"date_fin"`
