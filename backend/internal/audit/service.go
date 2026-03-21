@@ -3,11 +3,20 @@ package audit
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stratt/backend/internal/models"
 	"gorm.io/gorm"
 )
+
+type ListFilters struct {
+	ResourceType string
+	Action       string
+	UserID       string
+	From         *time.Time
+	To           *time.Time
+}
 
 type Service struct {
 	db *gorm.DB
@@ -50,9 +59,30 @@ func (s *Service) Log(ctx context.Context, in LogInput) {
 }
 
 func (s *Service) List(ctx context.Context, orgID uuid.UUID, page, limit int) ([]models.AuditLog, int64, error) {
+	return s.ListFiltered(ctx, orgID, page, limit, ListFilters{})
+}
+
+func (s *Service) ListFiltered(ctx context.Context, orgID uuid.UUID, page, limit int, f ListFilters) ([]models.AuditLog, int64, error) {
 	var logs []models.AuditLog
 	var total int64
 	q := s.db.WithContext(ctx).Where("organization_id = ?", orgID)
+	if f.ResourceType != "" {
+		q = q.Where("resource_type = ?", f.ResourceType)
+	}
+	if f.Action != "" {
+		q = q.Where("action LIKE ?", "%"+f.Action+"%")
+	}
+	if f.UserID != "" {
+		if uid, err := uuid.Parse(f.UserID); err == nil {
+			q = q.Where("user_id = ?", uid)
+		}
+	}
+	if f.From != nil {
+		q = q.Where("created_at >= ?", *f.From)
+	}
+	if f.To != nil {
+		q = q.Where("created_at <= ?", *f.To)
+	}
 	q.Model(&models.AuditLog{}).Count(&total)
 	err := q.Order("created_at DESC").Offset((page - 1) * limit).Limit(limit).Find(&logs).Error
 	return logs, total, err

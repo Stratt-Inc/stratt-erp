@@ -9,8 +9,27 @@ import { DemoBanner } from "@/components/DemoBanner";
 import { useDemoAction } from "@/store/toast";
 import {
   Shield, Users, Settings, ClipboardList, BookOpen, Plus,
-  ChevronRight, Lock, Server, Calendar,
+  ChevronRight, Lock, Server, Calendar, Download, ChevronLeft,
+  Filter,
 } from "lucide-react";
+
+/* ── Audit types ── */
+interface AuditLog {
+  id: string;
+  user_id: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: string;
+  ip_address: string;
+  metadata: unknown;
+  created_at: string;
+}
+interface AuditPage {
+  logs: AuditLog[];
+  total: number;
+  page: number;
+  pages: number;
+}
 
 /* ── Static demo data ── */
 const demoUsers = [
@@ -72,6 +91,42 @@ export default function AdministrationPage() {
     queryFn: () => api.get(`/api/v1/organizations/${currentOrg?.id}/members`, opts),
     enabled: !!accessToken && !!currentOrg && activeTab === "utilisateurs",
   });
+
+  /* ── Audit journal state ── */
+  const [auditPage,      setAuditPage]      = useState(1);
+  const [auditAction,    setAuditAction]    = useState("");
+  const [auditResource,  setAuditResource]  = useState("");
+  const [auditFrom,      setAuditFrom]      = useState("");
+  const [auditTo,        setAuditTo]        = useState("");
+
+  const auditParams = new URLSearchParams({ page: String(auditPage), limit: "50" });
+  if (auditAction)   auditParams.set("action", auditAction);
+  if (auditResource) auditParams.set("resource_type", auditResource);
+  if (auditFrom)     auditParams.set("from", auditFrom);
+  if (auditTo)       auditParams.set("to", auditTo);
+
+  const { data: auditData } = useQuery<AuditPage>({
+    queryKey: ["audit", currentOrg?.id, auditPage, auditAction, auditResource, auditFrom, auditTo],
+    queryFn: () => api.get(`/api/v1/audit?${auditParams.toString()}`, opts),
+    enabled: !!accessToken && !!currentOrg && activeTab === "journal",
+  });
+
+  const auditLogs   = auditData?.logs  ?? [];
+  const auditTotal  = auditData?.total ?? 0;
+  const auditPages  = auditData?.pages ?? 1;
+
+  function exportAuditCSV() {
+    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const params = new URLSearchParams();
+    if (auditFrom)     params.set("from", auditFrom);
+    if (auditTo)       params.set("to", auditTo);
+    if (auditAction)   params.set("action", auditAction);
+    if (auditResource) params.set("resource_type", auditResource);
+    window.open(
+      `${base}/api/v1/audit/export.csv?${params}&token=${accessToken}&org_id=${currentOrg?.id}`,
+      "_blank"
+    );
+  }
 
   /* Merge API members into demo users for display */
   const displayUsers = members.length > 0
@@ -251,39 +306,130 @@ export default function AdministrationPage() {
 
       {/* Journal */}
       {activeTab === "journal" && (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
-          <div className="px-4 py-3 border-b border-border">
-            <h2 className="text-sm font-semibold text-foreground">Journal d&apos;activité</h2>
+        <div className="space-y-3">
+          {/* Filter bar */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Action (ex: create, login…)"
+              value={auditAction}
+              onChange={(e) => { setAuditAction(e.target.value); setAuditPage(1); }}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground w-44"
+            />
+            <select
+              value={auditResource}
+              onChange={(e) => { setAuditResource(e.target.value); setAuditPage(1); }}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border bg-background text-foreground"
+            >
+              <option value="">Toutes ressources</option>
+              {["marche", "nomenclature", "user", "role", "module", "organization"].map(r => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <input
+              type="date"
+              value={auditFrom}
+              onChange={(e) => { setAuditFrom(e.target.value); setAuditPage(1); }}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border bg-background text-foreground"
+            />
+            <span className="text-xs text-muted-foreground">→</span>
+            <input
+              type="date"
+              value={auditTo}
+              onChange={(e) => { setAuditTo(e.target.value); setAuditPage(1); }}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border bg-background text-foreground"
+            />
+            <div className="flex-1" />
+            <button
+              onClick={exportAuditCSV}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+            >
+              <Download className="w-3 h-3" /> Exporter CSV
+            </button>
           </div>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                {["Action", "Utilisateur", "Date & Heure", "Détail"].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {journalEntries.map((j, i) => {
-                const ac = actionColors[j.action] ?? { bg: "rgba(107,114,128,0.1)", color: "#6B7280" };
-                return (
-                  <tr key={i} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <span
-                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
-                        style={{ background: ac.bg, color: ac.color }}
-                      >
-                        {j.action}
-                      </span>
+
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-foreground">
+                Journal d&apos;audit
+                {auditTotal > 0 && <span className="ml-2 text-xs font-normal text-muted-foreground">({auditTotal} entrée{auditTotal > 1 ? "s" : ""})</span>}
+              </h2>
+              <span className="text-[10px] text-muted-foreground font-mono">
+                Conservation 10 ans · Append-only
+              </span>
+            </div>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  {["Action", "Ressource", "ID", "Date & Heure", "IP"].map((h) => (
+                    <th key={h} className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {auditLogs.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-xs text-muted-foreground">
+                      {auditTotal === 0 ? "Aucune entrée dans le journal pour cette période." : "Chargement…"}
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-foreground">{j.utilisateur}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{j.date}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{j.detail}</td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                )}
+                {auditLogs.map((log) => {
+                  const actionVerb = log.action.split(".")[1] ?? log.action;
+                  const actionColor = actionVerb === "create"
+                    ? { bg: "hsl(var(--accent) / 0.1)", color: "hsl(var(--accent))" }
+                    : actionVerb === "delete"
+                    ? { bg: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }
+                    : actionVerb === "login" || actionVerb === "logout"
+                    ? { bg: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }
+                    : { bg: "hsl(var(--warning) / 0.1)", color: "hsl(var(--warning))" };
+                  return (
+                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-2.5">
+                        <span
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                          style={{ background: actionColor.bg, color: actionColor.color }}
+                        >
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-foreground font-medium">{log.resource_type || "—"}</td>
+                      <td className="px-4 py-2.5 text-[11px] text-muted-foreground font-mono truncate max-w-[120px]">
+                        {log.resource_id ? log.resource_id.slice(0, 8) + "…" : "—"}
+                      </td>
+                      <td className="px-4 py-2.5 text-[11px] text-muted-foreground font-mono">
+                        {new Date(log.created_at).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                      <td className="px-4 py-2.5 text-[11px] text-muted-foreground font-mono">{log.ip_address || "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {/* Pagination */}
+            {auditPages > 1 && (
+              <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Page {auditPage} / {auditPages}</span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setAuditPage(p => Math.max(1, p - 1))}
+                    disabled={auditPage <= 1}
+                    className="p-1.5 rounded-lg border border-border hover:bg-muted/50 disabled:opacity-40 transition-colors"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setAuditPage(p => Math.min(auditPages, p + 1))}
+                    disabled={auditPage >= auditPages}
+                    className="p-1.5 rounded-lg border border-border hover:bg-muted/50 disabled:opacity-40 transition-colors"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
