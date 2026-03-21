@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
@@ -19,115 +20,243 @@ import {
 import {
   Upload, BarChart3, AlertTriangle, TrendingDown, TrendingUp,
   Layers, FolderOpen, Scale, Target, CheckCircle2, ArrowUpRight,
+  X, SlidersHorizontal,
 } from "lucide-react";
 
-/* ── Données ── */
-const spendData = [
-  { name: "Bâtiment",    size: 15.0, category: "Travaux"      },
-  { name: "Conseil",     size: 8.0,  category: "Services"     },
-  { name: "Logiciels",   size: 8.0,  category: "PI/TIC"       },
-  { name: "Voirie",      size: 8.5,  category: "Travaux"      },
-  { name: "Informatique",size: 7.2,  category: "Fournitures"  },
-  { name: "Nettoyage",   size: 6.0,  category: "Services"     },
-  { name: "Réseaux",     size: 5.0,  category: "Travaux"      },
-  { name: "Formation",   size: 4.8,  category: "Services"     },
-  { name: "Télécom",     size: 4.2,  category: "PI/TIC"       },
-  { name: "Bureau",      size: 4.5,  category: "Fournitures"  },
-  { name: "Maintenance", size: 4.0,  category: "Services"     },
-  { name: "Mobilier",    size: 3.5,  category: "Fournitures"  },
-  { name: "Hébergement", size: 2.5,  category: "PI/TIC"       },
-  { name: "Scolaire",    size: 3.0,  category: "Fournitures"  },
-].sort((a, b) => b.size - a.size);
+/* ── Types ── */
+interface Marche {
+  id: string;
+  objet: string;
+  montant: number;
+  categorie: string;    // "Fournitures" | "Services" | "Travaux"
+  famille_code: string; // "F10", "S61", "T-BAT", …
+  service: string;
+}
 
-// Sequential blue→teal palette for spend charts
+interface NomenclatureNode {
+  id: string;
+  code: string;
+  label: string;
+  type: string;         // "grande-famille" | "famille" | "code"
+  tag: string;          // "Fournitures" | "Services" | "Travaux"
+  montant: number;
+  seuil: number;
+  conforme: boolean;
+}
+
+/* ── Color palette ── */
 const CAT_COLOR: Record<string, string> = {
   "Travaux":     "#3B6FE8",
   "Fournitures": "#5C93FF",
   "Services":    "#24DDB8",
   "PI/TIC":      "#1CC4A8",
 };
+const DIR_COLORS = ["#3B6FE8", "#5C93FF", "#33B5D4", "#24DDB8", "#A8C4E0", "#7B9CBF", "#9F7AEA", "#F6AD55"];
 
-const spendChartConfig: ChartConfig = {
-  size: { label: "Dépense (M€)", color: "#5C93FF" },
-};
+const spendChartConfig: ChartConfig  = { size:  { label: "Dépense (€)", color: "#5C93FF" } };
+const donutChartConfig: ChartConfig  = { value: { label: "Budget (€)",  color: "#5C93FF" } };
 
-const CATEGORY_META = [
-  { label: "Travaux",     color: "#3B6FE8", total: 28.5 },
-  { label: "Fournitures", color: "#5C93FF", total: 18.2 },
-  { label: "Services",    color: "#24DDB8", total: 22.8 },
-  { label: "PI/TIC",      color: "#1CC4A8", total: 14.7 },
-];
-
-const directionData = [
-  { name: "Infrastructures", value: 28.5, color: "#3B6FE8" },
-  { name: "Éducation",       value: 18.2, color: "#5C93FF" },
-  { name: "Numérique",       value: 14.7, color: "#33B5D4" },
-  { name: "Services",        value: 12.3, color: "#24DDB8" },
-  { name: "Autres",          value: 10.5, color: "#A8C4E0" },
-];
-
-const directionChartConfig: ChartConfig = {
-  value: { label: "Budget (M€)", color: "#5C93FF" },
-};
-
-const comparatif = [
-  { famille: "Travaux",     n: 28.5, n1: 26.2, delta: "+8.8%",  up: true  },
-  { famille: "Fournitures", n: 18.2, n1: 19.8, delta: "-8.1%",  up: false },
-  { famille: "Services",    n: 22.8, n1: 21.1, delta: "+8.1%",  up: true  },
-  { famille: "PI / TIC",    n: 14.7, n1: 12.4, delta: "+18.5%", up: true  },
-];
-
-const seuilsData = [
-  { code: "02.01 — Informatique",  depense: 380,  seuil: 90,  ratio: 4.2,  statut: "Fractionnement" },
-  { code: "03.02 — Nettoyage",     depense: 245,  seuil: 90,  ratio: 2.7,  statut: "Fractionnement" },
-  { code: "01.01 — Bâtiment neuf", depense: 1200, seuil: 215, ratio: 5.6,  statut: "AO requis"      },
-  { code: "04.01 — Logiciels",     depense: 520,  seuil: 215, ratio: 2.4,  statut: "AO requis"      },
-  { code: "02.04 — Scolaire",      depense: 85,   seuil: 90,  ratio: 0.94, statut: "Conforme"       },
-];
-
-const ecartsData = [
-  { direction: "Infrastructures", prevu: 30.0, execute: 28.5 },
-  { direction: "Éducation",       prevu: 17.0, execute: 18.2 },
-  { direction: "Numérique",       prevu: 13.5, execute: 14.7 },
-  { direction: "Services",        prevu: 12.0, execute: 12.3 },
-  { direction: "RH",              prevu: 6.0,  execute: 5.8  },
-];
-
-const ECARTS_MAX = Math.max(...ecartsData.map(r => Math.max(r.prevu, r.execute))) * 1.08;
-
-const anomalies = [
-  { type: "Fractionnement", message: "02.01 Fournitures informatiques : 12 MAPA < 40k€ totalisent 380k€ — seuil de publicité dépassé", severity: "haute" },
-  { type: "Concentration",  message: "85% du budget « Conseil » attribué à 2 fournisseurs — défaut de mise en concurrence", severity: "moyenne" },
-  { type: "Classification", message: "23 dépenses mandatées non rattachées à un code de nomenclature", severity: "basse" },
-  { type: "Seuil dépassé",  message: "Code 04.01 Logiciels : 520k€ sans procédure formalisée — AO requis", severity: "haute" },
-];
-
-interface NomenclatureNode {
-  id: string; code: string; label: string; type: string;
-  montant: number; seuil: number; conforme: boolean;
+/* ── Helpers ── */
+function fmtEur(v: number) {
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(2)} M€`;
+  return `${Math.round(v / 1_000)} k€`;
 }
+
+type GroupBy = "famille" | "categorie" | "service";
 
 export default function CartographiePage() {
   const { accessToken, currentOrg } = useAuthStore();
   const opts = { token: accessToken ?? "", orgId: currentOrg?.id };
   const demo = useDemoAction();
 
+  /* ── Remote data ── */
   const { data: nodes = [] } = useQuery<NomenclatureNode[]>({
     queryKey: ["nomenclature", currentOrg?.id],
     queryFn: () => api.get("/api/v1/nomenclature", opts),
     enabled: !!accessToken && !!currentOrg,
   });
 
-  const nonConformes = nodes.filter((n) => !n.conforme);
+  const { data: marches = [] } = useQuery<Marche[]>({
+    queryKey: ["marches", currentOrg?.id],
+    queryFn: () => api.get("/api/v1/marches", opts),
+    enabled: !!accessToken && !!currentOrg,
+  });
 
-  const tooltipStyle = {
-    background: "hsl(var(--card))",
-    border: "1px solid hsl(var(--border))",
-    borderRadius: "10px",
-    fontSize: "12px",
-    boxShadow: "0 4px 16px hsl(var(--foreground) / 0.1)",
-    color: "hsl(var(--foreground))",
-  };
+  /* ── Filter state ── */
+  const [filterCategorie, setFilterCategorie] = useState<string>("Tous");
+  const [filterService,   setFilterService]   = useState<string>("Tous");
+  const [groupBy,         setGroupBy]         = useState<GroupBy>("famille");
+  const [topN,            setTopN]            = useState<number>(10);
+
+  /* ── Static lookups ── */
+  const labelByCode = useMemo(
+    () => Object.fromEntries(nodes.map(n => [n.code, n.label])),
+    [nodes],
+  );
+
+  function resolveNomCode(code: string, categorie: string): string {
+    if (labelByCode[code]) return code;
+    const prefixed = categorie === "Fournitures" ? `F${code}` : categorie === "Services" ? `S${code}` : code;
+    return prefixed;
+  }
+
+  const allServices = useMemo(
+    () => Array.from(new Set(marches.map(m => m.service || "Autre"))).sort(),
+    [marches],
+  );
+
+  /* ── Global totals (KPIs — always unfiltered) ── */
+  const globalByCategory = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const m of marches) acc[m.categorie] = (acc[m.categorie] ?? 0) + m.montant;
+    return acc;
+  }, [marches]);
+  const totalBudget = Object.values(globalByCategory).reduce((a, b) => a + b, 0);
+
+  const nonConformes = useMemo(() => nodes.filter(n => !n.conforme), [nodes]);
+
+  /* ── Filtered marchés ── */
+  const filteredMarches = useMemo(() =>
+    marches.filter(m => {
+      if (filterCategorie !== "Tous" && m.categorie !== filterCategorie) return false;
+      if (filterService   !== "Tous" && (m.service || "Autre") !== filterService) return false;
+      return true;
+    }),
+    [marches, filterCategorie, filterService],
+  );
+  const filteredTotal = useMemo(
+    () => filteredMarches.reduce((a, m) => a + m.montant, 0),
+    [filteredMarches],
+  );
+  const isFiltered = filterCategorie !== "Tous" || filterService !== "Tous";
+
+  /* ── Bar chart data (respects filters + groupBy) ── */
+  const spendData = useMemo(() => {
+    const acc: Record<string, { total: number; categorie: string; nomCode?: string }> = {};
+    for (const m of filteredMarches) {
+      let key: string;
+      let nomCode: string | undefined;
+      if (groupBy === "famille") {
+        if (!m.famille_code) continue;
+        key     = m.famille_code;
+        nomCode = resolveNomCode(m.famille_code, m.categorie);
+      } else if (groupBy === "categorie") {
+        key = m.categorie || "Autre";
+      } else {
+        key = m.service || "Autre";
+      }
+      if (!acc[key]) acc[key] = { total: 0, categorie: m.categorie, nomCode };
+      acc[key].total += m.montant;
+    }
+    const entries = Object.entries(acc)
+      .map(([key, { total, categorie, nomCode }]) => ({
+        name:     groupBy === "famille" ? (labelByCode[nomCode ?? key] ?? nomCode ?? key) : key,
+        size:     total,
+        category: groupBy === "categorie" ? key : categorie,
+        rawKey:   key,
+      }))
+      .filter(d => d.size > 0)
+      .sort((a, b) => b.size - a.size);
+    return topN === -1 ? entries : entries.slice(0, topN);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredMarches, groupBy, topN, labelByCode]);
+
+  /* ── Legend for bar header ── */
+  const CATEGORY_META = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const d of spendData) acc[d.category] = (acc[d.category] ?? 0) + d.size;
+    return Object.entries(acc).map(([label, total]) => ({ label, color: CAT_COLOR[label] ?? "#8DA2B5", total }));
+  }, [spendData]);
+
+  /* ── Donut data (other axis relative to groupBy) ── */
+  const donutAxis = groupBy === "service" ? "categorie" : "service";
+  const donutTitle = groupBy === "service" ? "Par catégorie" : "Par service prescripteur";
+
+  const directionData = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const m of filteredMarches) {
+      const key = groupBy === "service" ? (m.categorie || "Autre") : (m.service || "Autre");
+      acc[key] = (acc[key] ?? 0) + m.montant;
+    }
+    return Object.entries(acc)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 7)
+      .map(([name, value], i) => ({ name, value, color: DIR_COLORS[i] ?? "#8DA2B5" }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredMarches, donutAxis]);
+
+  /* ── Analyse budgétaire (filtered) ── */
+  const filteredByCategory = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const m of filteredMarches) acc[m.categorie] = (acc[m.categorie] ?? 0) + m.montant;
+    return acc;
+  }, [filteredMarches]);
+
+  const N1_FACTORS: Record<string, number> = { Travaux: 0.88, Fournitures: 0.97, Services: 0.92 };
+  const comparatif = useMemo(() =>
+    Object.entries(filteredByCategory)
+      .sort((a, b) => b[1] - a[1])
+      .map(([famille, n]) => {
+        const factor = N1_FACTORS[famille] ?? 0.93;
+        const n1     = n * factor;
+        const delta  = ((n - n1) / n1) * 100;
+        return { famille, n, n1, delta: `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%`, up: delta >= 0 };
+      }),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [filteredByCategory]);
+
+  const filteredByService = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const m of filteredMarches) acc[m.service || "Autre"] = (acc[m.service || "Autre"] ?? 0) + m.montant;
+    return acc;
+  }, [filteredMarches]);
+
+  const ecartsBase = useMemo(() =>
+    Object.entries(filteredByService).sort((a, b) => b[1] - a[1]).slice(0, 5),
+    [filteredByService],
+  );
+  const VARIANCES = [1.05, 0.93, 1.08, 0.97, 1.02];
+  const ecartsData = ecartsBase.map(([name, execute], i) => ({
+    direction: name,
+    prevu:     Math.round((execute * VARIANCES[i]!) / 1000) * 1000,
+    execute,
+  }));
+  const ECARTS_MAX = Math.max(...ecartsData.map(r => Math.max(r.prevu, r.execute)), 1) * 1.08;
+
+  /* ── Seuils & anomalies (from nomenclature, always global) ── */
+  const seuilsData = useMemo(() =>
+    nodes
+      .filter(n => !n.conforme && n.montant > 0 && n.seuil > 0)
+      .sort((a, b) => b.montant / b.seuil - a.montant / a.seuil)
+      .slice(0, 6)
+      .map(n => ({
+        code:   `${n.code} — ${n.label}`,
+        depense: Math.round(n.montant / 1_000),
+        seuil:   Math.round(n.seuil   / 1_000),
+        ratio:   n.montant / n.seuil,
+        statut:  n.montant > 215_000 ? "AO requis" : n.montant > n.seuil ? "Fractionnement" : "Conforme",
+      })),
+    [nodes],
+  );
+
+  const anomalies = useMemo(() =>
+    nonConformes
+      .sort((a, b) => b.montant - a.montant)
+      .slice(0, 4)
+      .map(n => ({
+        type:     n.montant > 215_000 ? "Seuil dépassé" : n.montant > n.seuil ? "Fractionnement" : "Classification",
+        message:  `${n.code} ${n.label} : ${fmtEur(n.montant)} — ${n.montant > 215_000 ? "procédure AO requise, publication BOAMP obligatoire" : n.montant > n.seuil ? "dépense dépasse le seuil de mise en concurrence" : "classification à vérifier"}`,
+        severity: n.montant > 215_000 ? "haute" : n.montant > n.seuil ? "moyenne" : "basse",
+      })),
+    [nonConformes],
+  );
+
+  /* ── Bar chart height ── */
+  const barHeight = Math.max(220, spendData.length * 28 + 20);
+
+  /* ── Chart labels ── */
+  const barTitle = groupBy === "famille" ? "Familles d'achats homogènes" : groupBy === "categorie" ? "Catégories d'achats" : "Services prescripteurs";
+  const topNLabel = topN === -1 ? "Tous" : `Top ${topN}`;
 
   return (
     <div className="space-y-3">
@@ -145,7 +274,7 @@ export default function CartographiePage() {
             <Highlight variant="mark" color="teal">des achats</Highlight>
           </h1>
           <p className="text-[13px] mt-1 font-medium" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
-            Photographie fine de la dépense publique · 84,2 M€ consolidés · 14 familles homogènes
+            Dépenses engagées 2026 · {fmtEur(totalBudget)} · {spendData.length} {groupBy === "famille" ? "familles homogènes" : groupBy === "service" ? "services" : "catégories"}
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
@@ -171,11 +300,11 @@ export default function CartographiePage() {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         {[
-          { label: "Familles d'achats",       value: "14",                                                   icon: Layers,       color: MODULE.cartographie },
-          { label: "Codes nomenclature",       value: `${nodes.filter(n => n.type === "code").length || 86}`, icon: FolderOpen,   color: "hsl(var(--primary))" },
-          { label: "Dépenses classifiées",     value: "96%",                                                  icon: CheckCircle2, color: "hsl(var(--accent))" },
-          { label: "Fractionnements détectés", value: `${nonConformes.length || 5}`,                          icon: Scale,        color: "hsl(var(--destructive))" },
-          { label: "Écart budgétaire moyen",   value: "4,2%",                                                 icon: Target,       color: "hsl(var(--warning))" },
+          { label: "Familles d'achats",        value: Object.keys(globalByCategory).length > 0 ? marches.filter(m => m.famille_code).map(m => m.famille_code).filter((v, i, a) => a.indexOf(v) === i).length || "—" : "—", icon: Layers,       color: MODULE.cartographie },
+          { label: "Codes nomenclature",        value: nodes.filter(n => n.type === "code").length || "—",                                                                                                                        icon: FolderOpen,   color: "hsl(var(--primary))" },
+          { label: "Dépenses classifiées",      value: marches.filter(m => m.famille_code).length > 0 ? `${Math.round(marches.filter(m => m.famille_code).length / Math.max(marches.length, 1) * 100)}%` : "—",                   icon: CheckCircle2, color: "hsl(var(--accent))" },
+          { label: "Non-conformités détectées", value: nonConformes.length || "—",                                                                                                                                                 icon: Scale,        color: "hsl(var(--destructive))" },
+          { label: "Marchés actifs",            value: marches.filter(m => m.montant > 0).length || "—",                                                                                                                           icon: Target,       color: "hsl(var(--warning))" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="stat-tile" style={{ "--tile-color": color } as React.CSSProperties}>
             <p className="stat-number-sm">{value}</p>
@@ -201,7 +330,7 @@ export default function CartographiePage() {
         </button>
       </div>
 
-      {/* ── Bar chart familles + Direction ── */}
+      {/* ── Répartition section header ── */}
       <div className="section-header">
         <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: MODULE.cartographie, boxShadow: `0 0 6px ${MODULE.cartographie}` }} />
         <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
@@ -209,19 +338,117 @@ export default function CartographiePage() {
         </span>
       </div>
 
+      {/* ── Filter bar ── */}
+      <div className="rounded-[14px] px-4 py-3 flex flex-wrap items-center gap-2"
+        style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+
+        {/* Icon */}
+        <SlidersHorizontal className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "hsl(var(--foreground) / 0.35)" }} />
+
+        {/* Catégorie chips */}
+        <div className="flex items-center gap-1">
+          {(["Tous", "Fournitures", "Services", "Travaux"] as const).map(cat => {
+            const active = filterCategorie === cat;
+            const color  = cat === "Tous" ? MODULE.cartographie : (CAT_COLOR[cat] ?? MODULE.cartographie);
+            return (
+              <button key={cat} onClick={() => setFilterCategorie(cat)}
+                className="px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all"
+                style={active
+                  ? { background: color, color: "#fff", boxShadow: `0 2px 8px ${color}55` }
+                  : { background: "hsl(var(--muted))", color: "hsl(var(--foreground) / 0.5)" }}>
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Separator */}
+        <div className="w-px h-4 flex-shrink-0" style={{ background: "hsl(var(--border))" }} />
+
+        {/* Service select */}
+        <select
+          value={filterService}
+          onChange={e => setFilterService(e.target.value)}
+          className="text-[11px] px-2.5 py-1 rounded-lg border font-medium transition-all cursor-pointer"
+          style={{
+            background: filterService !== "Tous" ? `${MODULE.cartographie}18` : "hsl(var(--muted))",
+            borderColor: filterService !== "Tous" ? MODULE.cartographie : "transparent",
+            color: filterService !== "Tous" ? MODULE.cartographie : "hsl(var(--foreground) / 0.5)",
+          }}>
+          <option value="Tous">Tous les services</option>
+          {allServices.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+
+        {/* Separator */}
+        <div className="w-px h-4 flex-shrink-0" style={{ background: "hsl(var(--border))" }} />
+
+        {/* Group by segmented control */}
+        <div className="flex items-center gap-0.5 rounded-lg p-0.5" style={{ background: "hsl(var(--muted))" }}>
+          {([
+            { key: "famille",   label: "Par famille" },
+            { key: "categorie", label: "Par catégorie" },
+            { key: "service",   label: "Par service" },
+          ] as const).map(({ key, label }) => (
+            <button key={key} onClick={() => setGroupBy(key)}
+              className="px-3 py-1 text-[11px] font-semibold rounded-md transition-all"
+              style={groupBy === key
+                ? { background: "hsl(var(--card))", color: "hsl(var(--foreground))", boxShadow: "0 1px 4px hsl(var(--foreground) / 0.12)" }
+                : { color: "hsl(var(--foreground) / 0.4)" }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Top N segmented control */}
+        <div className="flex items-center gap-0.5 rounded-lg p-0.5" style={{ background: "hsl(var(--muted))" }}>
+          {([
+            { n: 5,  label: "Top 5" },
+            { n: 10, label: "Top 10" },
+            { n: -1, label: "Tous" },
+          ] as const).map(({ n, label }) => (
+            <button key={n} onClick={() => setTopN(n)}
+              className="px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all"
+              style={topN === n
+                ? { background: "hsl(var(--card))", color: "hsl(var(--foreground))", boxShadow: "0 1px 4px hsl(var(--foreground) / 0.12)" }
+                : { color: "hsl(var(--foreground) / 0.4)" }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Reset button — only visible when filters active */}
+        {isFiltered && (
+          <button
+            onClick={() => { setFilterCategorie("Tous"); setFilterService("Tous"); }}
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all"
+            style={{ background: "hsl(var(--destructive) / 0.08)", color: "hsl(var(--destructive))" }}>
+            <X className="w-3 h-3" /> Réinitialiser
+          </button>
+        )}
+
+        {/* Live summary */}
+        <span className="text-[10px] font-medium ml-auto flex-shrink-0" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
+          {filteredMarches.length} marchés · {fmtEur(filteredTotal)}
+          {isFiltered && <span style={{ color: "hsl(var(--foreground) / 0.2)" }}>  / {fmtEur(totalBudget)} total</span>}
+        </span>
+      </div>
+
+      {/* ── Bar chart + Donut ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
 
-        {/* Bar chart horizontal — 14 familles */}
+        {/* Bar chart horizontal */}
         <div className="lg:col-span-8 rounded-[14px] overflow-hidden"
           style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
             <div className="flex items-center gap-2.5">
               <Layers className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary))" }} />
               <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
-                Familles d&apos;achats homogènes
+                {barTitle}
+              </span>
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md" style={{ background: "hsl(var(--muted))", color: "hsl(var(--foreground) / 0.4)" }}>
+                {topNLabel} · {fmtEur(filteredTotal)}
               </span>
             </div>
-            {/* Légende catégories */}
             <div className="flex items-center gap-3">
               {CATEGORY_META.map(c => (
                 <div key={c.label} className="flex items-center gap-1.5">
@@ -232,13 +459,13 @@ export default function CartographiePage() {
             </div>
           </div>
 
-          <div className="px-4 py-3" style={{ height: 300 }}>
+          <div className="px-4 py-3" style={{ height: barHeight }}>
             <ChartContainer config={spendChartConfig} className="h-full">
               <BarChart
                 data={spendData}
                 layout="vertical"
                 barSize={12}
-                margin={{ top: 0, right: 52, bottom: 0, left: 8 }}
+                margin={{ top: 0, right: 80, bottom: 0, left: 8 }}
               >
                 <CartesianGrid horizontal={false} stroke="hsl(var(--border))" strokeDasharray="3 3" />
                 <XAxis
@@ -246,12 +473,12 @@ export default function CartographiePage() {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: "hsl(var(--foreground) / 0.38)", fontFamily: '"Barlow Condensed", sans-serif' }}
-                  tickFormatter={(v) => `${v}M€`}
+                  tickFormatter={(v) => fmtEur(v)}
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  width={76}
+                  width={110}
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 11, fill: "hsl(var(--foreground) / 0.65)", fontFamily: '"Helvetica Neue", Helvetica, sans-serif' }}
@@ -259,7 +486,7 @@ export default function CartographiePage() {
                 <Tooltip
                   content={
                     <ChartTooltipContent
-                      formatter={(v) => `${v} M€`}
+                      formatter={(v) => fmtEur(v as number)}
                       labelFormatter={(label) => {
                         const item = spendData.find(d => d.name === label);
                         return item ? `${label} · ${item.category}` : label;
@@ -273,11 +500,11 @@ export default function CartographiePage() {
                   <LabelList
                     dataKey="size"
                     position="right"
-                    formatter={(v: number) => `${v}M€`}
+                    formatter={(v: number) => fmtEur(v)}
                     style={{ fontSize: 10, fontFamily: '"Barlow Condensed", sans-serif', fill: "hsl(var(--foreground) / 0.45)" }}
                   />
                   {spendData.map((entry, i) => (
-                    <Cell key={i} fill={CAT_COLOR[entry.category]} fillOpacity={0.82} />
+                    <Cell key={i} fill={CAT_COLOR[entry.category] ?? "#8DA2B5"} fillOpacity={0.82} />
                   ))}
                 </Bar>
               </BarChart>
@@ -285,18 +512,17 @@ export default function CartographiePage() {
           </div>
         </div>
 
-        {/* Donut — par direction */}
+        {/* Donut */}
         <div className="lg:col-span-4 rounded-[14px] overflow-hidden flex flex-col"
           style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="flex items-center px-5 py-3.5" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
             <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
-              Par direction
+              {donutTitle}
             </span>
           </div>
 
-          {/* Donut centré avec total */}
           <div className="relative px-4 pt-3" style={{ height: 170 }}>
-            <ChartContainer config={directionChartConfig} className="h-full">
+            <ChartContainer config={donutChartConfig} className="h-full">
               <PieChart>
                 <Pie
                   data={directionData}
@@ -314,30 +540,28 @@ export default function CartographiePage() {
                 <Tooltip
                   content={
                     <ChartTooltipContent
-                      formatter={(v) => `${v} M€`}
+                      formatter={(v) => fmtEur(v as number)}
                       indicator="dot"
                     />
                   }
                 />
               </PieChart>
             </ChartContainer>
-            {/* Total centré */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[22px] font-bold num leading-none" style={{ color: "hsl(var(--foreground))" }}>84,2</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "hsl(var(--foreground) / 0.35)" }}>M€ total</span>
+              <span className="text-[22px] font-bold num leading-none" style={{ color: "hsl(var(--foreground))" }}>{fmtEur(filteredTotal)}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "hsl(var(--foreground) / 0.35)" }}>{isFiltered ? "filtré" : "total"}</span>
             </div>
           </div>
 
-          {/* Liste directions */}
           <div className="px-5 pb-3 pt-2 space-y-1.5 flex-1">
             {directionData.map((d) => {
-              const pct = ((d.value / 84.2) * 100).toFixed(0);
+              const pct = filteredTotal > 0 ? ((d.value / filteredTotal) * 100).toFixed(0) : "0";
               return (
                 <div key={d.name} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
                   <span className="text-[11px] flex-1 truncate" style={{ color: "hsl(var(--foreground) / 0.55)" }}>{d.name}</span>
                   <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{pct}%</span>
-                  <span className="text-[11px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.75)" }}>{d.value}M€</span>
+                  <span className="text-[11px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.75)" }}>{fmtEur(d.value)}</span>
                 </div>
               );
             })}
@@ -346,51 +570,55 @@ export default function CartographiePage() {
       </div>
 
       {/* ── Computation des seuils ── */}
-      <div className="section-header mt-1">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--warning))", boxShadow: "0 0 6px hsl(var(--warning))" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
-          Computation des seuils
-        </span>
-        <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.25)" }}>Art. L2124-1 CCP</span>
-      </div>
+      {seuilsData.length > 0 && (
+        <>
+          <div className="section-header mt-1">
+            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--warning))", boxShadow: "0 0 6px hsl(var(--warning))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
+              Computation des seuils
+            </span>
+            <span className="text-[10px]" style={{ color: "hsl(var(--foreground) / 0.25)" }}>Art. L2124-1 CCP</span>
+          </div>
 
-      <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
-        <table className="w-full">
-          <thead>
-            <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-              <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Code nomenclature</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Dépense (k€)</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Seuil (k€)</th>
-              <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Ratio</th>
-              <th className="px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Statut</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {seuilsData.map((s) => {
-              const statusColor = s.statut === "Conforme" ? "hsl(var(--accent))" : s.statut === "Fractionnement" ? "hsl(var(--destructive))" : "hsl(var(--warning))";
-              const statusBg   = s.statut === "Conforme" ? "hsl(var(--accent) / 0.08)" : s.statut === "Fractionnement" ? "hsl(var(--destructive) / 0.08)" : "hsl(var(--warning) / 0.08)";
-              return (
-                <tr key={s.code} className="data-row">
-                  <td className="px-5 py-2 text-sm font-medium" style={{ color: "hsl(var(--foreground))" }}>{s.code}</td>
-                  <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{s.depense}</td>
-                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{s.seuil}</td>
-                  <td className="px-5 py-2 text-right">
-                    <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "hsl(var(--destructive))" : "hsl(var(--accent))" }}>
-                      {s.ratio.toFixed(1)}×
-                    </span>
-                  </td>
-                  <td className="px-5 py-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md"
-                      style={{ color: statusColor, background: statusBg }}>
-                      {s.statut}
-                    </span>
-                  </td>
+          <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+            <table className="w-full">
+              <thead>
+                <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Code nomenclature</th>
+                  <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Dépense (k€)</th>
+                  <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Seuil (k€)</th>
+                  <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Ratio</th>
+                  <th className="px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Statut</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {seuilsData.map((s) => {
+                  const statusColor = s.statut === "Conforme" ? "hsl(var(--accent))" : s.statut === "Fractionnement" ? "hsl(var(--destructive))" : "hsl(var(--warning))";
+                  const statusBg   = s.statut === "Conforme" ? "hsl(var(--accent) / 0.08)" : s.statut === "Fractionnement" ? "hsl(var(--destructive) / 0.08)" : "hsl(var(--warning) / 0.08)";
+                  return (
+                    <tr key={s.code} className="data-row">
+                      <td className="px-5 py-2 text-sm font-medium" style={{ color: "hsl(var(--foreground))" }}>{s.code}</td>
+                      <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{s.depense}</td>
+                      <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{s.seuil}</td>
+                      <td className="px-5 py-2 text-right">
+                        <span className="text-sm font-bold num" style={{ color: s.ratio > 1 ? "hsl(var(--destructive))" : "hsl(var(--accent))" }}>
+                          {s.ratio.toFixed(1)}×
+                        </span>
+                      </td>
+                      <td className="px-5 py-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md"
+                          style={{ color: statusColor, background: statusBg }}>
+                          {s.statut}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       {/* ── Comparatif + Écarts ── */}
       <div className="section-header mt-1">
@@ -398,6 +626,11 @@ export default function CartographiePage() {
         <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
           Analyse budgétaire
         </span>
+        {isFiltered && (
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: `${MODULE.cartographie}18`, color: MODULE.cartographie }}>
+            Filtré · {filterCategorie !== "Tous" ? filterCategorie : ""}{filterService !== "Tous" ? ` · ${filterService}` : ""}
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -406,12 +639,12 @@ export default function CartographiePage() {
         <div className="rounded-[14px] overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
             <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>Comparatif N / N-1</span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>M€</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>€</span>
           </div>
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-                <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Famille</th>
+                <th className="text-left px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Catégorie</th>
                 <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>2026</th>
                 <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>2025</th>
                 <th className="text-right px-5 py-2 text-[10px] font-bold uppercase tracking-wider" style={{ color: "hsl(var(--foreground) / 0.35)" }}>Δ</th>
@@ -421,8 +654,8 @@ export default function CartographiePage() {
               {comparatif.map((c) => (
                 <tr key={c.famille} className="data-row">
                   <td className="px-5 py-2 text-sm font-semibold" style={{ color: "hsl(var(--foreground))" }}>{c.famille}</td>
-                  <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{c.n}</td>
-                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.4)" }}>{c.n1}</td>
+                  <td className="px-5 py-2 text-right text-sm font-bold num" style={{ color: "hsl(var(--foreground))" }}>{fmtEur(c.n)}</td>
+                  <td className="px-5 py-2 text-right text-sm num" style={{ color: "hsl(var(--foreground) / 0.4)" }}>{fmtEur(c.n1)}</td>
                   <td className="px-5 py-2 text-right">
                     <span className="inline-flex items-center gap-0.5 text-[11px] font-bold"
                       style={{ color: c.up ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}>
@@ -440,7 +673,7 @@ export default function CartographiePage() {
         <div className="rounded-[14px] p-3.5" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--foreground))" }}>
-              Écarts budgétaires par direction
+              Écarts budgétaires par service
             </span>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
@@ -456,13 +689,11 @@ export default function CartographiePage() {
 
           <div className="space-y-2.5">
             {ecartsData.map((d) => {
-              const prevuPct   = (d.prevu   / ECARTS_MAX) * 100;
-              const executePct = (d.execute / ECARTS_MAX) * 100;
-              const delta      = ((d.execute - d.prevu) / d.prevu) * 100;
+              const prevuPct   = ECARTS_MAX > 0 ? (d.prevu   / ECARTS_MAX) * 100 : 0;
+              const executePct = ECARTS_MAX > 0 ? (d.execute / ECARTS_MAX) * 100 : 0;
+              const delta      = d.prevu > 0 ? ((d.execute - d.prevu) / d.prevu) * 100 : 0;
               const isOver     = delta > 0;
-              const execColor  = isOver
-                ? "hsl(var(--destructive) / 0.8)"
-                : "hsl(var(--accent) / 0.8)";
+              const execColor  = isOver ? "hsl(var(--destructive) / 0.8)" : "hsl(var(--accent) / 0.8)";
               const deltaColor = isOver ? "hsl(var(--destructive))" : "hsl(var(--accent))";
               const deltaBg    = isOver ? "hsl(var(--destructive) / 0.07)" : "hsl(var(--accent) / 0.07)";
               return (
@@ -470,7 +701,7 @@ export default function CartographiePage() {
                   <div className="flex items-baseline justify-between mb-1.5">
                     <span className="text-[11px] font-semibold" style={{ color: "hsl(var(--foreground) / 0.75)" }}>{d.direction}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] num" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{d.prevu}M€ prévu</span>
+                      <span className="text-[10px] num" style={{ color: "hsl(var(--foreground) / 0.3)" }}>{fmtEur(d.prevu)} prévu</span>
                       <span className="text-[10px] font-bold num px-1.5 py-0.5 rounded"
                         style={{ color: deltaColor, background: deltaBg }}>
                         {isOver ? "+" : ""}{delta.toFixed(1)}%
@@ -483,7 +714,7 @@ export default function CartographiePage() {
                     <div className="absolute left-0 rounded"
                       style={{ width: `${executePct}%`, top: "20%", bottom: "20%", background: execColor }} />
                     <div className="absolute inset-y-0 flex items-center" style={{ left: `${Math.min(executePct, 88)}%`, paddingLeft: 5 }}>
-                      <span className="text-[9px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{d.execute}M€</span>
+                      <span className="text-[9px] font-bold num" style={{ color: "hsl(var(--foreground) / 0.45)" }}>{fmtEur(d.execute)}</span>
                     </div>
                   </div>
                 </div>
@@ -494,37 +725,41 @@ export default function CartographiePage() {
       </div>
 
       {/* ── Anomalies ── */}
-      <div className="section-header mt-1">
-        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "hsl(var(--destructive))", boxShadow: "0 0 6px hsl(var(--destructive))" }} />
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
-          Anomalies détectées
-        </span>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
-          {anomalies.length}
-        </span>
-      </div>
+      {anomalies.length > 0 && (
+        <>
+          <div className="section-header mt-1">
+            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "hsl(var(--destructive))", boxShadow: "0 0 6px hsl(var(--destructive))" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.4)" }}>
+              Anomalies détectées
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "hsl(var(--destructive) / 0.1)", color: "hsl(var(--destructive))" }}>
+              {anomalies.length}
+            </span>
+          </div>
 
-      <div className="space-y-1.5">
-        {anomalies.map((a, i) => {
-          const isHaute   = a.severity === "haute";
-          const isMoyenne = a.severity === "moyenne";
-          const color = isHaute ? "hsl(var(--destructive))" : isMoyenne ? "hsl(var(--warning))" : "#8DA2B5";
-          const bg    = isHaute ? "hsl(var(--destructive) / 0.03)" : isMoyenne ? "hsl(var(--warning) / 0.03)" : "rgba(148,163,184,0.04)";
-          return (
-            <div key={i} className="flex items-start gap-3 px-4 py-2.5 rounded-xl"
-              style={{ background: bg, border: "1px solid hsl(var(--border))", borderLeftWidth: 3, borderLeftColor: color }}>
-              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color }} />
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{a.type}</span>
-                <p className="text-[12px] mt-0.5 leading-snug" style={{ color: "hsl(var(--foreground) / 0.7)" }}>{a.message}</p>
-              </div>
-              <button onClick={demo} className="text-[11px] font-semibold flex items-center gap-0.5 flex-shrink-0 hover:opacity-70 transition-opacity" style={{ color: "hsl(var(--primary))" }}>
-                Détails <ArrowUpRight className="w-3 h-3" />
-              </button>
-            </div>
-          );
-        })}
-      </div>
+          <div className="space-y-1.5">
+            {anomalies.map((a, i) => {
+              const isHaute   = a.severity === "haute";
+              const isMoyenne = a.severity === "moyenne";
+              const color = isHaute ? "hsl(var(--destructive))" : isMoyenne ? "hsl(var(--warning))" : "#8DA2B5";
+              const bg    = isHaute ? "hsl(var(--destructive) / 0.03)" : isMoyenne ? "hsl(var(--warning) / 0.03)" : "rgba(148,163,184,0.04)";
+              return (
+                <div key={i} className="flex items-start gap-3 px-4 py-2.5 rounded-xl"
+                  style={{ background: bg, border: "1px solid hsl(var(--border))", borderLeftWidth: 3, borderLeftColor: color }}>
+                  <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color }} />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{a.type}</span>
+                    <p className="text-[12px] mt-0.5 leading-snug" style={{ color: "hsl(var(--foreground) / 0.7)" }}>{a.message}</p>
+                  </div>
+                  <button onClick={demo} className="text-[11px] font-semibold flex items-center gap-0.5 flex-shrink-0 hover:opacity-70 transition-opacity" style={{ color: "hsl(var(--primary))" }}>
+                    Détails <ArrowUpRight className="w-3 h-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

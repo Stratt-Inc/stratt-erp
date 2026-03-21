@@ -103,7 +103,7 @@ dev-frontend: ## Lance uniquement le frontend Next.js
 ##@ Base de données
 
 seed: ## Peuple la DB avec les données initiales (go run local, charge .env.dev)
-	@$(LOAD_ENV); cd backend && go run ./seed/main.go
+	@$(LOAD_ENV); cd backend && go run ./seed/
 	@echo "$(GREEN)✓ Seed terminé$(RESET)"
 
 seed-docker: ## Peuple la DB via Docker (si l'infra tourne via up-infra/up-dev)
