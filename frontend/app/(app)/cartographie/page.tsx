@@ -282,11 +282,25 @@ export default function CartographiePage() {
             <Upload className="w-3.5 h-3.5" /> Importer base achats
           </button>
           <button
-            onClick={demo}
+            onClick={() => {
+              const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+              const orgId = currentOrg?.id ?? "";
+              window.open(`${base}/api/v1/marches/rapport?year=${new Date().getFullYear()}&version=direction&org_id=${orgId}&token=${accessToken}`, "_blank");
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+          >
+            <BarChart3 className="w-3.5 h-3.5" /> Rapport direction
+          </button>
+          <button
+            onClick={() => {
+              const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+              const orgId = currentOrg?.id ?? "";
+              window.open(`${base}/api/v1/marches/rapport?year=${new Date().getFullYear()}&version=technique&org_id=${orgId}&token=${accessToken}`, "_blank");
+            }}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
             style={{ background: MODULE.cartographie }}
           >
-            <BarChart3 className="w-3.5 h-3.5" /> Générer cartographie
+            <BarChart3 className="w-3.5 h-3.5" /> Rapport complet
           </button>
         </div>
       </div>
