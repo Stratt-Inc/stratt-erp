@@ -25,6 +25,7 @@ import {
   GraduationCap,
   MessageSquare,
   BellRing,
+  ClipboardCheck,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { MODULE } from "@/lib/colors";
@@ -53,6 +54,7 @@ const systemeNav: NavItem[] = [
   { label: "Organisations",  href: "/organizations",  icon: Building2,    color: MODULE.organizations,  permission: "admin.manage" },
   { label: "Paramètres",     href: "/settings",       icon: Settings,     color: MODULE.settings,       permission: null,             tour: "settings" },
   { label: "Administration", href: "/administration", icon: Shield,       color: MODULE.administration, permission: "admin.manage" },
+  { label: "Quiz CCP",       href: "/quiz",           icon: ClipboardCheck,color: MODULE.quiz,           permission: null },
   { label: "Glossaire CCP",  href: "/glossaire",      icon: GraduationCap,color: MODULE.glossaire,      permission: null },
   { label: "Support",        href: "/support",        icon: LifeBuoy,     color: MODULE.support,        permission: null },
   { label: "Aide",           href: "/help",           icon: HelpCircle,   color: MODULE.help,           permission: null },
