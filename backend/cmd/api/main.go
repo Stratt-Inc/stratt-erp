@@ -36,6 +36,7 @@ import (
 	"github.com/stratt/backend/modules/auditlog"
 	"github.com/stratt/backend/modules/share"
 	"github.com/stratt/backend/modules/sirene"
+	"github.com/stratt/backend/modules/apidocs"
 	"github.com/stratt/backend/modules/quiz"
 	"github.com/stratt/backend/modules/webhooks"
 )
@@ -182,6 +183,13 @@ func main() {
 
 	quizHandler := quiz.NewHandler()
 	quiz.RegisterRoutes(v1.Group("/quiz", requireAuth), quizHandler)
+
+	// API docs + API key management
+	docsHandler := apidocs.NewHandler()
+	// Inject db into context for API key handlers
+	dbMiddleware := func(c *gin.Context) { c.Set("db", db); c.Next() }
+	apidocs.RegisterRoutes(v1.Group("", requireAuth, requireOrg, dbMiddleware), docsHandler)
+	apidocs.RegisterDocsRoute(r, docsHandler)
 
 	// Share links (authenticated creation, public consumption)
 	share.RegisterRoutes(v1.Group("/share", requireAuth, requireOrg), shareHandler)

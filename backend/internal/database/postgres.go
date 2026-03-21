@@ -16,6 +16,7 @@ import (
 	procurementmod "github.com/stratt/backend/modules/procurement"
 	chatbotmod "github.com/stratt/backend/modules/chatbot"
 	sirenemod "github.com/stratt/backend/modules/sirene"
+	apidocsmod "github.com/stratt/backend/modules/apidocs"
 	webhooksmod "github.com/stratt/backend/modules/webhooks"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -100,5 +101,7 @@ func AutoMigrate(db *gorm.DB) error {
 		// Webhooks
 		&webhooksmod.Webhook{},
 		&webhooksmod.WebhookDelivery{},
+		// API Keys
+		&apidocsmod.APIKey{},
 	)
 }
